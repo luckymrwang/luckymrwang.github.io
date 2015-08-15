@@ -1,0 +1,683 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>月末审计数据 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="##游戏快照功能：查看某个时间段内的支付用户在此刻的快照数据
+cli 运行方式： 
+nohup php index.php accountant/audit/snapshot tank 2011-01-01 2015-04-30 &amp;gt; snapshot/tank_snapshot_2011_2015.txt &amp;amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="月末审计数据">
+<meta property="og:url" content="http://yoursite.com/2015/05/21/月末审计数据/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="##游戏快照功能：查看某个时间段内的支付用户在此刻的快照数据
+cli 运行方式： 
+nohup php index.php accountant/audit/snapshot tank 2011-01-01 2015-04-30 &amp;gt; snapshot/tank_snapshot_2011_2015.txt &amp;amp;">
+<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="月末审计数据">
+<meta name="twitter:description" content="##游戏快照功能：查看某个时间段内的支付用户在此刻的快照数据
+cli 运行方式： 
+nohup php index.php accountant/audit/snapshot tank 2011-01-01 2015-04-30 &amp;gt; snapshot/tank_snapshot_2011_2015.txt &amp;amp;">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/21/月末审计数据/" title="月末审计数据" itemprop="url">月末审计数据</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-21T02:06:48.000Z" itemprop="datePublished"> 发表于 2015-05-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>##游戏快照<br><em>功能：查看某个时间段内的支付用户在此刻的快照数据</em></p>
+<p><em>cli 运行方式：</em> </p>
+<pre><code>nohup php index.php accountant/audit/snapshot tank <span class="number">2011</span>-<span class="number">01</span>-<span class="number">01</span> <span class="number">2015</span>-<span class="number">04</span>-<span class="number">30</span> &gt; snapshot/tank_snapshot_2011_2015.txt &amp;
+</code></pre><a id="more"></a>
+<p><em>CI中的网页查看方式：</em></p>
+<pre><code><span class="constant">Http:</span>/<span class="regexp">/.../accountant</span><span class="regexp">/audit/snapshot</span><span class="regexp">/world_war/</span><span class="number">2015</span>-<span class="number">05</span>-<span class="number">01</span>/<span class="number">2015</span>-<span class="number">05</span>-<span class="number">01</span>
+</code></pre><p>具体流程如下：</p>
+<p>1.遍历该游戏下的所有大平台，遍历某个大平台下的所有区服</p>
+<p>2.通过大平台，区服，时间段取到所有的支付用户ID</p>
+<p>3.将所有的支付用户分批次，每30个为一组，作为url参数之一；根据大平台和区服到数据库中取对应的拉取数据的url地址，与上面的参数，以及验签拼接成一个完整的url地址，例子如下：</p>
+<pre><code>[url] =&gt; worldwar-shouyou-ios-web01.raysns.com/tank-server/<span class="keyword">public</span>/index.php/getstat?userids=[{<span class="string">"zid"</span>:<span class="number">1</span>,<span class="string">"userids"</span>:[<span class="string">"1036461"</span>,<span class="string">"1004034"</span>,<span class="string">"1039689"</span>,<span class="string">"1020481"</span>,<span class="string">"1010641"</span>,<span class="string">"1007554"</span>,<span class="string">"1031727"</span>,<span class="string">"1005429"</span>,<span class="string">"1005705"</span>,<span class="string">"1029936"</span>]}]&amp;is_compress=<span class="number">1</span>&amp;type=get_user_audit_infos&amp;sign=<span class="number">6520</span>b6d1274a1e221a6f6b7ba52989f3
+</code></pre><p>4.将多个url放到一个数组中，实现并发访问获取远端数据 //<em>为防止给远端服务器造成压力，并发时一台服务器对应一个url,通过循环调用如下函数进行帅选</em></p>
+<pre><code>public <span class="keyword">function</span> get_request_nums(&amp;<span class="variable">$data</span>){
+    <span class="variable">$ret</span> = array();
+    foreach(<span class="variable">$data</span> as <span class="variable">$key</span> =&gt; <span class="variable">$value</span>){
+        if(empty(<span class="variable">$value</span>))
+            continue;
+        <span class="variable">$last</span>_key = count(<span class="variable">$value</span>) - <span class="number">1</span>;
+        <span class="variable">$ret</span>[] = <span class="variable">$value</span>[<span class="variable">$last</span>_key];
+        unset(<span class="variable">$data</span>[<span class="variable">$key</span>][<span class="variable">$last</span>_key]);
+    }
+    return <span class="variable">$ret</span>;
+}
+</code></pre><p>5.将信息显示出来</p>
+<p>##前两万名用户详情表<br><em>功能：查看某个游戏某一个时间段内前两万名用户的详情</em></p>
+<p><em>cli 运行方式：</em> </p>
+<pre><code>nohup php index.php accountant/audit/top_pay_users_by_period_cli tank <span class="number">2011</span>-<span class="number">01</span>-<span class="number">01</span> <span class="number">2015</span>-<span class="number">04</span>-<span class="number">30</span> <span class="number">1</span>~<span class="number">20000</span> &gt; top/tank_top_2011_2015.txt &amp;
+</code></pre><!-- more -->
+<p><em>CI中的网页查看方式：</em><br>    <a href="http://.../accountant/audit/top_pay_users_by_period_cli/tank/2015-05-01/2015-05-01/1~20000" target="_blank" rel="external">http://.../accountant/audit/top_pay_users_by_period_cli/tank/2015-05-01/2015-05-01/1~20000</a></p>
+<p>具体流程如下：</p>
+<p>1.调用函数 <code>_top_pay_users</code> </p>
+<p>2.调用函数 <code>_get_top_users_by_game</code> ，在该函数中做如下操作 通过<br><code>$game_name, $start_date, $end_date, $rank_from, $rank_to</code><br>这几个参数以<em>curl</em> 的方式访问<em>go</em>的接口来获取这个游戏这个时间段内的前两万名用户信息，之后再处理填充用户信息，具体如下：</p>
+<ul>
+<li>从<em>go</em>接口返回的信息：</li>
+<li><p>  Array<br>  (</p>
+<pre><code>[appTotalCosts] =&gt; Array
+    (
+        [<span class="number">1009</span>] =&gt; <span class="number">21376</span>
+        [<span class="number">1011</span>] =&gt; <span class="number">107498</span>
+        [<span class="number">1013</span>] =&gt; <span class="number">202793.76</span>
+        [<span class="number">1014</span>] =&gt; <span class="number">20004.21</span>
+        [<span class="number">1015</span>] =&gt; <span class="number">471750.89</span>
+        [<span class="number">1016</span>] =&gt; <span class="number">258342</span>
+        [<span class="number">1017</span>] =&gt; <span class="number">237508</span>
+        [<span class="number">1018</span>] =&gt; <span class="number">88136.06</span>
+        [<span class="number">1019</span>] =&gt; <span class="number">2941.68</span>
+        [<span class="number">1020</span>] =&gt; <span class="number">143607</span>
+        [<span class="number">1021</span>] =&gt; <span class="number">0</span>
+        [<span class="number">1023</span>] =&gt; <span class="number">0</span>
+        [<span class="number">1024</span>] =&gt; <span class="number">13014.79</span>
+        [<span class="number">1025</span>] =&gt; <span class="number">91822.11</span>
+        [<span class="number">1026</span>] =&gt; <span class="number">67377.12</span>
+        [<span class="number">1027</span>] =&gt; <span class="number">1495.04</span>
+        [<span class="number">1028</span>] =&gt; <span class="number">18.11</span>
+        [<span class="number">1029</span>] =&gt; <span class="number">249943.2</span>
+        [<span class="number">1031</span>] =&gt; <span class="number">85085.72</span>
+        [<span class="number">1032</span>] =&gt; <span class="number">996.43</span>
+        [<span class="number">1033</span>] =&gt; <span class="number">786.04</span>
+        [<span class="number">1034</span>] =&gt; <span class="number">0</span>
+    )
+
+[gameTopUsers] =&gt; Array
+    (
+        [<span class="number">0</span>] =&gt; Array
+            (
+                [bigAppId] =&gt; <span class="number">1017</span>
+                [zid] =&gt; <span class="number">49</span>
+                [userId] =&gt; <span class="number">49017166</span>
+                [cost] =&gt; <span class="number">13936</span>
+                [tradeType] =&gt; ioshaima
+                [payTimes] =&gt; <span class="number">22</span>
+            )
+
+        [<span class="number">1</span>] =&gt; Array
+            (
+                [bigAppId] =&gt; <span class="number">1016</span>
+                [zid] =&gt; <span class="number">45</span>
+                [userId] =&gt; <span class="number">45004559</span>
+                [cost] =&gt; <span class="number">12960</span>
+                [tradeType] =&gt; flappstore
+                [payTimes] =&gt; <span class="number">20</span>
+            )
+    ）
+</code></pre><p>  ）</p>
+</li>
+<li><p>第一次加工处理的信息：</p>
+</li>
+<li><p>  Array<br>  (</p>
+<pre><code>[<span class="number">1017</span><span class="preprocessor">#<span class="number">49017166</span>] =&gt; Array</span>
+    (
+        [big_app_id] =&gt; <span class="number">1017</span>
+        [zid] =&gt; <span class="number">49</span>
+        [user_id] =&gt; <span class="number">49017166</span>
+        [rank] =&gt; <span class="number">1</span>
+        [cost] =&gt; <span class="number">13936</span>
+        [money_type] =&gt; CNY
+        [trade_type] =&gt; ioshaima
+        [pay_times] =&gt; <span class="number">22</span>
+        [cost_percent] =&gt; <span class="number">67.5</span>
+    )
+
+[<span class="number">1016</span><span class="preprocessor">#<span class="number">45004559</span>] =&gt; Array</span>
+    (
+        [big_app_id] =&gt; <span class="number">1016</span>
+        [zid] =&gt; <span class="number">45</span>
+        [user_id] =&gt; <span class="number">45004559</span>
+        [rank] =&gt; <span class="number">2</span>
+        [cost] =&gt; <span class="number">12960</span>
+        [money_type] =&gt; CNY
+        [trade_type] =&gt; flappstore
+        [pay_times] =&gt; <span class="number">20</span>
+        [cost_percent] =&gt; <span class="number">62.78</span>
+    )
+</code></pre><p>  ）</p>
+</li>
+</ul>
+<p>3.调用函数 <code>_merge_user_cost_and_audit</code> ，通过<em>curl</em>获取远端用户审计信息，最终与之前的消费信息合并</p>
+<ul>
+<li>curl获取远端信息格式如下：</li>
+<li><p>  Array<br>  (</p>
+<pre><code>[<span class="number">0</span>] =&gt; <span class="keyword">Array</span>
+    (
+        [user_id] =&gt; <span class="number">49000507</span>
+        [name] =&gt; 稻草人
+        [level] =&gt; <span class="number">31</span>
+        [vip_level] =&gt; <span class="number">4</span>
+        [reg_time] =&gt; <span class="number">1429851196</span>
+        [last_login_time] =&gt; <span class="number">1432201556</span>
+        [last_pay_time] =&gt; <span class="number">1430459153</span>
+        [total_online_time] =&gt; <span class="number">348361</span>
+        [total_login_day_count] =&gt; <span class="number">25</span>
+        [last_login_ip] =&gt; <span class="number">113.200</span><span class="number">.85</span><span class="number">.123</span>
+        [remain_coin] =&gt; <span class="number">16</span>
+        [total_buy_coin] =&gt; <span class="number">4750</span>
+        [total_gift_coin] =&gt; <span class="number">5508</span>
+        [zid] =&gt; <span class="number">49</span>
+        [nonstop_login_day_count] =&gt; <span class="number">0</span>
+        [pid] =&gt; 
+    )
+</code></pre><p>  ）</p>
+</li>
+<li><p>最终合并格式如下：</p>
+</li>
+<li>  Array<br>  (<pre><code>[big_app_id] =&gt; <span class="number">1017</span>
+[zid] =&gt; <span class="number">49</span>
+[user_id] =&gt; <span class="number">49000507</span>
+[rank] =&gt; <span class="number">6517</span>
+[cost] =&gt; <span class="number">18</span>
+[money_type] =&gt; CNY
+[trade_type] =&gt; iosaisi
+[pay_times] =&gt; <span class="number">1</span>
+[cost_percent] =&gt; <span class="number">0.09</span>
+[name] =&gt; 稻草人
+[level] =&gt; <span class="number">31</span>
+[vip_level] =&gt; <span class="number">4</span>
+[reg_time] =&gt; <span class="number">2015</span>-<span class="number">04</span>-<span class="number">24</span> <span class="number">12</span>:<span class="number">53</span>:<span class="number">16</span>
+[last_login_time] =&gt; <span class="number">2015</span>-<span class="number">05</span>-<span class="number">22</span> <span class="number">13</span>:<span class="number">55</span>:<span class="number">30</span>
+[last_pay_time] =&gt; <span class="number">2015</span>-<span class="number">05</span>-<span class="number">01</span> <span class="number">13</span>:<span class="number">45</span>:<span class="number">53</span>
+[total_online_time] =&gt; <span class="number">357174</span>
+[total_login_day_count] =&gt; <span class="number">26</span>
+[last_login_ip] =&gt; <span class="number">113.200</span><span class="number">.85</span><span class="number">.123</span>
+[remain_coin] =&gt; <span class="number">18</span>
+[total_buy_coin] =&gt; <span class="number">4750</span>
+[total_gift_coin] =&gt; <span class="number">5516</span>
+[nonstop_login_day_count] =&gt; <span class="number">0</span>
+[pid] =&gt; 
+[game_desc] =&gt; 坦克
+[partner] =&gt; 深圳市为爱普信息技术有限公司
+[big_app_desc] =&gt; 坦克_越狱ios_飞流
+[audit_sub_app_desc] =&gt; 自营爱思助手_ios
+[sales_mode] =&gt; 自研自营
+[country] =&gt; 中国大陆
+[shore] =&gt; 境内
+[period] =&gt; <span class="number">2015</span>-<span class="number">05</span>-<span class="number">01</span>~<span class="number">2015</span>-<span class="number">05</span>-<span class="number">01</span>
+</code></pre>  )</li>
+</ul>
+<p>4.将信息显示出来</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/BI项目/">BI项目</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2015/05/21/月末审计数据/" data-title="月末审计数据 | iBlog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/23/Cookie与Session/" title="Cookie与Session">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Cookie与Session</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/20/Rolling-cURL-PHP并发最佳实践/"  title="Rolling cURL:PHP并发最佳实践">
+ <strong>下一篇：</strong><br/> 
+ <span>Rolling cURL:PHP并发最佳实践
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kafka/" title="Kafka">Kafka<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BI项目/" title="BI项目">BI项目<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NoSQL/" title="NoSQL">NoSQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SSH/" title="SSH">SSH<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/概念/" title="概念">概念<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me/jacman" target="_blank" title="Jacman">Jacman</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m luckymrwang. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

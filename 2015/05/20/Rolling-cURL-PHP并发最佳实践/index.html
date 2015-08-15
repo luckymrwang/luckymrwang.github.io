@@ -1,0 +1,600 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Rolling cURL:PHP并发最佳实践 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curlmulti*族函数实现简单的并发.
+本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rolling cURL:PHP并发最佳实践">
+<meta property="og:url" content="http://yoursite.com/2015/05/20/Rolling-cURL-PHP并发最佳实践/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curlmulti*族函数实现简单的并发.
+本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.">
+<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Rolling cURL:PHP并发最佳实践">
+<meta name="twitter:description" content="前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curlmulti*族函数实现简单的并发.
+本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/20/Rolling-cURL-PHP并发最佳实践/" title="Rolling cURL:PHP并发最佳实践" itemprop="url">Rolling cURL:PHP并发最佳实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-20T08:15:41.000Z" itemprop="datePublished"> 发表于 2015-05-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curl<em>multi</em>*族函数实现简单的并发.</p>
+<p>本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.<br><a id="more"></a></p>
+<p>##经典cURL并发机制及其存在的问题<br>经典的cURL实现机制在网上很容易找到, 比如参考<a href="http://php.net/manual/en/function.curl-multi-init.php" target="_blank" rel="external">PHP在线手册</a>在线手册，不过这里我附上我们BI项目中使用的多并发方式:</p>
+<pre><code>public static <span class="keyword">function</span> multi_curl_new(<span class="variable">$requests</span>) {
+    <span class="variable">$mh</span> = curl_multi_init();
+    <span class="variable">$chs</span> = array();
+    foreach (<span class="variable">$requests</span> as <span class="variable">$key</span> =&gt; <span class="variable">$req</span>) {
+        <span class="variable">$timeout</span> = empty(<span class="variable">$req</span>[<span class="string">'timeout'</span>]) ? <span class="number">20</span> : <span class="variable">$req</span>[<span class="string">'timeout'</span>];
+        <span class="variable">$ch</span> = curl_init(<span class="variable">$req</span>[<span class="string">'url'</span>]);
+        curl_setopt(<span class="variable">$ch</span>, CURLOPT_TIMEOUT, <span class="variable">$timeout</span>);
+        curl_setopt(<span class="variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="number">1</span>);
+        curl_setopt(<span class="variable">$ch</span>, CURLOPT_FOLLOWLOCATION, <span class="number">1</span>);
+        if(defined(<span class="string">'CURLOPT_IPRESOLVE'</span>) &amp;&amp; defined(<span class="string">'CURL_IPRESOLVE_V4'</span>)) {
+            curl_setopt(<span class="variable">$ch</span>, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        }
+        if(empty(<span class="variable">$req</span>[<span class="string">'not_need_proxy'</span>])) {
+            MY_Pull::set_curl_proxy(<span class="variable">$req</span>[<span class="string">'big_app_id'</span>], <span class="variable">$ch</span>);
+        }
+        curl_multi_add_handle(<span class="variable">$mh</span>, <span class="variable">$ch</span>);
+        <span class="variable">$chs</span>[<span class="variable">$key</span>] = <span class="variable">$ch</span>;
+    }
+
+    <span class="variable">$active</span> = null;
+    do {
+        <span class="variable">$mrc</span> = curl_multi_exec(<span class="variable">$mh</span>, <span class="variable">$active</span>);
+    } while(<span class="variable">$mrc</span> == CURLM_CALL_MULTI_PERFORM);
+
+    while(<span class="variable">$active</span> &amp;&amp; <span class="variable">$mrc</span>==CURLM_OK) {
+        if(curl_multi_select(<span class="variable">$mh</span>) != -<span class="number">1</span>) {
+            do {
+                <span class="variable">$mrc</span> = curl_multi_exec(<span class="variable">$mh</span>, <span class="variable">$active</span>);
+            } while(<span class="variable">$mrc</span> == CURLM_CALL_MULTI_PERFORM);
+        }
+        usleep(<span class="number">100</span>);
+    }
+
+    <span class="variable">$rets</span> = array();
+    foreach(<span class="variable">$chs</span> as <span class="variable">$key</span> =&gt; <span class="variable">$ch</span>) {
+        <span class="variable">$rets</span>[<span class="variable">$key</span>] = curl_multi_getcontent(<span class="variable">$ch</span>);
+        curl_multi_remove_handle(<span class="variable">$mh</span>, <span class="variable">$ch</span>);
+        curl_close(<span class="variable">$ch</span>);
+    }
+    curl_multi_close(<span class="variable">$mh</span>);
+
+    return <span class="variable">$rets</span>;
+}
+</code></pre><p>首先将所有的URL压入并发队列, 然后执行并发过程, 等待所有请求接收完之后进行数据的解析等后续处理. 在实际的处理过程中, 受网络传输的影响, 部分URL的内容会优先于其他URL返回, 但是经典cURL并发必须等待最慢的那个URL返回之后才开始处理, 等待也就意味着CPU的空闲和浪费. 如果URL队列很短, 这种空闲和浪费还处在可接受的范围, 但如果队列很长, 这种等待和浪费将变得不可接受.</p>
+<p>##改进的Rolling cURL并发方式</p>
+<p>仔细分析不难发现经典cURL并发还存在优化的空间, 优化的方式时当某个URL请求完毕之后尽可能快的去处理它, 边处理边等待其他的URL返回, 而不是等待那个最慢的接口返回之后才开始处理等工作, 从而避免CPU的空闲和浪费. 闲话不多说, 下面贴上具体的实现:</p>
+<pre><code><span class="keyword">function</span> rolling_curl(<span class="variable">$urls</span>, <span class="variable">$delay</span>) {
+    <span class="variable">$queue</span> = curl_multi_init();
+    <span class="variable">$map</span> = array();
+
+    foreach (<span class="variable">$urls</span> as <span class="variable">$url</span>) {
+        <span class="variable">$ch</span> = curl_init();
+
+        curl_setopt(<span class="variable">$ch</span>, CURLOPT_URL, <span class="variable">$url</span>);
+        curl_setopt(<span class="variable">$ch</span>, CURLOPT_TIMEOUT, <span class="number">1</span>);
+        curl_setopt(<span class="variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="number">1</span>);
+        curl_setopt(<span class="variable">$ch</span>, CURLOPT_HEADER, <span class="number">0</span>);
+        curl_setopt(<span class="variable">$ch</span>, CURLOPT_NOSIGNAL, true);
+
+        curl_multi_add_handle(<span class="variable">$queue</span>, <span class="variable">$ch</span>);
+        <span class="variable">$map</span>[(string) <span class="variable">$ch</span>] = <span class="variable">$url</span>;
+    }
+
+    <span class="variable">$responses</span> = array();
+    do {
+        while ((<span class="variable">$code</span> = curl_multi_exec(<span class="variable">$queue</span>, <span class="variable">$active</span>)) == CURLM_CALL_MULTI_PERFORM) ;
+
+        if (<span class="variable">$code</span> != CURLM_OK) { break; }
+
+        // a request was just completed -- find out which one
+        while (<span class="variable">$done</span> = curl_multi_info_read(<span class="variable">$queue</span>)) {
+
+            // get the info and content returned on the request
+            <span class="variable">$info</span> = curl_getinfo(<span class="variable">$done</span>[<span class="string">'handle'</span>]);
+            <span class="variable">$error</span> = curl_error(<span class="variable">$done</span>[<span class="string">'handle'</span>]);
+            <span class="variable">$results</span> = callback(curl_multi_getcontent(<span class="variable">$done</span>[<span class="string">'handle'</span>]), <span class="variable">$delay</span>);
+            <span class="variable">$responses</span>[<span class="variable">$map</span>[(string) <span class="variable">$done</span>[<span class="string">'handle'</span>]]] = compact(<span class="string">'info'</span>, <span class="string">'error'</span>, <span class="string">'results'</span>);
+
+            // remove the curl handle that just completed
+            curl_multi_remove_handle(<span class="variable">$queue</span>, <span class="variable">$done</span>[<span class="string">'handle'</span>]);
+            curl_close(<span class="variable">$done</span>[<span class="string">'handle'</span>]);
+        }
+
+        // Block for data in / output; error handling is done by curl_multi_exec
+        if (<span class="variable">$active</span> &gt; <span class="number">0</span>) {
+            curl_multi_select(<span class="variable">$queue</span>, <span class="number">0</span>.<span class="number">5</span>);
+        }
+
+    } while (<span class="variable">$active</span>);
+
+    curl_multi_close(<span class="variable">$queue</span>);
+    return <span class="variable">$responses</span>;
+}
+</code></pre><p><em>引自文章 <a href="http://www.searchtb.com/2012/06/rolling-curl-best-practices.html" target="_blank" rel="external">http://www.searchtb.com/2012/06/rolling-curl-best-practices.html</a></em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2015/05/20/Rolling-cURL-PHP并发最佳实践/" data-title="Rolling cURL:PHP并发最佳实践 | iBlog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/21/月末审计数据/" title="月末审计数据">
+  <strong>上一篇：</strong><br/>
+  <span>
+  月末审计数据</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/20/CI数据库类/"  title="CI数据库类">
+ <strong>下一篇：</strong><br/> 
+ <span>CI数据库类
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kafka/" title="Kafka">Kafka<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BI项目/" title="BI项目">BI项目<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NoSQL/" title="NoSQL">NoSQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SSH/" title="SSH">SSH<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/概念/" title="概念">概念<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me/jacman" target="_blank" title="Jacman">Jacman</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m luckymrwang. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,660 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Apache&amp;Nginx 虚拟主机 VirtualHost 配置 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="##概念
+虚拟主机 (Virtual Host) 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。
+重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache&Nginx 虚拟主机 VirtualHost 配置">
+<meta property="og:url" content="http://yoursite.com/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="##概念
+虚拟主机 (Virtual Host) 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。
+重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将">
+<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Apache&Nginx 虚拟主机 VirtualHost 配置">
+<meta name="twitter:description" content="##概念
+虚拟主机 (Virtual Host) 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。
+重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/" title="Apache&amp;Nginx 虚拟主机 VirtualHost 配置" itemprop="url">Apache&amp;Nginx 虚拟主机 VirtualHost 配置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-03T06:35:04.000Z" itemprop="datePublished"> 发表于 2015-06-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>##概念</p>
+<p><strong>虚拟主机 (Virtual Host)</strong> 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。</p>
+<p><em>重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将<dicrectory>（这个是所有目录的默认配置)和<direcotry opt="" lampp="" htdocs="">的权限，都是deny from all.作为默认。</direcotry></dicrectory></em><br><a id="more"></a></p>
+<p>##Redhat Enterprise Linux</p>
+<p>Redhat Enterprise Linux (包括 CentOS Linux), 是使用最广的 Linux 服务器, 大量的网站应用都部署在其上。</p>
+<ul>
+<li><p>打开文件 /etc/httpd/conf/httpd.conf, 搜索 VirtualHost example, 找到代码如下:</p>
+<pre><code><span class="preprocessor"># VirtualHost example:</span>
+<span class="preprocessor"># Almost any Apache directive may go into a VirtualHost container.</span>
+<span class="preprocessor"># The first VirtualHost section is used for requests without a known</span>
+<span class="preprocessor"># server name.</span>
+<span class="preprocessor">#</span>
+<span class="preprocessor">#&lt;VirtualHost *:80&gt;</span>
+<span class="preprocessor">#    ServerAdmin webmaster@dummy-host.example.com</span>
+<span class="preprocessor">#    DocumentRoot /www/docs/dummy-host.example.com</span>
+<span class="preprocessor">#    ServerName dummy-host.example.com</span>
+<span class="preprocessor">#    ErrorLog logs/dummy-host.example.com-error_log</span>
+<span class="preprocessor">#    CustomLog logs/dummy-host.example.com-access_log common</span>
+<span class="preprocessor">#&lt;/VirtualHost&gt;</span>
+</code></pre></li>
+<li><p>仿照例子, 添加一段代码来指定某一域名的网站</p>
+<pre><code><span class="comment"># DocumentRoot 是网站文件存放的根目录</span>
+<span class="comment"># ServerName 是网站域名, 需要跟 DNS 指向的域名一致</span>
+<span class="comment">#</span>
+<span class="tag">&lt;VirtualHost *:80&gt;</span>
+    <span class="keyword">ServerAdmin</span> webmaster@dummy-host.example.com
+    <span class="keyword"><span class="common">DocumentRoot</span></span> /var/www/httpdocs/demo_neoease_com
+    <span class="keyword"><span class="common">ServerName</span></span> demo.neoease.com
+    <span class="keyword">ErrorLog</span> logs/demo.neoease.com-error.log
+    <span class="keyword">CustomLog</span> logs/demo.neoease.com-access.log common
+<span class="tag">&lt;/VirtualHost&gt;</span>
+</code></pre></li>
+<li><p>重启 httpd 服务, 执行以下语句</p>
+<pre><code><span class="title">service</span> httpd restart
+</code></pre></li>
+</ul>
+<p>##Windows</p>
+<ul>
+<li><p>打开目录 {Apache2 安装目录}\conf\extra\, 找到 httpd-vhosts.conf 文件</p>
+</li>
+<li><p>仿照例子, 添加一段代码来指定某一域名的网站</p>
+<pre><code><span class="comment"># DocumentRoot 是网站文件存放的根目录</span>
+<span class="comment"># ServerName 是网站域名, 需要跟 DNS 指向的域名一致</span>
+<span class="comment">#</span>
+<span class="tag">&lt;VirtualHost *:80&gt;</span>
+    <span class="keyword">ServerAdmin</span> webmaster@dummy-host.example.com
+    <span class="keyword"><span class="common">DocumentRoot</span></span> <span class="string">"D:/workspace/php/demo_neoease_com"</span>
+    <span class="keyword"><span class="common">ServerName</span></span> demo.neoease.com
+    <span class="keyword">ErrorLog</span> <span class="string">"logs/demo.neoease.com-error.log"</span>
+    <span class="keyword">CustomLog</span> <span class="string">"logs/demo.neoease.com-access.log"</span> common
+<span class="tag">&lt;/VirtualHost&gt;</span>
+</code></pre></li>
+<li><p>打开 httpd.conf 文件, 添加如下语句</p>
+<pre><code># Virtual hosts
+<span class="keyword">Include</span> <span class="keyword">conf</span>/extra/httpd-vhosts.<span class="keyword">conf</span>
+</code></pre></li>
+<li><p>重启 Apache 服务</p>
+</li>
+</ul>
+<p>##Mac OS</p>
+<ul>
+<li><p>打开文件 /private/etc/apache2/extra/httpd-vhosts.conf</p>
+</li>
+<li><p>仿照例子, 添加一段代码来指定某一域名的网站</p>
+<pre><code><span class="comment"># DocumentRoot 是网站文件存放的根目录</span>
+<span class="comment"># ServerName 是网站域名, 需要跟 DNS 指向的域名一致</span>
+<span class="comment">#</span>
+<span class="tag">&lt;VirtualHost *:80&gt;</span>
+    <span class="keyword">ServerAdmin</span> webmaster@dummy-host.example.com
+    <span class="keyword"><span class="common">DocumentRoot</span></span> <span class="string">"/usr/docs/httpdocs/demo_neoease_com"</span>
+    <span class="keyword"><span class="common">ServerName</span></span> demo.neoease.com
+    <span class="keyword">ErrorLog</span> <span class="string">"/private/var/log/apache2/demo.neoease.com-error_log"</span>
+    <span class="keyword">CustomLog</span> <span class="string">"/private/var/log/apache2/demo.neoease.com-access_log"</span> common
+<span class="tag">&lt;/VirtualHost&gt;</span>
+</code></pre></li>
+<li><p>打开文件 /private/etc/apache2/httpd.conf, 搜索 Virtual hosts, 找到代码如下:</p>
+<pre><code><span class="preprocessor"># Virtual hosts</span>
+<span class="preprocessor">#<span class="keyword">Include</span> /private/etc/apache2/extra/httpd-vhosts.conf</span>
+</code></pre></li>
+</ul>
+<p>去掉前面的注释符号 #, 保存文件</p>
+<ul>
+<li><p>重启 apache 服务, 执行以下语句</p>
+<pre><code><span class="title">sudo</span> apachectl restart
+</code></pre></li>
+</ul>
+<p>##Nginx 虚拟主机</p>
+<ul>
+<li><p>进入 /usr/local/nginx/conf/vhost 目录, 创建虚拟主机配置文件 demo.neoease.com.conf ({域名}.conf)</p>
+</li>
+<li><p>打开配置文件, 添加服务如下:</p>
+<pre><code><span class="title">server</span> {
+    <span class="title">listen</span>       <span class="number">80</span>;
+    <span class="title">server_name</span> demo.neoease.com;
+    <span class="title">index</span> index.html index.htm index.php;
+    <span class="title">root</span>  /var/www/demo_neoease_com;
+
+    <span class="title">log_format</span> demo.neoease.com <span class="string">'<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span> [<span class="variable">$time_local</span>] <span class="variable">$request</span>'</span>
+    <span class="string">'<span class="variable">$status</span> <span class="variable">$body_bytes_sent</span> <span class="variable">$http_referer</span> '</span>
+    <span class="string">'<span class="variable">$http_user_agent</span> <span class="variable">$http_x_forwarded_for</span>'</span>;
+    <span class="title">access_log</span>  /var/log/demo.neoease.com.log demo.neoease.com;
+}
+</code></pre></li>
+<li><p>打开 Nginx 配置文件 /usr/local/nginx/conf/nginx.conf, 在 http 范围引入虚拟主机配置文件如下:</p>
+<pre><code><span class="preprocessor"><span class="keyword">include</span> vhost/*.conf;</span>
+</code></pre></li>
+<li><p>重启 Nginx 服务, 执行以下语句</p>
+<pre><code><span class="title">service</span> nginx restart
+</code></pre></li>
+</ul>
+<p>##让 Nginx 虚拟主机支持 PHP</p>
+<ul>
+<li><p>在前面第 2 步的虚拟主机服务对应的目录加入对 PHP 的支持, 这里使用的是 FastCGI, 修改如下</p>
+<pre><code><span class="title">server</span> {
+    <span class="title">listen</span>       <span class="number">80</span>;
+    <span class="title">server_name</span> demo.neoease.com;
+    <span class="title">index</span> index.html index.htm index.php;
+    <span class="title">root</span>  /var/www/demo_neoease_com;
+
+    <span class="title">location</span> <span class="regexp">~ .*\.(php|php5)?$</span> {
+        <span class="title">fastcgi_pass</span> <span class="url">unix:/tmp/php-cgi.sock</span>;
+        <span class="title">fastcgi_index</span> index.php;
+        <span class="title">include</span> fcgi.conf;
+    }
+
+    <span class="title">log_format</span> demo.neoease.com <span class="string">'<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span> [<span class="variable">$time_local</span>] <span class="variable">$request</span>'</span>
+    <span class="string">'<span class="variable">$status</span> <span class="variable">$body_bytes_sent</span> <span class="variable">$http_referer</span> '</span>
+    <span class="string">'<span class="variable">$http_user_agent</span> <span class="variable">$http_x_forwarded_for</span>'</span>;
+    <span class="title">access_log</span>  /var/log/demo.neoease.com.log demo.neoease.com;
+}
+</code></pre></li>
+</ul>
+<p>##图片防盗链</p>
+<p>图片作为重要的耗流量大的静态资源, 可能网站主并不希望其他网站直接引用, Nginx 可以通过 referer 来防止外站盗链图片</p>
+<pre><code><span class="title">server</span> {
+    <span class="title">listen</span>       <span class="number">80</span>;
+    <span class="title">server_name</span> demo.neoease.com;
+    <span class="title">index</span> index.html index.htm index.php;
+    <span class="title">root</span>  /var/www/demo_neoease_com;
+
+    <span class="comment"># 这里为图片添加为期 1 年的过期时间, 并且禁止 Google, 百度和本站之外的网站引用图片</span>
+    <span class="title">location</span> <span class="regexp">~ .*\.(ico|jpg|jpeg|png|gif)$</span> {
+        <span class="title">expires</span> <span class="number">1y</span>;
+        <span class="title">valid_referers</span> <span class="built_in">none</span> <span class="built_in">blocked</span> demo.neoease.com <span class="regexp">*.google.com</span> <span class="regexp">*.baidu.com</span>;
+        <span class="title">if</span> (<span class="variable">$invalid_referer</span>) {
+            <span class="title">return</span> <span class="number">404</span>;
+        }
+    }
+
+    <span class="title">log_format</span> demo.neoease.com <span class="string">'<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span> [<span class="variable">$time_local</span>] <span class="variable">$request</span>'</span>
+    <span class="string">'<span class="variable">$status</span> <span class="variable">$body_bytes_sent</span> <span class="variable">$http_referer</span> '</span>
+    <span class="string">'<span class="variable">$http_user_agent</span> <span class="variable">$http_x_forwarded_for</span>'</span>;
+    <span class="title">access_log</span>  /var/log/demo.neoease.com.log demo.neoease.com;
+}
+</code></pre>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Apache/">Apache</a><a href="/tags/Nginx/">Nginx</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/" data-title="Apache&amp;Nginx 虚拟主机 VirtualHost 配置 | iBlog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/06/03/Apache服务器访问方式去除Index.php/" title="Apache服务器访问方式去除Index.php">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Apache服务器访问方式去除Index.php</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/06/03/Apache的Order-All-Deny详解/"  title="Apache的Order All,Deny详解">
+ <strong>下一篇：</strong><br/> 
+ <span>Apache的Order All,Deny详解
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kafka/" title="Kafka">Kafka<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BI项目/" title="BI项目">BI项目<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NoSQL/" title="NoSQL">NoSQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SSH/" title="SSH">SSH<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/概念/" title="概念">概念<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me/jacman" target="_blank" title="Jacman">Jacman</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m luckymrwang. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#nothing"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,943 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="学习总结 思考感悟 知识管理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="http://yoursite.com/page/3/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="学习总结 思考感悟 知识管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iBlog">
+<meta name="twitter:description" content="学习总结 思考感悟 知识管理">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/" title="Apache&amp;Nginx 虚拟主机 VirtualHost 配置" itemprop="url">Apache&amp;Nginx 虚拟主机 VirtualHost 配置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-03T06:35:04.000Z" itemprop="datePublished"> 发表于 2015-06-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>##概念</p>
+<p><strong>虚拟主机 (Virtual Host)</strong> 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。</p>
+<p><em>重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将<Dicrectory />（这个是所有目录的默认配置)和<Direcotry /opt/lampp/htdocs>的权限，都是deny from all.作为默认。</em><br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Apache/">Apache</a><a href="/tags/Nginx/">Nginx</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/03/Apache的Order-All-Deny详解/" title="Apache的Order All,Deny详解" itemprop="url">Apache的Order All,Deny详解</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-03T03:46:40.000Z" itemprop="datePublished"> 发表于 2015-06-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Allow和Deny可以用于apache的conf文件或者.htaccess文件中（配合Directory, Location, Files等），用来控制目录和文件的访问授权。</p>
+<p>##Tips</p>
+<ul>
+<li><p>修改完配置后要保存好并重启Apache服务，配置才能生效</p>
+</li>
+<li><p>开头字母不分大小写</p>
+</li>
+<li><p>Allow、Deny语句不分先后顺序，谁先谁后不影响最终判断结果；但都会被判断到</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/06/03/Apache的Order-All-Deny详解/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Apache/">Apache</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/" title="Codeigniter在执行大量查询语句时内存占用过大的问题" itemprop="url">Codeigniter在执行大量查询语句时内存占用过大的问题</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-28T07:18:51.000Z" itemprop="datePublished"> 发表于 2015-05-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在跑审计前250名用户清单数据时，总是因为内存占用过大而异常退出。查看代码，也就是两个循环嵌套连接MySQL查询数据然后处理显示出来（不会存在一次取出数据超内存的情况），具体循环代码如下：
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CI/">CI</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/27/关系型数据库与NoSQL/" title="关系型数据库与NoSQL" itemprop="url">关系型数据库与NoSQL</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-27T07:14:35.000Z" itemprop="datePublished"> 发表于 2015-05-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>关系型数据库把所有的数据都通过行和列的二元表现形式表示出来。</p>
+<p>##关系型数据库的优势：</p>
+<ul>
+<li><p>保持数据的一致性（事务处理）</p>
+</li>
+<li><p>由于以标准化为前提，数据更新的开销很小（相同的字段基本上都只有一处）</p>
+</li>
+<li><p>可以进行Join等复杂查询</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/05/27/关系型数据库与NoSQL/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/NoSQL/">NoSQL</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/27/PHP程序的执行流程/" title="PHP程序的执行流程" itemprop="url">PHP程序的执行流程</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-27T06:37:15.000Z" itemprop="datePublished"> 发表于 2015-05-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><em>为了以后能开发PHP扩展，就一定要了解PHP的执行顺序。这篇文章就是为C开发PHP扩展做铺垫。</em></p>
+<p>前言：Web环境我们假设为Apache。在编译PHP的时候,为了能够让Apache支持PHP，我们会生成一个mod_php5.so的模块。Apache加载这个模块，在url访问.php文件的时候，就会转给mod_php5.so模块来处理。这个就是我们常说的SAPI。英文名字是：Server Application Programming Interface。SAPI其实是一个统称，其下有 ISAPI，CLI SAPI，CGI等。有了它，就可以很容易的跟其他东西交互，比如APACHE,IIS,CGI等。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/05/27/PHP程序的执行流程/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/23/Cookie与Session/" title="Cookie与Session" itemprop="url">Cookie与Session</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-23T02:51:39.000Z" itemprop="datePublished"> 发表于 2015-05-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>##Cookie的基本概念和设置</p>
+<p>Cookie在远程浏览器端存储数据并以此跟踪和识别用户的机制。从实现上说，Cookie是存储在客户端上的一小段数据（4k），浏览器（客户端）通过HTTP协议和服务器端进行Cookie交互。</p>
+<p><em>注意：这里说的是客户端而不是浏览器，实际上能管理Cookie的不仅仅是浏览器，当然最常见的是由浏览器管理Cookie，后面的叙述中不再区分这两个概念。</em><br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/05/23/Cookie与Session/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/21/月末审计数据/" title="月末审计数据" itemprop="url">月末审计数据</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-21T02:06:48.000Z" itemprop="datePublished"> 发表于 2015-05-21</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>##游戏快照<br><em>功能：查看某个时间段内的支付用户在此刻的快照数据</em></p>
+<p><em>cli 运行方式：</em> </p>
+<pre><code>nohup php index.php accountant/audit/snapshot tank <span class="number">2011</span>-<span class="number">01</span>-<span class="number">01</span> <span class="number">2015</span>-<span class="number">04</span>-<span class="number">30</span> &gt; snapshot/tank_snapshot_2011_2015.txt &amp;
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/05/21/月末审计数据/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/BI项目/">BI项目</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/20/Rolling-cURL-PHP并发最佳实践/" title="Rolling cURL:PHP并发最佳实践" itemprop="url">Rolling cURL:PHP并发最佳实践</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-20T08:15:41.000Z" itemprop="datePublished"> 发表于 2015-05-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curl<em>multi</em>*族函数实现简单的并发.</p>
+<p>本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/05/20/Rolling-cURL-PHP并发最佳实践/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/20/CI数据库类/" title="CI数据库类" itemprop="url">CI数据库类</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-20T07:51:51.000Z" itemprop="datePublished"> 发表于 2015-05-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用</p>
+<pre><code><span class="variable">$DB1</span> = <span class="variable">$this-</span>&gt;load-&gt;database(<span class="string">'group_one'</span>, TRUE);
+<span class="variable">$DB2</span> = <span class="variable">$this-</span>&gt;load-&gt;database(<span class="string">'group_two'</span>, TRUE);
+</code></pre><p>通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/05/20/CI数据库类/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CI/">CI</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/19/百万级别访问网站前期的技术准备/" title="百万级别访问网站前期的技术准备" itemprop="url">百万级别访问网站前期的技术准备</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-19T12:57:01.000Z" itemprop="datePublished"> 发表于 2015-05-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>##前言<br>对互联网有了解的人都有自己的想法，有人就把想法付诸实现，做个网站然后开始运营。其实从纯网站技术上来说，因为开源模式的发展，现在建一个小网站已经很简单也很便宜。当访问量到达一定数量级的时候成本就开始飙升了，问题也开始显现了。因为带宽的增加、硬件的扩展、人员的扩张所带来的成本提高是显而易见的，而还有相当大的一部分成本是因为代码重构、架构重构，甚至底层开发语言更换引起的，最惨的就是数据丢失，辛辛苦苦好几年，一夜回到创业前。</p>
+<p>减少成本就是增加利润。很多事情，我们在一开始就可以避免，先打好基础，往后可以省很多精力，少操很多心。</p>
+<p>假设你是一个参与创业的技术人员，当前一穷二白，什么都要自己做，自己出钱，初期几十万的资金，做一个应用不是特别复杂的网站，那么就要注意以下几点：
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/05/19/百万级别访问网站前期的技术准备/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kafka/" title="Kafka">Kafka<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BI项目/" title="BI项目">BI项目<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/NoSQL/" title="NoSQL">NoSQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SSH/" title="SSH">SSH<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/概念/" title="概念">概念<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me" target="_blank" title="Jark&#39;s Blog">Jark&#39;s Blog</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://wuchong.me/jacman" target="_blank" title="Jacman">Jacman</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m luckymrwang. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2015 
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>
