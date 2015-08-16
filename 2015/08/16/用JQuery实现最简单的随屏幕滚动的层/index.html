@@ -4,32 +4,29 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>CI数据库类 | iBlog</title>
+    <title>用JQuery实现最简单的随屏幕滚动的层 | iBlog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="luckymrwang">
     
 
     
-    <meta name="description" content="今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用
-$DB1 = $this-&amp;gt;load-&amp;gt;database(&apos;group_one&apos;, TRUE);
-$DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
-通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。">
+    <meta name="description" content="首先需要一个绝对定位的元素
+&amp;lt;div id=&quot;test&quot; style=&quot;position:absolute;&quot;&amp;gt;test&amp;lt;/div&amp;gt;
+实现方法：随页面滚动（Scroll）事件动态设置元素的CSS，TOP值">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CI数据库类">
-<meta property="og:url" content="http://yoursite.com/2015/05/20/CI数据库类/index.html">
+<meta property="og:title" content="用JQuery实现最简单的随屏幕滚动的层">
+<meta property="og:url" content="http://yoursite.com/2015/08/16/用JQuery实现最简单的随屏幕滚动的层/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用
-$DB1 = $this-&amp;gt;load-&amp;gt;database(&apos;group_one&apos;, TRUE);
-$DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
-通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。">
-<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta property="og:description" content="首先需要一个绝对定位的元素
+&amp;lt;div id=&quot;test&quot; style=&quot;position:absolute;&quot;&amp;gt;test&amp;lt;/div&amp;gt;
+实现方法：随页面滚动（Scroll）事件动态设置元素的CSS，TOP值">
+<meta property="og:updated_time" content="2015-08-16T06:55:31.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CI数据库类">
-<meta name="twitter:description" content="今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用
-$DB1 = $this-&amp;gt;load-&amp;gt;database(&apos;group_one&apos;, TRUE);
-$DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
-通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。">
+<meta name="twitter:title" content="用JQuery实现最简单的随屏幕滚动的层">
+<meta name="twitter:description" content="首先需要一个绝对定位的元素
+&amp;lt;div id=&quot;test&quot; style=&quot;position:absolute;&quot;&amp;gt;test&amp;lt;/div&amp;gt;
+实现方法：随页面滚动（Scroll）事件动态设置元素的CSS，TOP值">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -89,14 +86,14 @@ $DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/20/CI数据库类/" title="CI数据库类" itemprop="url">CI数据库类</a>
+      <a href="/2015/08/16/用JQuery实现最简单的随屏幕滚动的层/" title="用JQuery实现最简单的随屏幕滚动的层" itemprop="url">用JQuery实现最简单的随屏幕滚动的层</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
 		
   <p class="article-time">
-    <time datetime="2015-05-20T07:51:51.000Z" itemprop="datePublished"> 发表于 2015-05-20</time>
+    <time datetime="2015-08-16T06:50:23.000Z" itemprop="datePublished"> 发表于 2015-08-16</time>
     
   </p>
 </header>
@@ -109,189 +106,18 @@ $DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
 		
 		</div>
 		
-		<p>今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用</p>
-<pre><code><span class="variable">$DB1</span> = <span class="variable">$this-</span>&gt;load-&gt;database(<span class="string">'group_one'</span>, TRUE);
-<span class="variable">$DB2</span> = <span class="variable">$this-</span>&gt;load-&gt;database(<span class="string">'group_two'</span>, TRUE);
-</code></pre><p>通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。<br><a id="more"></a><br><em>当你使用这种方法，你将用对象名来执行操作命令而不是用户向导模式，也就是说，你将用以下方式执行数据库操作：</em></p>
-<pre><code>$<span class="type">DB1</span>-&gt;query();
-$<span class="type">DB1</span>-&gt;<span class="literal">result</span>();
-etc...
-</code></pre><p>而不是：</p>
-<pre><code>$this-&gt;db-&gt;query();
-$this-&gt;db-&gt;<span class="literal">result</span>();
-etc...
-</code></pre><p><em>译注：要连接多个数据库请先设置 config/database.php 中的 $db[‘xxxxxx’][‘pconnect’] = FALSE; 这是 mysql_pconnect() 造成的问题，和 CI 无关。</em></p>
-<p>我借用BI项目测试后返回一个对象，具体内容是这样的：</p>
-<pre><code>CI_DB_mysql_driver Object
-    (
-        [dbdriver] =&gt; mysql
-        [_escape_char] =&gt; `
-        [_like_escape_str] =&gt; 
-        [_like_escape_chr] =&gt; 
-        [delete_hack] =&gt; <span class="number">1</span>
-        [_count_string] =&gt; SELECT COUNT(*) <span class="keyword">AS</span> 
-        [_random_keyword] =&gt;  RAND()
-        [use_set_names] =&gt; 
-        [ar_select] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_distinct] =&gt; 
-        [ar_from] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_join] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_where] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_like] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_groupby] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_having] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_keys] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_limit] =&gt; 
-        [ar_offset] =&gt; 
-        [ar_order] =&gt; 
-        [ar_orderby] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_set] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_wherein] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_aliased_tables] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_store_array] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_caching] =&gt; 
-        [ar_cache_exists] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_select] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_from] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_join] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_where] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_like] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_groupby] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_having] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_orderby] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_set] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_no_escape] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_no_escape] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [username] =&gt; root
-        [password] =&gt; 
-        [hostname] =&gt; localhost
-        [database] =&gt; ga
-        [dbprefix] =&gt; 
-        [char_set] =&gt; utf8
-        [dbcollat] =&gt; utf8_general_ci
-        [autoinit] =&gt; <span class="number">1</span>
-        [swap_pre] =&gt; 
-        [port] =&gt; 
-        [pconnect] =&gt; 
-        [conn_id] =&gt; Resource id <span class="comment">#112</span>
-        [result_id] =&gt; Resource id <span class="comment">#113</span>
-        [db_debug] =&gt; <span class="number">1</span>
-        [benchmark] =&gt; <span class="number">0.00244402885437</span>
-        [query_count] =&gt; <span class="number">1</span>
-        [bind_marker] =&gt; ?
-        [save_queries] =&gt; <span class="number">1</span>
-        [queries] =&gt; <span class="keyword">Array</span>
-            (
-                [<span class="number">0</span>] =&gt; SELECT *
-                    FROM (`apps`)
-                    WHERE `appid` =  <span class="number">1009</span>
-            )
-
-        [query_times] =&gt; <span class="keyword">Array</span>
-            (
-                [<span class="number">0</span>] =&gt; <span class="number">0.00244402885437</span>
-            )
-
-        [data_cache] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [trans_enabled] =&gt; <span class="number">1</span>
-        [trans_strict] =&gt; <span class="number">1</span>
-        [_trans_depth] =&gt; <span class="number">0</span>
-        [_trans_status] =&gt; <span class="number">1</span>
-        [cache_on] =&gt; 
-        [cachedir] =&gt; 
-        [cache_autodel] =&gt; 
-        [CACHE] =&gt; 
-        [_protect_identifiers] =&gt; <span class="number">1</span>
-        [_reserved_identifiers] =&gt; <span class="keyword">Array</span>
-            (
-                [<span class="number">0</span>] =&gt; *
-            )
-
-        [stmt_id] =&gt; 
-        [curs_id] =&gt; 
-        [limit_used] =&gt; 
-        [stricton] =&gt; 
-    )
-</code></pre><p>变量非常多，例如 <code>[queries]</code> 也会记录着查询过的语句，<code>[query_time]</code> 记录着相应语句查询所需要的时间等等。</p>
-  
+		<p>首先需要一个绝对定位的元素</p>
+<pre><code>&lt;<span class="keyword">div</span> <span class="property">id</span>=<span class="string">"test"</span> style=<span class="string">"position:absolute;"</span>&gt;test&lt;/<span class="keyword">div</span>&gt;
+</code></pre><p>实现方法：随页面滚动（Scroll）事件动态设置元素的CSS，TOP值<br><a id="more"></a></p>
+<p>定位在页面顶端：</p>
+<pre><code>$(<span class="built_in">window</span>).scroll(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>{
+    $(<span class="string">'#test'</span>).css(<span class="string">'top'</span>, $(<span class="built_in">document</span>).scrollTop());
+});
+</code></pre><p>定位在页面底端：</p>
+<pre><code>$(<span class="built_in">window</span>).scroll(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>{
+    $(<span class="string">'#test'</span>).css(<span class="string">'top'</span>, $(<span class="built_in">document</span>).scrollTop() + $(<span class="built_in">window</span>).height() - $(<span class="string">'#test'</span>).height());
+});
+</code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -299,7 +125,7 @@ etc...
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/CI/">CI</a>
+  <span></span> <a href="/tags/JQuery/">JQuery</a>
   </div>
 
 </div>
@@ -308,7 +134,7 @@ etc...
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/05/20/CI数据库类/" data-title="CI数据库类 | iBlog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://yoursite.com/2015/08/16/用JQuery实现最简单的随屏幕滚动的层/" data-title="用JQuery实现最简单的随屏幕滚动的层 | iBlog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -321,19 +147,11 @@ etc...
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/05/20/Rolling-cURL-PHP并发最佳实践/" title="Rolling cURL:PHP并发最佳实践">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Rolling cURL:PHP并发最佳实践</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/05/19/百万级别访问网站前期的技术准备/"  title="百万级别访问网站前期的技术准备">
+<a href="/2015/08/15/hello-world/"  title="Hello World">
  <strong>下一篇：</strong><br/> 
- <span>百万级别访问网站前期的技术准备
+ <span>Hello World
 </span>
 </a>
 </div>
