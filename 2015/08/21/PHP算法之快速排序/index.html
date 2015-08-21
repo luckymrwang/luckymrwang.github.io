@@ -11,16 +11,16 @@
     
 
     
-    <meta name="description" content="###思路分析选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。">
+    <meta name="description" content="思路分析选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="PHP算法之快速排序">
 <meta property="og:url" content="http://yoursite.com/2015/08/21/PHP算法之快速排序/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="###思路分析选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。">
-<meta property="og:updated_time" content="2015-08-21T08:09:23.000Z">
+<meta property="og:description" content="思路分析选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。">
+<meta property="og:updated_time" content="2015-08-21T08:45:30.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PHP算法之快速排序">
-<meta name="twitter:description" content="###思路分析选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。">
+<meta name="twitter:description" content="思路分析选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -96,11 +96,11 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#思路分析"><span class="toc-number">1.</span> <span class="toc-text">思路分析</span></a></li></ol>
 		
 		</div>
 		
-		<p>###思路分析<br>选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。<br><a id="more"></a></p>
+		<h3 id="思路分析">思路分析</h3><p>选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。<br><a id="more"></a></p>
 <pre><code><span class="variable">$arr</span> = <span class="keyword">array</span>(<span class="number">12</span>, <span class="number">242</span>, <span class="number">3</span>, <span class="number">20</span>, <span class="number">11</span>,<span class="number">50</span>);
 <span class="keyword">function</span> kuaisu(<span class="variable">$arr</span>){
     <span class="variable">$len</span> = count(<span class="variable">$arr</span>);
@@ -179,7 +179,7 @@ echo implode(<span class="string">','</span>, kuaisu(<span class="variable">$arr
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#思路分析"><span class="toc-number">1.</span> <span class="toc-text">思路分析</span></a></li></ol>
  
   </div>
 
