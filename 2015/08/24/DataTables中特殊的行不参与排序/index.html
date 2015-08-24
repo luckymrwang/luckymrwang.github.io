@@ -21,7 +21,7 @@
 下面将介绍在中最上面的特殊行不参与排序的方法，分一行和多行的情况">
 <meta property="og:image" content="http://yoursite.com/images/no-sort_foot.png">
 <meta property="og:image" content="http://yoursite.com/images/no-sort_body.png">
-<meta property="og:updated_time" content="2015-08-24T08:22:32.000Z">
+<meta property="og:updated_time" content="2015-08-24T08:48:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="DataTables中特殊的行不参与排序">
 <meta name="twitter:description" content="DataTables中可以直接设置某列不参与排序，但是对于特殊的行其工具本身没有设置项 不过对于table底部的行可以添加标签来固定，并且不参与排序
@@ -121,10 +121,8 @@
 </li>
 </ul>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">	jQuery(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123;</span><br><span class="line">		<span class="keyword">var</span> mySpecialRow;		$tr.each(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;			mySpecialRow = mySpecialRow+<span class="string">"&lt;tr&gt;"</span>+$(<span class="keyword">this</span>).html()+<span class="string">"&lt;/tr&gt;"</span>;			$(<span class="keyword">this</span>).remove();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">var</span> table = $(<span class="string">'#&lt;?php echo $table_id;?&gt;'</span>).dataTable(&#123;</span><br><span class="line">			<span class="string">"fnDrawCallback"</span>: <span class="function"><span class="keyword">function</span>(<span class="params"> oSettings </span>) </span>&#123;</span><br><span class="line">				$(<span class="string">'#example tbody'</span>).prepend(mySpecialRow);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="效果如下：">效果如下：</h3><p>之前：</p>
-<p><img src="/images/no-sort_foot.png" alt="no-sort"></p>
-<p>之后：</p>
-<p><img src="/images/no-sort_body.png" alt="no-sort"></p>
+<h3 id="效果如下：">效果如下：</h3><p>之前：<br><img src="/images/no-sort_foot.png" alt="no-sort"></p>
+<p>之后：<br><img src="/images/no-sort_body.png" alt="no-sort"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
