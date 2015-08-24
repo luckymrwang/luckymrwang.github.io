@@ -11,8 +11,7 @@
     
 
     
-    <meta name="description" content="##方法一：
- 1、在 33 – 126 中生成一个随机整数，如 35
+    <meta name="description" content="方法一： 1、在 33 – 126 中生成一个随机整数，如 35
  2、将 35 转换成对应的ASCII码字符，如 35 对应 #
  3、重复以上 1、2 步骤 n 次，连接成 n 位的密码
 该算法主要用到了两个函数，mt_rand ( int $min , int $max ) 函数用于生成随机整数，其中 $min – $max 为 ASCII 码的范围，">
@@ -20,16 +19,14 @@
 <meta property="og:title" content="PHP生成随机密码的几种方法">
 <meta property="og:url" content="http://yoursite.com/2015/07/22/PHP生成随机密码的几种随机方法/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="##方法一：
- 1、在 33 – 126 中生成一个随机整数，如 35
+<meta property="og:description" content="方法一： 1、在 33 – 126 中生成一个随机整数，如 35
  2、将 35 转换成对应的ASCII码字符，如 35 对应 #
  3、重复以上 1、2 步骤 n 次，连接成 n 位的密码
 该算法主要用到了两个函数，mt_rand ( int $min , int $max ) 函数用于生成随机整数，其中 $min – $max 为 ASCII 码的范围，">
-<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta property="og:updated_time" content="2015-08-24T08:44:23.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="PHP生成随机密码的几种方法">
-<meta name="twitter:description" content="##方法一：
- 1、在 33 – 126 中生成一个随机整数，如 35
+<meta name="twitter:description" content="方法一： 1、在 33 – 126 中生成一个随机整数，如 35
  2、将 35 转换成对应的ASCII码字符，如 35 对应 #
  3、重复以上 1、2 步骤 n 次，连接成 n 位的密码
 该算法主要用到了两个函数，mt_rand ( int $min , int $max ) 函数用于生成随机整数，其中 $min – $max 为 ASCII 码的范围，">
@@ -108,12 +105,11 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#方法一："><span class="toc-number">1.</span> <span class="toc-text">方法一：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法二："><span class="toc-number">2.</span> <span class="toc-text">方法二：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#最终结果："><span class="toc-number">2.1.</span> <span class="toc-text">最终结果：</span></a></li></ol></li></ol>
 		
 		</div>
 		
-		<p>##方法一：</p>
-<p> 1、在 33 – 126 中生成一个随机整数，如 35</p>
+		<h2 id="方法一：">方法一：</h2><p> 1、在 33 – 126 中生成一个随机整数，如 35</p>
 <p> 2、将 35 转换成对应的ASCII码字符，如 35 对应 #</p>
 <p> 3、重复以上 1、2 步骤 n 次，连接成 n 位的密码</p>
 <p>该算法主要用到了两个函数，<code>mt_rand ( int $min , int $max )</code> 函数用于生成随机整数，其中 $min – $max 为 ASCII 码的范围，<a id="more"></a>这里取 33 -126 ，可以根据需要调整范围，如ASCII码表中 97 – 122 位对应 a – z 的英文字母，具体可参考 ASCII码表； <code>chr ( int $ascii )</code> 函数用于将对应整数 $ascii 转换成对应的字符</p>
@@ -129,8 +125,7 @@
 
 // 调用该函数，传递长度参数<span class="variable">$pw</span>_length = <span class="number">6</span>
 echo create_password(<span class="number">6</span>);
-</code></pre><p>##方法二：</p>
-<p>1、预置一个的字符串 $chars ，包括 a – z，A – Z，0 – 9，以及一些特殊字符</p>
+</code></pre><h2 id="方法二：">方法二：</h2><p>1、预置一个的字符串 $chars ，包括 a – z，A – Z，0 – 9，以及一些特殊字符</p>
 <p>2、在 $chars 字符串中随机取一个字符</p>
 <p>3、重复第二步 n 次，可得长度为 n 的密码</p>
 <pre><code><span class="keyword">function</span> generate_password( <span class="variable">$length</span> = <span class="number">8</span> ) {
@@ -209,8 +204,7 @@ echo create_password(<span class="number">6</span>);
  // 输出运行总时间 
 echo <span class="string">"执行时间 $time seconds"</span>;
 ?&gt;
-</code></pre><p>###最终结果：</p>
-<pre><code>方法一：<span class="number">9.89437103</span>27148E-5 秒
+</code></pre><h3 id="最终结果：">最终结果：</h3><pre><code>方法一：<span class="number">9.89437103</span>27148E-5 秒
 方法二：<span class="number">9.67979431</span>15234E-5 秒
 方法三：<span class="number">0.000174999</span><span class="number">23706055</span> 秒
 方法四：<span class="number">3.40938568</span>11523E-5 秒
@@ -272,7 +266,7 @@ echo <span class="string">"执行时间 $time seconds"</span>;
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#方法一："><span class="toc-number">1.</span> <span class="toc-text">方法一：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法二："><span class="toc-number">2.</span> <span class="toc-text">方法二：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#最终结果："><span class="toc-number">2.1.</span> <span class="toc-text">最终结果：</span></a></li></ol></li></ol>
  
   </div>
 
@@ -311,7 +305,7 @@ echo <span class="string">"执行时间 $time seconds"</span>;
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -335,7 +329,7 @@ echo <span class="string">"执行时间 $time seconds"</span>;
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
 			
 		
 			
@@ -343,11 +337,11 @@ echo <span class="string">"执行时间 $time seconds"</span>;
 			
 		
 			
-				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
 			
 		
 			
@@ -371,7 +365,7 @@ echo <span class="string">"执行时间 $time seconds"</span>;
 			
 		
 			
-				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
 			
 		
 		</ul>

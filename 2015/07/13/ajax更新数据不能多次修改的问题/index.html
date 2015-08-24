@@ -11,27 +11,21 @@
     
 
     
-    <meta name="description" content="##问题描述
-双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了
-##解决办法
-原来方法
+    <meta name="description" content="问题描述双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了
+解决办法原来方法
 $(&quot;.table_txt&quot;).dblclick(function(){">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ajax更新数据不能多次修改的问题">
 <meta property="og:url" content="http://yoursite.com/2015/07/13/ajax更新数据不能多次修改的问题/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="##问题描述
-双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了
-##解决办法
-原来方法
+<meta property="og:description" content="问题描述双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了
+解决办法原来方法
 $(&quot;.table_txt&quot;).dblclick(function(){">
-<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta property="og:updated_time" content="2015-08-24T08:39:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ajax更新数据不能多次修改的问题">
-<meta name="twitter:description" content="##问题描述
-双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了
-##解决办法
-原来方法
+<meta name="twitter:description" content="问题描述双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了
+解决办法原来方法
 $(&quot;.table_txt&quot;).dblclick(function(){">
 
     
@@ -108,22 +102,18 @@ $(&quot;.table_txt&quot;).dblclick(function(){">
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决办法"><span class="toc-number">2.</span> <span class="toc-text">解决办法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#说明"><span class="toc-number">3.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语法"><span class="toc-number">4.</span> <span class="toc-text">语法</span></a></li></ol>
 		
 		</div>
 		
-		<p>##问题描述</p>
-<p>双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了</p>
-<p>##解决办法</p>
-<p>原来方法</p>
+		<h2 id="问题描述">问题描述</h2><p>双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了</p>
+<h2 id="解决办法">解决办法</h2><p>原来方法</p>
 <pre><code>$(<span class="string">".table_txt"</span>).dblclick(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>{
 </code></pre><a id="more"></a>
 <p>修改后的方法</p>
 <pre><code>$(<span class="string">".scrollBody"</span>).on(<span class="string">"dblclick"</span>,<span class="string">".table_txt"</span>,<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>{
-</code></pre><p>##说明</p>
-<p>使用 on() 方法添加的事件处理程序适用于当前及 <code>未来的元素（比如由ajax创建的新元素）</code> 。</p>
-<p>##语法</p>
-<pre><code>$(<span class="keyword">select</span><span class="subst">or</span>)<span class="built_in">.</span><span class="keyword">on</span>(event,childSelect<span class="subst">or</span>,<span class="built_in">data</span>,function,<span class="built_in">map</span>)
+</code></pre><h2 id="说明">说明</h2><p>使用 on() 方法添加的事件处理程序适用于当前及 <code>未来的元素（比如由ajax创建的新元素）</code> 。</p>
+<h2 id="语法">语法</h2><pre><code>$(<span class="keyword">select</span><span class="subst">or</span>)<span class="built_in">.</span><span class="keyword">on</span>(event,childSelect<span class="subst">or</span>,<span class="built_in">data</span>,function,<span class="built_in">map</span>)
 </code></pre><p>其中</p>
 <p><code>childSelector</code>    可选。规定只能添加到指定的子元素上的事件处理程序（且不是选择器本身），所以若将.table_txt作为子元素，就要取其父元素 .scrollBody作为选择器</p>
   
@@ -183,7 +173,7 @@ $(&quot;.table_txt&quot;).dblclick(function(){">
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#问题描述"><span class="toc-number">1.</span> <span class="toc-text">问题描述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解决办法"><span class="toc-number">2.</span> <span class="toc-text">解决办法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#说明"><span class="toc-number">3.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语法"><span class="toc-number">4.</span> <span class="toc-text">语法</span></a></li></ol>
  
   </div>
 
@@ -222,7 +212,7 @@ $(&quot;.table_txt&quot;).dblclick(function(){">
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -246,7 +236,7 @@ $(&quot;.table_txt&quot;).dblclick(function(){">
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
 			
 		
 			
@@ -254,11 +244,11 @@ $(&quot;.table_txt&quot;).dblclick(function(){">
 			
 		
 			
-				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
 			
 		
 			
@@ -282,7 +272,7 @@ $(&quot;.table_txt&quot;).dblclick(function(){">
 			
 		
 			
-				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
 			
 		
 		</ul>

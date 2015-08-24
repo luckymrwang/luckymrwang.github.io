@@ -11,22 +11,19 @@
     
 
     
-    <meta name="description" content="##概念
-虚拟主机 (Virtual Host) 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。
-重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将">
+    <meta name="description" content="概念虚拟主机 (Virtual Host) 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。
+重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将（这个">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Apache&Nginx 虚拟主机 VirtualHost 配置">
 <meta property="og:url" content="http://yoursite.com/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="##概念
-虚拟主机 (Virtual Host) 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。
-重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将">
-<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta property="og:description" content="概念虚拟主机 (Virtual Host) 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。
+重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将（这个">
+<meta property="og:updated_time" content="2015-08-24T08:40:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Apache&Nginx 虚拟主机 VirtualHost 配置">
-<meta name="twitter:description" content="##概念
-虚拟主机 (Virtual Host) 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。
-重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将">
+<meta name="twitter:description" content="概念虚拟主机 (Virtual Host) 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。
+重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将（这个">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -102,15 +99,13 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redhat_Enterprise_Linux"><span class="toc-number">2.</span> <span class="toc-text">Redhat Enterprise Linux</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx_虚拟主机"><span class="toc-number">3.</span> <span class="toc-text">Nginx 虚拟主机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#让_Nginx_虚拟主机支持_PHP"><span class="toc-number">4.</span> <span class="toc-text">让 Nginx 虚拟主机支持 PHP</span></a></li></ol>
 		
 		</div>
 		
-		<p>##概念</p>
-<p><strong>虚拟主机 (Virtual Host)</strong> 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。</p>
+		<h2 id="概念">概念</h2><p><strong>虚拟主机 (Virtual Host)</strong> 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。</p>
 <p><em>重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将<dicrectory>（这个是所有目录的默认配置)和<direcotry opt="" lampp="" htdocs="">的权限，都是deny from all.作为默认。</direcotry></dicrectory></em><br><a id="more"></a></p>
-<p>##Redhat Enterprise Linux</p>
-<p>Redhat Enterprise Linux (包括 CentOS Linux), 是使用最广的 Linux 服务器, 大量的网站应用都部署在其上。</p>
+<h2 id="Redhat_Enterprise_Linux">Redhat Enterprise Linux</h2><p>Redhat Enterprise Linux (包括 CentOS Linux), 是使用最广的 Linux 服务器, 大量的网站应用都部署在其上。</p>
 <ul>
 <li><p>打开文件 /etc/httpd/conf/httpd.conf, 搜索 VirtualHost example, 找到代码如下:</p>
 <pre><code><span class="preprocessor"># VirtualHost example:</span>
@@ -192,8 +187,7 @@
 <pre><code><span class="title">sudo</span> apachectl restart
 </code></pre></li>
 </ul>
-<p>##Nginx 虚拟主机</p>
-<ul>
+<h2 id="Nginx_虚拟主机">Nginx 虚拟主机</h2><ul>
 <li><p>进入 /usr/local/nginx/conf/vhost 目录, 创建虚拟主机配置文件 demo.neoease.com.conf ({域名}.conf)</p>
 </li>
 <li><p>打开配置文件, 添加服务如下:</p>
@@ -216,8 +210,7 @@
 <pre><code><span class="title">service</span> nginx restart
 </code></pre></li>
 </ul>
-<p>##让 Nginx 虚拟主机支持 PHP</p>
-<ul>
+<h2 id="让_Nginx_虚拟主机支持_PHP">让 Nginx 虚拟主机支持 PHP</h2><ul>
 <li><p>在前面第 2 步的虚拟主机服务对应的目录加入对 PHP 的支持, 这里使用的是 FastCGI, 修改如下</p>
 <pre><code><span class="title">server</span> {
     <span class="title">listen</span>       <span class="number">80</span>;
@@ -317,7 +310,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概念"><span class="toc-number">1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redhat_Enterprise_Linux"><span class="toc-number">2.</span> <span class="toc-text">Redhat Enterprise Linux</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx_虚拟主机"><span class="toc-number">3.</span> <span class="toc-text">Nginx 虚拟主机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#让_Nginx_虚拟主机支持_PHP"><span class="toc-number">4.</span> <span class="toc-text">让 Nginx 虚拟主机支持 PHP</span></a></li></ol>
  
   </div>
 
@@ -356,7 +349,7 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -380,7 +373,7 @@
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
 			
 		
 			
@@ -388,11 +381,11 @@
 			
 		
 			
-				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
 			
 		
 			
@@ -416,7 +409,7 @@
 			
 		
 			
-				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
 			
 		
 		</ul>

@@ -11,25 +11,19 @@
     
 
     
-    <meta name="description" content="##概述
-kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。
-##辅助查看deploy机器已经配置了哪些kafka机器的信息
-在http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。">
+    <meta name="description" content="概述kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。
+辅助查看deploy机器已经配置了哪些kafka机器的信息在http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kafka代码自动化部署">
 <meta property="og:url" content="http://yoursite.com/2015/06/05/Kafka代码自动化部署/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="##概述
-kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。
-##辅助查看deploy机器已经配置了哪些kafka机器的信息
-在http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。">
-<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta property="og:description" content="概述kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。
+辅助查看deploy机器已经配置了哪些kafka机器的信息在http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。">
+<meta property="og:updated_time" content="2015-08-24T08:42:54.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kafka代码自动化部署">
-<meta name="twitter:description" content="##概述
-kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。
-##辅助查看deploy机器已经配置了哪些kafka机器的信息
-在http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。">
+<meta name="twitter:description" content="概述kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。
+辅助查看deploy机器已经配置了哪些kafka机器的信息在http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -105,29 +99,24 @@ kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#辅助查看deploy机器已经配置了哪些kafka机器的信息"><span class="toc-number">2.</span> <span class="toc-text">辅助查看deploy机器已经配置了哪些kafka机器的信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加一个kafka机器信息到deploy机器的ansible配置文件里(root权限)"><span class="toc-number">3.</span> <span class="toc-text">添加一个kafka机器信息到deploy机器的ansible配置文件里(root权限)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#将deploy机器的ssh_key加到目标kafka机器的信任里（rayjoy权限）"><span class="toc-number">4.</span> <span class="toc-text">将deploy机器的ssh key加到目标kafka机器的信任里（rayjoy权限）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#向某台kafka机器更新发布bi-kafka-consumer-go项目可执行程序（rayjoy权限）"><span class="toc-number">5.</span> <span class="toc-text">向某台kafka机器更新发布bi-kafka-consumer-go项目可执行程序（rayjoy权限）</span></a></li></ol>
 		
 		</div>
 		
-		<p>##概述</p>
-<p>kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。</p>
-<p>##辅助查看deploy机器已经配置了哪些kafka机器的信息</p>
-<p>在<a href="http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。" target="_blank" rel="external">http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。</a><br><a id="more"></a></p>
-<p>##添加一个kafka机器信息到deploy机器的ansible配置文件里(root权限)</p>
-<p>ansible的配置文件在/etc/ansible/hosts文件里</p>
+		<h2 id="概述">概述</h2><p>kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。</p>
+<h2 id="辅助查看deploy机器已经配置了哪些kafka机器的信息">辅助查看deploy机器已经配置了哪些kafka机器的信息</h2><p>在<a href="http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。" target="_blank" rel="external">http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。</a><br><a id="more"></a></p>
+<h2 id="添加一个kafka机器信息到deploy机器的ansible配置文件里(root权限)">添加一个kafka机器信息到deploy机器的ansible配置文件里(root权限)</h2><p>ansible的配置文件在/etc/ansible/hosts文件里</p>
 <pre><code>[kafka]
 kafka_1009 ansible_ssh_host=<span class="number">203.195</span><span class="number">.131</span><span class="number">.211</span> ansible_ssh_port=<span class="number">10220</span> ansible_ssh_user=rayjoy
 [devsdk]
 devsdk ansible_ssh_host=<span class="number">119.28</span><span class="number">.5</span><span class="number">.63</span> ansible_ssh_port=<span class="number">10220</span> ansible_ssh_user=rayjoy
 </code></pre><p>其中[kafka]这个section里配置都是kafka机器的，其他每个section对应一类机器。例如kafka_1009的配置，第一列为标记这台kafka机器对应的大平台，用的标识就是该太机器服务的大平台的统计ID。后边的host、port、user分别对应那台kafka机器的ip、ssh端口、和ssh登陆的用户</p>
-<p>##将deploy机器的ssh key加到目标kafka机器的信任里（rayjoy权限）</p>
-<p>由于ansible走的ssh协议，我们现在用ssh key方式来进行deploy和kafka机器的通信比较便捷。</p>
+<h2 id="将deploy机器的ssh_key加到目标kafka机器的信任里（rayjoy权限）">将deploy机器的ssh key加到目标kafka机器的信任里（rayjoy权限）</h2><p>由于ansible走的ssh协议，我们现在用ssh key方式来进行deploy和kafka机器的通信比较便捷。</p>
 <ol>
 <li>拷贝deploy机器的ssh key，在文件~/.ssh/id_rsa.pub里。（！注意：即使为了方便，不用每次加都去deploy拷key，也不能把这个key写到公共文档里，可以写到自己私人笔记里）</li>
 <li>将这个key放到目标kafka机器的~/.ssh/authorized_keys文件最后一行即可。</li>
 </ol>
-<p>##向某台kafka机器更新发布bi-kafka-consumer-go项目可执行程序（rayjoy权限）</p>
-<ol>
+<h2 id="向某台kafka机器更新发布bi-kafka-consumer-go项目可执行程序（rayjoy权限）">向某台kafka机器更新发布bi-kafka-consumer-go项目可执行程序（rayjoy权限）</h2><ol>
 <li>登陆到deploy这台机器</li>
 <li><p>进入bi-kafka-consumer-go项目的代码目录的发布脚本文件夹</p>
 <p> shell&gt; cd /home/rayjoy/plattech/go/src/rayjoy.com/plattech/bi-kafka-consumer-go/deploy-scripts</p>
@@ -203,7 +192,7 @@ devsdk ansible_ssh_host=<span class="number">119.28</span><span class="number">.
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#辅助查看deploy机器已经配置了哪些kafka机器的信息"><span class="toc-number">2.</span> <span class="toc-text">辅助查看deploy机器已经配置了哪些kafka机器的信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加一个kafka机器信息到deploy机器的ansible配置文件里(root权限)"><span class="toc-number">3.</span> <span class="toc-text">添加一个kafka机器信息到deploy机器的ansible配置文件里(root权限)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#将deploy机器的ssh_key加到目标kafka机器的信任里（rayjoy权限）"><span class="toc-number">4.</span> <span class="toc-text">将deploy机器的ssh key加到目标kafka机器的信任里（rayjoy权限）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#向某台kafka机器更新发布bi-kafka-consumer-go项目可执行程序（rayjoy权限）"><span class="toc-number">5.</span> <span class="toc-text">向某台kafka机器更新发布bi-kafka-consumer-go项目可执行程序（rayjoy权限）</span></a></li></ol>
  
   </div>
 
@@ -242,7 +231,7 @@ devsdk ansible_ssh_host=<span class="number">119.28</span><span class="number">.
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -266,7 +255,7 @@ devsdk ansible_ssh_host=<span class="number">119.28</span><span class="number">.
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
 			
 		
 			
@@ -274,11 +263,11 @@ devsdk ansible_ssh_host=<span class="number">119.28</span><span class="number">.
 			
 		
 			
-				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
 			
 		
 			
@@ -302,7 +291,7 @@ devsdk ansible_ssh_host=<span class="number">119.28</span><span class="number">.
 			
 		
 			
-				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
 			
 		
 		</ul>

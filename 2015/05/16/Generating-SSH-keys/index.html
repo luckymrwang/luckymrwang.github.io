@@ -11,24 +11,24 @@
     
 
     
-    <meta name="description" content="##Step 1: Check for SSH keys12$ ls -al ~/.ssh# Lists the files in your .ssh directory, if they exist
-Check the directory listing to see if you already have a public SSH key. By default, the filenames">
+    <meta name="description" content="Step 1: Check for SSH keys12$ ls -al ~/.ssh# Lists the files in your .ssh directory, if they exist
+Check the directory listing to see if you already have a public SSH key. By default, the filenames of">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Generating SSH keys">
 <meta property="og:url" content="http://yoursite.com/2015/05/16/Generating-SSH-keys/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="##Step 1: Check for SSH keys12$ ls -al ~/.ssh# Lists the files in your .ssh directory, if they exist
-Check the directory listing to see if you already have a public SSH key. By default, the filenames">
+<meta property="og:description" content="Step 1: Check for SSH keys12$ ls -al ~/.ssh# Lists the files in your .ssh directory, if they exist
+Check the directory listing to see if you already have a public SSH key. By default, the filenames of">
 <meta property="og:image" content="http://yoursite.com/images/userbar-account-settings.png">
 <meta property="og:image" content="http://yoursite.com/images/settings-sidebar-ssh-keys.png">
 <meta property="og:image" content="http://yoursite.com/images/ssh-add-ssh-key.png">
 <meta property="og:image" content="http://yoursite.com/images/ssh-key-paste.png">
 <meta property="og:image" content="http://yoursite.com/images/ssh-add-key.png">
-<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta property="og:updated_time" content="2015-08-24T08:42:26.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Generating SSH keys">
-<meta name="twitter:description" content="##Step 1: Check for SSH keys12$ ls -al ~/.ssh# Lists the files in your .ssh directory, if they exist
-Check the directory listing to see if you already have a public SSH key. By default, the filenames">
+<meta name="twitter:description" content="Step 1: Check for SSH keys12$ ls -al ~/.ssh# Lists the files in your .ssh directory, if they exist
+Check the directory listing to see if you already have a public SSH key. By default, the filenames of">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -104,14 +104,13 @@ Check the directory listing to see if you already have a public SSH key. By defa
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step_1:_Check_for_SSH_keys"><span class="toc-number">1.</span> <span class="toc-text">Step 1: Check for SSH keys</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step_2:_Generate_a_new_SSH_key"><span class="toc-number">2.</span> <span class="toc-text">Step 2: Generate a new SSH key</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step_3:_Add_your_SSH_key_to_your_account"><span class="toc-number">3.</span> <span class="toc-text">Step 3: Add your SSH key to your account</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step_4:_Test_the_connection"><span class="toc-number">4.</span> <span class="toc-text">Step 4: Test the connection</span></a></li></ol>
 		
 		</div>
 		
-		<p>##Step 1: Check for SSH keys<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls -al ~/.ssh</span><br><span class="line"><span class="comment"># Lists the files in your .ssh directory, if they exist</span></span><br></pre></td></tr></table></figure></p>
+		<h2 id="Step_1:_Check_for_SSH_keys">Step 1: Check for SSH keys</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls -al ~/.ssh</span><br><span class="line"><span class="comment"># Lists the files in your .ssh directory, if they exist</span></span><br></pre></td></tr></table></figure>
 <p>Check the directory listing to see if you already have a public SSH key. By default, the filenames of the public keys are one of the following:<br><code>&gt;</code> id_dsa.pub<br><code>&gt;</code> id_ecdsa.pub<br><code>&gt;</code> id_ed25519.pub<br><code>&gt;</code> id_rsa.pub<br><a id="more"></a></p>
-<p>##Step 2: Generate a new SSH key</p>
-<ul>
+<h2 id="Step_2:_Generate_a_new_SSH_key">Step 2: Generate a new SSH key</h2><ul>
 <li><p>With Git Bash still open, copy and paste the text below. Make sure you substitute in your GitHub email address.</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -b <span class="number">4096</span> -C <span class="string">"your_email@example.com"</span></span><br><span class="line"><span class="comment"># Creates a new ssh key, using the provided email as a label</span></span><br><span class="line">Generating public/private rsa key pair.</span><br></pre></td></tr></table></figure>
 </li>
@@ -125,7 +124,7 @@ Check the directory listing to see if you already have a public SSH key. By defa
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line"><span class="number">01</span>:<span class="number">0</span>f:f4:<span class="number">3</span>b:ca:<span class="number">85</span>:d6:<span class="number">17</span>:a1:<span class="number">7</span>d:f0:<span class="number">68</span>:<span class="number">9</span>d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<p>##Step 3: Add your SSH key to your account<br>Copy the SSH key to your clipboard. If your key is named id_dsa.pub, id_ecdsa.pub or id_ed25519.pub, then change the filename below from id_rsa.pub to the one that matches your key:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ clip &lt; ~/.ssh/id_rsa.pub</span><br><span class="line"><span class="comment"># Copies the contents of the id_rsa.pub file to your clipboard</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="Step_3:_Add_your_SSH_key_to_your_account">Step 3: Add your SSH key to your account</h2><p>Copy the SSH key to your clipboard. If your key is named id_dsa.pub, id_ecdsa.pub or id_ed25519.pub, then change the filename below from id_rsa.pub to the one that matches your key:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ clip &lt; ~/.ssh/id_rsa.pub</span><br><span class="line"><span class="comment"># Copies the contents of the id_rsa.pub file to your clipboard</span></span><br></pre></td></tr></table></figure></p>
 <p>Add the copied key to GitHub:</p>
 <ul>
 <li><p>In the top right corner of any page, click <code>setting</code>.<br><img src="/images/userbar-account-settings.png" alt="setting"></p>
@@ -143,7 +142,7 @@ Check the directory listing to see if you already have a public SSH key. By defa
 <li><p>Confirm the action by entering your GitHub password.</p>
 </li>
 </ul>
-<p>##Step 4: Test the connection<br>To make sure everything is working, you’ll now try to SSH into . When you do this, you will be asked to authenticate this action using your password, which is the SSH key passphrase you created earlier.</p>
+<h2 id="Step_4:_Test_the_connection">Step 4: Test the connection</h2><p>To make sure everything is working, you’ll now try to SSH into . When you do this, you will be asked to authenticate this action using your password, which is the SSH key passphrase you created earlier.</p>
 <ul>
 <li><p>Open Git Bash and enter:</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@github.com</span><br><span class="line"><span class="comment"># Attempts to ssh to GitHub</span></span><br></pre></td></tr></table></figure>
@@ -219,7 +218,7 @@ Check the directory listing to see if you already have a public SSH key. By defa
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Step_1:_Check_for_SSH_keys"><span class="toc-number">1.</span> <span class="toc-text">Step 1: Check for SSH keys</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step_2:_Generate_a_new_SSH_key"><span class="toc-number">2.</span> <span class="toc-text">Step 2: Generate a new SSH key</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step_3:_Add_your_SSH_key_to_your_account"><span class="toc-number">3.</span> <span class="toc-text">Step 3: Add your SSH key to your account</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Step_4:_Test_the_connection"><span class="toc-number">4.</span> <span class="toc-text">Step 4: Test the connection</span></a></li></ol>
  
   </div>
 
@@ -258,7 +257,7 @@ Check the directory listing to see if you already have a public SSH key. By defa
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -282,7 +281,7 @@ Check the directory listing to see if you already have a public SSH key. By defa
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
 			
 		
 			
@@ -290,11 +289,11 @@ Check the directory listing to see if you already have a public SSH key. By defa
 			
 		
 			
-				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
 			
 		
 			
@@ -318,7 +317,7 @@ Check the directory listing to see if you already have a public SSH key. By defa
 			
 		
 			
-				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
 			
 		
 		</ul>

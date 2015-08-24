@@ -81,6 +81,69 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/08/13/FixedHeader随表及浏览器大小自适应/" title="FixedHeader随表及浏览器大小自适应" itemprop="url">FixedHeader随表及浏览器大小自适应</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-13T12:09:42.000Z" itemprop="datePublished"> 发表于 2015-08-13</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>DataTables中有一个浮动表头的扩展<a href="http://datatables.net/extensions/fixedheader/">FixedHeader</a>,他的作用就是在浏览器滚动时使其表头能够浮动。</p>
+<p>使用方法：</p>
+<p>在引入js文件后，初始化一下命令：</p>
+<pre><code>$(<span class="built_in">document</span>).ready( <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>{
+    <span class="keyword">var</span> table = $(<span class="string">'#example'</span>).DataTable();
+    <span class="keyword">new</span> $.fn.dataTable.FixedHeader( table );
+} );
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/08/13/FixedHeader随表及浏览器大小自适应/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/DataTables/">DataTables</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/08/10/Redis-在SNS类应用中的最佳实践/" title="Redis 在SNS类应用中的最佳实践" itemprop="url">Redis 在SNS类应用中的最佳实践</a>
   </h1>
   <p class="article-author">By
@@ -155,8 +218,7 @@
 </header>
     <div class="article-content">
         
-        <p>##方法一：</p>
-<p> 1、在 33 – 126 中生成一个随机整数，如 35</p>
+        <h2 id="方法一：">方法一：</h2><p> 1、在 33 – 126 中生成一个随机整数，如 35</p>
 <p> 2、将 35 转换成对应的ASCII码字符，如 35 对应 #</p>
 <p> 3、重复以上 1、2 步骤 n 次，连接成 n 位的密码</p>
 <p>该算法主要用到了两个函数，<code>mt_rand ( int $min , int $max )</code> 函数用于生成随机整数，其中 $min – $max 为 ASCII 码的范围，
@@ -215,10 +277,8 @@
 </header>
     <div class="article-content">
         
-        <p>##问题描述</p>
-<p>双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了</p>
-<p>##解决办法</p>
-<p>原来方法</p>
+        <h2 id="问题描述">问题描述</h2><p>双击Table单元格修改内容，利用ajax局部更新后，再次点击就不能修改了</p>
+<h2 id="解决办法">解决办法</h2><p>原来方法</p>
 <pre><code>$(<span class="string">".table_txt"</span>).dblclick(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>{
 </code></pre>
         
@@ -390,10 +450,8 @@
 </header>
     <div class="article-content">
         
-        <p>##概述</p>
-<p>kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。</p>
-<p>##辅助查看deploy机器已经配置了哪些kafka机器的信息</p>
-<p>在<a href="http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。">http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。</a><br>
+        <h2 id="概述">概述</h2><p>kafka代码自动化部署的操作在deploy机器上。当前整个deploy比较简单，还需要登入deploy机器才能操作，以后有时间会慢慢改进成web方式直接操作。</p>
+<h2 id="辅助查看deploy机器已经配置了哪些kafka机器的信息">辅助查看deploy机器已经配置了哪些kafka机器的信息</h2><p>在<a href="http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。">http://203.195.156.75/deploy/里登陆后，在配置总览→查看ansible配置文件，这个页面其实就是现实ansible配置文件里的东西。</a><br>
         
         
         <p class="article-more-link">
@@ -514,9 +572,7 @@ shell&gt; cd kafka_2<span class="number">.9</span><span class="number">.2</span>
 </header>
     <div class="article-content">
         
-        <p>##kafka服务器将会部署的程序</p>
-<p>###日志kafka服务器程序及文件存储（平台技术部负责）</p>
-<ol>
+        <h2 id="kafka服务器将会部署的程序">kafka服务器将会部署的程序</h2><h3 id="日志kafka服务器程序及文件存储（平台技术部负责）">日志kafka服务器程序及文件存储（平台技术部负责）</h3><ol>
 <li>kafka的zookeeper、broker-server程序</li>
 <li>kafka的文件存储</li>
 <li>mysql少量存储</li>
@@ -618,64 +674,6 @@ shell&gt; cd kafka_2<span class="number">.9</span><span class="number">.2</span>
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/06/04/-bin-sbin-usr-bin-usr-sbin目录/" title="/bin,/sbin,/usr/bin,/usr/sbin目录" itemprop="url">/bin,/sbin,/usr/bin,/usr/sbin目录</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-06-04T09:12:44.000Z" itemprop="datePublished"> 发表于 2015-06-04</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>##/bin</p>
-<p> /bin是系统的一些指令。bin为binary的简写主要放置一些系统的必备执行档例如:cat、cp、chmod df、dmesg、gzip、kill、ls、mkdir、more、mount、rm、su、tar等。</p>
-<p>##/sbin<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/06/04/-bin-sbin-usr-bin-usr-sbin目录/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
@@ -719,7 +717,7 @@ shell&gt; cd kafka_2<span class="number">.9</span><span class="number">.2</span>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>3</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -743,7 +741,7 @@ shell&gt; cd kafka_2<span class="number">.9</span><span class="number">.2</span>
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
+				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
 			
 		
 			
@@ -751,11 +749,11 @@ shell&gt; cd kafka_2<span class="number">.9</span><span class="number">.2</span>
 			
 		
 			
-				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>1</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/博客搭建/" title="博客搭建">博客搭建<sup>1</sup></a></li>
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
 			
 		
 			
@@ -779,7 +777,7 @@ shell&gt; cd kafka_2<span class="number">.9</span><span class="number">.2</span>
 			
 		
 			
-				<li><a href="/tags/Redis/" title="Redis">Redis<sup>1</sup></a></li>
+				<li><a href="/tags/Jquery/" title="Jquery">Jquery<sup>1</sup></a></li>
 			
 		
 		</ul>

@@ -4,32 +4,28 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>CI数据库类 | iBlog</title>
+    <title>DataTables中特殊的行不参与排序 | iBlog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="luckymrwang">
     
 
     
-    <meta name="description" content="今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用
-$DB1 = $this-&amp;gt;load-&amp;gt;database(&apos;group_one&apos;, TRUE);
-$DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
-通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。">
+    <meta name="description" content="DataTables中可以直接设置某列不参与排序，但是对于特殊的行其工具本身没有设置项 不过对于table底部的行可以添加标签来固定，并且不参与排序
+下面将介绍在中最上面的特殊行不参与排序的方法，分一行和多行的情况">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CI数据库类">
-<meta property="og:url" content="http://yoursite.com/2015/05/20/CI数据库类/index.html">
+<meta property="og:title" content="DataTables中特殊的行不参与排序">
+<meta property="og:url" content="http://yoursite.com/2015/08/24/DataTables中特殊的行不参与排序/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用
-$DB1 = $this-&amp;gt;load-&amp;gt;database(&apos;group_one&apos;, TRUE);
-$DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
-通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。">
-<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta property="og:description" content="DataTables中可以直接设置某列不参与排序，但是对于特殊的行其工具本身没有设置项 不过对于table底部的行可以添加标签来固定，并且不参与排序
+下面将介绍在中最上面的特殊行不参与排序的方法，分一行和多行的情况">
+<meta property="og:image" content="http://yoursite.com/images/no-sort_foot.png">
+<meta property="og:image" content="http://yoursite.com/images/no-sort_body.png">
+<meta property="og:updated_time" content="2015-08-24T08:22:32.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CI数据库类">
-<meta name="twitter:description" content="今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用
-$DB1 = $this-&amp;gt;load-&amp;gt;database(&apos;group_one&apos;, TRUE);
-$DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
-通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。">
+<meta name="twitter:title" content="DataTables中特殊的行不参与排序">
+<meta name="twitter:description" content="DataTables中可以直接设置某列不参与排序，但是对于特殊的行其工具本身没有设置项 不过对于table底部的行可以添加标签来固定，并且不参与排序
+下面将介绍在中最上面的特殊行不参与排序的方法，分一行和多行的情况">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -89,14 +85,14 @@ $DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/05/20/CI数据库类/" title="CI数据库类" itemprop="url">CI数据库类</a>
+      <a href="/2015/08/24/DataTables中特殊的行不参与排序/" title="DataTables中特殊的行不参与排序" itemprop="url">DataTables中特殊的行不参与排序</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
 		
   <p class="article-time">
-    <time datetime="2015-05-20T07:51:51.000Z" itemprop="datePublished"> 发表于 2015-05-20</time>
+    <time datetime="2015-08-24T06:52:00.000Z" itemprop="datePublished"> 发表于 2015-08-24</time>
     
   </p>
 </header>
@@ -105,192 +101,30 @@ $DB2 = $this-&amp;gt;load-&amp;gt;database(&apos;group_two&apos;, TRUE);
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#只有一行时："><span class="toc-number">1.</span> <span class="toc-text">只有一行时：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多行时："><span class="toc-number">2.</span> <span class="toc-text">多行时：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#效果如下："><span class="toc-number">3.</span> <span class="toc-text">效果如下：</span></a></li></ol>
 		
 		</div>
 		
-		<p>今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用</p>
-<pre><code><span class="variable">$DB1</span> = <span class="variable">$this-</span>&gt;load-&gt;database(<span class="string">'group_one'</span>, TRUE);
-<span class="variable">$DB2</span> = <span class="variable">$this-</span>&gt;load-&gt;database(<span class="string">'group_two'</span>, TRUE);
-</code></pre><p>通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。<br><a id="more"></a><br><em>当你使用这种方法，你将用对象名来执行操作命令而不是用户向导模式，也就是说，你将用以下方式执行数据库操作：</em></p>
-<pre><code>$<span class="type">DB1</span>-&gt;query();
-$<span class="type">DB1</span>-&gt;<span class="literal">result</span>();
-etc...
-</code></pre><p>而不是：</p>
-<pre><code>$this-&gt;db-&gt;query();
-$this-&gt;db-&gt;<span class="literal">result</span>();
-etc...
-</code></pre><p><em>译注：要连接多个数据库请先设置 config/database.php 中的 $db[‘xxxxxx’][‘pconnect’] = FALSE; 这是 mysql_pconnect() 造成的问题，和 CI 无关。</em></p>
-<p>我借用BI项目测试后返回一个对象，具体内容是这样的：</p>
-<pre><code>CI_DB_mysql_driver Object
-    (
-        [dbdriver] =&gt; mysql
-        [_escape_char] =&gt; `
-        [_like_escape_str] =&gt; 
-        [_like_escape_chr] =&gt; 
-        [delete_hack] =&gt; <span class="number">1</span>
-        [_count_string] =&gt; SELECT COUNT(*) <span class="keyword">AS</span> 
-        [_random_keyword] =&gt;  RAND()
-        [use_set_names] =&gt; 
-        [ar_select] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_distinct] =&gt; 
-        [ar_from] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_join] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_where] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_like] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_groupby] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_having] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_keys] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_limit] =&gt; 
-        [ar_offset] =&gt; 
-        [ar_order] =&gt; 
-        [ar_orderby] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_set] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_wherein] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_aliased_tables] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_store_array] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_caching] =&gt; 
-        [ar_cache_exists] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_select] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_from] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_join] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_where] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_like] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_groupby] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_having] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_orderby] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_set] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_no_escape] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [ar_cache_no_escape] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [username] =&gt; root
-        [password] =&gt; 
-        [hostname] =&gt; localhost
-        [database] =&gt; ga
-        [dbprefix] =&gt; 
-        [char_set] =&gt; utf8
-        [dbcollat] =&gt; utf8_general_ci
-        [autoinit] =&gt; <span class="number">1</span>
-        [swap_pre] =&gt; 
-        [port] =&gt; 
-        [pconnect] =&gt; 
-        [conn_id] =&gt; Resource id <span class="comment">#112</span>
-        [result_id] =&gt; Resource id <span class="comment">#113</span>
-        [db_debug] =&gt; <span class="number">1</span>
-        [benchmark] =&gt; <span class="number">0.00244402885437</span>
-        [query_count] =&gt; <span class="number">1</span>
-        [bind_marker] =&gt; ?
-        [save_queries] =&gt; <span class="number">1</span>
-        [queries] =&gt; <span class="keyword">Array</span>
-            (
-                [<span class="number">0</span>] =&gt; SELECT *
-                    FROM (`apps`)
-                    WHERE `appid` =  <span class="number">1009</span>
-            )
-
-        [query_times] =&gt; <span class="keyword">Array</span>
-            (
-                [<span class="number">0</span>] =&gt; <span class="number">0.00244402885437</span>
-            )
-
-        [data_cache] =&gt; <span class="keyword">Array</span>
-            (
-            )
-
-        [trans_enabled] =&gt; <span class="number">1</span>
-        [trans_strict] =&gt; <span class="number">1</span>
-        [_trans_depth] =&gt; <span class="number">0</span>
-        [_trans_status] =&gt; <span class="number">1</span>
-        [cache_on] =&gt; 
-        [cachedir] =&gt; 
-        [cache_autodel] =&gt; 
-        [CACHE] =&gt; 
-        [_protect_identifiers] =&gt; <span class="number">1</span>
-        [_reserved_identifiers] =&gt; <span class="keyword">Array</span>
-            (
-                [<span class="number">0</span>] =&gt; *
-            )
-
-        [stmt_id] =&gt; 
-        [curs_id] =&gt; 
-        [limit_used] =&gt; 
-        [stricton] =&gt; 
-    )
-</code></pre><p>变量非常多，例如 <code>[queries]</code> 也会记录着查询过的语句，<code>[query_time]</code> 记录着相应语句查询所需要的时间等等。</p>
+		<p>DataTables中可以直接设置某列不参与排序，但是对于特殊的行其工具本身没有设置项 <em>不过对于table底部的行可以添加<tfoot></tfoot>标签来固定，并且不参与排序</em></p>
+<p>下面将介绍在<tbody></tbody>中最上面的特殊行不参与排序的方法，分一行和多行的情况<br><a id="more"></a></p>
+<h3 id="只有一行时：">只有一行时：</h3><ul>
+<li><p>在<tbody>中<tr>添加class类 如：<code>&lt;tr class=&quot;no-sort&quot;&gt;</code> <em>这是不参与排序的行</em></tr></tbody></p>
+</li>
+<li><p>在 <code>&lt;script type=&quot;text/script&quot;&gt;</code> 中的代码如下：</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">	jQuery(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123;</span><br><span class="line">		<span class="keyword">var</span> $tr = $(<span class="string">'.no-sort'</span>);</span><br><span class="line">		<span class="keyword">var</span> mySpecialRow = $tr.html();</span><br><span class="line">		$tr.remove();</span><br><span class="line">		<span class="keyword">var</span> table = $(<span class="string">'#&lt;?php echo $table_id;?&gt;'</span>).dataTable(&#123;</span><br><span class="line">			<span class="string">"fnDrawCallback"</span>: <span class="function"><span class="keyword">function</span>(<span class="params"> oSettings </span>) </span>&#123;</span><br><span class="line">				$(<span class="string">'#example tbody'</span>).prepend(mySpecialRow);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="多行时：">多行时：</h3><ul>
+<li><p>在<tbody>中<tr>添加class类 如：<code>&lt;tr class=&quot;no-sort&quot;&gt;</code> <em>这是不参与排序的行</em></tr></tbody></p>
+</li>
+<li><p>在 <code>&lt;script type=&quot;text/script&quot;&gt;</code> 中的代码如下：</p>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">	jQuery(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123;</span><br><span class="line">		<span class="keyword">var</span> mySpecialRow;		$tr.each(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;			mySpecialRow = mySpecialRow+<span class="string">"&lt;tr&gt;"</span>+$(<span class="keyword">this</span>).html()+<span class="string">"&lt;/tr&gt;"</span>;			$(<span class="keyword">this</span>).remove();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">var</span> table = $(<span class="string">'#&lt;?php echo $table_id;?&gt;'</span>).dataTable(&#123;</span><br><span class="line">			<span class="string">"fnDrawCallback"</span>: <span class="function"><span class="keyword">function</span>(<span class="params"> oSettings </span>) </span>&#123;</span><br><span class="line">				$(<span class="string">'#example tbody'</span>).prepend(mySpecialRow);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="效果如下：">效果如下：</h3><p>之前：</p>
+<p><img src="/images/no-sort_foot.png" alt="no-sort"></p>
+<p>之后：</p>
+<p><img src="/images/no-sort_body.png" alt="no-sort"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -299,7 +133,7 @@ etc...
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/CI/">CI</a>
+  <span></span> <a href="/tags/DataTables/">DataTables</a>
   </div>
 
 </div>
@@ -308,7 +142,7 @@ etc...
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/05/20/CI数据库类/" data-title="CI数据库类 | iBlog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://yoursite.com/2015/08/24/DataTables中特殊的行不参与排序/" data-title="DataTables中特殊的行不参与排序 | iBlog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -321,19 +155,11 @@ etc...
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/05/20/Rolling-cURL-PHP并发最佳实践/" title="Rolling cURL:PHP并发最佳实践">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Rolling cURL:PHP并发最佳实践</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/05/19/百万级别访问网站前期的技术准备/"  title="百万级别访问网站前期的技术准备">
+<a href="/2015/08/21/为最佳性能调优Nginx/"  title="为最佳性能调优Nginx">
  <strong>下一篇：</strong><br/> 
- <span>百万级别访问网站前期的技术准备
+ <span>为最佳性能调优Nginx
 </span>
 </a>
 </div>
@@ -348,7 +174,7 @@ etc...
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#只有一行时："><span class="toc-number">1.</span> <span class="toc-text">只有一行时：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多行时："><span class="toc-number">2.</span> <span class="toc-text">多行时：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#效果如下："><span class="toc-number">3.</span> <span class="toc-text">效果如下：</span></a></li></ol>
  
   </div>
 
