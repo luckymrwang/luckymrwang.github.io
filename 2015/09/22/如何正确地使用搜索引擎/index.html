@@ -4,28 +4,32 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>DataTables中特殊的行不参与排序 | iBlog</title>
+    <title>如何正确地使用搜索引擎 | iBlog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="luckymrwang">
     
 
     
-    <meta name="description" content="DataTables中可以直接设置某列不参与排序，但是对于特殊的行其工具本身没有设置项 不过对于table底部的行可以添加标签来固定，并且不参与排序
-下面将介绍在中最上面的特殊行不参与排序的方法，分一行和多行的情况">
+    <meta name="description">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DataTables中特殊的行不参与排序">
-<meta property="og:url" content="http://yoursite.com/2015/08/24/DataTables中特殊的行不参与排序/index.html">
+<meta property="og:title" content="如何正确地使用搜索引擎">
+<meta property="og:url" content="http://yoursite.com/2015/09/22/如何正确地使用搜索引擎/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="DataTables中可以直接设置某列不参与排序，但是对于特殊的行其工具本身没有设置项 不过对于table底部的行可以添加标签来固定，并且不参与排序
-下面将介绍在中最上面的特殊行不参与排序的方法，分一行和多行的情况">
-<meta property="og:image" content="http://yoursite.com/images/no-sort_foot.png">
-<meta property="og:image" content="http://yoursite.com/images/no-sort_body.png">
-<meta property="og:updated_time" content="2015-08-24T08:48:24.000Z">
+<meta property="og:description">
+<meta property="og:image" content="http://yoursite.com/images/searchgoogle.png">
+<meta property="og:image" content="http://yoursite.com/images/yinhao1.png">
+<meta property="og:image" content="http://yoursite.com/images/yinhao2.png">
+<meta property="og:image" content="http://yoursite.com/images/kongge1.png">
+<meta property="og:image" content="http://yoursite.com/images/kongge2.png">
+<meta property="og:image" content="http://yoursite.com/images/filetype.png">
+<meta property="og:image" content="http://yoursite.com/images/site.png">
+<meta property="og:image" content="http://yoursite.com/images/index1.png">
+<meta property="og:image" content="http://yoursite.com/images/index2.png">
+<meta property="og:updated_time" content="2015-09-27T07:44:40.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DataTables中特殊的行不参与排序">
-<meta name="twitter:description" content="DataTables中可以直接设置某列不参与排序，但是对于特殊的行其工具本身没有设置项 不过对于table底部的行可以添加标签来固定，并且不参与排序
-下面将介绍在中最上面的特殊行不参与排序的方法，分一行和多行的情况">
+<meta name="twitter:title" content="如何正确地使用搜索引擎">
+<meta name="twitter:description">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -85,14 +89,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/08/24/DataTables中特殊的行不参与排序/" title="DataTables中特殊的行不参与排序" itemprop="url">DataTables中特殊的行不参与排序</a>
+      <a href="/2015/09/22/如何正确地使用搜索引擎/" title="如何正确地使用搜索引擎" itemprop="url">如何正确地使用搜索引擎</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
 		
   <p class="article-time">
-    <time datetime="2015-08-24T06:52:00.000Z" itemprop="datePublished"> 发表于 2015-08-24</time>
+    <time datetime="2015-09-22T11:57:05.000Z" itemprop="datePublished"> 发表于 2015-09-22</time>
     
   </p>
 </header>
@@ -101,38 +105,25 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#只有一行时："><span class="toc-number">1.</span> <span class="toc-text">只有一行时：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多行时："><span class="toc-number">2.</span> <span class="toc-text">多行时：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#效果如下："><span class="toc-number">3.</span> <span class="toc-text">效果如下：</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-_“”_双引号表示完全匹配，结果中必须出现与搜索文本完全相同的内容。如图"><span class="toc-number">1.</span> <span class="toc-text">1. “” 双引号表示完全匹配，结果中必须出现与搜索文本完全相同的内容。如图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2_A_-B_搜索包含A但不包含B的结果（请注意A后面的空格不能省略）如图"><span class="toc-number">2.</span> <span class="toc-text">2 A -B 搜索包含A但不包含B的结果（请注意A后面的空格不能省略）如图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3_filetype_搜索对应类型的文件。例如：中国防火墙_filetype:ppt，即为搜索包含主题中国防火墙的ppt文件。（请注意使用英文的冒号）"><span class="toc-number">3.</span> <span class="toc-text">3 filetype 搜索对应类型的文件。例如：中国防火墙 filetype:ppt，即为搜索包含主题中国防火墙的ppt文件。（请注意使用英文的冒号）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4_site_在某个网站内搜索，比如：荷花_site:http://500px-com_表示在网站_http://500px-com_中搜索主题为荷花的内容。（注意英文冒号哟）另_site:http://pan-baidu-com_特别好用，用来搜百度云里的资源。"><span class="toc-number">4.</span> <span class="toc-text">4 site 在某个网站内搜索，比如：荷花 site:http://500px.com 表示在网站 http://500px.com 中搜索主题为荷花的内容。（注意英文冒号哟）另 site:http://pan.baidu.com 特别好用，用来搜百度云里的资源。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5_link_搜索网页中含有某链接的结果，比如搜索：link:http://baidu-com_则结果为包含百度这个链接的页面。"><span class="toc-number">5.</span> <span class="toc-text">5 link 搜索网页中含有某链接的结果，比如搜索：link:http://baidu.com 则结果为包含百度这个链接的页面。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6_intitle_搜索标题包含某内容的结果。"><span class="toc-number">6.</span> <span class="toc-text">6 intitle 搜索标题包含某内容的结果。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7_inurl_搜索网站地址中包含某内容的结果。"><span class="toc-number">7.</span> <span class="toc-text">7 inurl 搜索网站地址中包含某内容的结果。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8_related_搜索相关网站。"><span class="toc-number">8.</span> <span class="toc-text">8 related 搜索相关网站。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9_index_of_据说可以突破网站入口下载，比如搜索：终于等到你_index_of/mp3"><span class="toc-number">9.</span> <span class="toc-text">9 index of 据说可以突破网站入口下载，比如搜索：终于等到你 index of/mp3</span></a></li></ol>
 		
 		</div>
 		
-		<p>DataTables中可以直接设置某列不参与排序，但是对于特殊的行其工具本身没有设置项 <em>不过对于table底部的行可以添加<tfoot></tfoot>标签来固定，并且不参与排序</em></p>
-<p>下面将介绍在<tbody></tbody>中最上面的特殊行不参与排序的方法，分一行和多行的情况<br><a id="more"></a></p>
-<h3 id="只有一行时：">只有一行时：</h3><ul>
-<li><p>在<tbody>中<tr>添加class类 如：<code>&lt;tr class=&quot;no-sort&quot;&gt;</code> <em>这是不参与排序的行</em></tr></tbody></p>
-</li>
-<li><p>在 <code>&lt;script type=&quot;text/script&quot;&gt;</code> 中的代码如下：</p>
-</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">	jQuery(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123;</span><br><span class="line">		<span class="keyword">var</span> $tr = $(<span class="string">'.no-sort'</span>);</span><br><span class="line">		<span class="keyword">var</span> mySpecialRow = $tr.html();</span><br><span class="line">		$tr.remove();</span><br><span class="line">		<span class="keyword">var</span> table = $(<span class="string">'#&lt;?php echo $table_id;?&gt;'</span>).dataTable(&#123;</span><br><span class="line">			<span class="string">"fnDrawCallback"</span>: <span class="function"><span class="keyword">function</span>(<span class="params"> oSettings </span>) </span>&#123;</span><br><span class="line">				$(<span class="string">'#example tbody'</span>).prepend(mySpecialRow);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="多行时：">多行时：</h3><ul>
-<li><p>在<tbody>中<tr>添加class类 如：<code>&lt;tr class=&quot;no-sort&quot;&gt;</code> <em>这是不参与排序的行</em></tr></tbody></p>
-</li>
-<li><p>在 <code>&lt;script type=&quot;text/script&quot;&gt;</code> 中的代码如下：</p>
-</li>
-</ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">	jQuery(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123;</span><br><span class="line">		<span class="keyword">var</span> mySpecialRow;		$tr.each(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;			mySpecialRow = mySpecialRow+<span class="string">"&lt;tr&gt;"</span>+$(<span class="keyword">this</span>).html()+<span class="string">"&lt;/tr&gt;"</span>;			$(<span class="keyword">this</span>).remove();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">var</span> table = $(<span class="string">'#&lt;?php echo $table_id;?&gt;'</span>).dataTable(&#123;</span><br><span class="line">			<span class="string">"fnDrawCallback"</span>: <span class="function"><span class="keyword">function</span>(<span class="params"> oSettings </span>) </span>&#123;</span><br><span class="line">				$(<span class="string">'#example tbody'</span>).prepend(mySpecialRow);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="效果如下：">效果如下：</h3><p>之前：<br><img src="/images/no-sort_foot.png" alt="no-sort"></p>
-<p>之后：<br><img src="/images/no-sort_body.png" alt="no-sort"></p>
+		<p><img src="/images/searchgoogle.png" alt="SearchGoogle"></p>
+<a id="more"></a>
+<h4 id="1-_“”_双引号表示完全匹配，结果中必须出现与搜索文本完全相同的内容。如图">1. “” 双引号表示完全匹配，结果中必须出现与搜索文本完全相同的内容。如图</h4><p><img src="/images/yinhao1.png" alt="yinhao1"></p>
+<p><img src="/images/yinhao2.png" alt="yinhao2"></p>
+<h4 id="2_A_-B_搜索包含A但不包含B的结果（请注意A后面的空格不能省略）如图">2 A -B 搜索包含A但不包含B的结果（请注意A后面的空格不能省略）如图</h4><p><img src="/images/kongge1.png" alt="kongge1"></p>
+<p><img src="/images/kongge2.png" alt="kongge2"></p>
+<h4 id="3_filetype_搜索对应类型的文件。例如：中国防火墙_filetype:ppt，即为搜索包含主题中国防火墙的ppt文件。（请注意使用英文的冒号）">3 filetype 搜索对应类型的文件。例如：中国防火墙 filetype:ppt，即为搜索包含主题中国防火墙的ppt文件。（请注意使用英文的冒号）</h4><p><img src="/images/filetype.png" alt="filetype"></p>
+<h4 id="4_site_在某个网站内搜索，比如：荷花_site:http://500px-com_表示在网站_http://500px-com_中搜索主题为荷花的内容。（注意英文冒号哟）另_site:http://pan-baidu-com_特别好用，用来搜百度云里的资源。">4 site 在某个网站内搜索，比如：荷花 site:<a href="http://500px.com" target="_blank" rel="external">http://500px.com</a> 表示在网站 <a href="http://500px.com" target="_blank" rel="external">http://500px.com</a> 中搜索主题为荷花的内容。（注意英文冒号哟）另 site:<a href="http://pan.baidu.com" target="_blank" rel="external">http://pan.baidu.com</a> 特别好用，用来搜百度云里的资源。</h4><p><img src="/images/site.png" alt="site"></p>
+<h4 id="5_link_搜索网页中含有某链接的结果，比如搜索：link:http://baidu-com_则结果为包含百度这个链接的页面。">5 link 搜索网页中含有某链接的结果，比如搜索：link:<a href="http://baidu.com" target="_blank" rel="external">http://baidu.com</a> 则结果为包含百度这个链接的页面。</h4><h4 id="6_intitle_搜索标题包含某内容的结果。">6 intitle 搜索标题包含某内容的结果。</h4><h4 id="7_inurl_搜索网站地址中包含某内容的结果。">7 inurl 搜索网站地址中包含某内容的结果。</h4><h4 id="8_related_搜索相关网站。">8 related 搜索相关网站。</h4><h4 id="9_index_of_据说可以突破网站入口下载，比如搜索：终于等到你_index_of/mp3">9 index of 据说可以突破网站入口下载，比如搜索：终于等到你 index of/mp3</h4><p><img src="/images/index1.png" alt="index1"></p>
+<p><img src="/images/index2.png" alt="index2"></p>
   
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
 
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/DataTables/">DataTables</a>
-  </div>
 
 </div>
 
@@ -140,7 +131,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/08/24/DataTables中特殊的行不参与排序/" data-title="DataTables中特殊的行不参与排序 | iBlog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://yoursite.com/2015/09/22/如何正确地使用搜索引擎/" data-title="如何正确地使用搜索引擎 | iBlog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -153,19 +144,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/09/22/如何正确地使用搜索引擎/" title="如何正确地使用搜索引擎">
-  <strong>上一篇：</strong><br/>
-  <span>
-  如何正确地使用搜索引擎</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/08/21/为最佳性能调优Nginx/"  title="为最佳性能调优Nginx">
+<a href="/2015/08/24/DataTables中特殊的行不参与排序/"  title="DataTables中特殊的行不参与排序">
  <strong>下一篇：</strong><br/> 
- <span>为最佳性能调优Nginx
+ <span>DataTables中特殊的行不参与排序
 </span>
 </a>
 </div>
@@ -180,7 +163,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#只有一行时："><span class="toc-number">1.</span> <span class="toc-text">只有一行时：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多行时："><span class="toc-number">2.</span> <span class="toc-text">多行时：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#效果如下："><span class="toc-number">3.</span> <span class="toc-text">效果如下：</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-_“”_双引号表示完全匹配，结果中必须出现与搜索文本完全相同的内容。如图"><span class="toc-number">1.</span> <span class="toc-text">1. “” 双引号表示完全匹配，结果中必须出现与搜索文本完全相同的内容。如图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2_A_-B_搜索包含A但不包含B的结果（请注意A后面的空格不能省略）如图"><span class="toc-number">2.</span> <span class="toc-text">2 A -B 搜索包含A但不包含B的结果（请注意A后面的空格不能省略）如图</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3_filetype_搜索对应类型的文件。例如：中国防火墙_filetype:ppt，即为搜索包含主题中国防火墙的ppt文件。（请注意使用英文的冒号）"><span class="toc-number">3.</span> <span class="toc-text">3 filetype 搜索对应类型的文件。例如：中国防火墙 filetype:ppt，即为搜索包含主题中国防火墙的ppt文件。（请注意使用英文的冒号）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4_site_在某个网站内搜索，比如：荷花_site:http://500px-com_表示在网站_http://500px-com_中搜索主题为荷花的内容。（注意英文冒号哟）另_site:http://pan-baidu-com_特别好用，用来搜百度云里的资源。"><span class="toc-number">4.</span> <span class="toc-text">4 site 在某个网站内搜索，比如：荷花 site:http://500px.com 表示在网站 http://500px.com 中搜索主题为荷花的内容。（注意英文冒号哟）另 site:http://pan.baidu.com 特别好用，用来搜百度云里的资源。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5_link_搜索网页中含有某链接的结果，比如搜索：link:http://baidu-com_则结果为包含百度这个链接的页面。"><span class="toc-number">5.</span> <span class="toc-text">5 link 搜索网页中含有某链接的结果，比如搜索：link:http://baidu.com 则结果为包含百度这个链接的页面。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6_intitle_搜索标题包含某内容的结果。"><span class="toc-number">6.</span> <span class="toc-text">6 intitle 搜索标题包含某内容的结果。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7_inurl_搜索网站地址中包含某内容的结果。"><span class="toc-number">7.</span> <span class="toc-text">7 inurl 搜索网站地址中包含某内容的结果。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8_related_搜索相关网站。"><span class="toc-number">8.</span> <span class="toc-text">8 related 搜索相关网站。</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9_index_of_据说可以突破网站入口下载，比如搜索：终于等到你_index_of/mp3"><span class="toc-number">9.</span> <span class="toc-text">9 index of 据说可以突破网站入口下载，比如搜索：终于等到你 index of/mp3</span></a></li></ol>
  
   </div>
 

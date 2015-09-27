@@ -81,6 +81,68 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/06/03/Apache的Order-All-Deny详解/" title="Apache的Order All,Deny详解" itemprop="url">Apache的Order All,Deny详解</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-03T03:46:40.000Z" itemprop="datePublished"> 发表于 2015-06-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Allow和Deny可以用于apache的conf文件或者.htaccess文件中（配合Directory, Location, Files等），用来控制目录和文件的访问授权。</p>
+<h2 id="Tips">Tips</h2><ul>
+<li><p>修改完配置后要保存好并重启Apache服务，配置才能生效</p>
+</li>
+<li><p>开头字母不分大小写</p>
+</li>
+<li><p>Allow、Deny语句不分先后顺序，谁先谁后不影响最终判断结果；但都会被判断到</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/06/03/Apache的Order-All-Deny详解/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Apache/">Apache</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/" title="Codeigniter在执行大量查询语句时内存占用过大的问题" itemprop="url">Codeigniter在执行大量查询语句时内存占用过大的问题</a>
   </h1>
   <p class="article-author">By
@@ -566,67 +628,6 @@
   <div class="article-tags">
   
   <span></span> <a href="/tags/概念/">概念</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/18/BOSS页面/" title="BOSS页面" itemprop="url">BOSS页面</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-18T08:04:45.000Z" itemprop="datePublished"> 发表于 2015-05-18</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="月用户新增进度">月用户新增进度</h2><p><em>功能：展示各个游戏，各个区域（国内_Anndroid,国内_IOS,国外_Android&amp;IOS）的开服量、前日新增用户数、昨日新增用户数、上月同期新增用户数、本月当前新增用户数、上月总新增用户数、预计本月新增用户数</em></p>
-<p>具体流程如下：</p>
-<ol>
-<li><p>权限判断【超级管理员、运营权限管理员、BOSS、运营经理】可以直接查看</p>
-</li>
-<li><p>遍历 <em>appconfig.php</em> 文件通过 <em>shore</em> 来分成 <em>境内</em> 和 <em>境外</em> 两部分，之后调用 <code>_get_shore_item</code> 函数来整合不同区域的数据。<em>在该函数中做如下处理</em>：根据手机平台类型（Android、IOS）来区分统计，最终返回数据形式如下：
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/05/18/BOSS页面/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/BI项目/">BI项目</a>
   </div>
 
 </div>
