@@ -4,23 +4,32 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>PHP算法之插入排序 | iBlog</title>
+    <title>OS X EI Capitan | iBlog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="luckymrwang">
     
 
     
-    <meta name="description" content="思路分析在要排序的一组数中，假设前面的数已经是排好顺序的，现在要把第n个数插到前面的有序数中，使得这n个数也是排好顺序的。如此反复循环，直到全部排好顺序。">
+    <meta name="description" content="OS X El Capitan中，在内核下引入了Rootless机制，以下路径：
+/System/bin/sbin/usr (except /usr/local)
+均属于Rootless范围，即使root用户无法对此目录有写和执行权限，只有Apple以及Apple授权签名的软件（包括命令行工具）可以修改此目录。
+关闭Rootless(需要重启，以Recovery分区启动，在Security Con">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PHP算法之插入排序">
-<meta property="og:url" content="http://yoursite.com/2015/08/21/PHP算法之插入排序/index.html">
+<meta property="og:title" content="OS X EI Capitan">
+<meta property="og:url" content="http://yoursite.com/2015/10/04/OS-X-EI-Capitan/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="思路分析在要排序的一组数中，假设前面的数已经是排好顺序的，现在要把第n个数插到前面的有序数中，使得这n个数也是排好顺序的。如此反复循环，直到全部排好顺序。">
-<meta property="og:updated_time" content="2015-08-21T08:45:24.000Z">
+<meta property="og:description" content="OS X El Capitan中，在内核下引入了Rootless机制，以下路径：
+/System/bin/sbin/usr (except /usr/local)
+均属于Rootless范围，即使root用户无法对此目录有写和执行权限，只有Apple以及Apple授权签名的软件（包括命令行工具）可以修改此目录。
+关闭Rootless(需要重启，以Recovery分区启动，在Security Con">
+<meta property="og:updated_time" content="2015-10-04T06:05:40.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PHP算法之插入排序">
-<meta name="twitter:description" content="思路分析在要排序的一组数中，假设前面的数已经是排好顺序的，现在要把第n个数插到前面的有序数中，使得这n个数也是排好顺序的。如此反复循环，直到全部排好顺序。">
+<meta name="twitter:title" content="OS X EI Capitan">
+<meta name="twitter:description" content="OS X El Capitan中，在内核下引入了Rootless机制，以下路径：
+/System/bin/sbin/usr (except /usr/local)
+均属于Rootless范围，即使root用户无法对此目录有写和执行权限，只有Apple以及Apple授权签名的软件（包括命令行工具）可以修改此目录。
+关闭Rootless(需要重启，以Recovery分区启动，在Security Con">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -80,14 +89,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/08/21/PHP算法之插入排序/" title="PHP算法之插入排序" itemprop="url">PHP算法之插入排序</a>
+      <a href="/2015/10/04/OS-X-EI-Capitan/" title="OS X EI Capitan" itemprop="url">OS X EI Capitan</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
 		
   <p class="article-time">
-    <time datetime="2015-08-21T08:06:08.000Z" itemprop="datePublished"> 发表于 2015-08-21</time>
+    <time datetime="2015-10-04T06:01:05.000Z" itemprop="datePublished"> 发表于 2015-10-04</time>
     
   </p>
 </header>
@@ -96,30 +105,15 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#思路分析"><span class="toc-number">1.</span> <span class="toc-text">思路分析</span></a></li></ol>
+			
 		
 		</div>
 		
-		<h3 id="思路分析">思路分析</h3><p>在要排序的一组数中，假设前面的数已经是排好顺序的，现在要把第n个数插到前面的有序数中，使得这n个数也是排好顺序的。如此反复循环，直到全部排好顺序。<br><a id="more"></a></p>
-<pre><code><span class="keyword">function</span> insertSort(<span class="variable">$arr</span>) {
-    <span class="variable">$len</span>=count(<span class="variable">$arr</span>); 
-    for(<span class="variable">$i</span>=<span class="number">1</span>, <span class="variable">$i</span>&lt;<span class="variable">$len</span>; <span class="variable">$i</span>++) {
-        <span class="variable">$tmp</span> = <span class="variable">$arr</span>[<span class="variable">$i</span>];
-        //内层循环控制，比较并插入
-        for(<span class="variable">$j</span>=<span class="variable">$i-1</span>;<span class="variable">$j</span>&gt;=<span class="number">0</span>;<span class="variable">$j--</span>) {
-            if(<span class="variable">$tmp</span> &lt; <span class="variable">$arr</span>[<span class="variable">$j</span>]) {
-                //发现插入的元素要小，交换位置，将后边的元素与前面的元素互换
-                <span class="variable">$arr</span>[<span class="variable">$j</span>+<span class="number">1</span>] = <span class="variable">$arr</span>[<span class="variable">$j</span>];
-                <span class="variable">$arr</span>[<span class="variable">$j</span>] = <span class="variable">$tmp</span>;
-            } else {
-                //如果碰到不需要移动的元素，由于是已经排序好是数组，则前面的就不需要再次比较了。
-                break;
-            }
-        }
-    }
-    return <span class="variable">$arr</span>;
-}
-</code></pre>  
+		<p>OS X El Capitan中，在内核下引入了Rootless机制，以下路径：</p>
+<p>/System<br>/bin<br>/sbin<br>/usr (except /usr/local)</p>
+<p>均属于Rootless范围，即使root用户无法对此目录有写和执行权限，只有Apple以及Apple授权签名的软件（包括命令行工具）可以修改此目录。</p>
+<p>关闭Rootless(需要重启，以Recovery分区启动，在Security Configuration中关闭Enforce System Integrity Protection)</p>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -127,7 +121,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/PHP/">PHP</a>
+  <span></span> <a href="/tags/OSX/">OSX</a>
   </div>
 
 </div>
@@ -136,7 +130,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/08/21/PHP算法之插入排序/" data-title="PHP算法之插入排序 | iBlog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://yoursite.com/2015/10/04/OS-X-EI-Capitan/" data-title="OS X EI Capitan | iBlog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -149,19 +143,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/08/21/为最佳性能调优Nginx/" title="为最佳性能调优Nginx">
-  <strong>上一篇：</strong><br/>
-  <span>
-  为最佳性能调优Nginx</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/08/21/PHP算法之选择排序/"  title="PHP算法之选择排序">
+<a href="/2015/09/22/如何正确地使用搜索引擎/"  title="如何正确地使用搜索引擎">
  <strong>下一篇：</strong><br/> 
- <span>PHP算法之选择排序
+ <span>如何正确地使用搜索引擎
 </span>
 </a>
 </div>
@@ -176,7 +162,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#思路分析"><span class="toc-number">1.</span> <span class="toc-text">思路分析</span></a></li></ol>
+ 
  
   </div>
 
