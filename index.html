@@ -81,6 +81,63 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/10/05/PHP传参调试/" title="PHP传参调试" itemprop="url">PHP传参调试</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-05T04:39:44.000Z" itemprop="datePublished"> 发表于 2015-10-05</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>通过调用系统环境变量$_SERVER，可以查看到HTTP请求的信息，如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$_SERVER</span>[<span class="string">"REMOTE_ADDR"</span>]   <span class="comment">//记录来访者的IP</span></span><br><span class="line"><span class="variable">$_SERVER</span>[<span class="string">"QUERY_STRING"</span>]  <span class="comment">//查询请求字符串</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/10/05/PHP传参调试/#more">Read More</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/调试/">调试</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/10/04/OS-X-EI-Capitan/" title="OS X EI Capitan" itemprop="url">OS X EI Capitan</a>
   </h1>
   <p class="article-author">By
@@ -95,7 +152,10 @@
     <div class="article-content">
         
         <p>OS X El Capitan中，在内核下引入了Rootless机制，以下路径：</p>
-<p>/System<br>/bin<br>/sbin<br>/usr (except /usr/local)</p>
+<p>/System</p>
+<p>/bin</p>
+<p>/sbin</p>
+<p>/usr (except /usr/local)</p>
 <p>均属于Rootless范围，即使root用户无法对此目录有写和执行权限，只有Apple以及Apple授权签名的软件（包括命令行工具）可以修改此目录。</p>
 <p>关闭Rootless(需要重启，以Recovery分区启动，在Security Configuration中关闭Enforce System Integrity Protection)</p>
 
@@ -582,64 +642,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/08/16/用JQuery实现最简单的随屏幕滚动的层/" title="用JQuery实现最简单的随屏幕滚动的层" itemprop="url">用JQuery实现最简单的随屏幕滚动的层</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-08-16T06:50:23.000Z" itemprop="datePublished"> 发表于 2015-08-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>首先需要一个绝对定位的元素</p>
-<pre><code>&lt;<span class="keyword">div</span> <span class="property">id</span>=<span class="string">"test"</span> style=<span class="string">"position:absolute;"</span>&gt;test&lt;/<span class="keyword">div</span>&gt;
-</code></pre><p>实现方法：随页面滚动（Scroll）事件动态设置元素的CSS，TOP值<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/08/16/用JQuery实现最简单的随屏幕滚动的层/#more">Read More</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/JQuery/">JQuery</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -723,11 +725,15 @@
 			
 		
 			
-				<li><a href="/tags/OSX/" title="OSX">OSX<sup>1</sup></a></li>
+				<li><a href="/tags/调试/" title="调试">调试<sup>1</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/概念/" title="概念">概念<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
 			
 		
 			
@@ -744,10 +750,6 @@
 		
 			
 				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>1</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>1</sup></a></li>
 			
 		
 		</ul>

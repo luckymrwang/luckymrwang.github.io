@@ -4,23 +4,26 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Apache AllowOverride None 及 Option 详解 | iBlog</title>
+    <title>PHP传参调试 | iBlog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="luckymrwang">
     
 
     
-    <meta name="description" content="AllowOverrideAllowOverride参数就是指明Apache服务器是否去找.htaccess文件作为配置文件，如果设置为None,那么服务器将忽略.htacess文件，如果设置为All,那么所有在.htaccess文件里有的指令都将被重写。对于AllowOverride，还可以对它指定如下一些能被重写的指令类型。">
+    <meta name="description" content="通过调用系统环境变量$_SERVER，可以查看到HTTP请求的信息，如下：
+12$_SERVER[&quot;REMOTE_ADDR&quot;]   //记录来访者的IP$_SERVER[&quot;QUERY_STRING&quot;]  //查询请求字符串">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Apache AllowOverride None 及 Option 详解">
-<meta property="og:url" content="http://yoursite.com/2015/06/03/Apache-AllowOverride-None-及-Option-详解/index.html">
+<meta property="og:title" content="PHP传参调试">
+<meta property="og:url" content="http://yoursite.com/2015/10/05/PHP传参调试/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="AllowOverrideAllowOverride参数就是指明Apache服务器是否去找.htaccess文件作为配置文件，如果设置为None,那么服务器将忽略.htacess文件，如果设置为All,那么所有在.htaccess文件里有的指令都将被重写。对于AllowOverride，还可以对它指定如下一些能被重写的指令类型。">
-<meta property="og:updated_time" content="2015-08-24T08:40:05.000Z">
+<meta property="og:description" content="通过调用系统环境变量$_SERVER，可以查看到HTTP请求的信息，如下：
+12$_SERVER[&quot;REMOTE_ADDR&quot;]   //记录来访者的IP$_SERVER[&quot;QUERY_STRING&quot;]  //查询请求字符串">
+<meta property="og:updated_time" content="2015-10-05T04:57:26.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Apache AllowOverride None 及 Option 详解">
-<meta name="twitter:description" content="AllowOverrideAllowOverride参数就是指明Apache服务器是否去找.htaccess文件作为配置文件，如果设置为None,那么服务器将忽略.htacess文件，如果设置为All,那么所有在.htaccess文件里有的指令都将被重写。对于AllowOverride，还可以对它指定如下一些能被重写的指令类型。">
+<meta name="twitter:title" content="PHP传参调试">
+<meta name="twitter:description" content="通过调用系统环境变量$_SERVER，可以查看到HTTP请求的信息，如下：
+12$_SERVER[&quot;REMOTE_ADDR&quot;]   //记录来访者的IP$_SERVER[&quot;QUERY_STRING&quot;]  //查询请求字符串">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -80,14 +83,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2015/06/03/Apache-AllowOverride-None-及-Option-详解/" title="Apache AllowOverride None 及 Option 详解" itemprop="url">Apache AllowOverride None 及 Option 详解</a>
+      <a href="/2015/10/05/PHP传参调试/" title="PHP传参调试" itemprop="url">PHP传参调试</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
 		
   <p class="article-time">
-    <time datetime="2015-06-03T08:04:03.000Z" itemprop="datePublished"> 发表于 2015-06-03</time>
+    <time datetime="2015-10-05T04:39:44.000Z" itemprop="datePublished"> 发表于 2015-10-05</time>
     
   </p>
 </header>
@@ -96,49 +99,16 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#AllowOverride"><span class="toc-number">1.</span> <span class="toc-text">AllowOverride</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Options_Indexes_FollowSymLinks"><span class="toc-number">2.</span> <span class="toc-text">Options Indexes FollowSymLinks</span></a></li></ol>
+			
 		
 		</div>
 		
-		<h2 id="AllowOverride">AllowOverride</h2><p>AllowOverride参数就是指明Apache服务器是否去找.htaccess文件作为配置文件，如果设置为None,那么服务器将忽略.htacess文件，如果设置为All,那么所有在.htaccess文件里有的指令都将被重写。对于AllowOverride，还可以对它指定如下一些能被重写的指令类型。<br><a id="more"></a><br><em>通常利用Apache的rewrite模块对 URL 进行重写的时候， rewrite规则会写在 .htaccess 文件里。但要使 apache 能够正常的读取.htaccess 文件的内容，就必须对.htaccess 所在目录进行配置。从安全性考虑，根目录的AllowOverride属性一般都配置成不允许任何Override ，即</em></p>
-<pre><code>&lt;<span class="keyword">Directory</span> /&gt; 
-    AllowOverride <span class="keyword">None</span> 
-&lt;/<span class="keyword">Directory</span>&gt; 
-</code></pre><h2 id="Options_Indexes_FollowSymLinks">Options Indexes FollowSymLinks</h2><p><em>Options Indexes FollowSymLinks</em> 是来控制 Apache 是否显示目录列表</p>
-<ul>
-<li><p>默认情况下</p>
-<pre><code><span class="string">http:</span><span class="comment">//localhost:8080/</span>
-</code></pre></li>
-</ul>
-<p>如果文件根目录里有 index.html，浏览器就会显示 index.html的内容；</p>
-<p>如果没有 index.html，浏览器就会显示文件根目录的目录列表，目录列表包括文件根目录下的文件和子目录。</p>
-<ul>
-<li>禁用方法</li>
-</ul>
-<p>1.只需将 Option 中的 Indexes 去掉即可</p>
-<pre><code>&lt;<span class="keyword">Directory</span> <span class="string">"D:/Apa/blabla"</span>&gt;
-    <span class="keyword">Options</span> Indexes FollowSymLinks #----------&gt;<span class="keyword">Options</span> FollowSymLinks
-    AllowOverride <span class="keyword">None</span>
-    <span class="keyword">Order</span> allow,deny
-    Allow from all
-&lt;/<span class="keyword">Directory</span>&gt;
-</code></pre><p><em>只需要将上面代码中的 Indexes 去掉，就可以禁止 Apache 显示该目录结构。用户就不会看到该目录下的文件和子目录列表了。<br>Indexes 的作用就是当该目录下没有 index.html 文件时，就显示目录结构，去掉 Indexes，Apache 就不会显示该目录的列表了。</em></p>
-<p>2.编辑httpd.conf文件</p>
-<p>在Options Indexes FollowSymLinks在Indexes前面加上 – 符号。<br>即： Options -Indexes FollowSymLinks</p>
-<p><em>备注：在Indexes前，加 + 代表允许目录浏览；加 – 代表禁止目录浏览</em></p>
-<p>这样的话就属于整个Apache禁止目录浏览</p>
-<p>如果是在虚拟主机中，只要增加如下信息就行：</p>
-<pre><code><span class="tag">&lt;Directory “D:test”&gt;</span>
-    <span class="keyword"><span class="common">Options</span></span> -Indexes FollowSymLinks
-    <span class="keyword">AllowOverride</span> None
-    <span class="keyword"><span class="common">Order</span></span> deny,allow
-    <span class="keyword"><span class="common">Allow</span></span> from <span class="literal">all</span>
-<span class="tag">&lt;/Directory&gt;</span>
-</code></pre><p>3.在根目录的 .htaccess 文件中输入：</p>
-<pre><code><span class="tag">&lt;Files *&gt;</span>
-    <span class="keyword"><span class="common">Options</span></span> -Indexes
-<span class="tag">&lt;/Files&gt;</span>
-</code></pre><p>即阻止Apache 将目录结构列表出来。</p>
+		<p>通过调用系统环境变量$_SERVER，可以查看到HTTP请求的信息，如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$_SERVER</span>[<span class="string">"REMOTE_ADDR"</span>]   <span class="comment">//记录来访者的IP</span></span><br><span class="line"><span class="variable">$_SERVER</span>[<span class="string">"QUERY_STRING"</span>]  <span class="comment">//查询请求字符串</span></span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>把其加入代上面的代码中，并且将其写入到本地文件中来，全部代码如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">traceHttp</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="variable">$this</span>-&gt;logger(<span class="string">"REMOTE_ADDR:"</span>.<span class="variable">$_SERVER</span>[<span class="string">"REMOTE_ADDR"</span>].((strpos(<span class="variable">$_SERVER</span>[<span class="string">"REMOTE_ADDR"</span>], <span class="string">"101.226"</span>))?<span class="string">" From Weixin"</span>:<span class="string">" Unknown IP"</span>));</span><br><span class="line">	<span class="variable">$this</span>-&gt;logger(<span class="string">"QUERY_STRING:"</span>.<span class="variable">$_SERVER</span>[<span class="string">"QUERY_STRING"</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">logger</span><span class="params">(<span class="variable">$contentStr</span>)</span></span>&#123;</span><br><span class="line">	file_put_contents(<span class="string">"log.html"</span>, date(<span class="string">'Y-m-d H:i:s '</span>).<span class="variable">$contentStr</span>.<span class="string">"&lt;br&gt;"</span>, FILE_APPEND);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以<code>CodeIgniter</code>为例，生成的文件与<code>index.php</code>同级目录</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -147,7 +117,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Apache/">Apache</a>
+  <span></span> <a href="/tags/调试/">调试</a>
   </div>
 
 </div>
@@ -156,7 +126,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2015/06/03/Apache-AllowOverride-None-及-Option-详解/" data-title="Apache AllowOverride None 及 Option 详解 | iBlog" data-tsina="null" class="share clearfix">
+	  <div data-url="http://yoursite.com/2015/10/05/PHP传参调试/" data-title="PHP传参调试 | iBlog" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -169,19 +139,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2015/06/04/在-Mac-OS-X-终端里使用-Solarized-配色方案/" title="在 Mac OS X 终端里使用 Solarized 配色方案">
-  <strong>上一篇：</strong><br/>
-  <span>
-  在 Mac OS X 终端里使用 Solarized 配色方案</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2015/06/03/Apache服务器访问方式去除Index.php/"  title="Apache服务器访问方式去除Index.php">
+<a href="/2015/10/04/OS-X-EI-Capitan/"  title="OS X EI Capitan">
  <strong>下一篇：</strong><br/> 
- <span>Apache服务器访问方式去除Index.php
+ <span>OS X EI Capitan
 </span>
 </a>
 </div>
@@ -196,7 +158,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#AllowOverride"><span class="toc-number">1.</span> <span class="toc-text">AllowOverride</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Options_Indexes_FollowSymLinks"><span class="toc-number">2.</span> <span class="toc-text">Options Indexes FollowSymLinks</span></a></li></ol>
+ 
  
   </div>
 
