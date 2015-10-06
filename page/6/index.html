@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>iBlog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="学习总结 思考感悟 知识管理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="https://github.com/luckymrwang/page/6/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="学习总结 思考感悟 知识管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iBlog">
+<meta name="twitter:description" content="学习总结 思考感悟 知识管理">
+  
+  
+    <link rel="icon" href="favicon.png">
+  
+  
+ <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+ <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+
+
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  
+
+  
+
+  
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo" style="background-image: url(/css/images/logo.png)"></i><span class="site-title">iBlog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/.">主页</a>
+        
+          <a class="main-nav-link" href="/archives">文章列表</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/author.jpg"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+      
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="https://github.com/luckymrwang"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+        
+          <td><a class="main-nav-link" href="/.">主页</a></td>
+        
+          <td><a class="main-nav-link" href="/archives">文章列表</a></td>
+        
+          <td><a class="main-nav-link" href="/about">关于</a></td>
+        
+        <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="https://github.com/luckymrwang"></form>
+        </td>
+      </tr>
+    </table>
+  </div>
+</header>
+
+    <div class="outer">
+      
+        <aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      <img id="avatar" src="/css/images/author.jpg">
+      <h2 id="name">luckymrwang</h2>
+      <h3 id="title">Web Developer &amp; Designer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>BeiJing, China</span>
+      <a id="follow" href="https://github.com/luckymrwang">关注我</a>
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        47
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        24
+        <span>标签</span>
+      </div>
+    </div>
+    
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+          
+          <td><a href="https://github.com/luckymrwang" target="_blank" title="github"><i class="fa fa-github"></i></a></td>
+          
+          <td><a href="/#" target="_blank" title="twitter"><i class="fa fa-twitter"></i></a></td>
+          
+          <td><a href="/#" target="_blank" title="facebook"><i class="fa fa-facebook"></i></a></td>
+          
+          <td><a href="/#" target="_blank" title="dribbble"><i class="fa fa-dribbble"></i></a></td>
+          
+          <td><a href="/atom.xml" target="_blank" title="rss"><i class="fa fa-rss"></i></a></td>
+          
+        </tr>
+      </table>
+    </div>
+    
+    
+  </div>
+</aside>
+
+      
+      <section id="main">
+      <article id="post-Apache-AllowOverride-None-及-Option-详解" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/03/Apache-AllowOverride-None-及-Option-详解/">Apache AllowOverride None 及 Option 详解</a>
+    </h1>
+  
+
+        <div class="article-meta">
+          
+  <div class="article-date">
+    <i class="fa fa-calendar"></i>
+    <a href="/2015/06/03/Apache-AllowOverride-None-及-Option-详解/">
+      <time datetime="2015-06-03T08:04:03.000Z" itemprop="datePublished">2015-06-03</time>
+    </a>
+  </div>
+
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="AllowOverride">AllowOverride</h2><p>AllowOverride参数就是指明Apache服务器是否去找.htaccess文件作为配置文件，如果设置为None,那么服务器将忽略.htacess文件，如果设置为All,那么所有在.htaccess文件里有的指令都将被重写。对于AllowOverride，还可以对它指定如下一些能被重写的指令类型。<br>
+        
+          <p class="article-more-link">
+            <a href="/2015/06/03/Apache-AllowOverride-None-及-Option-详解/#more">阅读更多</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/luckymrwang/2015/06/03/Apache-AllowOverride-None-及-Option-详解/" data-id="ciff2z46a0037dfs6y34p2rm1" class="article-share-link">分享到</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Apache/">Apache</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-Apache服务器访问方式去除Index.php" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/03/Apache服务器访问方式去除Index.php/">Apache服务器访问方式去除Index.php</a>
+    </h1>
+  
+
+        <div class="article-meta">
+          
+  <div class="article-date">
+    <i class="fa fa-calendar"></i>
+    <a href="/2015/06/03/Apache服务器访问方式去除Index.php/">
+      <time datetime="2015-06-03T07:49:30.000Z" itemprop="datePublished">2015-06-03</time>
+    </a>
+  </div>
+
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><em>例如: 你原来的路径是： localhost/index.php/index<br>改变后的路径是： localhost/index</em></p>
+<ul>
+<li><p>httpd.conf配置文件中加载了mod_rewrite.so模块 //在Apache里面去配置</p>
+<pre><code><span class="id">#LoadModule</span> rewrite_module modules/mod_rewrite<span class="class">.so</span>  <span class="comment">//把前面的#号去掉 </span>
+</code></pre>
+        
+          <p class="article-more-link">
+            <a href="/2015/06/03/Apache服务器访问方式去除Index.php/#more">阅读更多</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/luckymrwang/2015/06/03/Apache服务器访问方式去除Index.php/" data-id="ciff2z4660032dfs61aimstv8" class="article-share-link">分享到</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Apache/">Apache</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-Apache-Nginx-虚拟主机-VirtualHost-配置" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/">Apache&amp;Nginx 虚拟主机 VirtualHost 配置</a>
+    </h1>
+  
+
+        <div class="article-meta">
+          
+  <div class="article-date">
+    <i class="fa fa-calendar"></i>
+    <a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/">
+      <time datetime="2015-06-03T06:35:04.000Z" itemprop="datePublished">2015-06-03</time>
+    </a>
+  </div>
+
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概念">概念</h2><p><strong>虚拟主机 (Virtual Host)</strong> 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。</p>
+<p><em>重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将<Dicrectory />（这个是所有目录的默认配置)和<Direcotry /opt/lampp/htdocs>的权限，都是deny from all.作为默认。</em><br>
+        
+          <p class="article-more-link">
+            <a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/#more">阅读更多</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/luckymrwang/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/" data-id="ciff2z4680034dfs6nc99b4q2" class="article-share-link">分享到</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Apache/">Apache</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-Apache的Order-All-Deny详解" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/03/Apache的Order-All-Deny详解/">Apache的Order All,Deny详解</a>
+    </h1>
+  
+
+        <div class="article-meta">
+          
+  <div class="article-date">
+    <i class="fa fa-calendar"></i>
+    <a href="/2015/06/03/Apache的Order-All-Deny详解/">
+      <time datetime="2015-06-03T03:46:40.000Z" itemprop="datePublished">2015-06-03</time>
+    </a>
+  </div>
+
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Allow和Deny可以用于apache的conf文件或者.htaccess文件中（配合Directory, Location, Files等），用来控制目录和文件的访问授权。</p>
+<h2 id="Tips">Tips</h2><ul>
+<li><p>修改完配置后要保存好并重启Apache服务，配置才能生效</p>
+</li>
+<li><p>开头字母不分大小写</p>
+</li>
+<li><p>Allow、Deny语句不分先后顺序，谁先谁后不影响最终判断结果；但都会被判断到</p>
+        
+          <p class="article-more-link">
+            <a href="/2015/06/03/Apache的Order-All-Deny详解/#more">阅读更多</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/luckymrwang/2015/06/03/Apache的Order-All-Deny详解/" data-id="ciff2z463002zdfs6p3vud6xm" class="article-share-link">分享到</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Apache/">Apache</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-Codeigniter在执行大量查询语句时内存占用过大的问题" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/">Codeigniter在执行大量查询语句时内存占用过大的问题</a>
+    </h1>
+  
+
+        <div class="article-meta">
+          
+  <div class="article-date">
+    <i class="fa fa-calendar"></i>
+    <a href="/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/">
+      <time datetime="2015-05-28T07:18:51.000Z" itemprop="datePublished">2015-05-28</time>
+    </a>
+  </div>
+
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在跑审计前250名用户清单数据时，总是因为内存占用过大而异常退出。查看代码，也就是两个循环嵌套连接MySQL查询数据然后处理显示出来（不会存在一次取出数据超内存的情况），具体循环代码如下：
+        
+          <p class="article-more-link">
+            <a href="/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/#more">阅读更多</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/luckymrwang/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/" data-id="ciff2z45u002sdfs6ckpiys01" class="article-share-link">分享到</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CI/">CI</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+    
+      <article id="post-关系型数据库与NoSQL" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/05/27/关系型数据库与NoSQL/">关系型数据库与NoSQL</a>
+    </h1>
+  
+
+        <div class="article-meta">
+          
+  <div class="article-date">
+    <i class="fa fa-calendar"></i>
+    <a href="/2015/05/27/关系型数据库与NoSQL/">
+      <time datetime="2015-05-27T07:14:35.000Z" itemprop="datePublished">2015-05-27</time>
+    </a>
+  </div>
+
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>关系型数据库把所有的数据都通过行和列的二元表现形式表示出来。</p>
+<h2 id="关系型数据库的优势：">关系型数据库的优势：</h2><ul>
+<li><p>保持数据的一致性（事务处理）</p>
+</li>
+<li><p>由于以标准化为前提，数据更新的开销很小（相同的字段基本上都只有一处）</p>
+</li>
+<li><p>可以进行Join等复杂查询</p>
+        
+          <p class="article-more-link">
+            <a href="/2015/05/27/关系型数据库与NoSQL/#more">阅读更多</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/luckymrwang/2015/05/27/关系型数据库与NoSQL/" data-id="ciff2z441000tdfs68sgetiv1" class="article-share-link">分享到</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NoSQL/">NoSQL</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+    
+      <nav id="page-nav">
+        <a class="extend prev" rel="prev" href="/page/5/">&laquo; 上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/7/">下一页 &raquo;</a>
+      </nav>
+    </section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Apache/">Apache</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BI项目/">BI项目</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bash/">Bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI/">CI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataTables/">DataTables</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/">Kafka</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NoSQL/">NoSQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OSX/">OSX</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">9</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/">Redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSH/">SSH</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Zepto/">Zepto</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jQuery/">jQuery</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客搭建/">博客搭建</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/概念/">概念</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调试/">调试</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Apache/" style="font-size: 18px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 12px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 12px;">CI</a> <a href="/tags/DataTables/" style="font-size: 16px;">DataTables</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Kafka/" style="font-size: 16px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Mac/" style="font-size: 14px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 12px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 12px;">jQuery</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">13</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2000 - 2015 luckymrwang<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>
+    </div>
+  </div>
+</footer>
+    
+
+
+
+ <script src="//ajax.useso.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
