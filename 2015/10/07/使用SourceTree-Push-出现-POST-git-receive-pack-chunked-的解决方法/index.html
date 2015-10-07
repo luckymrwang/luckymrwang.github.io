@@ -3,17 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: Hexo | iBlog</title>
+  <title>使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法 | iBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="学习总结 思考感悟 知识管理">
-<meta property="og:type" content="website">
-<meta property="og:title" content="iBlog">
-<meta property="og:url" content="https://github.com/luckymrwang/tags/Hexo/index.html">
+  <meta name="description" content="问题描述在使用SourceTree上传资料的时候,遇到
+POST git-receive-pack (chunked)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法">
+<meta property="og:url" content="https://github.com/luckymrwang/2015/10/07/使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="学习总结 思考感悟 知识管理">
+<meta property="og:description" content="问题描述在使用SourceTree上传资料的时候,遇到
+POST git-receive-pack (chunked)">
+<meta property="og:updated_time" content="2015-10-07T04:47:49.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="iBlog">
-<meta name="twitter:description" content="学习总结 思考感悟 知识管理">
+<meta name="twitter:title" content="使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法">
+<meta name="twitter:description" content="问题描述在使用SourceTree上传资料的时候,遇到
+POST git-receive-pack (chunked)">
   
   
     <link rel="icon" href="favicon.png">
@@ -147,49 +151,76 @@ var _hmt = _hmt || [];
 </aside>
 
       
-      <section id="main">
-    <section class="archives-wrap">
-    <div class="archive-tag-wrap">
-      <span class="archive-tag">#Hexo</span>
-    </div>
-    <div class="archives">
+      <section id="main"><article id="post-使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-      <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
     
-    <div class="archive-article-thumbnail">
-      <a href="/2015/06/04/Mac-下搭建-Hexo/" class="thumbnail">
-  
-    <span class="thumbnail-image thumbnail-none"></span>
-  
-</a>
-    </div>
     
-    <header class="archive-article-header">
-      
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2015/06/04/Mac-下搭建-Hexo/">Mac 下搭建 Hexo</a>
+    <h1 class="article-title" itemprop="name">
+      使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法
     </h1>
   
 
-      
-        
-  <div class="archive-article-date">
+        <div class="article-meta">
+          
+  <div class="article-date">
     <i class="fa fa-calendar"></i>
-    <a href="/2015/06/04/Mac-下搭建-Hexo/">
-      <time datetime="2015-06-04T05:14:58.000Z" itemprop="datePublished">2015 6月 4</time>
+    <a href="/2015/10/07/使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法/">
+      <time datetime="2015-10-07T04:44:00.000Z" itemprop="datePublished">2015-10-07</time>
     </a>
   </div>
 
 
-      
-    </header>
-  </div>
-</article>
+          
+        </div>
+      </header>
     
-    </div></section>
-    </section>
+    <div class="article-entry" itemprop="articleBody">
+      
+                
+        <h3 id="问题描述">问题描述</h3><p>在使用SourceTree上传资料的时候,遇到</p>
+<pre><code>POST git-receive-pack <span class="list">(<span class="keyword">chunked</span>)</span> 
+</code></pre><a id="more"></a>
+<h3 id="问题调查">问题调查</h3><p>从 stackoverflow 看到这样一则</p>
+<pre><code>This is a bug in Git; when using HTTPS it will <span class="operator"><span class="keyword">use</span> chunked <span class="keyword">encoding</span> <span class="keyword">for</span> uploads above a certain <span class="keyword">size</span>. Those <span class="keyword">do</span> <span class="keyword">not</span> <span class="keyword">work</span>. 
+
+A trivial fix <span class="keyword">is</span> <span class="keyword">to</span> tell git <span class="keyword">to</span> <span class="keyword">not</span> <span class="keyword">chunk</span> <span class="keyword">until</span> <span class="keyword">some</span> ridiculously <span class="keyword">large</span> <span class="keyword">size</span> <span class="keyword">value</span>, such <span class="keyword">as</span>: 
+git config <span class="keyword">http</span>.postBuffer <span class="number">524288000</span> </span>
+</code></pre><h3 id="问题解决办法">问题解决办法</h3><p>在 git/config 加入</p>
+<pre><code>[http] 
+    postBuffer = <span class="number">524288000</span>  <span class="comment">//我的修改值是3393492</span>
+</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/luckymrwang/2015/10/07/使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法/" data-id="cifgbe1i0000w08s6xwg7o99h" class="article-share-link">分享到</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GitHub/">GitHub</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/10/06/Zepto-使用中的一些注意点/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Zepto 使用中的一些注意点</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+</section>
       
         <aside id="sidebar">
   
