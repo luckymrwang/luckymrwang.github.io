@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://github.com/luckymrwang/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/index.html">
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="在跑审计前250名用户清单数据时，总是因为内存占用过大而异常退出。查看代码，也就是两个循环嵌套连接MySQL查询数据然后处理显示出来（不会存在一次取出数据超内存的情况），具体循环代码如下：">
-<meta property="og:updated_time" content="2015-08-15T10:33:54.000Z">
+<meta property="og:updated_time" content="2015-10-08T06:35:11.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Codeigniter在执行大量查询语句时内存占用过大的问题">
 <meta name="twitter:description" content="在跑审计前250名用户清单数据时，总是因为内存占用过大而异常退出。查看代码，也就是两个循环嵌套连接MySQL查询数据然后处理显示出来（不会存在一次取出数据超内存的情况），具体循环代码如下：">
@@ -262,12 +262,12 @@ mem<span class="number">7091896</span>
 mem<span class="number">5971528</span>
 mem<span class="number">7916000</span>
 </code></pre><p>之前的内存递增已解决。</p>
-<p>当你执行大数据时，记得<code>$save_queries = FALSE;</code></p>
+<p>当你执行大数据时，记得<code>$save_queries = FALSE;</code><br>或在model中加入 $this-&gt;db-&gt;save_queries = FALSE;</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/luckymrwang/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/" data-id="cifgbvfti002uvss66cw249v8" class="article-share-link">分享到</a>
+      <a data-url="https://github.com/luckymrwang/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/" data-id="cifhuo1rq002uowqoaj601ke5" class="article-share-link">分享到</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CI/">CI</a></li></ul>
