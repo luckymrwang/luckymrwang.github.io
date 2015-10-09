@@ -17,7 +17,7 @@ DH：diffie-hel">
 RSA：算法实现简单，诞生于 1977 年，历史悠久，经过了长时间的破解测试，安全性高。缺点就是需要比较大的素数（目前常用的是 2048 位）来保证安全强度，很消耗 CPU 运算资源。RSA 是目前唯一一个既能用于密钥交换又能用于证书签名的算法。
 
 DH：diffie-hel">
-<meta property="og:updated_time" content="2015-10-09T07:25:42.000Z">
+<meta property="og:updated_time" content="2015-10-09T07:28:40.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Nginx SSL 性能优化">
 <meta name="twitter:description" content="影响HTTPS速度的主要原因：密钥交换算法常见的密钥交换算法有 RSA，ECDHE，DH，DHE 等算法。它们的特性如下：
@@ -210,10 +210,10 @@ ssl_session_timeout <span class="number">10</span>m;
 </code></pre><p>或者</p>
 <pre><code>ssl_ciphers <span class="constant">ECDHE</span>-<span class="constant">ECDSA</span>-<span class="constant">AES256</span>-<span class="constant">GCM</span>-<span class="constant">SHA384</span><span class="symbol">:ECDHE-RSA-AES256-GCM-SHA384</span><span class="symbol">:ECDHE-ECDSA-AES256-SHA384</span><span class="symbol">:ECDHE-RSA-AES256-SHA384</span><span class="symbol">:ECDHE-ECDSA-AES128-GCM-SHA256</span><span class="symbol">:ECDHE-RSA-AES128-GCM-SHA256</span><span class="symbol">:ECDHE-ECDSA-AES128-SHA256</span><span class="symbol">:ECDHE-RSA-AES128-SHA256</span><span class="symbol">:ECDHE-ECDSA-RC4-SHA</span><span class="symbol">:</span>!<span class="constant">ECDHE</span>-<span class="constant">RSA</span>-<span class="constant">RC4</span>-<span class="constant">SHA</span><span class="symbol">:ECDH-ECDSA-RC4-SHA</span><span class="symbol">:ECDH-RSA-RC4-SHA</span><span class="symbol">:ECDHE-RSA-AES256-SHA</span><span class="symbol">:</span>!<span class="constant">RC4</span>-<span class="constant">SHA</span><span class="symbol">:HIGH</span><span class="symbol">:</span>!<span class="symbol">aNULL:</span>!<span class="symbol">eNULL:</span>!<span class="constant">LOW</span><span class="symbol">:</span>!<span class="number">3</span><span class="constant">DES:</span>!<span class="constant">MD5</span><span class="symbol">:</span>!<span class="constant">EXP</span><span class="symbol">:</span>!<span class="constant">CBC</span><span class="symbol">:</span>!<span class="constant">EDH</span><span class="symbol">:</span>!<span class="symbol">kEDH:</span>!<span class="constant">PSK</span><span class="symbol">:</span>!<span class="constant">SRP</span><span class="symbol">:</span>!kECDH;
 </code></pre><p><em>（禁用了RC4，sha1，MD5等算法）</em></p>
-<h4 id="辅助加速：">辅助加速：</h4><h5 id="1-_启用SPDY">1. 启用SPDY</h5><p>SPDY 是 Google 推出的优化 HTTP 传输效率的协议（<a href="https://www.chromium.org/spdy），它基本上沿用了" target="_blank" rel="external">https://www.chromium.org/spdy），它基本上沿用了</a> HTTP 协议的语义, 但是通过使用帧控制实现了多个特性，显著提升了 HTTP 协议的传输效率。<br>SPDY 最大的特性就是多路复用，能将多个 HTTP 请求在同一个连接上一起发出去，不像目前的 HTTP 协议一样，只能串行地逐个发送请求。<br>可以 在编译Nginx带上参数 –with-http_spdy_module 支持SPDY协议，然后可在配置中启用： </p>
+<h4 id="辅助加速：">辅助加速：</h4><h5 id="1-_启用SPDY">1. 启用SPDY</h5><p>SPDY 是 Google 推出的优化 HTTP 传输效率的协议（<a href="https://www.chromium.org/spdy）" target="_blank" rel="external">https://www.chromium.org/spdy）</a>, 它基本上沿用了 HTTP 协议的语义, 但是通过使用帧控制实现了多个特性，显著提升了 HTTP 协议的传输效率。<br>SPDY 最大的特性就是多路复用，能将多个 HTTP 请求在同一个连接上一起发出去，不像目前的 HTTP 协议一样，只能串行地逐个发送请求。<br>可以 在编译Nginx带上参数 –with-http_spdy_module 支持SPDY协议，然后可在配置中启用： </p>
 <pre><code><span class="keyword"><span class="common">listen</span></span> 443 ssl spdy;
 </code></pre><p><em>检测是否使用SPDY的网址（<a href="https://spdycheck.org/）" target="_blank" rel="external">https://spdycheck.org/）</a></em></p>
-<h5 id="2-_HSTS">2. HSTS</h5><p>HSTS(HTTP Strict Transport Security)。服务端返回一个 HSTS 的 http header，浏览器获取到 HSTS 头部之后，在一段时间内，不管用户输入 www.baidu.com 还是<a href="http://www.baidu.com" target="_blank" rel="external">http://www.baidu.com</a> ，都会默认将请求内部跳转成<a href="https://www.baidu.com；" target="_blank" rel="external">https://www.baidu.com；</a><br>将下述行添加到你的 HTTPS 配置的 server 块中：</p>
+<h5 id="2-_HSTS">2. HSTS</h5><p>HSTS(HTTP Strict Transport Security)。服务端返回一个 HSTS 的 http header，浏览器获取到 HSTS 头部之后，在一段时间内，不管用户输入 www.baidu.com 还是 <a href="http://www.baidu.com" target="_blank" rel="external">http://www.baidu.com</a> ，都会默认将请求内部跳转成 <a href="https://www.baidu.com；" target="_blank" rel="external">https://www.baidu.com；</a><br>将下述行添加到你的 HTTPS 配置的 server 块中：</p>
 <pre><code><span class="keyword">add_header </span><span class="keyword">Strict-Transport-Security </span><span class="string">"max-age=31536000"</span><span class="comment">;</span>
 </code></pre><h5 id="3-_Session_cache">3. Session cache</h5><p>Session cache 的原理是使用 client hello 中的 session id 查询服务端的 session cache, 如果服务端有对应的缓存，则直接使用已有的 session 信息提前完成握手，称为简化握手。</p>
 <p>Session cache 有两个缺点：</p>
@@ -278,7 +278,7 @@ ocsp -noverify  -issuer <span class="number">1</span>_root_bundle<span class="cl
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://github.com/luckymrwang/2015/10/09/Nginx-SSL-性能优化/" data-id="cifjbwy450022y5qosofbsgbm" class="article-share-link">分享到</a>
+      <a data-url="https://github.com/luckymrwang/2015/10/09/Nginx-SSL-性能优化/" data-id="cifjc0hu90022ypqof6b7oe9b" class="article-share-link">分享到</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
