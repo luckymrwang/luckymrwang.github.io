@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>set_error_hander()重要用法 | iBlog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="set_error_handler这个函数的作用是为了防止错误路径泄露何为错误路径泄露？
+我们写程序，难免会有问题，而PHP遇到错误时，就会给出出错脚本的位置、行数和原因
+有很多人说，这并没有什么大不了。确实，在调试程序阶段，这确实是没啥的，而且我认为给出错误路径是必要的。
+但泄露了实际路径的后果是不堪设想的，对于某些入侵者，这个信息可是非常重要，而事实上现在有很多的服务器都存在这个问题。
+有些网">
+<meta property="og:type" content="article">
+<meta property="og:title" content="set_error_hander()重要用法">
+<meta property="og:url" content="https://github.com/luckymrwang/2015/10/14/set-error-hander-重要用法/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="set_error_handler这个函数的作用是为了防止错误路径泄露何为错误路径泄露？
+我们写程序，难免会有问题，而PHP遇到错误时，就会给出出错脚本的位置、行数和原因
+有很多人说，这并没有什么大不了。确实，在调试程序阶段，这确实是没啥的，而且我认为给出错误路径是必要的。
+但泄露了实际路径的后果是不堪设想的，对于某些入侵者，这个信息可是非常重要，而事实上现在有很多的服务器都存在这个问题。
+有些网">
+<meta property="og:updated_time" content="2015-10-14T11:51:58.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="set_error_hander()重要用法">
+<meta name="twitter:description" content="set_error_handler这个函数的作用是为了防止错误路径泄露何为错误路径泄露？
+我们写程序，难免会有问题，而PHP遇到错误时，就会给出出错脚本的位置、行数和原因
+有很多人说，这并没有什么大不了。确实，在调试程序阶段，这确实是没啥的，而且我认为给出错误路径是必要的。
+但泄露了实际路径的后果是不堪设想的，对于某些入侵者，这个信息可是非常重要，而事实上现在有很多的服务器都存在这个问题。
+有些网">
+  
+  
+    <link rel="icon" href="favicon.png">
+  
+  
+ <link href='//fonts.useso.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+ <link href="//fonts.useso.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+
+
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" type="text/css">
+  
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-68490584-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+  
+
+  
+<!-- Baidu Analytics -->
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?ec2a44ace31b8d8b179065de4a6565cd";
+  var s = document.getElementsByTagName("script")[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<!-- End Baidu Analytics -->
+
+
+  
+</head>
+<body>
+  <div id="container">
+    <header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="/" id="logo"><i class="logo" style="background-image: url(/css/images/logo.png)"></i><span class="site-title">iBlog</span></a>
+      <nav id="main-nav">
+        
+          <a class="main-nav-link" href="/.">主页</a>
+        
+          <a class="main-nav-link" href="/archives">文章列表</a>
+        
+          <a class="main-nav-link" href="/about">关于</a>
+        
+      </nav>
+      
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="/css/images/author.jpg"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+      
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit"> </button><input type="hidden" name="sitesearch" value="https://github.com/luckymrwang"></form>
+      </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tr>
+        
+          <td><a class="main-nav-link" href="/.">主页</a></td>
+        
+          <td><a class="main-nav-link" href="/archives">文章列表</a></td>
+        
+          <td><a class="main-nav-link" href="/about">关于</a></td>
+        
+        <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><input type="hidden" name="sitesearch" value="https://github.com/luckymrwang"></form>
+        </td>
+      </tr>
+    </table>
+  </div>
+</header>
+
+    <div class="outer">
+      
+        <aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      <img id="avatar" src="/css/images/author.jpg">
+      <h2 id="name">luckymrwang</h2>
+      <h3 id="title">Web Developer &amp; Designer</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>BeiJing, China</span>
+      <a id="follow" href="https://github.com/luckymrwang">关注我</a>
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        52
+        <span>文章</span>
+      </div>
+      <div class="article-info-block">
+        25
+        <span>标签</span>
+      </div>
+    </div>
+    
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+          
+          <td><a href="https://github.com/luckymrwang" target="_blank" title="github"><i class="fa fa-github"></i></a></td>
+          
+          <td><a href="http://weibo.com/iuckymrwang" target="_blank" title="weibo"><i class="fa fa-weibo"></i></a></td>
+          
+          <td><a href="javascript:void(0);" target="_blank" title="twitter"><i class="fa fa-twitter"></i></a></td>
+          
+          <td><a href="javascript:void(0);" target="_blank" title="facebook"><i class="fa fa-facebook"></i></a></td>
+          
+        </tr>
+      </table>
+    </div>
+    
+    
+  </div>
+</aside>
+
+      
+      <section id="main"><article id="post-set-error-hander-重要用法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      set_error_hander()重要用法
+    </h1>
+  
+
+        <div class="article-meta">
+          
+  <div class="article-date">
+    <i class="fa fa-calendar"></i>
+    <a href="/2015/10/14/set-error-hander-重要用法/">
+      <time datetime="2015-10-14T11:45:12.000Z" itemprop="datePublished">2015-10-14</time>
+    </a>
+  </div>
+
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+                
+                    <div id="toc" class="toc-article">
+                    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#set_error_handler这个函数的作用是为了防止错误路径泄露"><span class="toc-number">1.</span> <span class="toc-text">set_error_handler这个函数的作用是为了防止错误路径泄露</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#set_error_handler的使用方法如下："><span class="toc-number">2.</span> <span class="toc-text">set_error_handler的使用方法如下：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#示例"><span class="toc-number">3.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+  </div>
+
+        <h4 id="set_error_handler这个函数的作用是为了防止错误路径泄露">set_error_handler这个函数的作用是为了防止错误路径泄露</h4><p>何为错误路径泄露？</p>
+<p>我们写程序，难免会有问题，而PHP遇到错误时，就会给出出错脚本的位置、行数和原因</p>
+<p>有很多人说，这并没有什么大不了。确实，在调试程序阶段，这确实是没啥的，而且我认为给出错误路径是必要的。</p>
+<p>但泄露了实际路径的后果是不堪设想的，对于某些入侵者，这个信息可是非常重要，而事实上现在有很多的服务器都存在这个问题。</p>
+<p>有些网管干脆把PHP配置文件中的display_errors设置为Off来解决（貌似我们就是这样做的），但本人认为这个方法过于消极。</p>
+<a id="more"></a>
+<p>有些时候，我们的确需要PHP返回错误的信息以便调试。而且在出错时也可能需要给用户一个交待，甚至导航到另一页面。</p>
+<p>那么，有什么解决办法？</p>
+<p>PHP从4.1.0开始提供了自定义错误处理句柄的功能函数set_error_handler()，但很少数脚本编写者知道。</p>
+<h4 id="set_error_handler的使用方法如下：">set_error_handler的使用方法如下：</h4><pre><code><span class="built_in">string</span> set_error_handler ( callback error_handler [, <span class="built_in">int</span> error_types]) 
+</code></pre><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//admin为管理员的身份判定，true为管理员。</span></span><br><span class="line"><span class="comment">//自定义的错误处理函数一定要有这４个输入变量$errno,$errstr,$errfile,$errline，否则无效。</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">my_error_handler</span><span class="params">(<span class="variable">$errno</span>,<span class="variable">$errstr</span>,<span class="variable">$errfile</span>,<span class="variable">$errline</span>)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="comment">//如果不是管理员就过滤实际路径</span></span><br><span class="line">    <span class="keyword">if</span>(!admin)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$errfile</span>=str_replace(getcwd(),<span class="string">""</span>,<span class="variable">$errfile</span>);</span><br><span class="line">        <span class="variable">$errstr</span>=str_replace(getcwd(),<span class="string">""</span>,<span class="variable">$errstr</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">switch</span>(<span class="variable">$errno</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">case</span> E_ERROR:</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"ERROR: [ID $errno] $errstr (Line: $errline of $errfile) \n"</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"程序已经停止运行，请联系管理员。"</span>;</span><br><span class="line">        <span class="comment">//遇到Error级错误时退出脚本</span></span><br><span class="line">        <span class="keyword">exit</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">case</span> E_WARNING:</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"WARNING: [ID $errno] $errstr (Line: $errline of $errfile) \n"</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">        <span class="comment">//不显示Notice级的错误</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就自定义了一个错误处理函数，那么怎么把错误的处理交给这个自定义函数呢？</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 应用到类</span></span><br><span class="line">set_error_handler(<span class="keyword">array</span>(&amp;<span class="variable">$this</span>,<span class="string">"appError"</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">//示例的做法</span></span><br><span class="line">set_error_handler(<span class="string">"my_error_handler"</span>);</span><br></pre></td></tr></table></figure>
+<p>需要注意的地方：</p>
+<ul>
+<li><p>E_ERROR、E_PARSE、E_CORE_ERROR、E_CORE_WARNING、 E_COMPILE_ERROR、E_COMPILE_WARNING是不会被这个句柄处理的，也就是会用最原始的方式显示出来。不过出现这些错误都是编 译或PHP内核出错，在通常情况下不会发生。</p>
+</li>
+<li><p>使用set_error_handler()后，error_reporting ()将会失效。也就是所有的错误（除上述的错误）都会交给自定义的函数处理。</p>
+</li>
+</ul>
+<h4 id="示例">示例</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//先定义一个函数，也可以定义在其他的文件中，再用require()调用</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myErrorHandler</span><span class="params">(<span class="variable">$errno</span>, <span class="variable">$errstr</span>, <span class="variable">$errfile</span>, <span class="variable">$errline</span>)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">　　　　　<span class="comment">//为了安全起见，不暴露出真实物理路径，下面两行过滤实际路径</span></span><br><span class="line">    <span class="variable">$errfile</span>=str_replace(getcwd(),<span class="string">""</span>,<span class="variable">$errfile</span>);</span><br><span class="line">    <span class="variable">$errstr</span>=str_replace(getcwd(),<span class="string">""</span>,<span class="variable">$errstr</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span> (<span class="variable">$errno</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> E_USER_ERROR:</span><br><span class="line"></span><br><span class="line">     <span class="keyword">echo</span> <span class="string">"&lt;b&gt;My ERROR&lt;/b&gt; [$errno] $errstr&lt;br /&gt;\n"</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"  Fatal error on line $errline in file $errfile"</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">", PHP "</span> . PHP_VERSION . <span class="string">" ("</span> . PHP_OS . <span class="string">")&lt;br /&gt;\n"</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Aborting...&lt;br /&gt;\n"</span>;</span><br><span class="line">        <span class="keyword">exit</span>(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> E_USER_WARNING:</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"&lt;b&gt;My WARNING&lt;/b&gt; [$errno] $errstr&lt;br /&gt;\n"</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">case</span> E_USER_NOTICE:</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"&lt;b&gt;My NOTICE&lt;/b&gt; [$errno] $errstr&lt;br /&gt;\n"</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"Unknown error type: [$errno] $errstr&lt;br /&gt;\n"</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Don't execute PHP internal error handler */</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//下面开始连接MYSQL服务器，我们故意指定MYSQL端口为3333,实际为3306。</span></span><br><span class="line"><span class="variable">$link_id</span>=@mysql_pconnect(<span class="string">"localhost:3333"</span>,<span class="string">"root"</span>,<span class="string">"password"</span>);</span><br><span class="line">set_error_handler(myErrorHandler);</span><br><span class="line"><span class="keyword">if</span> (!<span class="variable">$link_id</span>) &#123;</span><br><span class="line">    trigger_error(<span class="string">"出错了"</span>, E_USER_ERROR);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="总结">总结</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallbackClass</span> </span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">function</span> <span class="title">CallbackFunction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="comment">// refers to $this</span></span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">function</span> <span class="title">StaticFunction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="comment">// doesn't refer to $this</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">NonClassFunction</span><span class="params">(<span class="variable">$errno</span>, <span class="variable">$errstr</span>, <span class="variable">$errfile</span>, <span class="variable">$errline</span>)</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 三种方法如下:</span></span><br><span class="line"></span><br><span class="line"><span class="number">1</span>: set_error_handler(<span class="string">'NonClassFunction'</span>);  <span class="comment">// 直接转到一个普通的函数 NonClassFunction</span></span><br><span class="line"></span><br><span class="line"><span class="number">2</span>: set_error_handler(<span class="keyword">array</span>(<span class="string">'CallbackClass'</span>, <span class="string">'StaticFunction'</span>)); <span class="comment">// 转到 CallbackClass 类下的静方法 StaticFunction</span></span><br><span class="line"></span><br><span class="line"><span class="number">3</span>: <span class="variable">$o</span> =&amp; <span class="keyword">new</span> CallbackClass();</span><br><span class="line">    set_error_handler(<span class="keyword">array</span>(<span class="variable">$o</span>, <span class="string">'CallbackFunction'</span>));  <span class="comment">// 转到类的构造函数，其实本质上跟下面的第四条一样。</span></span><br><span class="line"></span><br><span class="line"><span class="number">4.</span> <span class="variable">$o</span> = <span class="keyword">new</span> CallbackClass();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// The following may also prove useful:</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallbackClass</span> </span>&#123;</span><br><span class="line">   <span class="function"><span class="keyword">function</span> <span class="title">CallbackClass</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       set_error_handler(<span class="keyword">array</span>(&amp;<span class="variable">$this</span>, <span class="string">'CallbackFunction'</span>)); <span class="comment">// the &amp; is important</span></span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">   <span class="function"><span class="keyword">function</span> <span class="title">CallbackFunction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">       <span class="comment">// refers to $this</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://github.com/luckymrwang/2015/10/14/set-error-hander-重要用法/" data-id="cifqqmeoz00171pqod5vhem97" class="article-share-link">分享到</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/10/13/PHP错误异常处理详解/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">PHP错误异常处理详解</div>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+
+</section>
+      
+        <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Apache/">Apache</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/BI项目/">BI项目</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Bash/">Bash</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CI/">CI</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cookie/">Cookie</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DataTables/">DataTables</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GitHub/">GitHub</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Kafka/">Kafka</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/">Linux</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Mac/">Mac</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/">MySQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Nginx/">Nginx</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NoSQL/">NoSQL</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OSX/">OSX</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/">PHP</a><span class="tag-list-count">11</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/">Redis</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SSH/">SSH</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Session/">Session</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Zepto/">Zepto</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jQuery/">jQuery</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/博客搭建/">博客搭建</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/架构/">架构</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/概念/">概念</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/调试/">调试</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Apache/" style="font-size: 18px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 12px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 12px;">CI</a> <a href="/tags/Cookie/" style="font-size: 10px;">Cookie</a> <a href="/tags/DataTables/" style="font-size: 16px;">DataTables</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Kafka/" style="font-size: 16px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Mac/" style="font-size: 14px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 14px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Session/" style="font-size: 10px;">Session</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/10/">十月 2015</a><span class="archive-list-count">8</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/09/">九月 2015</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/08/">八月 2015</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/07/">七月 2015</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">六月 2015</a><span class="archive-list-count">15</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">五月 2015</a><span class="archive-list-count">13</span></li></ul>
+    </div>
+  </div>
+
+  
+  <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2000 - 2015 luckymrwang
+    </div>
+  </div>
+</footer>
+    
+
+
+
+ <script src="//ajax.useso.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
