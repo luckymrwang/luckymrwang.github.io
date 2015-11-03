@@ -163,6 +163,73 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-Kafka开源软件配置及启动" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/06/05/Kafka开源软件配置及启动/" class="article-date">
+  	<time datetime="2015-06-05T13:25:55.000Z" itemprop="datePublished">2015-06-05</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/05/Kafka开源软件配置及启动/">Kafka开源软件配置及启动</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><em>以下安装均在root权限下操作</em></p>
+<pre><code><span class="keyword">shell</span>&gt; sudo <span class="keyword">su</span> -
+</code></pre><ul>
+<li><p>安装kafka开源软件</p>
+<pre><code>shell&gt; mkdir -p /data/plattech
+shell&gt; cd /data/plattech
+shell&gt; wget http:<span class="comment">//mirrors.cnnic.cn/apache/kafka/0.8.1.1/kafka_2.9.2-0.8.1.1.tgz</span>
+shell&gt; tar -xzvf kafka_2<span class="number">.9</span><span class="number">.2</span>-<span class="number">0.8</span><span class="number">.1</span><span class="number">.1</span>.tgz
+shell&gt; cd kafka_2<span class="number">.9</span><span class="number">.2</span>-<span class="number">0.8</span><span class="number">.1</span><span class="number">.1</span>
+</code></pre>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kafka/">Kafka</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/06/05/Kafka开源软件配置及启动/#more">阅读更多 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
     <article id="post-Kafka机器部署总览" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -1005,65 +1072,6 @@ folders=(everyone snapshot top total_100 total_250)
       
         <p class="article-more-link">
           <a  href="/2015/05/27/关系型数据库与NoSQL/#more">阅读更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-PHP程序的执行流程" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/05/27/PHP程序的执行流程/" class="article-date">
-  	<time datetime="2015-05-27T06:37:15.000Z" itemprop="datePublished">2015-05-27</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/05/27/PHP程序的执行流程/">PHP程序的执行流程</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><em>为了以后能开发PHP扩展，就一定要了解PHP的执行顺序。这篇文章就是为C开发PHP扩展做铺垫。</em></p>
-<p>前言：Web环境我们假设为Apache。在编译PHP的时候,为了能够让Apache支持PHP，我们会生成一个mod_php5.so的模块。Apache加载这个模块，在url访问.php文件的时候，就会转给mod_php5.so模块来处理。这个就是我们常说的SAPI。英文名字是：Server Application Programming Interface。SAPI其实是一个统称，其下有 ISAPI，CLI SAPI，CGI等。有了它，就可以很容易的跟其他东西交互，比如APACHE,IIS,CGI等。<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/05/27/PHP程序的执行流程/#more">阅读更多 >></a>
         </p>
       
       <div class="clearfix"></div>
