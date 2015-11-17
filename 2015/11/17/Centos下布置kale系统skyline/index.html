@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Centos下布置kale系统skyline | iBlog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Skyline 的页面上已经介绍了安装步骤，下面我记录一下在Centos上安装出现的问题已经相应的解决办法
+Centos上默认安装了python2.6以及对应的pip，如果想升级点击这里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos下布置kale系统skyline">
+<meta property="og:url" content="https://github.com/luckymrwang/2015/11/17/Centos下布置kale系统skyline/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Skyline 的页面上已经介绍了安装步骤，下面我记录一下在Centos上安装出现的问题已经相应的解决办法
+Centos上默认安装了python2.6以及对应的pip，如果想升级点击这里">
+<meta property="og:updated_time" content="2015-11-17T05:24:41.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Centos下布置kale系统skyline">
+<meta name="twitter:description" content="Skyline 的页面上已经介绍了安装步骤，下面我记录一下在Centos上安装出现的问题已经相应的解决办法
+Centos上默认安装了python2.6以及对应的pip，如果想升级点击这里">
+  
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/img/author.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">luckymrwang</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">Write down what I think.</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/luckymrwang" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/iuckymrwang" title="weibo">weibo</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/Apache/" style="font-size: 18px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 12px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 12px;">CI</a> <a href="/tags/Cookie/" style="font-size: 10px;">Cookie</a> <a href="/tags/DataTables/" style="font-size: 16px;">DataTables</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Kafka/" style="font-size: 16px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Mac/" style="font-size: 14px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 12px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 16px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Session/" style="font-size: 10px;">Session</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/监控/" style="font-size: 10px;">监控</a> <a href="/tags/缓存/" style="font-size: 12px;">缓存</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+				
+				<section class="switch-part switch-part3">
+				
+					<div id="js-aboutme">一天一点进步...</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">luckymrwang</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="/img/author.jpg" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">luckymrwang</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">Write down what I think.</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/luckymrwang" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/iuckymrwang" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-Centos下布置kale系统skyline" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/11/17/Centos下布置kale系统skyline/" class="article-date">
+  	<time datetime="2015-11-17T04:52:16.000Z" itemprop="datePublished">2015-11-17</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Centos下布置kale系统skyline
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/监控/">监控</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://github.com/etsy/skyline">Skyline</a> 的页面上已经介绍了安装步骤，下面我记录一下在Centos上安装出现的问题已经相应的解决办法</p>
+<p>Centos上默认安装了python2.6以及对应的pip，如果想升级<a href="http://ruiaylin.github.io/2014/12/12/python%20update/" target="_blank" rel="external">点击这里</a></p>
+<a id="more"></a>
+<p>我是以默认的python2.6安装的，在第2步执行如下：</p>
+<pre><code>pip <span class="keyword">install</span> scipy
+</code></pre><p>会提示这样的错误</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#9;Collecting scipy&#10;  Using cached scipy-0.16.1.tar.gz&#10;Installing collected packages: scipy&#10;  Running setup.py install for scipy&#10;    Complete output from command /usr/bin/python -c &#34;import setuptools, tokenize;__file__=&#39;/tmp/pip-build-7YhC6v/scipy/setup.py&#39;;exec(compile(getattr(tokenize, &#39;open&#39;, open)(__file__).read().replace(&#39;\r\n&#39;, &#39;\n&#39;), __file__, &#39;exec&#39;))&#34; install --record /tmp/pip-TtkOaR-record/install-record.txt --single-version-externally-managed --compile:&#10;    lapack_opt_info:&#10;    openblas_lapack_info:&#10;      libraries openblas not found in [&#39;/usr/local/lib64&#39;, &#39;/usr/local/lib&#39;, &#39;/usr/lib64&#39;, &#39;/usr/lib&#39;]&#10;      NOT AVAILABLE&#10;&#10;    lapack_mkl_info:&#10;    mkl_info:&#10;      libraries mkl,vml,guide not found in [&#39;/usr/local/lib64&#39;, &#39;/usr/local/lib&#39;, &#39;/usr/lib64&#39;, &#39;/usr/lib&#39;]&#10;      NOT AVAILABLE&#10;&#10;      NOT AVAILABLE&#10;&#10;    atlas_3_10_threads_info:&#10;    Setting PTATLAS=ATLAS&#10;      libraries tatlas,tatlas not found in /usr/local/lib64&#10;      libraries lapack_atlas not found in /usr/local/lib64&#10;      libraries tatlas,tatlas not found in /usr/local/lib&#10;      libraries lapack_atlas not found in /usr/local/lib&#10;      libraries tatlas,tatlas not found in /usr/lib64/atlas&#10;      libraries lapack_atlas not found in /usr/lib64/atlas&#10;      libraries tatlas,tatlas not found in /usr/lib64/sse2&#10;      libraries lapack_atlas not found in /usr/lib64/sse2&#10;      libraries tatlas,tatlas not found in /usr/lib64&#10;      libraries lapack_atlas not found in /usr/lib64&#10;      libraries tatlas,tatlas not found in /usr/lib&#10;      libraries lapack_atlas not found in /usr/lib&#10;    &#60;class &#39;numpy.distutils.system_info.atlas_3_10_threads_info&#39;&#62;&#10;      NOT AVAILABLE&#10;&#10;    atlas_3_10_info:&#10;      libraries satlas,satlas not found in /usr/local/lib64&#10;      libraries lapack_atlas not found in /usr/local/lib64&#10;      libraries satlas,satlas not found in /usr/local/lib&#10;      libraries lapack_atlas not found in /usr/local/lib&#10;      libraries satlas,satlas not found in /usr/lib64/atlas&#10;      libraries lapack_atlas not found in /usr/lib64/atlas&#10;      libraries satlas,satlas not found in /usr/lib64/sse2&#10;      libraries lapack_atlas not found in /usr/lib64/sse2&#10;      libraries satlas,satlas not found in /usr/lib64&#10;      libraries lapack_atlas not found in /usr/lib64&#10;      libraries satlas,satlas not found in /usr/lib&#10;      libraries lapack_atlas not found in /usr/lib&#10;    &#60;class &#39;numpy.distutils.system_info.atlas_3_10_info&#39;&#62;&#10;      NOT AVAILABLE&#10;&#10;    atlas_threads_info:&#10;    Setting PTATLAS=ATLAS&#10;      libraries ptf77blas,ptcblas,atlas not found in /usr/local/lib64&#10;      libraries lapack_atlas not found in /usr/local/lib64&#10;      libraries ptf77blas,ptcblas,atlas not found in /usr/local/lib&#10;      libraries lapack_atlas not found in /usr/local/lib&#10;      libraries ptf77blas,ptcblas,atlas not found in /usr/lib64/atlas&#10;      libraries lapack_atlas not found in /usr/lib64/atlas&#10;      libraries ptf77blas,ptcblas,atlas not found in /usr/lib64/sse2&#10;      libraries lapack_atlas not found in /usr/lib64/sse2&#10;      libraries ptf77blas,ptcblas,atlas not found in /usr/lib64&#10;      libraries lapack_atlas not found in /usr/lib64&#10;      libraries ptf77blas,ptcblas,atlas not found in /usr/lib&#10;      libraries lapack_atlas not found in /usr/lib&#10;    &#60;class &#39;numpy.distutils.system_info.atlas_threads_info&#39;&#62;&#10;      NOT AVAILABLE&#10;&#10;    atlas_info:&#10;      libraries f77blas,cblas,atlas not found in /usr/local/lib64&#10;      libraries lapack_atlas not found in /usr/local/lib64&#10;      libraries f77blas,cblas,atlas not found in /usr/local/lib&#10;      libraries lapack_atlas not found in /usr/local/lib&#10;      libraries f77blas,cblas,atlas not found in /usr/lib64/atlas&#10;      libraries lapack_atlas not found in /usr/lib64/atlas&#10;      libraries f77blas,cblas,atlas not found in /usr/lib64/sse2&#10;      libraries lapack_atlas not found in /usr/lib64/sse2&#10;      libraries f77blas,cblas,atlas not found in /usr/lib64&#10;      libraries lapack_atlas not found in /usr/lib64&#10;      libraries f77blas,cblas,atlas not found in /usr/lib&#10;      libraries lapack_atlas not found in /usr/lib&#10;    &#60;class &#39;numpy.distutils.system_info.atlas_info&#39;&#62;&#10;      NOT AVAILABLE&#10;&#10;    /usr/lib64/python2.6/site-packages/numpy/distutils/system_info.py:1552: UserWarning:&#10;        Atlas (http://math-atlas.sourceforge.net/) libraries not found.&#10;        Directories to search for the libraries can be specified in the&#10;        numpy/distutils/site.cfg file (section [atlas]) or by setting&#10;        the ATLAS environment variable.&#10;      warnings.warn(AtlasNotFoundError.__doc__)&#10;    lapack_info:&#10;      libraries lapack not found in [&#39;/usr/local/lib64&#39;, &#39;/usr/local/lib&#39;, &#39;/usr/lib64&#39;, &#39;/usr/lib&#39;]&#10;      NOT AVAILABLE&#10;&#10;    /usr/lib64/python2.6/site-packages/numpy/distutils/system_info.py:1563: UserWarning:&#10;        Lapack (http://www.netlib.org/lapack/) libraries not found.&#10;        Directories to search for the libraries can be specified in the&#10;        numpy/distutils/site.cfg file (section [lapack]) or by setting&#10;        the LAPACK environment variable.&#10;      warnings.warn(LapackNotFoundError.__doc__)&#10;    lapack_src_info:&#10;      NOT AVAILABLE&#10;&#10;    /usr/lib64/python2.6/site-packages/numpy/distutils/system_info.py:1566: UserWarning:&#10;        Lapack (http://www.netlib.org/lapack/) sources not found.&#10;        Directories to search for the sources can be specified in the&#10;        numpy/distutils/site.cfg file (section [lapack_src]) or by setting&#10;        the LAPACK_SRC environment variable.&#10;      warnings.warn(LapackSrcNotFoundError.__doc__)&#10;      NOT AVAILABLE&#10;&#10;    Running from scipy source directory.&#10;    Traceback (most recent call last):&#10;      File &#34;&#60;string&#62;&#34;, line 1, in &#60;module&#62;&#10;      File &#34;/tmp/pip-build-7YhC6v/scipy/setup.py&#34;, line 253, in &#60;module&#62;&#10;        setup_package()&#10;      File &#34;/tmp/pip-build-7YhC6v/scipy/setup.py&#34;, line 250, in setup_package&#10;        setup(**metadata)&#10;      File &#34;/usr/lib64/python2.6/site-packages/numpy/distutils/core.py&#34;, line 135, in setup&#10;        config = configuration()&#10;      File &#34;/tmp/pip-build-7YhC6v/scipy/setup.py&#34;, line 175, in configuration&#10;        config.add_subpackage(&#39;scipy&#39;)&#10;      File &#34;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&#34;, line 1001, in add_subpackage&#10;        caller_level = 2)&#10;      File &#34;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&#34;, line 970, in get_subpackage&#10;        caller_level = caller_level + 1)&#10;      File &#34;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&#34;, line 907, in _get_configuration_from_setup_py&#10;        config = setup_module.configuration(*args)&#10;      File &#34;scipy/setup.py&#34;, line 15, in configuration&#10;        config.add_subpackage(&#39;linalg&#39;)&#10;      File &#34;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&#34;, line 1001, in add_subpackage&#10;        caller_level = 2)&#10;      File &#34;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&#34;, line 970, in get_subpackage&#10;        caller_level = caller_level + 1)&#10;      File &#34;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&#34;, line 907, in _get_configuration_from_setup_py&#10;        config = setup_module.configuration(*args)&#10;      File &#34;scipy/linalg/setup.py&#34;, line 20, in configuration&#10;        raise NotFoundError(&#39;no lapack/blas resources found&#39;)&#10;    numpy.distutils.system_info.NotFoundError: no lapack/blas resources found&#10;&#10;    ----------------------------------------&#10;&#9;Command &#34;/usr/bin/python -c &#34;import setuptools, tokenize;__file__=&#39;/tmp/pip-build-7YhC6v/scipy/setup.py&#39;;exec(compile(getattr(tokenize, &#39;open&#39;, open)(__file__).read().replace(&#39;\r\n&#39;, &#39;\n&#39;), __file__, &#39;exec&#39;))&#34; install --record /tmp/pip-TtkOaR-record/install-record.txt --single-version-externally-managed --compile&#34; failed with error code 1 in /tmp/pip-build-7YhC6v/scipy</span><br></pre></td></tr></table></figure>
+<p>这是因为缺少 <strong>lapack</strong> 的原因，执行如下命令安装即可</p>
+<pre><code>sudo yum -y <span class="keyword">install</span> lapack-devel
+</code></pre><p>之后再次执行，成功安装：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install scipy&#10;Collecting scipy&#10;  Using cached scipy-0.16.1.tar.gz&#10;Installing collected packages: scipy&#10;  Running setup.py install for scipy&#10;Successfully installed scipy-0.16.1</span><br></pre></td></tr></table></figure>
+<p>安装Redis的错误提示</p>
+<p>在执行</p>
+<pre><code>make <span class="built_in">test</span>
+</code></pre><p>提示系统需要<strong>tcl</strong>8.5以上版本，直接执行命令安装即可：</p>
+<pre><code>yum <span class="keyword">install</span> tcl
+</code></pre><p>之后</p>
+<pre><code>make <span class="keyword">install</span> 
+</code></pre><p>安装完启动会有如下错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add &#39;vm.overcommit_memory = 1&#39; to /etc/sysctl.conf and then reboot or run the command &#39;sysctl vm.overcommit_memory=1&#39; for this to take effect.&#10;WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.</span><br></pre></td></tr></table></figure>
+<p>解决方法</p>
+<p>第一个警告两个方式解决(overcommit_memory)</p>
+<ol>
+<li>echo “vm.overcommit_memory=1” &gt; /etc/sysctl.conf  或 vi /etcsysctl.conf , 然后reboot重启机器</li>
+<li>echo 1 &gt; /proc/sys/vm/overcommit_memory  不需要启机器就生效</li>
+</ol>
+<p>第二个警告解决</p>
+<ol>
+<li>echo 511 &gt; /proc/sys/net/core/somaxconn</li>
+</ol>
+<p>overcommit_memory参数说明：</p>
+<p>设置内存分配策略（可选，根据服务器的实际情况进行设置）<br>/proc/sys/vm/overcommit_memory</p>
+<p>可选值：0、1、2。</p>
+<p>0， 表示内核将检查是否有足够的可用内存供应用进程使用；如果有足够的可用内存，内存申请允许；否则，内存申请失败，并把错误返回给应用进程。</p>
+<p>1， 表示内核允许分配所有的物理内存，而不管当前的内存状态如何。</p>
+<p>2， 表示内核允许分配超过所有物理内存和交换空间总和的内存</p>
+<p>注意：redis在dump数据的时候，会fork出一个子进程，理论上child进程所占用的内存和parent是一样的，比如parent占用 的内存为8G，这个时候也要同样分配8G的内存给child,如果内存无法负担，往往会造成redis服务器的down机或者IO负载过高，效率下降。所 以这里比较优化的内存分配策略应该设置为 1（表示内核允许分配所有的物理内存，而不管当前的内存状态如何）。</p>
+<p>这里又涉及到Overcommit和OOM。</p>
+<p>什么是Overcommit和OOM</p>
+<p>在Unix中，当一个用户进程使用malloc()函数申请内存时，假如返回值是NULL，则这个进程知道当前没有可用内存空间，就会做相应的处理工作。许多进程会打印错误信息并退出。<br>Linux使用另外一种处理方式，它对大部分申请内存的请求都回复”yes”，以便能跑更多更大的程序。因为申请内存后，并不会马上使用内存。这种技术叫做Overcommit。<br>当内存不足时，会发生OOM killer(OOM=out-of-memory)。它会选择杀死一些进程(用户态进程，不是内核线程)，以便释放内存。</p>
+<p>Overcommit的策略</p>
+<p>Linux下overcommit有三种策略(Documentation/vm/overcommit-accounting)：</p>
+<ol>
+<li>启发式策略。合理的overcommit会被接受，不合理的overcommit会被拒绝。</li>
+<li>任何overcommit都会被接受。</li>
+<li>当系统分配的内存超过swap+N%*物理RAM(N%由vm.overcommit_ratio决定)时，会拒绝commit。</li>
+<li>overcommit的策略通过vm.overcommit_memory设置。<br>overcommit的百分比由vm.overcommit_ratio设置。</li>
+</ol>
+<p># echo 2 &gt; /proc/sys/vm/overcommit_memory</p>
+<p># echo 80 &gt; /proc/sys/vm/overcommit_ratio</p>
+<p>当oom-killer发生时，linux会选择杀死哪些进程<br>选择进程的函数是oom_badness函数(在mm/oom_kill.c中)，该函数会计算每个进程的点数(0~1000)。<br>点数越高，这个进程越有可能被杀死。<br>每个进程的点数跟oom_score_adj有关，而且oom_score_adj可以被设置(-1000最低，1000最高)。</p>
+<p>最后启动的时候，如果执行</p>
+<pre><code>sudo ./analyzer<span class="class">.d</span> start
+</code></pre><p>提示缺少factorial之类的库时大多是因为scipy没有装好或者版本不对应</p>
+<p>最后测试数据时，执行：</p>
+<pre><code><span class="keyword">cd</span> utils
+<span class="keyword">python</span> seed_data.<span class="keyword">py</span>
+</code></pre><p>如果提示：</p>
+<pre><code>Woops, looks like <span class="keyword">the</span> metrics didn't make <span class="keyword">it</span> <span class="keyword">into</span> Horizon. Try again?
+</code></pre><p>则需要做如下设置：找到配置文件 <em>settings.py</em> 将下面前边的 # 去掉并改为：</p>
+<pre><code><span class="setting">HORIZON_IP = <span class="value"><span class="string">'127.0.0.1'</span></span></span>
+</code></pre><p>之后重启 ./horizon.d</p>
+<p>如果在其他终端浏览器中通过该机IP查看端口1500不能访问的话则修改配置文件 <em>settings.py</em> </p>
+<pre><code><span class="setting">WEBAPP_IP = <span class="value"><span class="string">'127.0.0.1'</span></span></span>
+</code></pre><p>将其值修改为对应的机器IP，并重启 ./webapp.d 即可</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/11/12/正向代理与反向代理的区别/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">正向代理与反向代理的区别</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="Centos下布置kale系统skyline" data-title="Centos下布置kale系统skyline" data-url="https://github.com/luckymrwang/2015/11/17/Centos下布置kale系统skyline/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"luckymrwang"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0]
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2015 luckymrwang
+    	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-68490584-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
