@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>PHP算法之快速排序 | iBlog</title>
+  <title>Kale系统skyline的过滤算法 | iBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="思路分析选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。">
+  <meta name="description" content="简介同样作为时间序列存储的 rrdtool 和 graphite，都偏重在预测算法，也就是说根据现有数据推测下一个数据应该是多少；而 skyline 则是根据现有数据统计最新数据是否异常">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PHP算法之快速排序">
-<meta property="og:url" content="https://github.com/luckymrwang/2015/08/21/PHP算法之快速排序/index.html">
+<meta property="og:title" content="Kale系统skyline的过滤算法">
+<meta property="og:url" content="https://github.com/luckymrwang/2015/11/17/Kale系统skyline的过滤算法/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="思路分析选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。">
-<meta property="og:updated_time" content="2015-08-21T08:45:30.000Z">
+<meta property="og:description" content="简介同样作为时间序列存储的 rrdtool 和 graphite，都偏重在预测算法，也就是说根据现有数据推测下一个数据应该是多少；而 skyline 则是根据现有数据统计最新数据是否异常">
+<meta property="og:updated_time" content="2015-11-17T08:19:10.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PHP算法之快速排序">
-<meta name="twitter:description" content="思路分析选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。">
+<meta name="twitter:title" content="Kale系统skyline的过滤算法">
+<meta name="twitter:description" content="简介同样作为时间序列存储的 rrdtool 和 graphite，都偏重在预测算法，也就是说根据现有数据推测下一个数据应该是多少；而 skyline 则是根据现有数据统计最新数据是否异常">
   
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
   
@@ -162,11 +162,11 @@
 		</header>				
 	</div>
 </nav>
-      <div class="body-wrap"><article id="post-PHP算法之快速排序" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-Kale系统skyline的过滤算法" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/08/21/PHP算法之快速排序/" class="article-date">
-  	<time datetime="2015-08-21T07:43:30.000Z" itemprop="datePublished">2015-08-21</time>
+      <a href="/2015/11/17/Kale系统skyline的过滤算法/" class="article-date">
+  	<time datetime="2015-11-17T08:12:49.000Z" itemprop="datePublished">2015-11-17</time>
 </a>
     </div>
   
@@ -179,7 +179,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      PHP算法之快速排序
+      Kale系统skyline的过滤算法
     </h1>
   
 
@@ -188,7 +188,7 @@
       <div class="article-info article-info-post">
         
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/监控/">监控</a></li></ul>
 	</div>
 
         
@@ -199,29 +199,46 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="思路分析">思路分析</h3><p>选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。<br><a id="more"></a></p>
-<pre><code><span class="variable">$arr</span> = <span class="keyword">array</span>(<span class="number">12</span>, <span class="number">242</span>, <span class="number">3</span>, <span class="number">20</span>, <span class="number">11</span>,<span class="number">50</span>);
-<span class="keyword">function</span> kuaisu(<span class="variable">$arr</span>){
-    <span class="variable">$len</span> = count(<span class="variable">$arr</span>);
-    if(<span class="variable">$len</span> &lt;= <span class="number">1</span>){
-        return <span class="variable">$arr</span>;
-    }
-    <span class="variable">$left</span> = <span class="variable">$right</span> = array();
-    //选择基准值
-    <span class="variable">$mark</span> = <span class="variable">$arr</span>[<span class="number">0</span>];
-    //依次循环比较
-    for(<span class="variable">$i</span>=<span class="number">1</span>; <span class="variable">$i</span>&lt;<span class="variable">$len</span>; <span class="variable">$i</span>++){
-        //把小值放入左边，把大值放入右边
-        (<span class="variable">$mark</span> &gt; <span class="variable">$arr</span>[<span class="variable">$i</span>]) ? (<span class="variable">$left</span>[] = <span class="variable">$arr</span>[<span class="variable">$i</span>]) : (<span class="variable">$right</span>[] = <span class="variable">$arr</span>[<span class="variable">$i</span>]);
-    }
-    //对<span class="variable">$left</span>/<span class="variable">$right</span>进行递归循环比较
-    <span class="variable">$left</span> = kuaisu(<span class="variable">$left</span>);
-    <span class="variable">$right</span> = kuaisu(<span class="variable">$right</span>);
-    //合并
-    return array_merge(<span class="variable">$left</span>, array(<span class="variable">$mark</span>), <span class="variable">$right</span>);
-}
-echo implode(<span class="string">','</span>, kuaisu(<span class="variable">$arr</span>));
-</code></pre>
+        <h3 id="简介">简介</h3><p>同样作为时间序列存储的 rrdtool 和 graphite，都偏重在预测算法，也就是说根据现有数据推测下一个数据应该是多少；而 skyline 则是根据现有数据统计最新数据是否异常<br><a id="more"></a></p>
+<p>目前，skyline 一共提供了 7 个异常检测算法，如果有 5 个以上认为是异常，那么 skyline 就认为这个序列异常了。(当然，这都是可以修改的)</p>
+<p>异常检测算法实际写在了 src/analyzer/algorithms.py 里，包括有：</p>
+<h4 id="first_hour_average">first_hour_average</h4><p>这是最简单的。先求本周期内最前面的第一个小时的平均值和标准差，然后和最新的三个值的平均值(tail_avg()，这是后面多数算法都通用的做法)做比较。如果 tail_avg 和 第一小时平均值的差距大于 3 倍的标准差，那么认定为异常。</p>
+<h4 id="simple_stddev_from_moving_average">simple_stddev_from_moving_average</h4><p>把上面算法的范围扩大化，求的是整个周期内全部数据的平均值和标准差。</p>
+<h4 id="stddev_from_moving_average">stddev_from_moving_average</h4><p>在上面算法的基础上，采用指数加权移动平均值。对周期内采点数量较少的情况更好一些。</p>
+<h4 id="mean_subtraction_cumulation">mean_subtraction_cumulation</h4><p>做法是这样的：</p>
+<ul>
+<li>排除最后一个值；</li>
+<li>求剩余序列的平均值；</li>
+<li>全序列减去上面这个平均值；</li>
+<li>求剩余序列的标准差；</li>
+<li>判断全序列最后一个值是否大于 3 倍的标准差</li>
+</ul>
+<p>在代码中本来还计算了一次序列的指数加权移动平均值，但是算完了却没用，感觉怪怪的。</p>
+<h4 id="least_squares">least_squares</h4><p>采用最小二乘法拟近时间序列，然后用实际值减去拟近值得到新序列。然后判断新序列的最后三个值的平均值是否大于 3 倍的新序列标准差。</p>
+<p>所谓最小二乘法，简单说就是对一个 [x, y] 序列，会有一对常数 [m, c]，让 Y = mx + c 等式中的 Y 和 y 在全序列上最接近。</p>
+<h4 id="histogram_bins">histogram_bins</h4><p>将整个周期序列的数据按照直方图统计法归入 15 个直方中，然后看最后三个值的平均值属于这 15 个直方的具体哪个。如果这个直方中包含的数据小于 20 个，判断为异常。</p>
+<p>从算法中可以知道，如果周期内数据量不够，很容易被判断为异常的。</p>
+<h4 id="grubbs">grubbs</h4><p>将整个周期序列的数据按照格拉布斯法求异常值。</p>
+<p>标准的格拉布斯法是这样的：</p>
+<ul>
+<li>从小到大排序；</li>
+<li>求序列的平均值和标准差；</li>
+<li>计算最小值和最大值与平均值的差距，更大的那个为可疑值；</li>
+<li>可疑值减去平均值，再除以标准差，如果大于格拉布斯临界值，那么就是异常值；</li>
+<li>排除异常值，对剩余序列循环做 1-5 步骤。</li>
+</ul>
+<p>这里只用判断时间序列的最后是否异常，所以直接将最后三个值的平均值作为可疑值判断是否异常即可。</p>
+<p>2013 年 07 月 23 日更新</p>
+<p>新增了一个异常算法，现在有 8 个了，要通过 6 个才算真异常。</p>
+<p>新增的是”绝对中值偏差法”</p>
+<h4 id="median_absolute_deviation">median_absolute_deviation</h4><p>具体实现是：序列的最后一个值，比该序列的绝对中值大 6 倍以上，即判断为异常。</p>
+<p>注意这里是中值，不是平均值。</p>
+<p>2013 年 08 月 14 日更新</p>
+<p>新增一个异常算法，现在有 9 个了。</p>
+<p>新增的是”柯尔莫诺夫-斯米尔诺夫检验法”</p>
+<h4 id="Kolmogorov-Smirnov_test">Kolmogorov-Smirnov_test</h4><p>具体实现是：计算序列内最近十分钟的数值的ks测试分布，然后计算序列中最近一个小时前到十分钟前这 50 分钟的数值的ks测试分布；如果两个分布相差较大，即判断为异常。</p>
+<p>本文引自<a href="http://chenlinux.com/2013/06/19/skyline-algorithms-intro/" target="_blank" rel="external">三斗室</a></p>
+
       
     </div>
     
@@ -230,18 +247,9 @@ echo implode(<span class="string">','</span>, kuaisu(<span class="variable">$arr
     
 <nav id="article-nav">
   
-    <a href="/2015/08/21/PHP算法之选择排序/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          PHP算法之选择排序
-        
-      </div>
-    </a>
   
-  
-    <a href="/2015/08/21/PHP算法之冒泡排序/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">PHP算法之冒泡排序</div>
+    <a href="/2015/11/17/Centos下布置kale系统skyline/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Centos下布置kale系统skyline</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -270,7 +278,7 @@ echo implode(<span class="string">','</span>, kuaisu(<span class="variable">$arr
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="PHP算法之快速排序" data-title="PHP算法之快速排序" data-url="https://github.com/luckymrwang/2015/08/21/PHP算法之快速排序/"></div>
+	<div class="ds-thread" data-thread-key="Kale系统skyline的过滤算法" data-title="Kale系统skyline的过滤算法" data-url="https://github.com/luckymrwang/2015/11/17/Kale系统skyline的过滤算法/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
