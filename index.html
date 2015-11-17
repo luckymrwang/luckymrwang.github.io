@@ -103,7 +103,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Apache/" style="font-size: 18px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 12px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 12px;">CI</a> <a href="/tags/Cookie/" style="font-size: 10px;">Cookie</a> <a href="/tags/DataTables/" style="font-size: 16px;">DataTables</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Kafka/" style="font-size: 16px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Mac/" style="font-size: 14px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 12px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 16px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Session/" style="font-size: 10px;">Session</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/监控/" style="font-size: 12px;">监控</a> <a href="/tags/缓存/" style="font-size: 12px;">缓存</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
+						<a href="/tags/Apache/" style="font-size: 18px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 12px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 12px;">CI</a> <a href="/tags/Cookie/" style="font-size: 10px;">Cookie</a> <a href="/tags/DataTables/" style="font-size: 16px;">DataTables</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Kafka/" style="font-size: 16px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Mac/" style="font-size: 14px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 12px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 16px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Session/" style="font-size: 10px;">Session</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/监控/" style="font-size: 14px;">监控</a> <a href="/tags/缓存/" style="font-size: 12px;">缓存</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
 					</div>
 				</section>
 				
@@ -162,6 +162,64 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-直接从elasticsearch获取数据进入skyline异常检测" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/11/17/直接从elasticsearch获取数据进入skyline异常检测/" class="article-date">
+  	<time datetime="2015-11-17T08:38:29.000Z" itemprop="datePublished">2015-11-17</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/11/17/直接从elasticsearch获取数据进入skyline异常检测/">直接从elasticsearch获取数据进入skyline异常检测</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这几天搭建 elasticsearch 集群做日志分析，终于有机会可以实际跑一下 skyline 的效果。不过比较麻烦的事情是，skyline 是一个比较完备的系统而不是插件，要求我们把数据通过 msgpack 发过去存到 redis 里。这是个很没有道理的做法，早在去年刚看到这个项目的时候我就在博客里写下了愿景是应该用 elasticsearch 替换掉 redis。等了这么久没等到，干脆就自己动手实现。修改后，skyline 其余的程序完全可以直接扔掉，只留下这一个脚本定时运行就够了：<br>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/监控/">监控</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/11/17/直接从elasticsearch获取数据进入skyline异常检测/#more">阅读更多 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-Kale系统skyline的过滤算法" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -990,67 +1048,6 @@ DHE：不支持 ECC。非常消耗 CPU 资源 。
         <p class="article-more-link">
           <a  href="/2015/10/05/PHP传参调试/#more">阅读更多 >></a>
         </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-OS-X-EI-Capitan" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/10/04/OS-X-EI-Capitan/" class="article-date">
-  	<time datetime="2015-10-04T06:01:05.000Z" itemprop="datePublished">2015-10-04</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/10/04/OS-X-EI-Capitan/">OS X EI Capitan</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>OS X El Capitan中，在内核下引入了Rootless机制，以下路径：</p>
-<p>/System</p>
-<p>/bin</p>
-<p>/sbin</p>
-<p>/usr (except /usr/local)</p>
-<p>均属于Rootless范围，即使root用户无法对此目录有写和执行权限，只有Apple以及Apple授权签名的软件（包括命令行工具）可以修改此目录。</p>
-<p>关闭Rootless(需要重启，以Recovery分区启动，在Security Configuration中关闭Enforce System Integrity Protection)</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OSX/">OSX</a></li></ul>
-	</div>
-
-      
-
       
       <div class="clearfix"></div>
     </div>
