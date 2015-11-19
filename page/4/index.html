@@ -103,7 +103,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Apache/" style="font-size: 18px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 12px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 12px;">CI</a> <a href="/tags/Cookie/" style="font-size: 10px;">Cookie</a> <a href="/tags/DataTables/" style="font-size: 16px;">DataTables</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Kafka/" style="font-size: 16px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Mac/" style="font-size: 14px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 12px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 16px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Session/" style="font-size: 10px;">Session</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/监控/" style="font-size: 14px;">监控</a> <a href="/tags/缓存/" style="font-size: 12px;">缓存</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
+						<a href="/tags/Apache/" style="font-size: 18px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 12px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 12px;">CI</a> <a href="/tags/Cookie/" style="font-size: 10px;">Cookie</a> <a href="/tags/DataTables/" style="font-size: 16px;">DataTables</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Kafka/" style="font-size: 16px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Mac/" style="font-size: 14px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 12px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 16px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Session/" style="font-size: 10px;">Session</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/监控/" style="font-size: 14px;">监控</a> <a href="/tags/缓存/" style="font-size: 12px;">缓存</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
 					</div>
 				</section>
 				
@@ -162,6 +162,68 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-Apache服务器访问方式去除Index.php" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/06/03/Apache服务器访问方式去除Index.php/" class="article-date">
+  	<time datetime="2015-06-03T07:49:30.000Z" itemprop="datePublished">2015-06-03</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/03/Apache服务器访问方式去除Index.php/">Apache服务器访问方式去除Index.php</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><em>例如: 你原来的路径是： localhost/index.php/index<br>改变后的路径是： localhost/index</em></p>
+<ul>
+<li><p>httpd.conf配置文件中加载了mod_rewrite.so模块 //在Apache里面去配置</p>
+<pre><code><span class="id">#LoadModule</span> rewrite_module modules/mod_rewrite<span class="class">.so</span>  <span class="comment">//把前面的#号去掉 </span>
+</code></pre>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Apache/">Apache</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/06/03/Apache服务器访问方式去除Index.php/#more">阅读更多 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-Apache-Nginx-虚拟主机-VirtualHost-配置" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -1002,68 +1064,9 @@
 
 
   
-    <article id="post-搭建独立博客——简明Github-Pages与Hexo教程" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/05/14/搭建独立博客——简明Github-Pages与Hexo教程/" class="article-date">
-  	<time datetime="2015-05-14T03:40:12.000Z" itemprop="datePublished">2015-05-14</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/05/14/搭建独立博客——简明Github-Pages与Hexo教程/">搭建独立博客——简明Github Pages与Hexo教程</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>摘要：这是一篇很详尽的独立博客搭建教程，我搜索了很多资料各取其精华历练而成，不仅希望记录和整理我的整个搭建过程与所遇到的问题及解决办法，同时也希望能为后来者指明方向。</p>
-<h2 id="前言">前言</h2><p>计算机技术的飞速发展有目共睹，作为一个程序开发者，或者更确切地说是一个优秀程序员，能够与时俱进就需要不断地学习新的技术来充实自己。众所周知，学习一门新的技术的过程中会遇到很多问题，将自己是如何解决这些问题以及在解决的过程中所搜集整理的资料记录下来方便以后查看绝对是一件受益无穷的事情。<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/博客搭建/">博客搭建</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/05/14/搭建独立博客——简明Github-Pages与Hexo教程/#more">阅读更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+      <a class="extend prev" rel="prev" href="/page/3/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">Next &raquo;</a>
     </nav>
   
 </div>

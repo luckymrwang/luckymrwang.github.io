@@ -103,7 +103,7 @@
 				
 				<section class="switch-part switch-part2">
 					<div class="widget tagcloud" id="js-tagcloud">
-						<a href="/tags/Apache/" style="font-size: 18px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 12px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 12px;">CI</a> <a href="/tags/Cookie/" style="font-size: 10px;">Cookie</a> <a href="/tags/DataTables/" style="font-size: 16px;">DataTables</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Kafka/" style="font-size: 16px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Mac/" style="font-size: 14px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 12px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 16px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Session/" style="font-size: 10px;">Session</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/监控/" style="font-size: 14px;">监控</a> <a href="/tags/缓存/" style="font-size: 12px;">缓存</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
+						<a href="/tags/Apache/" style="font-size: 18px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 12px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 12px;">CI</a> <a href="/tags/Cookie/" style="font-size: 10px;">Cookie</a> <a href="/tags/DataTables/" style="font-size: 16px;">DataTables</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/Kafka/" style="font-size: 16px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 12px;">Linux</a> <a href="/tags/Mac/" style="font-size: 14px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 12px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 16px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Session/" style="font-size: 10px;">Session</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 14px;">jQuery</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/监控/" style="font-size: 14px;">监控</a> <a href="/tags/缓存/" style="font-size: 12px;">缓存</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
 					</div>
 				</section>
 				
@@ -162,6 +162,65 @@
 	</div>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-PHP传参调试" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/05/PHP传参调试/" class="article-date">
+  	<time datetime="2015-10-05T04:39:44.000Z" itemprop="datePublished">2015-10-05</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/05/PHP传参调试/">PHP传参调试</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>通过调用系统环境变量$_SERVER，可以查看到HTTP请求的信息，如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$_SERVER</span>[<span class="string">"REMOTE_ADDR"</span>]   <span class="comment">//记录来访者的IP</span></span><br><span class="line"><span class="variable">$_SERVER</span>[<span class="string">"QUERY_STRING"</span>]  <span class="comment">//查询请求字符串</span></span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/调试/">调试</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/10/05/PHP传参调试/#more">阅读更多 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
   
     <article id="post-OS-X-EI-Capitan" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -994,70 +1053,9 @@
 
 
   
-    <article id="post-PHP生成随机密码的几种随机方法" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/07/22/PHP生成随机密码的几种随机方法/" class="article-date">
-  	<time datetime="2015-07-22T08:31:10.000Z" itemprop="datePublished">2015-07-22</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/07/22/PHP生成随机密码的几种随机方法/">PHP生成随机密码的几种方法</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="方法一">方法一</h2><p> 1、在 33 – 126 中生成一个随机整数，如 35</p>
-<p> 2、将 35 转换成对应的ASCII码字符，如 35 对应 #</p>
-<p> 3、重复以上 1、2 步骤 n 次，连接成 n 位的密码</p>
-<p>该算法主要用到了两个函数，<code>mt_rand ( int $min , int $max )</code> 函数用于生成随机整数，其中 $min – $max 为 ASCII 码的范围，
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/07/22/PHP生成随机密码的几种随机方法/#more">阅读更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
     </nav>
   
 </div>
