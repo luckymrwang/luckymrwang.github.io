@@ -3,24 +3,25 @@
 <head>
   <meta charset="utf-8">
   
-  <title>jQuery中attr和prop的区别 | iBlog</title>
+  <title>jQuery中prop()方法和attr()方法的区别 | iBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="在高版本的jquery引入prop方法后，什么时候该用prop？什么时候用attr？它们两个之间有什么区别？这些问题就出现了。
-关于它们两个的区别，网上的答案很多。这里谈谈我的心得，我的心得很简单：
-对于HTML元素本身就带有的固有属性，在处理时，使用prop方法。对于HTML元素我们自己自定义的DOM属性，在处理时，使用attr方法。">
+  <meta name="description" content="jquery1.6中新加了一个方法prop()，一直没用过它，官方解释只有一句话:获取在匹配的元素集中的第一个元素的属性值。
+官方例举的例子感觉和attr()差不多，也不知道有什么区别，既然有了prop()这个新方法，不可能没用吧，那什么时候该用attr()，什么时候该用prop()呢？
+大家都知道有的浏览器只要写disabled，checked就可以了，而有的要写成disabled = “dis">
 <meta property="og:type" content="article">
-<meta property="og:title" content="jQuery中attr和prop的区别">
-<meta property="og:url" content="https://github.com/luckymrwang/2015/10/09/jQuery中attr和prop的区别/index.html">
+<meta property="og:title" content="jQuery中prop()方法和attr()方法的区别">
+<meta property="og:url" content="https://github.com/luckymrwang/2015/12/05/jQuery中prop-方法和attr-方法的区别/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="在高版本的jquery引入prop方法后，什么时候该用prop？什么时候用attr？它们两个之间有什么区别？这些问题就出现了。
-关于它们两个的区别，网上的答案很多。这里谈谈我的心得，我的心得很简单：
-对于HTML元素本身就带有的固有属性，在处理时，使用prop方法。对于HTML元素我们自己自定义的DOM属性，在处理时，使用attr方法。">
-<meta property="og:updated_time" content="2015-10-09T07:16:48.000Z">
+<meta property="og:description" content="jquery1.6中新加了一个方法prop()，一直没用过它，官方解释只有一句话:获取在匹配的元素集中的第一个元素的属性值。
+官方例举的例子感觉和attr()差不多，也不知道有什么区别，既然有了prop()这个新方法，不可能没用吧，那什么时候该用attr()，什么时候该用prop()呢？
+大家都知道有的浏览器只要写disabled，checked就可以了，而有的要写成disabled = “dis">
+<meta property="og:image" content="https://github.com/luckymrwang/images/propattr.png">
+<meta property="og:updated_time" content="2015-12-05T13:12:18.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="jQuery中attr和prop的区别">
-<meta name="twitter:description" content="在高版本的jquery引入prop方法后，什么时候该用prop？什么时候用attr？它们两个之间有什么区别？这些问题就出现了。
-关于它们两个的区别，网上的答案很多。这里谈谈我的心得，我的心得很简单：
-对于HTML元素本身就带有的固有属性，在处理时，使用prop方法。对于HTML元素我们自己自定义的DOM属性，在处理时，使用attr方法。">
+<meta name="twitter:title" content="jQuery中prop()方法和attr()方法的区别">
+<meta name="twitter:description" content="jquery1.6中新加了一个方法prop()，一直没用过它，官方解释只有一句话:获取在匹配的元素集中的第一个元素的属性值。
+官方例举的例子感觉和attr()差不多，也不知道有什么区别，既然有了prop()这个新方法，不可能没用吧，那什么时候该用attr()，什么时候该用prop()呢？
+大家都知道有的浏览器只要写disabled，checked就可以了，而有的要写成disabled = “dis">
   
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
   
@@ -168,11 +169,11 @@
 		</header>				
 	</div>
 </nav>
-      <div class="body-wrap"><article id="post-jQuery中attr和prop的区别" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-jQuery中prop-方法和attr-方法的区别" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/10/09/jQuery中attr和prop的区别/" class="article-date">
-  	<time datetime="2015-10-09T07:13:16.000Z" itemprop="datePublished">2015-10-09</time>
+      <a href="/2015/12/05/jQuery中prop-方法和attr-方法的区别/" class="article-date">
+  	<time datetime="2015-12-05T12:58:09.000Z" itemprop="datePublished">2015-12-05</time>
 </a>
     </div>
   
@@ -185,7 +186,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      jQuery中attr和prop的区别
+      jQuery中prop()方法和attr()方法的区别
     </h1>
   
 
@@ -205,22 +206,15 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>在高版本的jquery引入prop方法后，什么时候该用prop？什么时候用attr？它们两个之间有什么区别？这些问题就出现了。</p>
-<p>关于它们两个的区别，网上的答案很多。这里谈谈我的心得，我的心得很简单：</p>
-<p>对于HTML元素本身就带有的固有属性，在处理时，使用prop方法。<br>对于HTML元素我们自己自定义的DOM属性，在处理时，使用attr方法。</p>
-<a id="more"></a>
-<p>上面的描述也许有点模糊，举几个例子就知道了。 </p>
-<pre><code><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"http://www.baidu.com"</span> <span class="attribute">target</span>=<span class="value">"_self"</span> <span class="attribute">class</span>=<span class="value">"btn"</span>&gt;</span>百度<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
-</code></pre><p>这个例子里<code>&lt;a&gt;</code>元素的DOM属性有 “href、target和class”，这些属性就是<code>&lt;a&gt;</code>元素本身就带有的属性，也是W3C标准里就包含有这几个属性，或者说在IDE里能够智能提示出的属性，这些就叫做固有属性。处理这些属性时，建议使用prop方法。</p>
-<pre><code><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">id</span>=<span class="value">"link1"</span> <span class="attribute">action</span>=<span class="value">"delete"</span>&gt;</span>删除<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
-</code></pre><p>这个例子里<code>&lt;a&gt;</code>元素的DOM属性有 “href、id和action”，很明显，前两个是固有属性，而后面一个“action”属性是我们自己自定义上去的，<code>&lt;a&gt;</code>元素本身是没有这个属性的。这种就是自定义的DOM属性。处理这些属性时，建议使用attr方法。使用prop方法取值和设置属性值时，都会返回undefined值。</p>
-<p>再举一个例子：</p>
-<pre><code>&lt;input id=<span class="string">"chk1"</span> <span class="class"><span class="keyword">type</span></span>=<span class="string">"checkbox"</span> /&gt;是否可见
-&lt;input id=<span class="string">"chk2"</span> <span class="class"><span class="keyword">type</span></span>=<span class="string">"checkbox"</span> checked=<span class="string">"checked"</span> /&gt;是否可见
-</code></pre><p>像checkbox，radio和select这样的元素，选中属性对应“checked”和“selected”，这些也属于固有属性，因此需要使用prop方法去操作才能获得正确的结果。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">"#chk1"</span>).prop(<span class="string">"checked"</span>) == <span class="literal">false</span></span><br><span class="line">$(<span class="string">"#chk2"</span>).prop(<span class="string">"checked"</span>) == <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<p>如果上面使用attr方法，则会出现：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">"#chk1"</span>).attr(<span class="string">"checked"</span>) == <span class="literal">undefined</span></span><br><span class="line">$(<span class="string">"#chk2"</span>).attr(<span class="string">"checked"</span>) == <span class="string">"checked"</span></span><br></pre></td></tr></table></figure>
+        <p>jquery1.6中新加了一个方法prop()，一直没用过它，官方解释只有一句话:获取在匹配的元素集中的第一个元素的属性值。</p>
+<p>官方例举的例子感觉和attr()差不多，也不知道有什么区别，既然有了prop()这个新方法，不可能没用吧，那什么时候该用attr()，什么时候该用prop()呢？</p>
+<p>大家都知道有的浏览器只要写disabled，checked就可以了，而有的要写成disabled = “disabled”，checked=”checked”，比如用attr(“checked”)获取checkbox的checked属性时选中的时候可以取到值,值为”checked”但没选中获取值就是undefined。</p>
+<p>jq提供新的方法“prop”来获取这些属性，就是来解决这个问题的，以前我们使用attr获取checked属性时返回”checked”和””,现在使用prop方法获取属性则统一返回true和false。</p>
+<p>那么，什么时候使用attr()，什么时候使用prop()？<br>1.添加属性名称该属性就会生效应该使用prop();<br>2.是有true,false两个属性使用prop();<br>3.其他则使用attr();<br>项目中jquery升级的时候大家要注意这点！</p>
+<p>官方的对比解释<a href="http://stackoverflow.com/questions/5874652/prop-vs-attr" target="_blank" rel="external">点击这里</a></p>
+<p>以下是官方建议attr(),prop()的使用：<br><img src="images/propattr.png" alt="propattr"></p>
+<p>本文引自<a href="http://www.candoudou.com/archives/161" target="_blank" rel="external">WEB前段开发</a></p>
+
       
     </div>
     
@@ -229,18 +223,9 @@
     
 <nav id="article-nav">
   
-    <a href="/2015/10/09/Nginx-SSL-性能优化/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          Nginx SSL 性能优化
-        
-      </div>
-    </a>
   
-  
-    <a href="/2015/10/07/使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法</div>
+    <a href="/2015/11/19/自动化测试基本流程/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">自动化测试基本流程</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -269,7 +254,7 @@
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="jQuery中attr和prop的区别" data-title="jQuery中attr和prop的区别" data-url="https://github.com/luckymrwang/2015/10/09/jQuery中attr和prop的区别/"></div>
+	<div class="ds-thread" data-thread-key="jQuery中prop-方法和attr-方法的区别" data-title="jQuery中prop()方法和attr()方法的区别" data-url="https://github.com/luckymrwang/2015/12/05/jQuery中prop-方法和attr-方法的区别/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">

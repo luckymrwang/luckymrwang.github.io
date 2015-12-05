@@ -3,21 +3,17 @@
 <head>
   <meta charset="utf-8">
   
-  <title>使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法 | iBlog</title>
+  <title>Archives: 2015/12 | iBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="问题描述在使用SourceTree上传资料的时候,遇到
-POST git-receive-pack (chunked)">
-<meta property="og:type" content="article">
-<meta property="og:title" content="使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法">
-<meta property="og:url" content="https://github.com/luckymrwang/2015/10/07/使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法/index.html">
+  <meta name="description" content="学习总结 思考感悟 知识管理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="https://github.com/luckymrwang/archives/2015/12/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="问题描述在使用SourceTree上传资料的时候,遇到
-POST git-receive-pack (chunked)">
-<meta property="og:updated_time" content="2015-10-07T05:01:24.000Z">
+<meta property="og:description" content="学习总结 思考感悟 知识管理">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法">
-<meta name="twitter:description" content="问题描述在使用SourceTree上传资料的时候,遇到
-POST git-receive-pack (chunked)">
+<meta name="twitter:title" content="iBlog">
+<meta name="twitter:description" content="学习总结 思考感悟 知识管理">
   
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
   
@@ -165,122 +161,53 @@ POST git-receive-pack (chunked)">
 		</header>				
 	</div>
 </nav>
-      <div class="body-wrap"><article id="post-使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap">
   
-    <div class="article-meta">
-      <a href="/2015/10/07/使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法/" class="article-date">
-  	<time datetime="2015-10-07T04:44:00.000Z" itemprop="datePublished">2015-10-07</time>
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2015" class="archive-year">2015</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2015/12/05/jQuery中prop-方法和attr-方法的区别/" class="archive-article-date">
+  	<time datetime="2015-12-05T12:58:09.000Z" itemprop="datePublished">Dec 5</time>
 </a>
-    </div>
+        </div>
+    	 
   
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2015/12/05/jQuery中prop-方法和attr-方法的区别/">jQuery中prop()方法和attr()方法的区别</a>
     </h1>
   
 
-      </header>
-      
-      <div class="article-info article-info-post">
-        
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GitHub/">GitHub</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jQuery/">jQuery</a></li></ul>
 	</div>
 
-        
+          
 
+        </div>
         <div class="clearfix"></div>
-      </div>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="问题描述">问题描述</h3><p>在使用SourceTree上传资料的时候,遇到</p>
-<pre><code>POST git-receive-pack <span class="list">(<span class="keyword">chunked</span>)</span> 
-</code></pre><a id="more"></a>
-<h3 id="问题调查">问题调查</h3><p>从 stackoverflow 看到这样一则</p>
-<pre><code>This is a bug in Git; when using HTTPS it will <span class="operator"><span class="keyword">use</span> chunked <span class="keyword">encoding</span> <span class="keyword">for</span> uploads above a certain <span class="keyword">size</span>. Those <span class="keyword">do</span> <span class="keyword">not</span> <span class="keyword">work</span>. 
-
-A trivial fix <span class="keyword">is</span> <span class="keyword">to</span> tell git <span class="keyword">to</span> <span class="keyword">not</span> <span class="keyword">chunk</span> <span class="keyword">until</span> <span class="keyword">some</span> ridiculously <span class="keyword">large</span> <span class="keyword">size</span> <span class="keyword">value</span>, such <span class="keyword">as</span>: 
-git config <span class="keyword">http</span>.postBuffer <span class="number">524288000</span> </span>
-</code></pre><h3 id="问题解决办法">问题解决办法</h3><p>在 git/config 加入</p>
-<pre><code>[http] 
-    postBuffer = <span class="number">524288000</span>
-</code></pre>
-      
-    </div>
-    
+    </header>
   </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2015/10/09/Nginx-SSL-性能优化/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          Nginx SSL 性能优化
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2015/10/06/Zepto-使用中的一些注意点/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Zepto 使用中的一些注意点</div>
-      <strong class="article-nav-caption">></strong>
-    </a>
-  
-</nav>
-
-  
 </article>
+  
+  
+    </div></section>
+  
 
-
-<div class="share">
-	<!-- JiaThis Button BEGIN -->
-	<div class="jiathis_style">
-		<span class="jiathis_txt">分享到：</span>
-		<a class="jiathis_button_tsina"></a>
-		<a class="jiathis_button_cqq"></a>
-		<a class="jiathis_button_douban"></a>
-		<a class="jiathis_button_weixin"></a>
-		<a class="jiathis_button_tumblr"></a>
-		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
-	</div>
-	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
-	<!-- JiaThis Button END -->
-</div>
-
-
-
-<div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法" data-title="使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法" data-url="https://github.com/luckymrwang/2015/10/07/使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法/"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"luckymrwang"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0]
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
-</div>
-
-
-
+    
 
 </div>
       <footer id="footer">
@@ -303,8 +230,8 @@ git config <span class="keyword">http</span>.postBuffer <span class="number">524
 		mathjax: true,
 		animate: true,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false
