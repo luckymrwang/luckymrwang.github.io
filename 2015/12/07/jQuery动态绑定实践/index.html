@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>PHP算法之冒泡排序 | iBlog</title>
+  <title>jQuery动态绑定实践 | iBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="思路分析在要排序的一组数中，对当前还未排好的序列，从前往后对相邻的两个数依次进行比较和调整，让较大的数往下沉，较小的往上冒。即，每当两相邻的数比较后发现它们的排序与排序要求相反时，就将它们互换。">
+  <meta name="description" content="在jQuery中给动态元素和属性绑定实践的是 live 和 on，其中 live 在jQuery 1.7之后就不推荐使用了。现在主要用 on ，使用是要注意， on 前面的元素也必须在页面加载的时候就存在于 DOM 里面。 动态元素或者元素必须放在 on 的第二个参数里面。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PHP算法之冒泡排序">
-<meta property="og:url" content="https://github.com/luckymrwang/2015/08/21/PHP算法之冒泡排序/index.html">
+<meta property="og:title" content="jQuery动态绑定实践">
+<meta property="og:url" content="https://github.com/luckymrwang/2015/12/07/jQuery动态绑定实践/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="思路分析在要排序的一组数中，对当前还未排好的序列，从前往后对相邻的两个数依次进行比较和调整，让较大的数往下沉，较小的往上冒。即，每当两相邻的数比较后发现它们的排序与排序要求相反时，就将它们互换。">
-<meta property="og:updated_time" content="2015-08-21T08:45:36.000Z">
+<meta property="og:description" content="在jQuery中给动态元素和属性绑定实践的是 live 和 on，其中 live 在jQuery 1.7之后就不推荐使用了。现在主要用 on ，使用是要注意， on 前面的元素也必须在页面加载的时候就存在于 DOM 里面。 动态元素或者元素必须放在 on 的第二个参数里面。">
+<meta property="og:updated_time" content="2015-12-07T07:44:17.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PHP算法之冒泡排序">
-<meta name="twitter:description" content="思路分析在要排序的一组数中，对当前还未排好的序列，从前往后对相邻的两个数依次进行比较和调整，让较大的数往下沉，较小的往上冒。即，每当两相邻的数比较后发现它们的排序与排序要求相反时，就将它们互换。">
+<meta name="twitter:title" content="jQuery动态绑定实践">
+<meta name="twitter:description" content="在jQuery中给动态元素和属性绑定实践的是 live 和 on，其中 live 在jQuery 1.7之后就不推荐使用了。现在主要用 on ，使用是要注意， on 前面的元素也必须在页面加载的时候就存在于 DOM 里面。 动态元素或者元素必须放在 on 的第二个参数里面。">
   
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
   
@@ -162,11 +162,11 @@
 		</header>				
 	</div>
 </nav>
-      <div class="body-wrap"><article id="post-PHP算法之冒泡排序" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-jQuery动态绑定实践" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/08/21/PHP算法之冒泡排序/" class="article-date">
-  	<time datetime="2015-08-21T07:40:12.000Z" itemprop="datePublished">2015-08-21</time>
+      <a href="/2015/12/07/jQuery动态绑定实践/" class="article-date">
+  	<time datetime="2015-12-07T07:37:45.000Z" itemprop="datePublished">2015-12-07</time>
 </a>
     </div>
   
@@ -179,7 +179,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      PHP算法之冒泡排序
+      jQuery动态绑定实践
     </h1>
   
 
@@ -188,7 +188,7 @@
       <div class="article-info article-info-post">
         
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jQuery/">jQuery</a></li></ul>
 	</div>
 
         
@@ -199,23 +199,14 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="思路分析">思路分析</h3><p>在要排序的一组数中，对当前还未排好的序列，从前往后对相邻的两个数依次进行比较和调整，让较大的数往下沉，较小的往上冒。即，每当两相邻的数比较后发现它们的排序与排序要求相反时，就将它们互换。<br><a id="more"></a></p>
-<pre><code><span class="variable">$arr</span> = <span class="keyword">array</span>(<span class="number">12</span>, <span class="number">242</span>, <span class="number">3</span>, <span class="number">20</span>, <span class="number">11</span>,<span class="number">50</span>);
-<span class="keyword">function</span> maopao(<span class="variable">$arr</span>){
-   <span class="variable">$len</span> = count(<span class="variable">$arr</span>);
-    for(<span class="variable">$i</span>=<span class="number">0</span>;<span class="variable">$i</span>&lt;<span class="variable">$len</span>;<span class="variable">$i</span>++){
-        for(<span class="variable">$j</span>=<span class="variable">$i</span>+<span class="number">1</span>;<span class="variable">$j</span>&lt;<span class="variable">$len</span>;<span class="variable">$j</span>++){
-            if(<span class="variable">$arr</span>[<span class="variable">$i</span>]&gt;<span class="variable">$arr</span>[<span class="variable">$j</span>]){
-                <span class="variable">$tmp</span> = <span class="variable">$arr</span>[<span class="variable">$i</span>];
-                <span class="variable">$arr</span>[<span class="variable">$i</span>] = <span class="variable">$arr</span>[<span class="variable">$j</span>];
-                <span class="variable">$arr</span>[<span class="variable">$j</span>] = <span class="variable">$tmp</span>;
-            }
-        }
-    }
-    return <span class="variable">$arr</span>;
-}
-echo implode(<span class="string">','</span>, maopao(<span class="variable">$arr</span>));
-</code></pre>
+        <p>在jQuery中给动态元素和属性绑定实践的是 <code>live</code> 和 <code>on</code>，其中 <code>live</code> 在jQuery 1.7之后就不推荐使用了。现在主要用 <code>on</code> ，使用是要注意， <code>on</code> 前面的元素也必须在页面加载的时候就存在于 <code>DOM</code> 里面。 动态元素或者元素必须放在 <code>on</code> 的第二个参数里面。</p>
+<a id="more"></a>
+<p>如下正确用法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'#a'</span>).on(<span class="string">'click'</span>, <span class="string">'.b'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br></pre></td></tr></table></figure>
+<p>下面方式是不起作用的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'#a'</span>).on(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br></pre></td></tr></table></figure>
+<p>跟这样的方式是等价的：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'#a'</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -224,18 +215,9 @@ echo implode(<span class="string">','</span>, maopao(<span class="variable">$arr
     
 <nav id="article-nav">
   
-    <a href="/2015/08/21/PHP算法之快速排序/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          PHP算法之快速排序
-        
-      </div>
-    </a>
   
-  
-    <a href="/2015/08/18/那些最好的轮子-PHP篇/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">那些最好的轮子-PHP篇</div>
+    <a href="/2015/12/05/jQuery中prop-方法和attr-方法的区别/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">jQuery中prop()方法和attr()方法的区别</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -264,7 +246,7 @@ echo implode(<span class="string">','</span>, maopao(<span class="variable">$arr
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="PHP算法之冒泡排序" data-title="PHP算法之冒泡排序" data-url="https://github.com/luckymrwang/2015/08/21/PHP算法之冒泡排序/"></div>
+	<div class="ds-thread" data-thread-key="jQuery动态绑定实践" data-title="jQuery动态绑定实践" data-url="https://github.com/luckymrwang/2015/12/07/jQuery动态绑定实践/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
