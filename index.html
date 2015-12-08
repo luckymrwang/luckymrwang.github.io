@@ -190,7 +190,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>PHPExcel隐藏Sheet语句：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$objPHPExcel</span>-&gt;createSheet();</span><br><span class="line"><span class="variable">$objPHPExcel</span>-&gt;getSheetByName(<span class="string">'Worksheet'</span>)-&gt;setSheetState(PHPExcel_Worksheet::SHEETSTATE_HIDDEN);</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$objPHPExcel</span>-&gt;createSheet();</span><br><span class="line"></span><br><span class="line"><span class="comment">//在07版以上不起作用，在excel中取消隐藏后即可显示</span></span><br><span class="line"><span class="variable">$objPHPExcel</span>-&gt;getSheetByName(<span class="string">'Worksheet'</span>)-&gt;setSheetState(PHPExcel_Worksheet::SHEETSTATE_HIDDEN);</span><br><span class="line"></span><br><span class="line"><span class="comment">//适用于07版及以上，在excel中不能取消隐藏，可在visual_basic中查看</span></span><br><span class="line"><span class="variable">$objPHPExcel</span>-&gt;getSheetByName(<span class="string">'Worksheet'</span>)-&gt;setSheetState(PHPExcel_Worksheet::SHEETSTATE_VERYHIDDEN);</span><br></pre></td></tr></table></figure>
       
     </div>
     
