@@ -163,6 +163,199 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-set-error-hander-重要用法" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/14/set-error-hander-重要用法/" class="article-date">
+  	<time datetime="2015-10-14T11:45:12.000Z" itemprop="datePublished">2015-10-14</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/14/set-error-hander-重要用法/">set_error_hander()重要用法</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="set_error_handler这个函数的作用是为了防止错误路径泄露">set_error_handler这个函数的作用是为了防止错误路径泄露</h4><p>何为错误路径泄露？</p>
+<p>我们写程序，难免会有问题，而PHP遇到错误时，就会给出出错脚本的位置、行数和原因</p>
+<p>有很多人说，这并没有什么大不了。确实，在调试程序阶段，这确实是没啥的，而且我认为给出错误路径是必要的。</p>
+<p>但泄露了实际路径的后果是不堪设想的，对于某些入侵者，这个信息可是非常重要，而事实上现在有很多的服务器都存在这个问题。</p>
+<p>有些网管干脆把PHP配置文件中的display_errors设置为Off来解决（貌似我们就是这样做的），但本人认为这个方法过于消极。</p>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/10/14/set-error-hander-重要用法/#more">阅读更多 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-PHP错误异常处理详解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/13/PHP错误异常处理详解/" class="article-date">
+  	<time datetime="2015-10-13T09:40:57.000Z" itemprop="datePublished">2015-10-13</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/13/PHP错误异常处理详解/">PHP错误异常处理详解</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>异常处理（又称为错误处理）功能提供了处理程序运行时出现的错误或异常情况的方法。</p>
+<p>异常处理通常是防止未知错误产生所采取的处理措施。异常处理的好处是你不用再绞尽脑汁去考虑各种错误，这为处理某一类错误提供了一个很有效的方法，使编程效率大大提高。当异常被触发时，通常会发生：</p>
+<ul>
+<li>当前代码状态被保存</li>
+<li>代码执行被切换到预定义的异常处理器函数</li>
+</ul>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/10/13/PHP错误异常处理详解/#more">阅读更多 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-Nginx-SSL-性能优化" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/09/Nginx-SSL-性能优化/" class="article-date">
+  	<time datetime="2015-10-09T07:18:03.000Z" itemprop="datePublished">2015-10-09</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/10/09/Nginx-SSL-性能优化/">Nginx SSL 性能优化</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="影响HTTPS速度的主要原因：">影响HTTPS速度的主要原因：</h3><h4 id="密钥交换算法">密钥交换算法</h4><p>常见的密钥交换算法有 <code>RSA</code>，<code>ECDHE</code>，<code>DH</code>，<code>DHE</code> 等算法。它们的特性如下：</p>
+<pre><code>RSA：算法实现简单，诞生于 <span class="number">1977</span> 年，历史悠久，经过了长时间的破解测试，安全性高。缺点就是需要比较大的素数（目前常用的是 <span class="number">2048</span> 位）来保证安全强度，很消耗 CPU 运算资源。RSA 是目前唯一一个既能用于密钥交换又能用于证书签名的算法。
+
+DH：diffie-hellman 密钥交换算法，诞生时间比较早（<span class="number">1977</span> 年），但是 <span class="number">1999</span> 年才公开。缺点是比较消耗 CPU 性能。
+
+ECDHE：使用椭圆曲线（ECC）的 DH 算法，优点是能用较小的素数（<span class="number">256</span> 位）实现 RSA 相同的安全等级。缺点是算法实现复杂，用于密钥交换的历史不长，没有经过长时间的安全攻击测试。
+
+ECDH：不支持 PFS，安全性低，同时无法实现 <span class="literal">false</span> start。
+
+DHE：不支持 ECC。非常消耗 CPU 资源 。
+</code></pre>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a  href="/2015/10/09/Nginx-SSL-性能优化/#more">阅读更多 >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
     <article id="post-使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -851,184 +1044,6 @@
       
         <p class="article-more-link">
           <a  href="/2015/08/18/那些最好的轮子-PHP篇/#more">阅读更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-用jQuery实现最简单的随屏幕滚动的层" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/08/16/用jQuery实现最简单的随屏幕滚动的层/" class="article-date">
-  	<time datetime="2015-08-16T06:50:23.000Z" itemprop="datePublished">2015-08-16</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/08/16/用jQuery实现最简单的随屏幕滚动的层/">用JQuery实现最简单的随屏幕滚动的层</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>首先需要一个绝对定位的元素</p>
-<pre><code>&lt;<span class="keyword">div</span> <span class="property">id</span>=<span class="string">"test"</span> style=<span class="string">"position:absolute;"</span>&gt;test&lt;/<span class="keyword">div</span>&gt;
-</code></pre><p>实现方法：随页面滚动（Scroll）事件动态设置元素的CSS，TOP值<br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jQuery/">jQuery</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/08/16/用jQuery实现最简单的随屏幕滚动的层/#more">阅读更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/08/15/hello-world/" class="article-date">
-  	<time datetime="2015-08-15T10:33:54.000Z" itemprop="datePublished">2015-08-15</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/08/15/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-DataTables中的插件TableTools" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/08/15/DataTables中的插件TableTools/" class="article-date">
-  	<time datetime="2015-08-15T09:36:56.000Z" itemprop="datePublished">2015-08-15</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/08/15/DataTables中的插件TableTools/">DataTables中的插件TableTools</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>TableTools是一个DataTables中的插件，它能够将table表中的数据拷贝到粘贴板，导出到excel甚至是pdf格式。</p>
-<p><a href="https://www.datatables.net/download/packages">下载</a>以及<a href="https://www.datatables.net/extensions/tabletools/">使用方法</a>：<em>官网给出的初始化如下</em><br>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DataTables/">DataTables</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/08/15/DataTables中的插件TableTools/#more">阅读更多 >></a>
         </p>
       
       <div class="clearfix"></div>

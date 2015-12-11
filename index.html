@@ -163,6 +163,154 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-JavaScript图表图形框架-GOJS简介" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/12/11/JavaScript图表图形框架-GOJS简介/" class="article-date">
+  	<time datetime="2015-12-11T06:58:40.000Z" itemprop="datePublished">2015-12-11</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>title: JavaScript图表图形框架 – GOJS简介</p>
+<p>date: 2015-12-11 14:40:58</p>
+<h2 id="tags:_[GOJS]">tags: [GOJS]</h2><h3 id="简介">简介</h3><p>gojs是一个能够让我们很容易的实现基于html5浏览器绘制具有交互性的图形图表的JavaScript框架。 gojs采用了面向对象的编程模式。以图形对象表示绘图模板。以用普通js对象存储数据作为数据模型，然后赋值给图形对象的属性作为数据绑定的模式。gojs同样提供了大量工具类来代表我们的交互行为。我们需要做的就是创建图形对象、构建数据模型、设置属性、绑定数据模型、使用工具类添加行为即可创建出具有丰富交互性能的各种图表。</p>
+<h3 id="一个简单的gojs图表">一个简单的gojs图表</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// For conciseness. See the "Building Parts" intro page for more</span></span><br><span class="line">    <span class="keyword">var</span> $ = go.GraphObject.make;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// the node template describes how each Node should be constructed</span></span><br><span class="line">    diagram.nodeTemplate =</span><br><span class="line">      $(go.Node, <span class="string">"Auto"</span>,  <span class="comment">// the Shape automatically fits around the TextBlock</span></span><br><span class="line">        $(go.Shape, <span class="string">"RoundedRectangle"</span>,</span><br><span class="line">          <span class="comment">// bind Shape.fill to Node.data.color</span></span><br><span class="line">          <span class="keyword">new</span> go.Binding(<span class="string">"fill"</span>, <span class="string">"color"</span>)),</span><br><span class="line">        $(go.TextBlock,</span><br><span class="line">          &#123; margin: <span class="number">3</span> &#125;,  <span class="comment">// some room around the text</span></span><br><span class="line">          <span class="comment">// bind TextBlock.text to Node.data.key</span></span><br><span class="line">          <span class="keyword">new</span> go.Binding(<span class="string">"text"</span>, <span class="string">"key"</span>))</span><br><span class="line">      );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// the Model holds only the essential information describing the diagram</span></span><br><span class="line">    diagram.model = <span class="keyword">new</span> go.GraphLinksModel(</span><br><span class="line">    [ <span class="comment">// a JavaScript Array of JavaScript objects, one per node</span></span><br><span class="line">      &#123; key: <span class="string">"Alpha"</span>, color: <span class="string">"lightblue"</span> &#125;,</span><br><span class="line">      &#123; key: <span class="string">"Beta"</span>, color: <span class="string">"orange"</span> &#125;,</span><br><span class="line">      &#123; key: <span class="string">"Gamma"</span>, color: <span class="string">"lightgreen"</span> &#125;,</span><br><span class="line">      &#123; key: <span class="string">"Delta"</span>, color: <span class="string">"pink"</span> &#125;</span><br><span class="line">    ],</span><br><span class="line">    [ <span class="comment">// a JavaScript Array of JavaScript objects, one per link</span></span><br><span class="line">      &#123; from: <span class="string">"Alpha"</span>, to: <span class="string">"Beta"</span> &#125;,</span><br><span class="line">      &#123; from: <span class="string">"Alpha"</span>, to: <span class="string">"Gamma"</span> &#125;,</span><br><span class="line">      &#123; from: <span class="string">"Beta"</span>, to: <span class="string">"Beta"</span> &#125;,</span><br><span class="line">      &#123; from: <span class="string">"Gamma"</span>, to: <span class="string">"Delta"</span> &#125;,</span><br><span class="line">      &#123; from: <span class="string">"Delta"</span>, to: <span class="string">"Alpha"</span> &#125;</span><br><span class="line">    ]);</span><br><span class="line"></span><br><span class="line">    diagram.initialContentAlignment = go.Spot.Center;</span><br><span class="line">    <span class="comment">// enable Ctrl-Z to undo and Ctrl-Y to redo</span></span><br><span class="line">    diagram.undoManager.isEnabled = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<p> <img src="/Users/sino/Documents/luckymrwang/hexo/public/images/simplediagram.jpg" alt="simplediagram"></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-Draggable控件clone后可拖拽" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/12/11/Draggable控件clone后可拖拽/" class="article-date">
+  	<time datetime="2015-12-11T06:29:24.000Z" itemprop="datePublished">2015-12-11</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>title: Draggable控件clone后可拖拽</p>
+<p>date: 2015-12-11 14:17:02</p>
+<h2 id="tags:_[jQuery]">tags: [jQuery]</h2><p>使用jQuery UI 拖动控件克隆后继续能拖动，代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"form-group"</span> <span class="attribute">style</span>=<span class="value">"float:left;"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">"text"</span> <span class="attribute">id</span>=<span class="value">"form-field-1"</span> <span class="attribute">placeholder</span>=<span class="value">"input"</span> <span class="attribute">class</span>=<span class="value">"col-xs-10 col-sm-5"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"widget-main"</span> <span class="attribute">style</span>=<span class="value">"height:800px;"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">".form-group"</span>).draggable(&#123;</span><br><span class="line">		appendTo: <span class="string">".widget-main"</span>,</span><br><span class="line">		helper: <span class="string">"clone"</span>,</span><br><span class="line">		revert: <span class="string">"invalid"</span>,</span><br><span class="line">		cursor: <span class="string">"move"</span></span><br><span class="line">	&#125;);</span><br><span class="line">    $( <span class="string">".widget-main"</span> ).droppable(&#123;</span><br><span class="line">      activeClass: <span class="string">"bg"</span>,</span><br><span class="line">      hoverClass: <span class="string">""</span>,</span><br><span class="line">      accept: <span class="string">".form-group"</span>,</span><br><span class="line">      drop: <span class="function"><span class="keyword">function</span>(<span class="params">event, ui</span>) </span>&#123;</span><br><span class="line">		<span class="comment">// $(this).append($(ui.draggable).clone()); </span></span><br><span class="line">       $(ui.helper).clone().appendTo($(<span class="keyword">this</span>)).draggable(&#123;appendTo: <span class="string">".widget-main"</span>,revert: <span class="string">"invalid"</span>&#125;); <span class="comment">//继续有拖动功能</span></span><br><span class="line">		$(ui.helper).remove(); <span class="comment">//去掉克隆功能</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;).sortable(&#123;</span><br><span class="line">      items: <span class="string">"li:not(.placeholder)"</span>,</span><br><span class="line">      sort: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">// 获取由 droppable 与 sortable 交互而加入的条目</span></span><br><span class="line">        <span class="comment">// 使用 connectWithSortable 可以解决这个问题，但不允许您自定义 active/hoverClass 选项</span></span><br><span class="line">        $(<span class="keyword">this</span>).removeClass(<span class="string">"ui-state-default"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/12/10/hello-world/" class="article-date">
+  	<time datetime="2015-12-10T02:18:36.000Z" itemprop="datePublished">2015-12-10</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/12/10/hello-world/">Hello World</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick_Start">Quick Start</h2><h3 id="Create_a_new_post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run_server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate_static_files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+  
     <article id="post-PHPExcel隐藏Sheet" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -848,199 +996,6 @@
       
         <p class="article-more-link">
           <a  href="/2015/10/26/Web缓存/#more">阅读更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-set-error-hander-重要用法" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/10/14/set-error-hander-重要用法/" class="article-date">
-  	<time datetime="2015-10-14T11:45:12.000Z" itemprop="datePublished">2015-10-14</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/10/14/set-error-hander-重要用法/">set_error_hander()重要用法</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="set_error_handler这个函数的作用是为了防止错误路径泄露">set_error_handler这个函数的作用是为了防止错误路径泄露</h4><p>何为错误路径泄露？</p>
-<p>我们写程序，难免会有问题，而PHP遇到错误时，就会给出出错脚本的位置、行数和原因</p>
-<p>有很多人说，这并没有什么大不了。确实，在调试程序阶段，这确实是没啥的，而且我认为给出错误路径是必要的。</p>
-<p>但泄露了实际路径的后果是不堪设想的，对于某些入侵者，这个信息可是非常重要，而事实上现在有很多的服务器都存在这个问题。</p>
-<p>有些网管干脆把PHP配置文件中的display_errors设置为Off来解决（貌似我们就是这样做的），但本人认为这个方法过于消极。</p>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/10/14/set-error-hander-重要用法/#more">阅读更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-PHP错误异常处理详解" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/10/13/PHP错误异常处理详解/" class="article-date">
-  	<time datetime="2015-10-13T09:40:57.000Z" itemprop="datePublished">2015-10-13</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/10/13/PHP错误异常处理详解/">PHP错误异常处理详解</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>异常处理（又称为错误处理）功能提供了处理程序运行时出现的错误或异常情况的方法。</p>
-<p>异常处理通常是防止未知错误产生所采取的处理措施。异常处理的好处是你不用再绞尽脑汁去考虑各种错误，这为处理某一类错误提供了一个很有效的方法，使编程效率大大提高。当异常被触发时，通常会发生：</p>
-<ul>
-<li>当前代码状态被保存</li>
-<li>代码执行被切换到预定义的异常处理器函数</li>
-</ul>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/10/13/PHP错误异常处理详解/#more">阅读更多 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-  
-    <article id="post-Nginx-SSL-性能优化" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2015/10/09/Nginx-SSL-性能优化/" class="article-date">
-  	<time datetime="2015-10-09T07:18:03.000Z" itemprop="datePublished">2015-10-09</time>
-</a>
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2015/10/09/Nginx-SSL-性能优化/">Nginx SSL 性能优化</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="影响HTTPS速度的主要原因：">影响HTTPS速度的主要原因：</h3><h4 id="密钥交换算法">密钥交换算法</h4><p>常见的密钥交换算法有 <code>RSA</code>，<code>ECDHE</code>，<code>DH</code>，<code>DHE</code> 等算法。它们的特性如下：</p>
-<pre><code>RSA：算法实现简单，诞生于 <span class="number">1977</span> 年，历史悠久，经过了长时间的破解测试，安全性高。缺点就是需要比较大的素数（目前常用的是 <span class="number">2048</span> 位）来保证安全强度，很消耗 CPU 运算资源。RSA 是目前唯一一个既能用于密钥交换又能用于证书签名的算法。
-
-DH：diffie-hellman 密钥交换算法，诞生时间比较早（<span class="number">1977</span> 年），但是 <span class="number">1999</span> 年才公开。缺点是比较消耗 CPU 性能。
-
-ECDHE：使用椭圆曲线（ECC）的 DH 算法，优点是能用较小的素数（<span class="number">256</span> 位）实现 RSA 相同的安全等级。缺点是算法实现复杂，用于密钥交换的历史不长，没有经过长时间的安全攻击测试。
-
-ECDH：不支持 PFS，安全性低，同时无法实现 <span class="literal">false</span> start。
-
-DHE：不支持 ECC。非常消耗 CPU 资源 。
-</code></pre>
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Nginx/">Nginx</a></li></ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a  href="/2015/10/09/Nginx-SSL-性能优化/#more">阅读更多 >></a>
         </p>
       
       <div class="clearfix"></div>
