@@ -3,21 +3,24 @@
 <head>
   <meta charset="utf-8">
   
-  <title>DataTables中的插件TableTools | iBlog</title>
+  <title>JS获取url参数值的两种方式 | iBlog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="TableTools是一个DataTables中的插件，它能够将table表中的数据拷贝到粘贴板，导出到excel甚至是pdf格式。
-下载以及使用方法：官网给出的初始化如下">
+  <meta name="description" content="JS获取url：    window.location.href;
+有个url格式如下：http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;amp;appid=1009
+通过正则123456789function getQueryString(name) &amp;#123;	var reg = new RegExp(&quot;(^">
 <meta property="og:type" content="article">
-<meta property="og:title" content="DataTables中的插件TableTools">
-<meta property="og:url" content="https://github.com/luckymrwang/2015/08/15/DataTables中的插件TableTools/index.html">
+<meta property="og:title" content="JS获取url参数值的两种方式">
+<meta property="og:url" content="https://github.com/luckymrwang/2015/12/24/JS获取url参数值的两种方式/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="TableTools是一个DataTables中的插件，它能够将table表中的数据拷贝到粘贴板，导出到excel甚至是pdf格式。
-下载以及使用方法：官网给出的初始化如下">
-<meta property="og:updated_time" content="2015-08-24T08:41:52.000Z">
+<meta property="og:description" content="JS获取url：    window.location.href;
+有个url格式如下：http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;amp;appid=1009
+通过正则123456789function getQueryString(name) &amp;#123;	var reg = new RegExp(&quot;(^">
+<meta property="og:updated_time" content="2015-12-24T12:35:13.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DataTables中的插件TableTools">
-<meta name="twitter:description" content="TableTools是一个DataTables中的插件，它能够将table表中的数据拷贝到粘贴板，导出到excel甚至是pdf格式。
-下载以及使用方法：官网给出的初始化如下">
+<meta name="twitter:title" content="JS获取url参数值的两种方式">
+<meta name="twitter:description" content="JS获取url：    window.location.href;
+有个url格式如下：http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;amp;appid=1009
+通过正则123456789function getQueryString(name) &amp;#123;	var reg = new RegExp(&quot;(^">
   
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
   
@@ -165,11 +168,11 @@
 		</header>				
 	</div>
 </nav>
-      <div class="body-wrap"><article id="post-DataTables中的插件TableTools" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-JS获取url参数值的两种方式" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2015/08/15/DataTables中的插件TableTools/" class="article-date">
-  	<time datetime="2015-08-15T09:36:56.000Z" itemprop="datePublished">2015-08-15</time>
+      <a href="/2015/12/24/JS获取url参数值的两种方式/" class="article-date">
+  	<time datetime="2015-12-24T12:31:40.000Z" itemprop="datePublished">2015-12-24</time>
 </a>
     </div>
   
@@ -182,7 +185,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      DataTables中的插件TableTools
+      JS获取url参数值的两种方式
     </h1>
   
 
@@ -191,7 +194,7 @@
       <div class="article-info article-info-post">
         
 	<div class="article-tag tagcloud">
-		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DataTables/">DataTables</a></li></ul>
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JS/">JS</a></li></ul>
 	</div>
 
         
@@ -202,47 +205,10 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>TableTools是一个DataTables中的插件，它能够将table表中的数据拷贝到粘贴板，导出到excel甚至是pdf格式。</p>
-<p><a href="https://www.datatables.net/download/packages" target="_blank" rel="external">下载</a>以及<a href="https://www.datatables.net/extensions/tabletools/" target="_blank" rel="external">使用方法</a>：<em>官网给出的初始化如下</em><br><a id="more"></a></p>
-<pre><code><span class="comment">//Example initialisation</span>
-$(<span class="built_in">document</span>).ready( <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>{
-    $(<span class="string">'#example'</span>).dataTable( {
-        <span class="string">"dom"</span>: <span class="string">'T&lt;"clear"&gt;lfrtip'</span>,
-        <span class="string">"tableTools"</span>: {
-            <span class="string">"sSwfPath"</span>: <span class="string">"/swf/copy_csv_xls_pdf.swf"</span>
-        }
-    } );
-} );
-</code></pre><h3 id="出现的问题及解决办法：">出现的问题及解决办法：</h3><p>1.</p>
-<ul>
-<li>描述：引入js文件和css文件后，相应的Button会出现在table的右上角，但是只有<code>Print</code>按钮起作用</li>
-<li>原因：<code>sSwfPath</code>后面的<code>swf</code>文件没有引用到</li>
-<li><p>解决办法<em>这是用PHP输出的全路径</em>：</p>
-<p>  “sSwfPath”: “&lt;?php echo base_url(); ?&gt;assets/swf/copy_csv_xls_pdf.swf”</p>
-</li>
-</ul>
-<p>2.</p>
-<ul>
-<li>导出excel时中文乱码的</li>
-<li><p>解决办法：在引用tabletools时加入 <code>charset=&quot;gbk&quot;</code> 这个属性,如下：</p>
-  <script type="text/javascript" src="<?php echo base_url(); ?>assets/js/dataTables.tableTools.min.js" charset="gbk"></script>
-
-</li>
-</ul>
-<p>3.</p>
-<ul>
-<li><p>自定义按钮以及文字描述</p>
-<p>  “tableTools”: {</p>
-<pre><code><span class="string">"sSwfPath"</span>: <span class="string">"&lt;?php echo base_url(); ?&gt;assets/swf/copy_csv_xls_pdf.swf"</span>,
-<span class="string">"aButtons"</span>:[
-    {<span class="string">"sExtends"</span>:<span class="string">"copy"</span>, <span class="string">"sButtonText"</span>:<span class="string">"拷贝到粘贴板"</span>},
-    {<span class="string">"sExtends"</span>:<span class="string">"xls"</span>, <span class="string">"sButtonText"</span>:<span class="string">"导出Excel"</span>},
-    {<span class="string">"sExtends"</span>:<span class="string">"print"</span>, <span class="string">"sButtonText"</span>:<span class="string">"打印预览"</span>}
-]
-</code></pre><p>  }</p>
-</li>
-</ul>
-
+        <p>JS获取url：<br>    window.location.href;</p>
+<p>有个url格式如下：<br><a href="http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;appid=1009" target="_blank" rel="external">http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;appid=1009</a></p>
+<h3 id="通过正则">通过正则</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getQueryString</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">var</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"(^|&amp;)"</span> + name + <span class="string">"=([^&amp;]*)(&amp;|$)"</span>, <span class="string">"i"</span>);</span><br><span class="line">	<span class="keyword">var</span> r = <span class="built_in">window</span>.location.search.substr(<span class="number">1</span>).match(reg);</span><br><span class="line">	<span class="keyword">if</span> (r != <span class="literal">null</span>) <span class="keyword">return</span> <span class="built_in">unescape</span>(r[<span class="number">2</span>]); <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> from = getQueryString(<span class="string">"game"</span>);</span><br><span class="line"></span><br><span class="line">alert(from);</span><br></pre></td></tr></table></figure>
+<h3 id="通过切串放进数组">通过切串放进数组</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">GetRequest</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">	<span class="keyword">var</span> url = location.search; <span class="comment">//获取url中"?"符后的字串 </span></span><br><span class="line">	<span class="keyword">var</span> theRequest = <span class="keyword">new</span> <span class="built_in">Object</span>(); </span><br><span class="line">	<span class="keyword">if</span> (url.indexOf(<span class="string">"?"</span>) != -<span class="number">1</span>) &#123;</span><br><span class="line">		<span class="keyword">var</span> str = url.substr(<span class="number">1</span>); </span><br><span class="line">		strs = str.split(<span class="string">"&amp;"</span>); </span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; strs.length; i ++) &#123;</span><br><span class="line">			theRequest[strs[i].split(<span class="string">"="</span>)[<span class="number">0</span>]]=<span class="built_in">unescape</span>(strs[i].split(<span class="string">"="</span>)[<span class="number">1</span>]); </span><br><span class="line">		&#125; </span><br><span class="line">	&#125; </span><br><span class="line">	<span class="keyword">return</span> theRequest; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> req = GetRequest(); </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> from = req[<span class="string">'game'</span>];</span><br><span class="line"></span><br><span class="line">alert(from);</span><br></pre></td></tr></table></figure>
       
     </div>
     
@@ -251,18 +217,18 @@ $(<span class="built_in">document</span>).ready( <span class="function"><span cl
     
 <nav id="article-nav">
   
-    <a href="/2015/08/16/用jQuery实现最简单的随屏幕滚动的层/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2015/12/24/JSON-stringify/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption"><</strong>
       <div class="article-nav-title">
         
-          用JQuery实现最简单的随屏幕滚动的层
+          JSON.stringify()
         
       </div>
     </a>
   
   
-    <a href="/2015/08/13/FixedHeader随表及浏览器大小自适应/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">FixedHeader随表及浏览器大小自适应</div>
+    <a href="/2015/12/15/Draggable时阻止单击click事件/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Draggable时阻止单击click事件</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -291,7 +257,7 @@ $(<span class="built_in">document</span>).ready( <span class="function"><span cl
 
 <div class="duoshuo">
 	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="DataTables中的插件TableTools" data-title="DataTables中的插件TableTools" data-url="https://github.com/luckymrwang/2015/08/15/DataTables中的插件TableTools/"></div>
+	<div class="ds-thread" data-thread-key="JS获取url参数值的两种方式" data-title="JS获取url参数值的两种方式" data-url="https://github.com/luckymrwang/2015/12/24/JS获取url参数值的两种方式/"></div>
 	<!-- 多说评论框 end -->
 	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
 	<script type="text/javascript">
