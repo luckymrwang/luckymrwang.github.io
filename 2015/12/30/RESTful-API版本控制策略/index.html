@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://github.com/luckymrwang/images/point-to-point.png">
 <meta property="og:image" content="https://github.com/luckymrwang/images/compatible-versioning.png">
 <meta property="og:image" content="https://github.com/luckymrwang/images/api.png">
-<meta property="og:updated_time" content="2015-12-30T07:42:04.000Z">
+<meta property="og:updated_time" content="2015-12-30T07:45:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RESTful API版本控制策略">
 <meta name="twitter:description" content="前言做RESTful开放平台，一方面其API变动越少， 对API调用者越有利；另一方面，没有人可以预测未来，系统在发展的过程中，不可避免的需要添加新的资源，或者修改现有资源。因此，改动升级必不可少，但是，作为平台开发者，你必须有觉悟：一旦你的API开放出去，有人开始用了，你就不能只管自己Happy了，你对平台的任何改动都需要考虑对当前用户的影响。因此，做开放平台，你从第一个API的设计就需要开始A">
@@ -218,7 +218,7 @@
 <p>针对上面的论述，首先，API一定得有版本，否则升级对于用户来说将是噩梦。其次，要做到Compatible Versioning有现实的限制，毕竟API升级时，不可避免的会出现无法兼容老版本的状况，因此，版本控制需要结合第二种和第三种模式，即提供一个统一的兼容版本入口，同时对于不能兼容历史版本的API保留历史版本，支持用户能够调用到历史版本的API。另外，对历史版本的API支持一定要有时间和用户限制，即老版API支持到一定时间就删除，新用户必须使用新版API，否则一个API有10个版本会让平台的维护非常痛苦。 </p>
 <h3 id="URI_vs_Request_Parameter_vs_Media_Type">URI vs Request Parameter vs Media Type</h3><p>在RESTful API领域，关于如何做版本控制，目前业界比较主流的有3种做法： </p>
 <p>第一种：URI， 即在URI中直接标记使用的是哪个版本，无版本号URI默认使用最新版本。如下： </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//xianlinbox/api/customers/1234</span></span><br><span class="line">http:<span class="comment">//xianlinbox/api/v3.0/customers/1234</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//server:port/api/customers/1234</span></span><br><span class="line">http:<span class="comment">//server:port/api/v3.0/customers/1234</span></span><br></pre></td></tr></table></figure>
 <p>好处：</p>
 <ul>
 <li>直接可以在URI中直观的看到API版本</li>
