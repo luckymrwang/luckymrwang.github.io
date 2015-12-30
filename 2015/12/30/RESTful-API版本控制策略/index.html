@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>RESTful API版本控制策略 | iBlog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="前言做RESTful开放平台，一方面其API变动越少， 对API调用者越有利；另一方面，没有人可以预测未来，系统在发展的过程中，不可避免的需要添加新的资源，或者修改现有资源。因此，改动升级必不可少，但是，作为平台开发者，你必须有觉悟：一旦你的API开放出去，有人开始用了，你就不能只管自己Happy了，你对平台的任何改动都需要考虑对当前用户的影响。因此，做开放平台，你从第一个API的设计就需要开始A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RESTful API版本控制策略">
+<meta property="og:url" content="https://github.com/luckymrwang/2015/12/30/RESTful-API版本控制策略/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="前言做RESTful开放平台，一方面其API变动越少， 对API调用者越有利；另一方面，没有人可以预测未来，系统在发展的过程中，不可避免的需要添加新的资源，或者修改现有资源。因此，改动升级必不可少，但是，作为平台开发者，你必须有觉悟：一旦你的API开放出去，有人开始用了，你就不能只管自己Happy了，你对平台的任何改动都需要考虑对当前用户的影响。因此，做开放平台，你从第一个API的设计就需要开始A">
+<meta property="og:image" content="https://github.com/luckymrwang/images/the-knot.png">
+<meta property="og:image" content="https://github.com/luckymrwang/images/point-to-point.png">
+<meta property="og:image" content="https://github.com/luckymrwang/images/compatible-versioning.png">
+<meta property="og:image" content="https://github.com/luckymrwang/images/api.png">
+<meta property="og:updated_time" content="2015-12-30T07:37:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RESTful API版本控制策略">
+<meta name="twitter:description" content="前言做RESTful开放平台，一方面其API变动越少， 对API调用者越有利；另一方面，没有人可以预测未来，系统在发展的过程中，不可避免的需要添加新的资源，或者修改现有资源。因此，改动升级必不可少，但是，作为平台开发者，你必须有觉悟：一旦你的API开放出去，有人开始用了，你就不能只管自己Happy了，你对平台的任何改动都需要考虑对当前用户的影响。因此，做开放平台，你从第一个API的设计就需要开始A">
+  
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="/img/author.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">luckymrwang</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">Write down what I think.</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="https://github.com/luckymrwang" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="http://weibo.com/iuckymrwang" title="weibo">weibo</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/API/" style="font-size: 10px;">API</a> <a href="/tags/Ajax/" style="font-size: 10px;">Ajax</a> <a href="/tags/AngularJS/" style="font-size: 10px;">AngularJS</a> <a href="/tags/Apache/" style="font-size: 18.33px;">Apache</a> <a href="/tags/BI项目/" style="font-size: 11.67px;">BI项目</a> <a href="/tags/Bash/" style="font-size: 10px;">Bash</a> <a href="/tags/CI/" style="font-size: 11.67px;">CI</a> <a href="/tags/Cookie/" style="font-size: 10px;">Cookie</a> <a href="/tags/DataTables/" style="font-size: 15px;">DataTables</a> <a href="/tags/GOJS/" style="font-size: 10px;">GOJS</a> <a href="/tags/GitHub/" style="font-size: 10px;">GitHub</a> <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/JS/" style="font-size: 11.67px;">JS</a> <a href="/tags/Kafka/" style="font-size: 15px;">Kafka</a> <a href="/tags/Linux/" style="font-size: 11.67px;">Linux</a> <a href="/tags/Mac/" style="font-size: 13.33px;">Mac</a> <a href="/tags/MySQL/" style="font-size: 11.67px;">MySQL</a> <a href="/tags/Nginx/" style="font-size: 15px;">Nginx</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/OSX/" style="font-size: 10px;">OSX</a> <a href="/tags/PHP/" style="font-size: 20px;">PHP</a> <a href="/tags/PHPExcel/" style="font-size: 10px;">PHPExcel</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SSH/" style="font-size: 10px;">SSH</a> <a href="/tags/Session/" style="font-size: 10px;">Session</a> <a href="/tags/Zepto/" style="font-size: 10px;">Zepto</a> <a href="/tags/jQuery/" style="font-size: 16.67px;">jQuery</a> <a href="/tags/jQurye/" style="font-size: 10px;">jQurye</a> <a href="/tags/博客搭建/" style="font-size: 10px;">博客搭建</a> <a href="/tags/架构/" style="font-size: 10px;">架构</a> <a href="/tags/概念/" style="font-size: 10px;">概念</a> <a href="/tags/测试/" style="font-size: 10px;">测试</a> <a href="/tags/监控/" style="font-size: 13.33px;">监控</a> <a href="/tags/缓存/" style="font-size: 11.67px;">缓存</a> <a href="/tags/调试/" style="font-size: 10px;">调试</a>
+					</div>
+				</section>
+				
+				
+				
+
+				
+				
+				<section class="switch-part switch-part3">
+				
+					<div id="js-aboutme">一天一点进步...</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">luckymrwang</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="/img/author.jpg" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">luckymrwang</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">Write down what I think.</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="https://github.com/luckymrwang" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="http://weibo.com/iuckymrwang" title="weibo">weibo</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-RESTful-API版本控制策略" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/12/30/RESTful-API版本控制策略/" class="article-date">
+  	<time datetime="2015-12-30T07:23:15.000Z" itemprop="datePublished">2015-12-30</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      RESTful API版本控制策略
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/API/">API</a></li></ul>
+	</div>
+
+        
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="前言">前言</h3><p>做RESTful开放平台，一方面其API变动越少， 对API调用者越有利；另一方面，没有人可以预测未来，系统在发展的过程中，不可避免的需要添加新的资源，或者修改现有资源。因此，改动升级必不可少，但是，作为平台开发者，你必须有觉悟：一旦你的API开放出去，有人开始用了，你就不能只管自己Happy了，你对平台的任何改动都需要考虑对当前用户的影响。因此，做开放平台，你从第一个API的设计就需要开始API的版本控制策略问题，API的版本控制策略就像是开放平台和平台用户之间的长期协议，其设计的好坏将直接决定用户是否使用该平台，或者说用户在使用之后是否会因为某次版本升级直接弃用该平台。 </p>
+<a id="more"></a>
+<h3 id="版本控制策略模式">版本控制策略模式</h3><p>API的版本控制策略通常有3种模式：</p>
+<p>第一种：<strong>The Knot</strong>：无版本，即平台的API永远只有一个版本，所有的用户都必须使用最新的API，任何API的修改都会影响到平台所有的用户。甚至平台的整个生态系统。 </p>
+<p><img src="/images/the-knot.png" alt="the-knot"></p>
+<p>第二种：<strong>Point-to-Point</strong>：点对点，即平台的API版本自带版本号，用户根据自己的需求选择使用对应的API，需要使用新的API特性，用户必须自己升级。 </p>
+<p><img src="/images/point-to-point.png" alt="point-to-point"></p>
+<p>第三种：<strong>Compatible Versioning</strong>：兼容性版本控制，和The Knot一样，平台只有一个版本，但是最新版本需要兼容以前版本的API行为。 </p>
+<p><img src="/images/compatible-versioning.png" alt="compatible-versioning"></p>
+<p>三种策略对整个平台在升级API的开销对比如下：</p>
+<p><img src="/images/api.png" alt="api"></p>
+<p>以上信息来源于<a href="http://www.ebpml.org/blog2/index.php/2013/11/25/understanding-the-costs-of-versioning" target="_blank" rel="external">这里</a></p>
+<p>针对上面的论述，首先，API一定得有版本，否则升级对于用户来说将是噩梦。其次，要做到Compatible Versioning有现实的限制，毕竟API升级时，不可避免的会出现无法兼容老版本的状况，因此，版本控制需要结合第二种和第三种模式，即提供一个统一的兼容版本入口，同时对于不能兼容历史版本的API保留历史版本，支持用户能够调用到历史版本的API。另外，对历史版本的API支持一定要有时间和用户限制，即老版API支持到一定时间就删除，新用户必须使用新版API，否则一个API有10个版本会让平台的维护非常痛苦。 </p>
+<h3 id="URI_vs_Request_Parameter_vs_Media_Type">URI vs Request Parameter vs Media Type</h3><p>在RESTful API领域，关于如何做版本控制，目前业界比较主流的有3种做法： </p>
+<p>第一种：URI， 即在URI中直接标记使用的是哪个版本，无版本号URI默认使用最新版本。如下： </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//xianlinbox/api/customers/1234</span></span><br><span class="line">http:<span class="comment">//xianlinbox/api/v3.0/customers/1234</span></span><br></pre></td></tr></table></figure>
+<p>好处：</p>
+<ul>
+<li>直接可以在URI中直观的看到API版本</li>
+<li>可以直接在浏览器的查看各个版本API的结果</li>
+</ul>
+<p>坏处：</p>
+<ul>
+<li>版本号在URI中破坏了REST的HATEOAS（hypermedia as the engine of application state）规则</li>
+<li>版本号和资源之间并无直接关系</li>
+</ul>
+<p>第二种：Request Parameter， 即在每个请求后添加一个version参数，表示请求的是哪个版本。如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//server:port/api/customer/123?version=2</span></span><br></pre></td></tr></table></figure>
+<p>这种做法其实就是URI方式的变种，好坏处也都一样。</p>
+<p>第三种： Mdedia Type， 即在HTTP请求的header中使用Media Type标记该请求想获取的资源， 同样的可以不设置或设置通用的Media Type表示最新版本的API。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">===&gt;</span><br><span class="line">GET /customer/<span class="number">123</span> HTTP/<span class="number">1.1</span></span><br><span class="line">Accept: application/vnd.xianlinbox.customer-v3+json</span><br><span class="line"></span><br><span class="line">&lt;===</span><br><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">Content-Type: application/vnd.xianlinbox.customer-v3+json</span><br><span class="line"></span><br><span class="line">&#123;<span class="string">"customer"</span>:</span><br><span class="line">	&#123;<span class="string">"name"</span>:<span class="string">"Xianlinbox"</span>&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>好处：</p>
+<ul>
+<li>遵循了REST的设计风格， </li>
+</ul>
+<p>坏处：</p>
+<ul>
+<li>版本不直观，需要能设置header的client才能调用查看该API的效果。</li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2015/12/28/PHP-Ajax-跨域问题最佳解决方案/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">PHP Ajax 跨域问题最佳解决方案</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="RESTful-API版本控制策略" data-title="RESTful API版本控制策略" data-url="https://github.com/luckymrwang/2015/12/30/RESTful-API版本控制策略/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"luckymrwang"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0]
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2015 luckymrwang
+    	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="/js/main.js" type="text/javascript"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-68490584-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
