@@ -1,0 +1,552 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>使用 Elastic Stack 来监控和调优 Golang 应用程序 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Golang 因为其语法简单，上手快且方便部署正被越来越多的开发者所青睐，一个 Golang 程序开发好了之后，势必要关心其运行情况，今天在这里就给大家介绍一下如果使用 Elastic Stack 来分析 Golang 程序的内存使用情况，方便对 Golang 程序做长期监控进而调优和诊断，甚至发现一些潜在的内存泄露等问题。 Elastic Stack 其实是一个集合，包含 Elasticsear">
+<meta name="keywords" content="Go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Elastic Stack 来监控和调优 Golang 应用程序">
+<meta property="og:url" content="https://luckymrwang.github.io/2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Golang 因为其语法简单，上手快且方便部署正被越来越多的开发者所青睐，一个 Golang 程序开发好了之后，势必要关心其运行情况，今天在这里就给大家介绍一下如果使用 Elastic Stack 来分析 Golang 程序的内存使用情况，方便对 Golang 程序做长期监控进而调优和诊断，甚至发现一些潜在的内存泄露等问题。 Elastic Stack 其实是一个集合，包含 Elasticsear">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/elk1.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/elk2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/elk3.png">
+<meta property="og:updated_time" content="2017-09-07T03:48:43.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 Elastic Stack 来监控和调优 Golang 应用程序">
+<meta name="twitter:description" content="Golang 因为其语法简单，上手快且方便部署正被越来越多的开发者所青睐，一个 Golang 程序开发好了之后，势必要关心其运行情况，今天在这里就给大家介绍一下如果使用 Elastic Stack 来分析 Golang 程序的内存使用情况，方便对 Golang 程序做长期监控进而调优和诊断，甚至发现一些潜在的内存泄露等问题。 Elastic Stack 其实是一个集合，包含 Elasticsear">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/elk1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/" title="使用 Elastic Stack 来监控和调优 Golang 应用程序" itemprop="url">使用 Elastic Stack 来监控和调优 Golang 应用程序</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-16T02:25:58.000Z" itemprop="datePublished"> 发表于 2017-03-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>Golang 因为其语法简单，上手快且方便部署正被越来越多的开发者所青睐，一个 Golang 程序开发好了之后，势必要关心其运行情况，今天在这里就给大家介绍一下如果使用 Elastic Stack 来分析 Golang 程序的内存使用情况，方便对 Golang 程序做长期监控进而调优和诊断，甚至发现一些潜在的内存泄露等问题。</p>
+<p>Elastic Stack 其实是一个集合，包含 Elasticsearch、Logstash 和 Beats 这几个开源软件，而 Beats 又包含 Filebeat、Packetbeat、Winlogbeat、Metricbeat 和新出的 Heartbeat，呵呵，有点多吧，恩，每个 beat 做的事情不一样，没关系，今天主要用到 Elasticsearch、Metricbeat 和 Kibana 就行了。</p>
+<a id="more"></a>
+<p>Metricbeat 是一个专门用来获取服务器或应用服务内部运行指标数据的收集程序，也是 Golang 写的，部署包比较小才10M 左右，对目标服务器的部署环境也没有依赖，内存资源占用和 CPU 开销也较小，目前除了可以监控服务器本身的资源使用情况外，还支持常见的应用服务器和服务，目前支持列表如下：</p>
+<ul>
+<li>Apache Module</li>
+<li>Couchbase Module</li>
+<li>Docker Module</li>
+<li>HAProxy Module</li>
+<li>kafka Module</li>
+<li>MongoDB Module</li>
+<li>MySQL Module</li>
+<li>Nginx Module</li>
+<li>PostgreSQL Module</li>
+<li>Prometheus Module</li>
+<li>Redis Module</li>
+<li>System Module</li>
+<li>ZooKeeper Module</li>
+</ul>
+<p>当然，也有可能你的应用不在上述列表，没关系，Metricbeat 是可以扩展的，你可以很方便的实现一个模块，而本文接下来所用的 Golang Module 也就是我刚刚为 Metricbeat 添加的扩展模块，目前已经 merge 进入 Metricbeat 的 master 分支，预计会在 6.0 版本发布，想了解是如何扩展这个模块的可以查看 代码路径 和 PR地址。</p>
+<p>上面的这些可能还不够吸引人，我们来看一下 Kibana 对 Metricbeat 使用 Golang 模块收集的数据进行的可视化分析吧：</p>
+<p><img src="/images/elk1.png" alt="elk"></p>
+<p>上面的图简单解读一下: 最上面一栏是 Golang Heap 的摘要信息，可以大致了解 Golang 的内存使用和 GC 情况，System 表示 Golang 程序从操作系统申请的内存，可以理解为进程所占的内存（注意不是进程对应的虚拟内存），Bytes allocated 表示 Heap 目前分配的内存，也就是 Golang 里面直接可使用的内存，GC limit 表示当 Golang 的 Heap 内存分配达到这个 limit 值之后就会开始执行 GC，这个值会随着每次 GC 而变化， GC cycles 则代表监控周期内的 GC 次数；</p>
+<p>中间的三列分别是堆内存、进程内存和对象的统计情况；Heap Allocated 表示正在用和没有用但还未被回收的对象的大小；Heap Inuse 显然就是活跃的对象大小了；Heap Idle 表示已分配但空闲的内存；</p>
+<p>底下两列是 GC 时间和 GC 次数的监控统计，CPUFraction 这个代表该进程 CPU 占用时间花在 GC 上面的百分比，值越大说明 GC 越频繁，浪费更多的时间在 GC 上面，上图虽然趋势陡峭，但是看范围在0.41%~0.52%之间，看起来还算可以，如果GC 比率占到个位数甚至更多比例，那肯定需要进一步优化程序了。</p>
+<p>有了这些信息我们就能够知道该 Golang 的内存使用和分配情况和 GC 的执行情况，假如要分析是否有内存泄露，看内存使用和堆内存分配的趋势是否平稳就可以了，另外 GC_Limit 和 Byte Allocation 一直上升，那肯定就是有内存泄露了，结合历史信息还能对不同版本/提交对 Golang 的内存使用和 GC 影响进行分析。</p>
+<p>接下来就要给大家介绍如何具体使用了，首先需要启用 Golang 的 expvar 服务，expvar（<a href="">https://golang.org/pkg/expvar/</a>） 是 Golang 提供的一个暴露内部变量或统计信息的标准包。 使用的方法很简单，只需要在 Golang 的程序引入该包即可，它会自动注册现有的 http 服务上，如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> _ <span class="string">"expvar"</span></div></pre></td></tr></table></figure>
+<p>如果 Golang 没有启动 http 服务，使用下面的方式启动一个即可，这里端口是 6060，如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">metricsHandler</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</div><div class="line">    w.Header().Set(<span class="string">"Content-Type"</span>, <span class="string">"application/json; charset=utf-8"</span>)</div><div class="line"></div><div class="line">    first := <span class="literal">true</span></div><div class="line">    report := <span class="function"><span class="keyword">func</span><span class="params">(key <span class="keyword">string</span>, value <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">        <span class="keyword">if</span> !first &#123;</div><div class="line">            fmt.Fprintf(w, <span class="string">",\n"</span>)</div><div class="line">        &#125;</div><div class="line">        first = <span class="literal">false</span></div><div class="line">        <span class="keyword">if</span> str, ok := value.(<span class="keyword">string</span>); ok &#123;</div><div class="line">            fmt.Fprintf(w, <span class="string">"%q: %q"</span>, key, str)</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            fmt.Fprintf(w, <span class="string">"%q: %v"</span>, key, value)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    fmt.Fprintf(w, <span class="string">"&#123;\n"</span>)</div><div class="line">    monitoring.Do(monitoring.Full, report)</div><div class="line">    expvar.Do(<span class="function"><span class="keyword">func</span><span class="params">(kv expvar.KeyValue)</span></span> &#123;</div><div class="line">        report(kv.Key, kv.Value)</div><div class="line">    &#125;)</div><div class="line">    fmt.Fprintf(w, <span class="string">"\n&#125;\n"</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">   mux := http.NewServeMux()</div><div class="line">   mux.HandleFunc(<span class="string">"/debug/vars"</span>, metricsHandler)</div><div class="line">   endpoint := http.ListenAndServe(<span class="string">"localhost:6060"</span>, mux)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>默认注册的访问路径是/debug/vars， 编译启动之后，就可以通过 <a href="">http://localhost:6060/debug/vars</a> 来访问 expvar 以 JSON 格式暴露出来的这些内部变量，默认提供了 Golang 的 runtime.Memstats 信息，也就是上面分析的数据源，当然你还可以注册自己的变量，这里暂时不提。</p>
+<p>OK，现在我们的 Golang 程序已经启动了，并且通过 expvar 暴露出了运行时的内存使用情况，现在我们需要使用 Metricbeat 来获取这些信息并存进 Elasticsearch。</p>
+<p>关于 Metricbeat 的安装其实很简单，下载对应平台的包解压（下载地址：<a href="">https://www.elastic.co/downloads/beats/metricbeat</a> ），启动 Metricbeat 前，修改配置文件：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">metricbeat.yml</div><div class="line"></div><div class="line">metricbeat.modules:</div><div class="line">  - module: golang</div><div class="line">     metricsets: [<span class="string">"heap"</span>]</div><div class="line">     enabled: <span class="literal">true</span></div><div class="line">     period: <span class="number">10s</span></div><div class="line">     hosts: [<span class="string">"localhost:6060"</span>]</div><div class="line">     heap.path: <span class="string">"/debug/vars"</span></div></pre></td></tr></table></figure>
+<p>上面的参数启用了 Golang 监控模块，并且会10秒获取一次配置路径的返回内存数据，我们同样配置该配置文件，设置数据输出到本机的 Elasticsearch：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">output.elasticsearch:</div><div class="line">  hosts: [<span class="string">"localhost:9200"</span>]</div></pre></td></tr></table></figure>
+<p>现在启动 Metricbeat：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./metricbeat -e -v</div></pre></td></tr></table></figure>
+<p>现在在 Elasticsearch 应该就有数据了，当然记得确保 Elasticsearch 和 Kibana 是可用状态，你可以在 Kibana 根据数据灵活自定义可视化，推荐使用 Timelion 来进行分析，当然为了方便也可以直接导入提供的样例仪表板，就是上面第一个图的效果。 关于如何导入样例仪表板请参照这个文档：<a href="https://www.elastic.co/guide/e" target="_blank" rel="external">https://www.elastic.co/guide/e</a> … .html</p>
+<p>除了监控已经有的内存信息之外，如果你还有一些内部的业务指标想要暴露出来，也是可以的，通过 expvar 来做同样可以。一个简单的例子如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> inerInt <span class="keyword">int64</span> = <span class="number">1024</span></div><div class="line">pubInt := expvar.NewInt(<span class="string">"your_metric_key"</span>)</div><div class="line">pubInt.Set(inerInt)</div><div class="line">pubInt.Add(<span class="number">2</span>)</div></pre></td></tr></table></figure>
+<p>在 Metricbeat 内部也同样暴露了很多内部运行的信息，所以 Metricbeat 可以自己监控自己了。。。 首先，启动的时候带上参数设置pprof监控的地址，如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./metricbeat -httpprof=<span class="string">"127.0.0.1:6060"</span> -e -v</div></pre></td></tr></table></figure>
+<p>这样我们就能够通过 <a href="">http://127.0.0.1:6060/debug/vars</a> 访问到内部运行情况了，如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line"><span class="string">"output.events.acked"</span>: <span class="number">1088</span>,</div><div class="line"><span class="string">"output.write.bytes"</span>: <span class="number">1027455</span>,</div><div class="line"><span class="string">"output.write.errors"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.messages.dropped"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.elasticsearch.publishEvents.call.count"</span>: <span class="number">24</span>,</div><div class="line"><span class="string">"output.elasticsearch.read.bytes"</span>: <span class="number">12215</span>,</div><div class="line"><span class="string">"output.elasticsearch.read.errors"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.elasticsearch.write.bytes"</span>: <span class="number">1027455</span>,</div><div class="line"><span class="string">"output.elasticsearch.write.errors"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.elasticsearch.events.acked"</span>: <span class="number">1088</span>,</div><div class="line"><span class="string">"output.elasticsearch.events.not_acked"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.kafka.events.acked"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.kafka.events.not_acked"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.kafka.publishEvents.call.count"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.logstash.write.errors"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.logstash.write.bytes"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.logstash.events.acked"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.logstash.events.not_acked"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.logstash.publishEvents.call.count"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.logstash.read.bytes"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.logstash.read.errors"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.redis.events.acked"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.redis.events.not_acked"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.redis.read.bytes"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.redis.read.errors"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.redis.write.bytes"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"output.redis.write.errors"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"beat.memstats.memory_total"</span>: <span class="number">155721720</span>,</div><div class="line"><span class="string">"beat.memstats.memory_alloc"</span>: <span class="number">3632728</span>,</div><div class="line"><span class="string">"beat.memstats.gc_next"</span>: <span class="number">6052800</span>,</div><div class="line"><span class="string">"cmdline"</span>: [<span class="string">"./metricbeat"</span>,<span class="string">"-httpprof=127.0.0.1:6060"</span>,<span class="string">"-e"</span>,<span class="string">"-v"</span>],</div><div class="line"><span class="string">"fetches"</span>: &#123;<span class="string">"system-cpu"</span>: &#123;<span class="string">"events"</span>: <span class="number">4</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-filesystem"</span>: &#123;<span class="string">"events"</span>: <span class="number">20</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-fsstat"</span>: &#123;<span class="string">"events"</span>: <span class="number">4</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-load"</span>: &#123;<span class="string">"events"</span>: <span class="number">4</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-memory"</span>: &#123;<span class="string">"events"</span>: <span class="number">4</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-network"</span>: &#123;<span class="string">"events"</span>: <span class="number">44</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-process"</span>: &#123;<span class="string">"events"</span>: <span class="number">1008</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;&#125;,</div><div class="line"><span class="string">"libbeat.config.module.running"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"libbeat.config.module.starts"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"libbeat.config.module.stops"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"libbeat.config.reloads"</span>: <span class="number">0</span>,</div><div class="line"><span class="string">"memstats"</span>: &#123;<span class="string">"Alloc"</span>:<span class="number">3637704</span>,<span class="string">"TotalAlloc"</span>:<span class="number">155</span></div><div class="line">... ...</div></pre></td></tr></table></figure>
+<p>比如，上面就能看到output模块Elasticsearch的处理情况，如 output.elasticsearch.events.acked 参数表示发送到 Elasticsearch Ack返回之后的消息。</p>
+<p>现在我们要修改 Metricbeat 的配置文件，Golang 模块有两个 metricset，可以理解为两个监控的指标类型，我们现在需要加入一个新的 expvar 类型，这个即自定义的其他指标，相应配置文件修改如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">- module: golang</div><div class="line">  metricsets: [<span class="string">"heap"</span>,<span class="string">"expvar"</span>]</div><div class="line">  enabled: <span class="literal">true</span></div><div class="line">  period: <span class="number">1s</span></div><div class="line">  hosts: [<span class="string">"localhost:6060"</span>]</div><div class="line">  heap.path: <span class="string">"/debug/vars"</span></div><div class="line">  expvar:</div><div class="line">    namespace: <span class="string">"metricbeat"</span></div><div class="line">    path: <span class="string">"/debug/vars"</span></div></pre></td></tr></table></figure>
+<p> 上面的一个参数 namespace 表示自定义指标的一个命令空间，主要是为了方便管理，这里是 Metricbeat 自身的信息，所以 namespace 就是 metricbeat。</p>
+<p>重启 Metricbeat 应该就能收到新的数据了，我们前往 Kibana。</p>
+<p>这里假设关注 output.elasticsearch.events.acked和 output.elasticsearch.events.not_acked这两个指标，我们在Kibana里面简单定义一个曲线图就能看到 Metricbeat 发往 Elasticsearch 消息的成功和失败趋势。 Timelion 表达式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">.es(<span class="string">"metricbeat*"</span>,metric=<span class="string">"max:golang.metricbeat.output.elasticsearch.events.acked"</span>).derivative().label(<span class="string">"Elasticsearch Success"</span>),.es(<span class="string">"metricbeat*"</span>,metric=<span class="string">"max:golang.metricbeat.output.elasticsearch.events.not_acked"</span>).derivative().label(<span class="string">"Elasticsearch Failed"</span>)</div></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p><img src="/images/elk2.png" alt="elk"></p>
+<p>从上图可以看到，发往 Elasticsearch 的消息很稳定，没有出现丢消息的情况，同时关于 Metricbeat 的内存情况，我们打开导入的 Dashboard 查看:</p>
+<p><img src="/images/elk3.png" alt="elk"></p>
+<p>关于如何使用 Metricbeat 来监控 Golang 应用程序的内容基本上就差不多到这里了，上面介绍了如何基于 expvar 来监控 Golang 的内存情况和自定义业务监控指标，在结合 Elastic Stack 可以快速的进行分析，希望对大家有用。</p>
+<p>最后，这个 Golang 模块目前还没 release，估计在 beats 6.0 发布，有兴趣尝鲜的可以自己下载源码打包。</p>
+<p>本文引自<a href="https://gocn.io/article/285" target="_blank" rel="external">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/" data-title="使用 Elastic Stack 来监控和调优 Golang 应用程序 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/03/20/Go语言的排序和搜索/" title="Go语言的排序和搜索">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Go语言的排序和搜索</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/01/17/在Mac上安装MongoDB/"  title="在Mac上安装MongoDB">
+ <strong>下一篇：</strong><br/> 
+ <span>在Mac上安装MongoDB
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/" data-title="使用 Elastic Stack 来监控和调优 Golang 应用程序" data-url="https://luckymrwang.github.io/2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>24</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m luckymrwang. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/iuckymrwang" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

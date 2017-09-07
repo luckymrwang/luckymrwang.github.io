@@ -1,0 +1,973 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="学习总结 思考感悟 知识管理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="https://luckymrwang.github.io/page/9/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="学习总结 思考感悟 知识管理">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iBlog">
+<meta name="twitter:description" content="学习总结 思考感悟 知识管理">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/15/Draggable时阻止单击click事件/" title="Draggable时阻止单击click事件" itemprop="url">Draggable时阻止单击click事件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-15T03:46:27.000Z" itemprop="datePublished"> 发表于 2015-12-15</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Draggable时阻止单击事件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$(<span class="string">'.selector'</span>).draggable(&#123;</div><div class="line">    stop: <span class="function"><span class="keyword">function</span>(<span class="params">event, ui</span>) </span>&#123;</div><div class="line">        <span class="comment">// event.toElement is the element that was responsible</span></div><div class="line">        <span class="comment">// for triggering this event. The handle, in case of a draggable.</span></div><div class="line">        $( event.toElement ).one(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123; e.stopImmediatePropagation(); &#125; );</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>This works because “one-listeners” are fired before “normal” listeners. So if a one-listener stops propagation, it will never reach your previously set listeners.</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/jQuery/">jQuery</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/15/Draggable时阻止单击click事件/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/15/Draggable时阻止单击click事件/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/11/GOJS去除水印/" title="GOJS去除水印" itemprop="url">GOJS去除水印</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-11T07:40:05.000Z" itemprop="datePublished"> 发表于 2015-12-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>将<code>go.js</code>格式化，修改如下代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//a.ax = d[u.Da("7eba17a4ca3b1a8346")][u.Da("78a118b7")](d, u.wl, 4, 4);</span>a.ax= <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> <span class="literal">true</span>;&#125; <span class="comment">// 去水印</span></div></pre></td></tr></table></figure>
+<p>具体GOJS简介<a href="http://www.devtalking.com/articles/gojs-simple-diagram/" target="_blank" rel="external">点击这里</a></p>
+<p>源码Github,<a href="https://github.com/luckymrwang/GoJS" target="_blank" rel="external">点击这里</a></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GOJS/">GOJS</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/11/GOJS去除水印/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/11/GOJS去除水印/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/11/Draggable拖拽克隆后可拖拽/" title="Draggable拖拽克隆后可拖拽" itemprop="url">Draggable拖拽克隆后可拖拽</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-11T07:26:23.000Z" itemprop="datePublished"> 发表于 2015-12-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>使用jQuery UI 拖动控件克隆后继续能拖动，代码如下：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span> <span class="attr">style</span>=<span class="string">"float:left;"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"form-field-1"</span> <span class="attr">placeholder</span>=<span class="string">"input"</span> <span class="attr">class</span>=<span class="string">"col-xs-10 col-sm-5"</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"widget-main"</span> <span class="attr">style</span>=<span class="string">"height:800px;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">$(<span class="string">".form-group"</span>).draggable(&#123;</div><div class="line">		appendTo: <span class="string">".widget-main"</span>,</div><div class="line">		helper: <span class="string">"clone"</span>,</div><div class="line">		revert: <span class="string">"invalid"</span>,</div><div class="line">		cursor: <span class="string">"move"</span></div><div class="line">	&#125;);</div><div class="line">    $( <span class="string">".widget-main"</span> ).droppable(&#123;</div><div class="line">      activeClass: <span class="string">"bg"</span>,</div><div class="line">      hoverClass: <span class="string">""</span>,</div><div class="line">      accept: <span class="string">".form-group"</span>,</div><div class="line">      drop: <span class="function"><span class="keyword">function</span>(<span class="params">event, ui</span>) </span>&#123;</div><div class="line">		<span class="comment">// $(this).append($(ui.draggable).clone()); </span></div><div class="line">       $(ui.helper).clone().appendTo($(<span class="keyword">this</span>)).draggable(&#123;<span class="attr">appendTo</span>: <span class="string">".widget-main"</span>,<span class="attr">revert</span>: <span class="string">"invalid"</span>&#125;); <span class="comment">//继续有拖动功能</span></div><div class="line">		$(ui.helper).remove(); <span class="comment">//去掉克隆功能</span></div><div class="line">      &#125;</div><div class="line">    &#125;).sortable(&#123;</div><div class="line">      items: <span class="string">"li:not(.placeholder)"</span>,</div><div class="line">      sort: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="comment">// 获取由 droppable 与 sortable 交互而加入的条目</span></div><div class="line">        <span class="comment">// 使用 connectWithSortable 可以解决这个问题，但不允许您自定义 active/hoverClass 选项</span></div><div class="line">        $(<span class="keyword">this</span>).removeClass(<span class="string">"ui-state-default"</span>);</div><div class="line">      &#125;</div><div class="line">    &#125;);</div></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/jQuery/">jQuery</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/11/Draggable拖拽克隆后可拖拽/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/11/Draggable拖拽克隆后可拖拽/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/08/PHPExcel隐藏Sheet/" title="PHPExcel隐藏Sheet" itemprop="url">PHPExcel隐藏Sheet</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-08T09:27:27.000Z" itemprop="datePublished"> 发表于 2015-12-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>PHPExcel隐藏Sheet语句：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$objPHPExcel-&gt;createSheet();</div><div class="line"></div><div class="line"><span class="comment">//在07版以上不起作用，在excel中取消隐藏后即可显示</span></div><div class="line">$objPHPExcel-&gt;getSheetByName(<span class="string">'Worksheet'</span>)-&gt;setSheetState(PHPExcel_Worksheet::SHEETSTATE_HIDDEN);</div><div class="line"></div><div class="line"><span class="comment">//适用于07版及以上，在excel中不能取消隐藏，可在visual_basic中查看</span></div><div class="line">$objPHPExcel-&gt;getSheetByName(<span class="string">'Worksheet'</span>)-&gt;setSheetState(PHPExcel_Worksheet::SHEETSTATE_VERYHIDDEN);</div></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHPExcel/">PHPExcel</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/08/PHPExcel隐藏Sheet/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/08/PHPExcel隐藏Sheet/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/07/jQuery动态绑定事件/" title="jQuery动态绑定事件" itemprop="url">jQuery动态绑定事件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-07T07:37:45.000Z" itemprop="datePublished"> 发表于 2015-12-07</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在jQuery中给动态元素和属性绑定事件的是 <code>live</code> 和 <code>on</code>，其中 <code>live</code> 在jQuery 1.7之后就不推荐使用了。现在主要用 <code>on</code> ，使用是要注意， <code>on</code> 前面的元素也必须在页面加载的时候就存在于 <code>DOM</code> 里面。 动态元素或者元素必须放在 <code>on</code> 的第二个参数里面。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/12/07/jQuery动态绑定事件/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/jQuery/">jQuery</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/07/jQuery动态绑定事件/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/07/jQuery动态绑定事件/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/05/jQuery中prop-方法和attr-方法的区别/" title="jQuery中prop()方法和attr()方法的区别" itemprop="url">jQuery中prop()方法和attr()方法的区别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-05T12:58:09.000Z" itemprop="datePublished"> 发表于 2015-12-05</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>jquery1.6中新加了一个方法prop()，一直没用过它，官方解释只有一句话:获取在匹配的元素集中的第一个元素的属性值。</p>
+<p>官方例举的例子感觉和attr()差不多，也不知道有什么区别，既然有了prop()这个新方法，不可能没用吧，那什么时候该用attr()，什么时候该用prop()呢？</p>
+<p>大家都知道有的浏览器只要写disabled，checked就可以了，而有的要写成disabled = “disabled”，checked=”checked”，比如用attr(“checked”)获取checkbox的checked属性时选中的时候可以取到值,值为”checked”但没选中获取值就是undefined。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/12/05/jQuery中prop-方法和attr-方法的区别/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/jQuery/">jQuery</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/05/jQuery中prop-方法和attr-方法的区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/05/jQuery中prop-方法和attr-方法的区别/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/19/自动化测试基本流程/" title="自动化测试基本流程" itemprop="url">自动化测试基本流程</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-19T05:17:55.000Z" itemprop="datePublished"> 发表于 2015-11-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><img src="/images/autotest.jpg" alt="自动化测试基本流程"></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/11/19/自动化测试基本流程/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/测试/">测试</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/11/19/自动化测试基本流程/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/19/自动化测试基本流程/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/17/直接从elasticsearch获取数据进入skyline异常检测/" title="直接从elasticsearch获取数据进入skyline异常检测" itemprop="url">直接从elasticsearch获取数据进入skyline异常检测</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-17T08:38:29.000Z" itemprop="datePublished"> 发表于 2015-11-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>这几天搭建 elasticsearch 集群做日志分析，终于有机会可以实际跑一下 skyline 的效果。不过比较麻烦的事情是，skyline 是一个比较完备的系统而不是插件，要求我们把数据通过 msgpack 发过去存到 redis 里。这是个很没有道理的做法，早在去年刚看到这个项目的时候我就在博客里写下了愿景是应该用 elasticsearch 替换掉 redis。等了这么久没等到，干脆就自己动手实现。修改后，skyline 其余的程序完全可以直接扔掉，只留下这一个脚本定时运行就够了：<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/11/17/直接从elasticsearch获取数据进入skyline异常检测/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/监控/">监控</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/11/17/直接从elasticsearch获取数据进入skyline异常检测/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/17/直接从elasticsearch获取数据进入skyline异常检测/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/17/Kale系统skyline的过滤算法/" title="Kale系统skyline的过滤算法" itemprop="url">Kale系统skyline的过滤算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-17T08:12:49.000Z" itemprop="datePublished"> 发表于 2015-11-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>同样作为时间序列存储的 rrdtool 和 graphite，都偏重在预测算法，也就是说根据现有数据推测下一个数据应该是多少；而 skyline 则是根据现有数据统计最新数据是否异常<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/11/17/Kale系统skyline的过滤算法/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/监控/">监控</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/11/17/Kale系统skyline的过滤算法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/17/Kale系统skyline的过滤算法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/17/Centos下布置kale系统skyline/" title="Centos下布置kale系统skyline" itemprop="url">Centos下布置kale系统skyline</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-17T04:52:16.000Z" itemprop="datePublished"> 发表于 2015-11-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><a href="https://github.com/etsy/skyline" target="_blank" rel="external">Skyline</a> 的页面上已经介绍了安装步骤，下面我记录一下在Centos上安装出现的问题已经相应的解决办法</p>
+<p>Centos上默认安装了python2.6以及对应的pip，如果想升级<a href="http://ruiaylin.github.io/2014/12/12/python%20update/" target="_blank" rel="external">点击这里</a></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/11/17/Centos下布置kale系统skyline/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/监控/">监控</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/11/17/Centos下布置kale系统skyline/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/17/Centos下布置kale系统skyline/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/8/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/10/">Next<span></span></a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>24</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m luckymrwang. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/iuckymrwang" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>
