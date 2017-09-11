@@ -4,25 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Golang安装及配置 | iBlog</title>
+    <title>bash: hexo: command not found | iBlog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="luckymrwang">
     
 
     
-    <meta name="description" content="Linux, Mac OS X, and FreeBSD tarballs下载安装包解压到/usr/local, 例如： tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz">
-<meta name="keywords" content="Go">
+    <meta name="description" content="最近将MacOS升级到10.12.6，以及更新了Homebrew，结果发现之前正常的hexo命令不能使用了，于是更新了版本依旧如此。 折腾了很久后最终发现是nvm的原因 所以列出我的解决办法  安装 brew install nvm 创建文件目录 mkdir ~/.nvm 设置环境变量，将如下信息添加到~/.bash_profile中  12export NVM_DIR=&amp;quot;$HOME/.">
+<meta name="keywords" content="Hexo">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Golang安装及配置">
-<meta property="og:url" content="https://luckymrwang.github.io/2016/05/25/Golang安装及配置/index.html">
+<meta property="og:title" content="bash: hexo: command not found">
+<meta property="og:url" content="https://luckymrwang.github.io/2017/09/11/bash-hexo-command-not-found/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="Linux, Mac OS X, and FreeBSD tarballs下载安装包解压到/usr/local, 例如： tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz">
+<meta property="og:description" content="最近将MacOS升级到10.12.6，以及更新了Homebrew，结果发现之前正常的hexo命令不能使用了，于是更新了版本依旧如此。 折腾了很久后最终发现是nvm的原因 所以列出我的解决办法  安装 brew install nvm 创建文件目录 mkdir ~/.nvm 设置环境变量，将如下信息添加到~/.bash_profile中  12export NVM_DIR=&amp;quot;$HOME/.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2017-09-07T03:48:43.000Z">
+<meta property="og:updated_time" content="2017-09-11T14:46:05.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Golang安装及配置">
-<meta name="twitter:description" content="Linux, Mac OS X, and FreeBSD tarballs下载安装包解压到/usr/local, 例如： tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz">
+<meta name="twitter:title" content="bash: hexo: command not found">
+<meta name="twitter:description" content="最近将MacOS升级到10.12.6，以及更新了Homebrew，结果发现之前正常的hexo命令不能使用了，于是更新了版本依旧如此。 折腾了很久后最终发现是nvm的原因 所以列出我的解决办法  安装 brew install nvm 创建文件目录 mkdir ~/.nvm 设置环境变量，将如下信息添加到~/.bash_profile中  12export NVM_DIR=&amp;quot;$HOME/.">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -82,14 +82,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/05/25/Golang安装及配置/" title="Golang安装及配置" itemprop="url">Golang安装及配置</a>
+      <a href="/2017/09/11/bash-hexo-command-not-found/" title="bash: hexo: command not found" itemprop="url">bash: hexo: command not found</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
 		
   <p class="article-time">
-    <time datetime="2016-05-25T06:04:43.000Z" itemprop="datePublished"> 发表于 2016-05-25</time>
+    <time datetime="2017-09-11T14:36:35.000Z" itemprop="datePublished"> 发表于 2017-09-11</time>
     
   </p>
 </header>
@@ -98,18 +98,25 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux-Mac-OS-X-and-FreeBSD-tarballs"><span class="toc-number">1.</span> <span class="toc-text">Linux, Mac OS X, and FreeBSD tarballs</span></a></li></ol>
+			
 		
 		</div>
 		
-		<h3 id="Linux-Mac-OS-X-and-FreeBSD-tarballs"><a href="#Linux-Mac-OS-X-and-FreeBSD-tarballs" class="headerlink" title="Linux, Mac OS X, and FreeBSD tarballs"></a>Linux, Mac OS X, and FreeBSD tarballs</h3><p>下载安装包解压到<code>/usr/local</code>, 例如：</p>
-<pre><code>tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
-</code></pre><a id="more"></a>
-<p><em>选择对应版本的安装包 go1.2.1.linux-amd64.tar.gz</em></p>
-<p>将<code>GOROOT</code>,<code>GOPATH</code>添加到环境变量</p>
-<p>在linux下添加到 <code>$HOME/.bashrc</code> 中</p>
-<p><em><code>.bashrc</code>与<code>.bash_profile</code>的区别：当shell是交互式登录shell时，读取.bash_profile文件，如在系统启动、远程登录或使用su -切换用户时；当shell是交互式登录和非登录shell时都会读取.bashrc文件，如：在图形界面中打开新终端或使用su切换用户时，均属于非登录shell的情况。<br>.bash_profile只在会话开始时被读取一次，而.bashrc则每次打开新的终端时，都会被读取。</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">export GOROOT=/usr/local/go</div><div class="line">export GOPATH=/data/plattech/go  // 项目目录 用go get *** 后会自动在该目录下创建src和pkg文件夹</div><div class="line">export PATH=$PATH:$GOROOT/bin  // 如果安装了bee 则PATH=$PATH:$GOROOT/bin:$GOPATH/bin</div></pre></td></tr></table></figure>  
+		<p>最近将<code>MacOS</code>升级到10.12.6，以及更新了<code>Homebrew</code>，结果发现之前正常的<code>hexo</code>命令不能使用了，于是更新了版本依旧如此。</p>
+<p>折腾了很久后最终发现是<code>nvm</code>的原因</p>
+<p>所以列出我的解决办法</p>
+<ul>
+<li>安装 <code>brew install nvm</code></li>
+<li>创建文件目录 <code>mkdir ~/.nvm</code></li>
+<li>设置环境变量，将如下信息添加到<code>~/.bash_profile</code>中</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export NVM_DIR=&quot;$HOME/.nvm&quot;</div><div class="line">. &quot;/usr/local/opt/nvm/nvm.sh&quot;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>source ~/.bash_profile</code></li>
+<li>用<code>nvm</code>安装<code>Node.js</code> <code>nvm install stable</code></li>
+<li><code>npm install -g hexo-cli</code></li>
+</ul>
+  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -117,7 +124,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/Go/">Go</a>
+  <span></span> <a href="/tags/Hexo/">Hexo</a>
   </div>
 
 </div>
@@ -126,7 +133,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://luckymrwang.github.io/2016/05/25/Golang安装及配置/" data-title="Golang安装及配置 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  <div data-url="https://luckymrwang.github.io/2017/09/11/bash-hexo-command-not-found/" data-title="bash: hexo: command not found | iBlog" data-tsina="iuckymrwang" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -139,19 +146,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/05/31/PHP连接Access/" title="PHP连接Access">
-  <strong>上一篇：</strong><br/>
-  <span>
-  PHP连接Access</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/05/25/进一步认识Golang中的并发/"  title="进一步认识Golang中的并发">
+<a href="/2017/09/07/人人都是产品经理/"  title="人人都是产品经理">
  <strong>下一篇：</strong><br/> 
- <span>进一步认识Golang中的并发
+ <span>人人都是产品经理
 </span>
 </a>
 </div>
@@ -160,7 +159,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2016/05/25/Golang安装及配置/" data-title="Golang安装及配置" data-url="https://luckymrwang.github.io/2016/05/25/Golang安装及配置/"></div>
+	<div class="ds-thread" data-thread-key="2017/09/11/bash-hexo-command-not-found/" data-title="bash: hexo: command not found" data-url="https://luckymrwang.github.io/2017/09/11/bash-hexo-command-not-found/"></div>
 </section>
 
 
@@ -170,7 +169,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux-Mac-OS-X-and-FreeBSD-tarballs"><span class="toc-number">1.</span> <span class="toc-text">Linux, Mac OS X, and FreeBSD tarballs</span></a></li></ol>
+ 
  
   </div>
 

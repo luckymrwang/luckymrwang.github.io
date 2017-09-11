@@ -82,6 +82,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2017/03/21/Map-对Key和Value排序/" title="Map 对Key和Value排序" itemprop="url">Map 对Key和Value排序</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-21T03:32:35.000Z" itemprop="datePublished"> 发表于 2017-03-21</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="Map-根据键名排序"><a href="#Map-根据键名排序" class="headerlink" title="Map 根据键名排序"></a>Map 根据键名排序</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"sort"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// To create a map as input</span></div><div class="line">	m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>)</div><div class="line">	m[<span class="number">1</span>] = <span class="string">"a"</span></div><div class="line">	m[<span class="number">2</span>] = <span class="string">"c"</span></div><div class="line">	m[<span class="number">0</span>] = <span class="string">"b"</span></div><div class="line"></div><div class="line">	<span class="comment">// To store the keys in slice in sorted order</span></div><div class="line">	<span class="keyword">var</span> keys []<span class="keyword">int</span></div><div class="line">	<span class="keyword">for</span> k := <span class="keyword">range</span> m &#123;</div><div class="line">		keys = <span class="built_in">append</span>(keys, k)</div><div class="line">	&#125;</div><div class="line">	sort.Ints(keys)</div><div class="line"></div><div class="line">	<span class="comment">// To perform the opertion you want</span></div><div class="line">	<span class="keyword">for</span> _, k := <span class="keyword">range</span> keys &#123;</div><div class="line">		fmt.Println(<span class="string">"Key:"</span>, k, <span class="string">"Value:"</span>, m[k])</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2017/03/21/Map-对Key和Value排序/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/03/21/Map-对Key和Value排序/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/03/21/Map-对Key和Value排序/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2017/03/20/Go语言的排序和搜索/" title="Go语言的排序和搜索" itemprop="url">Go语言的排序和搜索</a>
   </h1>
   <p class="article-author">By
@@ -638,68 +697,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/11/17/Go语言测试-Test-性能测试-Benchmark/" title="Go语言测试(Test)&amp;性能测试(Benchmark)" itemprop="url">Go语言测试(Test)&amp;性能测试(Benchmark)</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-11-17T03:33:58.000Z" itemprop="datePublished"> 发表于 2016-11-17</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Package testing provides support for automated testing of Go packages. It is intended to be used in concert with the “go test” command, which automates execution of any function of the form.</div></pre></td></tr></table></figure>
-<p>testing 包提供了对Go包的自动测试支持。 这是和go test 命令相呼应的功能， go test 命令会自动执行所以符合格式</p>
-<pre><code>func TestXXX(t *testing.T) 
-</code></pre><h3 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Functions of the form</div><div class="line"></div><div class="line">func BenchmarkXxx(b *testing.B)</div><div class="line"></div><div class="line">are considered benchmarks, and are executed by the “go test” command when &gt;its -bench flag is provided. Benchmarks are run sequentially.</div></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/11/17/Go语言测试-Test-性能测试-Benchmark/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/11/17/Go语言测试-Test-性能测试-Benchmark/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/17/Go语言测试-Test-性能测试-Benchmark/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
@@ -787,15 +784,19 @@
 			
 		
 			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>2</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			
@@ -804,10 +805,6 @@
 		
 			
 				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
 			
 		
 		</ul>
