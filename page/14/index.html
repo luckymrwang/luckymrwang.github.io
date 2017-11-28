@@ -82,6 +82,129 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/06/03/Apache服务器访问方式去除Index.php/" title="Apache服务器访问方式去除Index.php" itemprop="url">Apache服务器访问方式去除Index.php</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-03T07:49:30.000Z" itemprop="datePublished"> 发表于 2015-06-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><em>例如: 你原来的路径是： localhost/index.php/index<br>改变后的路径是： localhost/index</em></p>
+<ul>
+<li><p>httpd.conf配置文件中加载了mod_rewrite.so模块 //在Apache里面去配置</p>
+<pre><code>#LoadModule rewrite_module modules/mod_rewrite.so  //把前面的#号去掉 
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/06/03/Apache服务器访问方式去除Index.php/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Apache/">Apache</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/06/03/Apache服务器访问方式去除Index.php/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/03/Apache服务器访问方式去除Index.php/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/" title="Apache&amp;Nginx 虚拟主机 VirtualHost 配置" itemprop="url">Apache&amp;Nginx 虚拟主机 VirtualHost 配置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-03T06:35:04.000Z" itemprop="datePublished"> 发表于 2015-06-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p><strong>虚拟主机 (Virtual Host)</strong> 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。</p>
+<p><em>重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将<dicrectory>（这个是所有目录的默认配置)和<direcotry opt="" lampp="" htdocs="">的权限，都是deny from all.作为默认。</direcotry></dicrectory></em><br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Apache/">Apache</a><a href="/tags/Nginx/">Nginx</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/06/03/Apache的Order-All-Deny详解/" title="Apache的Order All,Deny详解" itemprop="url">Apache的Order All,Deny详解</a>
   </h1>
   <p class="article-author">By
@@ -568,118 +691,6 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/18/同步与异步，阻塞与非阻塞/" title="同步与异步，阻塞与非阻塞" itemprop="url">同步与异步，阻塞与非阻塞</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-18T13:23:48.000Z" itemprop="datePublished"> 发表于 2015-05-18</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="同步与异步"><a href="#同步与异步" class="headerlink" title="同步与异步"></a>同步与异步</h2><p>同步和异步关注的是<em>消息通信机制</em> (synchronous communication/ asynchronous communication)<br>所谓同步，就是在发出一个<strong>调用</strong> 时，在没有得到结果之前，该<em>调用</em> 就不返回。但是一旦调用返回，就得到返回值了。<br>换句话说，就是由<strong>调用者</strong> 主动等待这个 <strong>调用</strong> 的结果。</p>
-<p>而异步则是相反，<strong>调用</strong> 在发出之后，这个调用就直接返回了，所以没有返回结果。换句话说，当一个异步过程调用发出后，调用者不会立刻得到结果。而是在 <strong>调用</strong> 发出后，<strong>被调用者</strong> 通过状态、通知来通知调用者，或通过回调函数处理这个调用。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/05/18/同步与异步，阻塞与非阻塞/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/概念/">概念</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/05/18/同步与异步，阻塞与非阻塞/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/18/同步与异步，阻塞与非阻塞/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/18/Git-常用命令总结/" title="Git 常用命令总结" itemprop="url">Git 常用命令总结</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-18T02:21:48.000Z" itemprop="datePublished"> 发表于 2015-05-18</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/05/18/Git-常用命令总结/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/18/Git-常用命令总结/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/13/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/15/">Next<span></span></a>
@@ -719,11 +730,11 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>8</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -735,19 +746,11 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
@@ -755,7 +758,15 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
@@ -767,10 +778,6 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>2</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
@@ -779,7 +786,11 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>2</sup></a></li>
 			
 		
 			

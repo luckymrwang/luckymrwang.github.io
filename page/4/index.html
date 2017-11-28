@@ -82,6 +82,122 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/11/11/Writing-Files/" title="Writing Files" itemprop="url">Writing Files</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-11T09:35:15.000Z" itemprop="datePublished"> 发表于 2016-11-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"bufio"</span></div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"io/ioutil"</span></div><div class="line">	<span class="string">"os"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(e error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(e)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	d1 := []<span class="keyword">byte</span>(<span class="string">"hello\ngo\n"</span>)</div><div class="line">	err := ioutil.WriteFile(<span class="string">"/tmp/dat1"</span>, d1, <span class="number">0644</span>)</div><div class="line">	check(err)</div><div class="line">	f, err := os.Create(<span class="string">"/tmp/dat2"</span>)</div><div class="line">	check(err)</div><div class="line">	<span class="keyword">defer</span> f.Close()</div><div class="line"></div><div class="line">	d2 := []<span class="keyword">byte</span>&#123;<span class="number">115</span>, <span class="number">111</span>, <span class="number">109</span>, <span class="number">101</span>, <span class="number">10</span>&#125;</div><div class="line">	n2, err := f.Write(d2)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n2)</div><div class="line"></div><div class="line">	n3, err := f.WriteString(<span class="string">"writes\n"</span>)</div><div class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n3)</div><div class="line">	f.Sync()</div><div class="line">	w := bufio.NewWriter(f)</div><div class="line"></div><div class="line">	n4, err := w.WriteString(<span class="string">"buffered\n"</span>)</div><div class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n4)</div><div class="line">	w.Flush()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">	</div><div class="line">$ go run writing-files.go </div><div class="line">wrote 5 bytes</div><div class="line">wrote 7 bytes</div><div class="line">wrote 9 bytes</div><div class="line"></div><div class="line">$ cat /tmp/dat1</div><div class="line">hello</div><div class="line">go</div><div class="line">$ cat /tmp/dat2</div><div class="line">some</div><div class="line">writes</div><div class="line">buffered</div></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GoExample/">GoExample</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/11/Writing-Files/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/11/Writing-Files/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/11/String-Functions/" title="String Functions" itemprop="url">String Functions</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-11T09:29:58.000Z" itemprop="datePublished"> 发表于 2016-11-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> s <span class="string">"strings"</span></div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> p = fmt.Println</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	p(<span class="string">"Contains:  "</span>, s.Contains(<span class="string">"test"</span>, <span class="string">"es"</span>))</div><div class="line">	p(<span class="string">"Count:     "</span>, s.Count(<span class="string">"test"</span>, <span class="string">"t"</span>))</div><div class="line">	p(<span class="string">"HasPrefix: "</span>, s.HasPrefix(<span class="string">"test"</span>, <span class="string">"te"</span>))</div><div class="line">	p(<span class="string">"HasSuffix: "</span>, s.HasSuffix(<span class="string">"test"</span>, <span class="string">"st"</span>))</div><div class="line">	p(<span class="string">"Index:     "</span>, s.Index(<span class="string">"test"</span>, <span class="string">"e"</span>))</div><div class="line">	p(<span class="string">"Join:      "</span>, s.Join([]<span class="keyword">string</span>&#123;<span class="string">"a"</span>, <span class="string">"b"</span>&#125;, <span class="string">"-"</span>))</div><div class="line">	p(<span class="string">"Repeat:    "</span>, s.Repeat(<span class="string">"a"</span>, <span class="number">5</span>))</div><div class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">-1</span>))</div><div class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">1</span>))</div><div class="line">	p(<span class="string">"Split:     "</span>, s.Split(<span class="string">"a-b-c-d-e"</span>, <span class="string">"-"</span>))</div><div class="line">	p(<span class="string">"ToLower:   "</span>, s.ToLower(<span class="string">"TEST"</span>))</div><div class="line">	p(<span class="string">"ToUpper:   "</span>, s.ToUpper(<span class="string">"test"</span>))</div><div class="line">	p()</div><div class="line">	p(<span class="string">"Len: "</span>, <span class="built_in">len</span>(<span class="string">"hello"</span>))</div><div class="line">	p(<span class="string">"Char:"</span>, <span class="string">"hello"</span>[<span class="number">1</span>])</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">$ go run string-functions.go</div><div class="line">Contains:   true</div><div class="line">Count:      2</div><div class="line">HasPrefix:  true</div><div class="line">HasSuffix:  true</div><div class="line">Index:      1</div><div class="line">Join:       a-b</div><div class="line">Repeat:     aaaaa</div><div class="line">Replace:    f00</div><div class="line">Replace:    f0o</div><div class="line">Split:      [a b c d e]</div><div class="line">toLower:    test</div><div class="line">ToUpper:    TEST</div><div class="line">Len:  5</div><div class="line">Char: 101</div></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GoExample/">GoExample</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/11/String-Functions/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/11/String-Functions/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/11/03/轮询调度算法-Round-Robin-Scheduling/" title="轮询调度算法(Round-Robin Scheduling)" itemprop="url">轮询调度算法(Round-Robin Scheduling)</a>
   </h1>
   <p class="article-author">By
@@ -560,134 +676,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/09/27/Go命令行flag包/" title="Go命令行flag包" itemprop="url">Go命令行flag包</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-09-27T10:07:02.000Z" itemprop="datePublished"> 发表于 2016-09-27</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>go语言提供的flag包可以解析命令行的参数，代码：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"flag"</span></div><div class="line"></div><div class="line">	<span class="string">"fmt"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line"></div><div class="line">	<span class="comment">//第一个参数，为参数名称，第二个参数为默认值，第三个参数是说明</span></div><div class="line"></div><div class="line">	username := flag.String(<span class="string">"name"</span>, <span class="string">""</span>, <span class="string">"Input your username"</span>)</div><div class="line"></div><div class="line">	flag.Parse()</div><div class="line"></div><div class="line">	fmt.Println(<span class="string">"Hello, "</span>, *username)</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>编译：</p>
-<pre><code>go build flag.go
-</code></pre><p>运行：</p>
-<pre><code>./flag -name=world
-</code></pre><p>输出：</p>
-<pre><code>Hello, world
-</code></pre><p>如果不输入name参数：</p>
-<pre><code>./flag
-</code></pre><p>则输出：</p>
-<pre><code>Hello,
-</code></pre>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/09/27/Go命令行flag包/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/27/Go命令行flag包/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/09/27/程序在的内存中的分配（常量，局部变量，全局变量，程序代码）/" title="程序在的内存中的分配（常量，局部变量，全局变量，程序代码）" itemprop="url">程序在的内存中的分配（常量，局部变量，全局变量，程序代码）</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-09-27T03:49:46.000Z" itemprop="datePublished"> 发表于 2016-09-27</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="在c中分为这几个存储区"><a href="#在c中分为这几个存储区" class="headerlink" title="在c中分为这几个存储区"></a>在c中分为这几个存储区</h3><ol>
-<li>栈 - 由编译器自动分配释放</li>
-<li>堆 - 一般由程序员分配释放，若程序员不释放，程序结束时可能由OS回收</li>
-<li>全局区（静态区），全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在一块区域，未初始化的全局变量和未初始化的静态变量在相邻的另一块区域。- 程序结束释放</li>
-<li>另外还有一个专门放常量的地方。- 程序结束释放</li>
-</ol>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/09/27/程序在的内存中的分配（常量，局部变量，全局变量，程序代码）/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/09/27/程序在的内存中的分配（常量，局部变量，全局变量，程序代码）/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/27/程序在的内存中的分配（常量，局部变量，全局变量，程序代码）/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/3/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/5/">Next<span></span></a>
@@ -727,11 +715,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>8</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -743,19 +731,11 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
@@ -763,7 +743,15 @@
 			
 		
 			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
@@ -775,10 +763,6 @@
 			
 		
 			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>2</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
@@ -787,7 +771,11 @@
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>2</sup></a></li>
 			
 		
 			

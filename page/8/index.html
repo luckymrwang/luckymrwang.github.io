@@ -82,6 +82,124 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/03/06/Go的-byte与string/" title="Go的[]byte与string" itemprop="url">Go的[]byte与string</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-06T04:56:50.000Z" itemprop="datePublished"> 发表于 2016-03-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">    <span class="string">"fmt"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    s1 := <span class="string">"abcd"</span></div><div class="line">    b1 := []<span class="keyword">byte</span>(s1)</div><div class="line">    fmt.Println(b1) <span class="comment">// [97 98 99 100]</span></div><div class="line"></div><div class="line">    s2 := <span class="string">"中文"</span></div><div class="line">    b2 := []<span class="keyword">byte</span>(s2)</div><div class="line">    fmt.Println(b2) <span class="comment">// [228 184 173 230 150 135], unicode，每个中文字符会由三个byte组成 </span></div><div class="line"></div><div class="line">    r := []<span class="keyword">rune</span>(s2)</div><div class="line">    fmt.Println(r) <span class="comment">// [20013 25991], 每个字一个数值</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/03/06/Go的-byte与string/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/03/06/Go的-byte与string/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/03/06/Go的-byte与string/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/03/06/Go语言指针符号的-和/" title="Go语言指针符号的*和&amp;" itemprop="url">Go语言指针符号的*和&amp;</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-06T03:13:46.000Z" itemprop="datePublished"> 发表于 2016-03-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="先看一段代码"><a href="#先看一段代码" class="headerlink" title="先看一段代码"></a>先看一段代码</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">1</span> </div><div class="line">    <span class="keyword">var</span> b *<span class="keyword">int</span> = &amp;a</div><div class="line">    <span class="keyword">var</span> c **<span class="keyword">int</span> = &amp;b</div><div class="line">    <span class="keyword">var</span> x <span class="keyword">int</span> = *b</div><div class="line">    fmt.Println(<span class="string">"a = "</span>,a)</div><div class="line">    fmt.Println(<span class="string">"&amp;a = "</span>,&amp;a)</div><div class="line">    fmt.Println(<span class="string">"*&amp;a = "</span>,*&amp;a)</div><div class="line">    fmt.Println(<span class="string">"b = "</span>,b)</div><div class="line">    fmt.Println(<span class="string">"&amp;b = "</span>,&amp;b)</div><div class="line">    fmt.Println(<span class="string">"*&amp;b = "</span>,*&amp;b)</div><div class="line">    fmt.Println(<span class="string">"*b = "</span>,*b)</div><div class="line">    fmt.Println(<span class="string">"c = "</span>,c)</div><div class="line">    fmt.Println(<span class="string">"*c = "</span>,*c)</div><div class="line">    fmt.Println(<span class="string">"&amp;c = "</span>,&amp;c)</div><div class="line">    fmt.Println(<span class="string">"*&amp;c = "</span>,*&amp;c)</div><div class="line">    fmt.Println(<span class="string">"**c = "</span>,**c)</div><div class="line">    fmt.Println(<span class="string">"***&amp;*&amp;*&amp;*&amp;c = "</span>,***&amp;*&amp;*&amp;*&amp;*&amp;c)</div><div class="line">    fmt.Println(<span class="string">"x = "</span>,x)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/03/06/Go语言指针符号的-和/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/03/06/Go语言指针符号的-和/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/03/06/Go语言指针符号的-和/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/02/29/如何做到jQuery-free/" title="如何做到jQuery-free?" itemprop="url">如何做到jQuery-free?</a>
   </h1>
   <p class="article-author">By
@@ -580,124 +698,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/12/30/RESTful-API版本控制策略/" title="RESTful API版本控制策略" itemprop="url">RESTful API版本控制策略</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-12-30T07:23:15.000Z" itemprop="datePublished"> 发表于 2015-12-30</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>做RESTful开放平台，一方面其API变动越少， 对API调用者越有利；另一方面，没有人可以预测未来，系统在发展的过程中，不可避免的需要添加新的资源，或者修改现有资源。因此，改动升级必不可少，但是，作为平台开发者，你必须有觉悟：一旦你的API开放出去，有人开始用了，你就不能只管自己Happy了，你对平台的任何改动都需要考虑对当前用户的影响。因此，做开放平台，你从第一个API的设计就需要开始API的版本控制策略问题，API的版本控制策略就像是开放平台和平台用户之间的长期协议，其设计的好坏将直接决定用户是否使用该平台，或者说用户在使用之后是否会因为某次版本升级直接弃用该平台。 </p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/12/30/RESTful-API版本控制策略/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/API/">API</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/12/30/RESTful-API版本控制策略/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/30/RESTful-API版本控制策略/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/12/28/PHP-Ajax-跨域问题最佳解决方案/" title="PHP Ajax 跨域问题最佳解决方案" itemprop="url">PHP Ajax 跨域问题最佳解决方案</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-12-28T08:47:26.000Z" itemprop="datePublished"> 发表于 2015-12-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="本文通过设置Access-Control-Allow-Origin来实现跨域。"><a href="#本文通过设置Access-Control-Allow-Origin来实现跨域。" class="headerlink" title="本文通过设置Access-Control-Allow-Origin来实现跨域。"></a>本文通过设置Access-Control-Allow-Origin来实现跨域。</h3><p>例如：客户端的域名是client.runoob.com，而请求的域名是server.runoob.com。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/12/28/PHP-Ajax-跨域问题最佳解决方案/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/PHP/">PHP</a><a href="/tags/Ajax/">Ajax</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/12/28/PHP-Ajax-跨域问题最佳解决方案/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/28/PHP-Ajax-跨域问题最佳解决方案/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/7/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/9/">Next<span></span></a>
@@ -737,11 +737,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>8</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -753,19 +753,11 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
@@ -773,7 +765,15 @@
 			
 		
 			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
@@ -785,10 +785,6 @@
 			
 		
 			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>2</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
@@ -797,7 +793,11 @@
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>2</sup></a></li>
 			
 		
 			
