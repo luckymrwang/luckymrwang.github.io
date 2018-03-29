@@ -82,6 +82,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/08/25/file-exists/" title="file_exists()" itemprop="url">file_exists()</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-25T02:30:20.000Z" itemprop="datePublished"> 发表于 2016-08-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近在看<code>CodeIgniter</code>的源码，在<code>system/common.php</code>中有个公共函数<code>load_class</code>的定义，其中用到<code>file_exists</code>函数来判断指定类的文件是否存在，于是就具体查了下该函数的用法~</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/08/25/file-exists/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/08/25/file-exists/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/25/file-exists/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/08/23/Access-denied-for-user-root-localhost-using-password-NO/" title="Access denied for user &#39;root@localhost&#39; (using password:NO)" itemprop="url">Access denied for user &#39;root@localhost&#39; (using password:NO)</a>
   </h1>
   <p class="article-author">By
@@ -646,64 +705,6 @@ systemctl enable iptables.service #设置防火墙开机启动
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/07/26/利用Go调用系统命令得到kafka部分日志/" title="利用Go调用系统命令得到kafka部分日志" itemprop="url">利用Go调用系统命令得到kafka部分日志</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-07-26T11:20:17.000Z" itemprop="datePublished"> 发表于 2016-07-26</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><em>自己加的一个利用Go调用系统命令得到kafka部分日志的函数</em></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// @router /get_user_items_log</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *QueryController)</span> <span class="title">GetUserItemsLog</span><span class="params">()</span></span> &#123;</div><div class="line">        t := time.Now().AddDate(<span class="number">0</span>, <span class="number">0</span>, <span class="number">-1</span>)</div><div class="line">        dateStr := t.Format(<span class="string">"2006-01-02 00:00:00"</span>)</div><div class="line">        fmt.Println(dateStr)</div><div class="line">        date, _:= time.Parse(<span class="string">"2006-01-02 00:00:00"</span>, dateStr)</div><div class="line">        timestamp := date.Unix()</div><div class="line">        timestr := strconv.FormatInt(timestamp, <span class="number">10</span>)</div><div class="line"></div><div class="line">        consumer := &amp;models.Consumer&#123;&#125;</div><div class="line">        offset := consumer.GetOffset(timestr)</div><div class="line">        cmdstr := fmt.Sprintf(<span class="string">`/data/plattech/kafka_2.9.2-0.8.1.1/bin/kafka-simple-consumer-shell.sh --broker-list 10.251.192.137:9092 --topic game_server --partit</span></div><div class="line"><span class="string">ion 0 --offset %d --no-wait-at-logend | grep '"type":"item"' &gt; kafka_raw.txt`</span>, offset)</div><div class="line">        cmd := exec.Command(<span class="string">"/bin/sh"</span>, <span class="string">"-c"</span>, cmdstr)</div><div class="line">        err := cmd.Run()</div><div class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">                <span class="built_in">panic</span>(err)</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">                c.Ctx.WriteString(<span class="string">"Success."</span>)</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/07/26/利用Go调用系统命令得到kafka部分日志/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/07/26/利用Go调用系统命令得到kafka部分日志/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/5/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/7/">Next<span></span></a>
@@ -755,11 +756,11 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
@@ -767,11 +768,11 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
 			
 		
 			
@@ -779,11 +780,7 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
@@ -795,7 +792,11 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/缓存/" title="缓存">缓存<sup>2</sup></a></li>
 			
 		
 			
@@ -803,15 +804,15 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 		</ul>
