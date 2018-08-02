@@ -82,6 +82,72 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/09/21/PHP二维数组排序方法/" title="PHP二维数组排序方法" itemprop="url">PHP二维数组排序方法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-21T06:35:17.000Z" itemprop="datePublished"> 发表于 2016-09-21</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>例如像下面的数组：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$users = <span class="keyword">array</span>(</div><div class="line">    <span class="keyword">array</span>(<span class="string">'name'</span> =&gt; <span class="string">'tom'</span>, <span class="string">'age'</span> =&gt; <span class="number">20</span>),</div><div class="line">    <span class="keyword">array</span>(<span class="string">'name'</span> =&gt; <span class="string">'anny'</span>, <span class="string">'age'</span> =&gt; <span class="number">18</span>)，</div><div class="line">    <span class="keyword">array</span>(<span class="string">'name'</span> =&gt; <span class="string">'jack'</span>, <span class="string">'age'</span> =&gt; <span class="number">22</span>)</div><div class="line">);</div></pre></td></tr></table></figure>
+<h4 id="使用array-multisort"><a href="#使用array-multisort" class="headerlink" title="使用array_multisort"></a>使用array_multisort</h4><p>先将age提取出来存储到一维数组里，然后按照age升序排列。具体代码如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ages = <span class="keyword">array</span>();</div><div class="line"><span class="keyword">foreach</span> ($users <span class="keyword">as</span> $user) &#123;</div><div class="line">    $ages[] = $user[<span class="string">'age'</span>];</div><div class="line">&#125;</div><div class="line">array_multisort($ages, SORT_ASC, $users);</div></pre></td></tr></table></figure>
+<p>执行后，$users就是排序好的数组了，可以打印出来看看。如果需要先按年龄升序排列，再按照名称升序排列，方法同上，就是多提取一个名称数组出来，最后的排序方法这样调用：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">array_multisort($ages, SORT_ASC, $names, SORT_ASC, $users);</div></pre></td></tr></table></figure>
+<h4 id="使用usort"><a href="#使用usort" class="headerlink" title="使用usort"></a>使用usort</h4><p>使用这个方法最大的好处就是可以自定义一些比较复杂的排序方法。例如按照名称的长度降序排列：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">usort($users, <span class="function"><span class="keyword">function</span><span class="params">($a, $b)</span> </span>&#123;</div><div class="line">      $al = strlen($a[<span class="string">'name'</span>]);</div><div class="line">      $bl = strlen($b[<span class="string">'name'</span>]);</div><div class="line">      <span class="keyword">if</span> ($al == $bl)</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">      <span class="keyword">return</span> ($al &gt; $bl) ? <span class="number">-1</span> : <span class="number">1</span>;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>这里使用了匿名函数，如果有需要也可以单独提取出来。其中$a, $b可以理解为$users数组下的元素，可以直接索引name值，并计算长度，而后比较长度就可以了。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/21/PHP二维数组排序方法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/21/PHP二维数组排序方法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/09/01/error-command-gcc-failed-with-exit-status-1/" title="error: command &#39;gcc&#39; failed with exit status 1" itemprop="url">error: command &#39;gcc&#39; failed with exit status 1</a>
   </h1>
   <p class="article-author">By
@@ -640,65 +706,6 @@ systemctl enable iptables.service #设置防火墙开机启动
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/07/31/Go与Ajax的结合使用，返回json或者xml的值/" title="Go与Ajax的结合使用，返回json或者xml的值" itemprop="url">Go与Ajax的结合使用，返回json或者xml的值</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-07-31T07:44:48.000Z" itemprop="datePublished"> 发表于 2016-07-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>很多时候利用Go开发API的服务，会返回给调用端json或者xml格式的数据，这个在Go里面很容易做到。当然还有一些框架也可以轻松做到，比如<a href="http://beego.me/" target="_blank" rel="external">beego</a>，这里我们看一下标准库的代码如何做到。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/07/31/Go与Ajax的结合使用，返回json或者xml的值/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/07/31/Go与Ajax的结合使用，返回json或者xml的值/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/07/31/Go与Ajax的结合使用，返回json或者xml的值/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/5/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/7/">Next<span></span></a>
@@ -730,7 +737,7 @@ systemctl enable iptables.service #设置防火墙开机启动
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>24</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
 			
 		
 			
@@ -750,15 +757,19 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
 			
 		
 			
@@ -767,10 +778,6 @@ systemctl enable iptables.service #设置防火墙开机启动
 		
 			
 				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
 			
 		
 			
@@ -802,11 +809,11 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 		</ul>
