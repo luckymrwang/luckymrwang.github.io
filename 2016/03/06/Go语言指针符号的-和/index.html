@@ -102,7 +102,7 @@
 		
 		</div>
 		
-		<h3 id="先看一段代码"><a href="#先看一段代码" class="headerlink" title="先看一段代码"></a>先看一段代码</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">1</span> </div><div class="line">    <span class="keyword">var</span> b *<span class="keyword">int</span> = &amp;a</div><div class="line">    <span class="keyword">var</span> c **<span class="keyword">int</span> = &amp;b</div><div class="line">    <span class="keyword">var</span> x <span class="keyword">int</span> = *b</div><div class="line">    fmt.Println(<span class="string">"a = "</span>,a)</div><div class="line">    fmt.Println(<span class="string">"&amp;a = "</span>,&amp;a)</div><div class="line">    fmt.Println(<span class="string">"*&amp;a = "</span>,*&amp;a)</div><div class="line">    fmt.Println(<span class="string">"b = "</span>,b)</div><div class="line">    fmt.Println(<span class="string">"&amp;b = "</span>,&amp;b)</div><div class="line">    fmt.Println(<span class="string">"*&amp;b = "</span>,*&amp;b)</div><div class="line">    fmt.Println(<span class="string">"*b = "</span>,*b)</div><div class="line">    fmt.Println(<span class="string">"c = "</span>,c)</div><div class="line">    fmt.Println(<span class="string">"*c = "</span>,*c)</div><div class="line">    fmt.Println(<span class="string">"&amp;c = "</span>,&amp;c)</div><div class="line">    fmt.Println(<span class="string">"*&amp;c = "</span>,*&amp;c)</div><div class="line">    fmt.Println(<span class="string">"**c = "</span>,**c)</div><div class="line">    fmt.Println(<span class="string">"***&amp;*&amp;*&amp;*&amp;c = "</span>,***&amp;*&amp;*&amp;*&amp;*&amp;c)</div><div class="line">    fmt.Println(<span class="string">"x = "</span>,x)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+		<h3 id="先看一段代码"><a href="#先看一段代码" class="headerlink" title="先看一段代码"></a>先看一段代码</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> a <span class="keyword">int</span> = <span class="number">1</span> </span><br><span class="line">    <span class="keyword">var</span> b *<span class="keyword">int</span> = &amp;a</span><br><span class="line">    <span class="keyword">var</span> c **<span class="keyword">int</span> = &amp;b</span><br><span class="line">    <span class="keyword">var</span> x <span class="keyword">int</span> = *b</span><br><span class="line">    fmt.Println(<span class="string">"a = "</span>,a)</span><br><span class="line">    fmt.Println(<span class="string">"&amp;a = "</span>,&amp;a)</span><br><span class="line">    fmt.Println(<span class="string">"*&amp;a = "</span>,*&amp;a)</span><br><span class="line">    fmt.Println(<span class="string">"b = "</span>,b)</span><br><span class="line">    fmt.Println(<span class="string">"&amp;b = "</span>,&amp;b)</span><br><span class="line">    fmt.Println(<span class="string">"*&amp;b = "</span>,*&amp;b)</span><br><span class="line">    fmt.Println(<span class="string">"*b = "</span>,*b)</span><br><span class="line">    fmt.Println(<span class="string">"c = "</span>,c)</span><br><span class="line">    fmt.Println(<span class="string">"*c = "</span>,*c)</span><br><span class="line">    fmt.Println(<span class="string">"&amp;c = "</span>,&amp;c)</span><br><span class="line">    fmt.Println(<span class="string">"*&amp;c = "</span>,*&amp;c)</span><br><span class="line">    fmt.Println(<span class="string">"**c = "</span>,**c)</span><br><span class="line">    fmt.Println(<span class="string">"***&amp;*&amp;*&amp;*&amp;c = "</span>,***&amp;*&amp;*&amp;*&amp;*&amp;c)</span><br><span class="line">    fmt.Println(<span class="string">"x = "</span>,x)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <h3 id="解释"><a href="#解释" class="headerlink" title="解释"></a>解释</h3><h4 id="理论"><a href="#理论" class="headerlink" title="理论"></a>理论</h4><p>&amp;符号的意思是对变量取地址，如：变量a的地址是&amp;a </p>
 <p>*符号的意思是对指针取值，如:*&amp;a，就是a变量所在地址的值，当然也就是a的值了</p>
@@ -122,8 +122,8 @@
 <p>**c和*&amp;a是一样的，再次把&amp;约去后 </p>
 <p>**c和a是一样的，都是1</p>
 <h3 id="结果"><a href="#结果" class="headerlink" title="结果"></a>结果</h3><p><em>运行的结果内的地址值（0xc200开头的）可能会因不同机器运行而不同</em></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">$ <span class="keyword">go</span> run main.<span class="keyword">go</span> </div><div class="line">a     =     <span class="number">1</span></div><div class="line">&amp;a     =     <span class="number">0xc200000018</span></div><div class="line">*&amp;a     =     <span class="number">1</span></div><div class="line">b     =     <span class="number">0xc200000018</span></div><div class="line">&amp;b     =     <span class="number">0xc200000020</span></div><div class="line">*&amp;b     =     <span class="number">0xc200000018</span></div><div class="line">*b     =     <span class="number">1</span></div><div class="line">c     =     <span class="number">0xc200000020</span></div><div class="line">*c     =     <span class="number">0xc200000018</span></div><div class="line">&amp;c     =     <span class="number">0xc200000028</span></div><div class="line">*&amp;c     =     <span class="number">0xc200000020</span></div><div class="line">**c     =     <span class="number">1</span></div><div class="line">***&amp;*&amp;*&amp;*&amp;c     =     <span class="number">1</span></div><div class="line">x     =     <span class="number">1</span></div></pre></td></tr></table></figure>
-<p>本文引自<a href="http://my.oschina.net/u/943306/blog/131269" target="_blank" rel="external">这里</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">go</span> run main.<span class="keyword">go</span> </span><br><span class="line">a     =     <span class="number">1</span></span><br><span class="line">&amp;a     =     <span class="number">0xc200000018</span></span><br><span class="line">*&amp;a     =     <span class="number">1</span></span><br><span class="line">b     =     <span class="number">0xc200000018</span></span><br><span class="line">&amp;b     =     <span class="number">0xc200000020</span></span><br><span class="line">*&amp;b     =     <span class="number">0xc200000018</span></span><br><span class="line">*b     =     <span class="number">1</span></span><br><span class="line">c     =     <span class="number">0xc200000020</span></span><br><span class="line">*c     =     <span class="number">0xc200000018</span></span><br><span class="line">&amp;c     =     <span class="number">0xc200000028</span></span><br><span class="line">*&amp;c     =     <span class="number">0xc200000020</span></span><br><span class="line">**c     =     <span class="number">1</span></span><br><span class="line">***&amp;*&amp;*&amp;*&amp;c     =     <span class="number">1</span></span><br><span class="line">x     =     <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>本文引自<a href="http://my.oschina.net/u/943306/blog/131269" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -212,7 +212,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -232,11 +232,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -260,11 +260,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -272,7 +272,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -284,11 +284,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

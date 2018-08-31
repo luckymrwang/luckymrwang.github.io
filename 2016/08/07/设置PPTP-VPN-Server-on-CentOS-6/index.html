@@ -103,18 +103,18 @@
 		</div>
 		
 		<h3 id="以yum安装VPN服务"><a href="#以yum安装VPN服务" class="headerlink" title="以yum安装VPN服务"></a>以<code>yum</code>安装VPN服务</h3><pre><code>yum install -y pptpd
-</code></pre><h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><h4 id="修改-etc-ppp-options-pptpd"><a href="#修改-etc-ppp-options-pptpd" class="headerlink" title="修改/etc/ppp/options.pptpd"></a>修改<code>/etc/ppp/options.pptpd</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">name pptpd</div><div class="line">refuse-pap</div><div class="line">refuse-chap</div><div class="line">refuse-mschap</div><div class="line">require-mschap-v2</div><div class="line">require-mppe-128</div><div class="line">proxyarp</div><div class="line">lock</div><div class="line">nobsdcomp </div><div class="line">novj</div><div class="line">novjccomp</div><div class="line">nologfd</div><div class="line">ms-dns 8.8.8.8</div><div class="line">ms-dns 8.8.4.4</div></pre></td></tr></table></figure>
+</code></pre><h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><h4 id="修改-etc-ppp-options-pptpd"><a href="#修改-etc-ppp-options-pptpd" class="headerlink" title="修改/etc/ppp/options.pptpd"></a>修改<code>/etc/ppp/options.pptpd</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">name pptpd</span><br><span class="line">refuse-pap</span><br><span class="line">refuse-chap</span><br><span class="line">refuse-mschap</span><br><span class="line">require-mschap-v2</span><br><span class="line">require-mppe-128</span><br><span class="line">proxyarp</span><br><span class="line">lock</span><br><span class="line">nobsdcomp </span><br><span class="line">novj</span><br><span class="line">novjccomp</span><br><span class="line">nologfd</span><br><span class="line">ms-dns 8.8.8.8</span><br><span class="line">ms-dns 8.8.4.4</span><br></pre></td></tr></table></figure>
 <p><em>ms-dns 8.8.8.8， ms-dns 8.8.4.4是使用google的dns服务器</em></p>
 <a id="more"></a>
 <h4 id="修改-etc-ppp-chap-secrets"><a href="#修改-etc-ppp-chap-secrets" class="headerlink" title="修改/etc/ppp/chap-secrets"></a>修改<code>/etc/ppp/chap-secrets</code></h4><p>增加用户名和密码，比如</p>
 <pre><code>vultr1  pptpd   P@$$w0rd  *
 </code></pre><p><em>星号表示来自所有的ip都可以接入</em></p>
-<h4 id="修改-etc-pptpd-conf"><a href="#修改-etc-pptpd-conf" class="headerlink" title="修改/etc/pptpd.conf"></a>修改<code>/etc/pptpd.conf</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">option /etc/ppp/options.pptpd</div><div class="line">logwtmp</div><div class="line">localip 192.168.0.1 //表示VPN拨号后，客户端在连接里面看到的VPN服务器IP</div><div class="line">remoteip 192.168.0.234-238,192.168.0.245 // //表示vpn客户端获得ip的范围</div></pre></td></tr></table></figure>
+<h4 id="修改-etc-pptpd-conf"><a href="#修改-etc-pptpd-conf" class="headerlink" title="修改/etc/pptpd.conf"></a>修改<code>/etc/pptpd.conf</code></h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">option /etc/ppp/options.pptpd</span><br><span class="line">logwtmp</span><br><span class="line">localip 192.168.0.1 //表示VPN拨号后，客户端在连接里面看到的VPN服务器IP</span><br><span class="line">remoteip 192.168.0.234-238,192.168.0.245 // //表示vpn客户端获得ip的范围</span><br></pre></td></tr></table></figure>
 <h4 id="etc-sysctl-conf"><a href="#etc-sysctl-conf" class="headerlink" title="/etc/sysctl.conf"></a><code>/etc/sysctl.conf</code></h4><p>运行下面的命令修改sysctl.conf</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sed -i &apos;s/^net.ipv4.ip_forward.*/net.ipv4.ip_forward = 1/g&apos; /etc/sysctl.conf</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i &apos;s/^net.ipv4.ip_forward.*/net.ipv4.ip_forward = 1/g&apos; /etc/sysctl.conf</span><br></pre></td></tr></table></figure>
 <p>并执行下面的命令来生效它</p>
 <pre><code>sysctl -p
-</code></pre><h4 id="配置转发规则"><a href="#配置转发规则" class="headerlink" title="配置转发规则"></a>配置转发规则</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">iptables -A INPUT -m state --state NEW -m tcp -p tcp --dport 1723 -j ACCEPT</div></pre></td></tr></table></figure>
+</code></pre><h4 id="配置转发规则"><a href="#配置转发规则" class="headerlink" title="配置转发规则"></a>配置转发规则</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -m state --state NEW -m tcp -p tcp --dport 1723 -j ACCEPT</span><br></pre></td></tr></table></figure>
 <p>转发规则</p>
 <pre><code>iptables -t nat -A POSTROUTING -o eth0 -s 192.168.0.0/24 -j MASQUERADE
 </code></pre><p><em>其中的IP[192.168.0.0]必须与上面的IP范围中的一致</em></p>
@@ -123,13 +123,13 @@
 </code></pre><p>重启服务</p>
 <pre><code>service iptables start
 </code></pre><p><strong>这个地方有一个大坑，执行命令<code>vi /etc/sysconfig/iptables</code>打开防火墙配置如下</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"># Generated by iptables-save v1.4.7 on Sun Aug  7 10:32:37 2016</div><div class="line">*nat</div><div class="line">:PREROUTING ACCEPT [0:0]</div><div class="line">:POSTROUTING ACCEPT [0:0]</div><div class="line">:OUTPUT ACCEPT [0:0]</div><div class="line">-A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE</div><div class="line">COMMIT</div><div class="line"># Completed on Sun Aug  7 10:32:37 2016</div><div class="line"># Generated by iptables-save v1.4.7 on Sun Aug  7 10:32:37 2016</div><div class="line">*filter</div><div class="line">:INPUT ACCEPT [0:0]</div><div class="line">:FORWARD ACCEPT [0:0]</div><div class="line">:OUTPUT ACCEPT [29:3140]</div><div class="line">-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT</div><div class="line">-A INPUT -p icmp -j ACCEPT</div><div class="line">-A INPUT -i lo -j ACCEPT</div><div class="line">-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT</div><div class="line">-A INPUT -p tcp -m state --state NEW -m tcp --dport 1723 -j ACCEPT</div><div class="line">-A INPUT -p gre -j ACCEPT</div><div class="line">-A INPUT -j REJECT --reject-with icmp-host-prohibited</div><div class="line">COMMIT</div><div class="line"># Completed on Sun Aug  7 10:32:37 2016</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># Generated by iptables-save v1.4.7 on Sun Aug  7 10:32:37 2016</span><br><span class="line">*nat</span><br><span class="line">:PREROUTING ACCEPT [0:0]</span><br><span class="line">:POSTROUTING ACCEPT [0:0]</span><br><span class="line">:OUTPUT ACCEPT [0:0]</span><br><span class="line">-A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE</span><br><span class="line">COMMIT</span><br><span class="line"># Completed on Sun Aug  7 10:32:37 2016</span><br><span class="line"># Generated by iptables-save v1.4.7 on Sun Aug  7 10:32:37 2016</span><br><span class="line">*filter</span><br><span class="line">:INPUT ACCEPT [0:0]</span><br><span class="line">:FORWARD ACCEPT [0:0]</span><br><span class="line">:OUTPUT ACCEPT [29:3140]</span><br><span class="line">-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT</span><br><span class="line">-A INPUT -p icmp -j ACCEPT</span><br><span class="line">-A INPUT -i lo -j ACCEPT</span><br><span class="line">-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT</span><br><span class="line">-A INPUT -p tcp -m state --state NEW -m tcp --dport 1723 -j ACCEPT</span><br><span class="line">-A INPUT -p gre -j ACCEPT</span><br><span class="line">-A INPUT -j REJECT --reject-with icmp-host-prohibited</span><br><span class="line">COMMIT</span><br><span class="line"># Completed on Sun Aug  7 10:32:37 2016</span><br></pre></td></tr></table></figure>
 <p>其中20行<code>-A INPUT -p gre -j ACCEPT
 -A INPUT -j REJECT --reject-with icmp-host-prohibited
 COMMIT</code>必须在<code>-A INPUT -p tcp -m state --state NEW -m tcp --dport 1723 -j ACCEPT</code>和<br><code>-A INPUT -p gre -j ACCEPT</code>两行代码的下面，否则无法登录VPN</p>
 <h3 id="开启PPTP"><a href="#开启PPTP" class="headerlink" title="开启PPTP"></a>开启PPTP</h3><pre><code>service pptpd start
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chkconfig pptpd on       //开机启动pptp vpn服务</div><div class="line">chkconfig iptables on    //开机启动iptables</div></pre></td></tr></table></figure>
-<p>引自<a href="https://www.vultr.com/docs/setup-pptp-vpn-server-on-centos-6" target="_blank" rel="external">这里</a></p>
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chkconfig pptpd on       //开机启动pptp vpn服务</span><br><span class="line">chkconfig iptables on    //开机启动iptables</span><br></pre></td></tr></table></figure>
+<p>引自<a href="https://www.vultr.com/docs/setup-pptp-vpn-server-on-centos-6" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -218,7 +218,7 @@ COMMIT</code>必须在<code>-A INPUT -p tcp -m state --state NEW -m tcp --dport 
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -238,11 +238,11 @@ COMMIT</code>必须在<code>-A INPUT -p tcp -m state --state NEW -m tcp --dport 
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -266,11 +266,11 @@ COMMIT</code>必须在<code>-A INPUT -p tcp -m state --state NEW -m tcp --dport 
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -278,7 +278,7 @@ COMMIT</code>必须在<code>-A INPUT -p tcp -m state --state NEW -m tcp --dport 
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -290,11 +290,11 @@ COMMIT</code>必须在<code>-A INPUT -p tcp -m state --state NEW -m tcp --dport 
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

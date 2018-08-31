@@ -103,14 +103,14 @@
 		</div>
 		
 		<ul>
-<li>Using <a href="https://github.com/go-pg/pg" target="_blank" rel="external">go-pg</a>. To avoid out of memory issue, instead of writing the result to buffer, the result should be written directly to a file. The snippets will be:</li>
+<li>Using <a href="https://github.com/go-pg/pg" target="_blank" rel="noopener">go-pg</a>. To avoid out of memory issue, instead of writing the result to buffer, the result should be written directly to a file. The snippets will be:</li>
 </ul>
 <a id="more"></a>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//open database connection first</span></div><div class="line">db := pg.Connect(&amp;pg.Options&#123;</div><div class="line">    User:     <span class="string">"username"</span>,</div><div class="line">    Password: <span class="string">"password"</span>,</div><div class="line">    Database: <span class="string">"database"</span>,</div><div class="line">    Addr:     <span class="string">"192.168.1.2:5432"</span>,   <span class="comment">//database address</span></div><div class="line">&#125;)</div><div class="line"><span class="keyword">defer</span> db.Close()</div><div class="line"></div><div class="line"><span class="comment">//open output file</span></div><div class="line">out, err := os.Create(<span class="string">"/tmp/bar.json"</span>)</div><div class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">    <span class="built_in">panic</span>(err)</div><div class="line">&#125;</div><div class="line"><span class="keyword">defer</span> out.Close()</div><div class="line"></div><div class="line"><span class="comment">//execute opy</span></div><div class="line"><span class="built_in">copy</span> := <span class="string">`COPY (SELECT row_to_json(foo) FROM (SELECT * FROM bar) foo ) TO STDOUT`</span></div><div class="line">_, err = db.CopyTo(out, <span class="built_in">copy</span>)</div><div class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">    <span class="built_in">panic</span>(err)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//open database connection first</span></span><br><span class="line">db := pg.Connect(&amp;pg.Options&#123;</span><br><span class="line">    User:     <span class="string">"username"</span>,</span><br><span class="line">    Password: <span class="string">"password"</span>,</span><br><span class="line">    Database: <span class="string">"database"</span>,</span><br><span class="line">    Addr:     <span class="string">"192.168.1.2:5432"</span>,   <span class="comment">//database address</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">defer</span> db.Close()</span><br><span class="line"></span><br><span class="line"><span class="comment">//open output file</span></span><br><span class="line">out, err := os.Create(<span class="string">"/tmp/bar.json"</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> out.Close()</span><br><span class="line"></span><br><span class="line"><span class="comment">//execute opy</span></span><br><span class="line"><span class="built_in">copy</span> := <span class="string">`COPY (SELECT row_to_json(foo) FROM (SELECT * FROM bar) foo ) TO STDOUT`</span></span><br><span class="line">_, err = db.CopyTo(out, <span class="built_in">copy</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
-<li>Using <a href="https://www.postgresql.org/docs/current/static/app-psql.html" target="_blank" rel="external">psql</a> and <a href="https://golang.org/pkg/os/exec/" target="_blank" rel="external">exec</a> package. Basically, this approach execute a psql command in the form of: psql -c query1 -c query2 … args. Please note, this approach requires that psql is already installed. The snippets:</li>
+<li>Using <a href="https://www.postgresql.org/docs/current/static/app-psql.html" target="_blank" rel="noopener">psql</a> and <a href="https://golang.org/pkg/os/exec/" target="_blank" rel="noopener">exec</a> package. Basically, this approach execute a psql command in the form of: psql -c query1 -c query2 … args. Please note, this approach requires that psql is already installed. The snippets:</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">queries := []<span class="keyword">string</span>&#123;</div><div class="line">    <span class="string">`SET client_encoding='UTF8'`</span>,</div><div class="line">    <span class="string">`\COPY (SELECT row_to_json(foo) FROM (SELECT * FROM bar) foo ) TO '/tmp/bar.json'`</span>,</div><div class="line">&#125;</div><div class="line">dsn := <span class="string">"postgresql://username:password@192.168.1.2/database"</span></div><div class="line"></div><div class="line"><span class="comment">//construct arguments</span></div><div class="line">args := []<span class="keyword">string</span>&#123;&#125;</div><div class="line"><span class="keyword">for</span> _, q := <span class="keyword">range</span> queries &#123;</div><div class="line">    args = <span class="built_in">append</span>(args, <span class="string">"-c"</span>, q)</div><div class="line">&#125;</div><div class="line">args = <span class="built_in">append</span>(args, dsn)</div><div class="line"></div><div class="line"><span class="comment">//Execute psql command</span></div><div class="line">cmd := exec.Command(<span class="string">"psql"</span>, args...)</div><div class="line">stdoutStderr, err := cmd.CombinedOutput()</div><div class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">    <span class="built_in">panic</span>(err)</div><div class="line">&#125;</div><div class="line">fmt.Printf(<span class="string">"%s\n"</span>, stdoutStderr)</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">queries := []<span class="keyword">string</span>&#123;</span><br><span class="line">    <span class="string">`SET client_encoding='UTF8'`</span>,</span><br><span class="line">    <span class="string">`\COPY (SELECT row_to_json(foo) FROM (SELECT * FROM bar) foo ) TO '/tmp/bar.json'`</span>,</span><br><span class="line">&#125;</span><br><span class="line">dsn := <span class="string">"postgresql://username:password@192.168.1.2/database"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//construct arguments</span></span><br><span class="line">args := []<span class="keyword">string</span>&#123;&#125;</span><br><span class="line"><span class="keyword">for</span> _, q := <span class="keyword">range</span> queries &#123;</span><br><span class="line">    args = <span class="built_in">append</span>(args, <span class="string">"-c"</span>, q)</span><br><span class="line">&#125;</span><br><span class="line">args = <span class="built_in">append</span>(args, dsn)</span><br><span class="line"></span><br><span class="line"><span class="comment">//Execute psql command</span></span><br><span class="line">cmd := exec.Command(<span class="string">"psql"</span>, args...)</span><br><span class="line">stdoutStderr, err := cmd.CombinedOutput()</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">"%s\n"</span>, stdoutStderr)</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -199,7 +199,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -219,11 +219,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -247,11 +247,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -259,7 +259,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -271,11 +271,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

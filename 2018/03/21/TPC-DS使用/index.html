@@ -102,9 +102,9 @@
 		
 		</div>
 		
-		<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近在调研<a href="https://drill.apache.org/" target="_blank" rel="external">Drill</a>，需要导入大量的测试数据来评估下其查询性能是否满足需要，于是就看到了<code>TPC-DS</code>，折腾了一番，毕竟没有详细的文档，总览一部分查询后，简单整理如下（仅限于导入到<code>MySQL</code>）:</p>
+		<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>最近在调研<a href="https://drill.apache.org/" target="_blank" rel="noopener">Drill</a>，需要导入大量的测试数据来评估下其查询性能是否满足需要，于是就看到了<code>TPC-DS</code>，折腾了一番，毕竟没有详细的文档，总览一部分查询后，简单整理如下（仅限于导入到<code>MySQL</code>）:</p>
 <a id="more"></a>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><h4 id="下载工具"><a href="#下载工具" class="headerlink" title="下载工具"></a>下载工具</h4><p>1、下载地址：<a href="http://www.tpc.org/tpc_documents_current_versions/download_programs/tools-download-request.asp?bm_type=TPC-DS&amp;bm_vers=2.7.0&amp;mode=CURRENT-ONLY" target="_blank" rel="external">http://www.tpc.org/tpc_documents_current_versions/download_programs/tools-download-request.asp?bm_type=TPC-DS&amp;bm_vers=2.7.0&amp;mode=CURRENT-ONLY</a></p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><h4 id="下载工具"><a href="#下载工具" class="headerlink" title="下载工具"></a>下载工具</h4><p>1、下载地址：<a href="http://www.tpc.org/tpc_documents_current_versions/download_programs/tools-download-request.asp?bm_type=TPC-DS&amp;bm_vers=2.7.0&amp;mode=CURRENT-ONLY" target="_blank" rel="noopener">http://www.tpc.org/tpc_documents_current_versions/download_programs/tools-download-request.asp?bm_type=TPC-DS&amp;bm_vers=2.7.0&amp;mode=CURRENT-ONLY</a></p>
 <p><em>必须输入邮箱，然后官方会将下载地址发到该邮箱</em></p>
 <p>2、处理工具</p>
 <p>1）解压，执行命令:</p>
@@ -136,7 +136,7 @@
 </li>
 </ul>
 <p>1、生成数据</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">./dsdgen -dir /data/tpc/v2.7.0/data/ -scale 1 （表示产生1G测试数据）</div><div class="line"></div><div class="line">或者</div><div class="line"></div><div class="line">./dsdgen -dir /part2/tpcds/v2.6.0/datas/ -scale 10 -parallel 4 -child 1 （并行产生1G数据）</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">./dsdgen -dir /data/tpc/v2.7.0/data/ -scale 1 （表示产生1G测试数据）</span><br><span class="line"></span><br><span class="line">或者</span><br><span class="line"></span><br><span class="line">./dsdgen -dir /part2/tpcds/v2.6.0/datas/ -scale 10 -parallel 4 -child 1 （并行产生1G数据）</span><br></pre></td></tr></table></figure>
 <p>2、生成的数据进行处理</p>
 <p>生成的数据不能直接导入到<code>MySQL</code>中，因为有些字段（日期和整型为空）需要进一步处理</p>
 <p>在该目录下创建一个文件夹</p>
@@ -145,22 +145,22 @@
 <p>MySQL </p>
 </blockquote>
 <p>在当前执行，（处理思路是将空值替换成<code>NULL</code>）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">for i in `ls *.dat`</div><div class="line">	do</div><div class="line">		name=&quot;handled/$i&quot;</div><div class="line">		echo $name</div><div class="line">		`touch $name`</div><div class="line">		`chmod 777 $name`</div><div class="line">		sed &apos;s/^|/\\N|/g;s/|||/|\\N|\\N|/g;s/||/|\\N|/g;s/||/|\\N|/g;s/||/|\\N|/g;&apos; $i &gt; $name;</div><div class="line">	done</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">for i in `ls *.dat`</span><br><span class="line">	do</span><br><span class="line">		name=&quot;handled/$i&quot;</span><br><span class="line">		echo $name</span><br><span class="line">		`touch $name`</span><br><span class="line">		`chmod 777 $name`</span><br><span class="line">		sed &apos;s/^|/\\N|/g;s/|||/|\\N|\\N|/g;s/||/|\\N|/g;s/||/|\\N|/g;s/||/|\\N|/g;&apos; $i &gt; $name;</span><br><span class="line">	done</span><br></pre></td></tr></table></figure>
 <p>将数据导入到<code>MySQL</code>即可</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">LOAD DATA INFILE &apos;/var/lib/mysql-files/handled/call_center.dat&apos; INTO TABLE call_center FIELDS TERMINATED BY &apos;|&apos; LINES TERMINATED BY &apos;\n&apos;;</div><div class="line">LOAD DATA INFILE &apos;/var/lib/mysql-files/handled/catalog_page.dat&apos; INTO TABLE catalog_page FIELDS TERMINATED BY &apos;|&apos; LINES TERMINATED BY &apos;\n&apos;;</div><div class="line">...</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LOAD DATA INFILE &apos;/var/lib/mysql-files/handled/call_center.dat&apos; INTO TABLE call_center FIELDS TERMINATED BY &apos;|&apos; LINES TERMINATED BY &apos;\n&apos;;</span><br><span class="line">LOAD DATA INFILE &apos;/var/lib/mysql-files/handled/catalog_page.dat&apos; INTO TABLE catalog_page FIELDS TERMINATED BY &apos;|&apos; LINES TERMINATED BY &apos;\n&apos;;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>Postgres</p>
 </blockquote>
 <p>在当前执行，（处理思路是去掉最后的<code>|</code>）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">for i in `ls *.dat`</div><div class="line">	do</div><div class="line">		name=&quot;handled/$i&quot;</div><div class="line">		echo $name</div><div class="line">		`touch $name`</div><div class="line">		`chmod 777 $name`</div><div class="line">		sed &apos;s/|$//g;&apos; $i &gt; $name;</div><div class="line">	done</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">for i in `ls *.dat`</span><br><span class="line">	do</span><br><span class="line">		name=&quot;handled/$i&quot;</span><br><span class="line">		echo $name</span><br><span class="line">		`touch $name`</span><br><span class="line">		`chmod 777 $name`</span><br><span class="line">		sed &apos;s/|$//g;&apos; $i &gt; $name;</span><br><span class="line">	done</span><br></pre></td></tr></table></figure>
 <p>将数据导入到<code>Postgres</code>即可</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export PGPASSWORD=xxx&amp;psql -U postgres -h 127.0.0.1 tpc -c &quot;copy call_center from &apos;/data/tpc/v2.7.0/data/call_center.dat.bak&apos; with delimiter as &apos;|&apos; NULL &apos;&apos;;&quot;</div><div class="line">...</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export PGPASSWORD=xxx&amp;psql -U postgres -h 127.0.0.1 tpc -c &quot;copy call_center from &apos;/data/tpc/v2.7.0/data/call_center.dat.bak&apos; with delimiter as &apos;|&apos; NULL &apos;&apos;;&quot;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <h3 id="生成查询语句"><a href="#生成查询语句" class="headerlink" title="生成查询语句"></a>生成查询语句</h3><p>修改<code>query_template</code>下<code>query1-99</code>模板，在行尾加<code>define _END = &quot;&quot;</code>，否则执行生成命令会出错，执行如下脚本操作</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">for i in `ls /data/tpc/v2.7.0/query_templates/query*`;</div><div class="line">	do</div><div class="line">		echo &quot;define _END= \&quot;\&quot;;&quot; &gt;&gt; $i</div><div class="line">	done</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for i in `ls /data/tpc/v2.7.0/query_templates/query*`;</span><br><span class="line">	do</span><br><span class="line">		echo &quot;define _END= \&quot;\&quot;;&quot; &gt;&gt; $i</span><br><span class="line">	done</span><br></pre></td></tr></table></figure>
 <p>切换到<code>tools</code>目录下执行</p>
 <pre><code>./dsqgen -output_dir /data/tpc/sql -input ../query_templates/templates.lst -scale 1 -dialect netezza -directory ../query_templates
 </code></pre><p>生成查询语句（放到了<code>/data/tpc/sql</code>下，可以自己指定输出目录）</p>
-<p>参考<a href="http://blog.csdn.net/u011563666/article/details/78751584" target="_blank" rel="external">TPC-DS性能测试及使用方法</a></p>
+<p>参考<a href="http://blog.csdn.net/u011563666/article/details/78751584" target="_blank" rel="noopener">TPC-DS性能测试及使用方法</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -249,7 +249,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -269,11 +269,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -297,11 +297,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -309,7 +309,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -321,11 +321,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

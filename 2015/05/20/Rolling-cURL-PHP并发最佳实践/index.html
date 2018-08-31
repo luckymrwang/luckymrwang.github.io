@@ -11,18 +11,18 @@
     
 
     
-    <meta name="description" content="前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curlmulti*族函数实现简单的并发. 本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.">
+    <meta name="description" content="前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curl_multi_*族函数实现简单的并发. 本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.">
 <meta name="keywords" content="PHP">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Rolling cURL:PHP并发最佳实践">
 <meta property="og:url" content="https://luckymrwang.github.io/2015/05/20/Rolling-cURL-PHP并发最佳实践/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curlmulti*族函数实现简单的并发. 本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.">
+<meta property="og:description" content="前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curl_multi_*族函数实现简单的并发. 本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2015-08-24T08:44:40.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Rolling cURL:PHP并发最佳实践">
-<meta name="twitter:description" content="前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curlmulti*族函数实现简单的并发. 本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.">
+<meta name="twitter:description" content="前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curl_multi_*族函数实现简单的并发. 本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -102,9 +102,9 @@
 		
 		</div>
 		
-		<p>前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curl<em>multi</em>*族函数实现简单的并发.</p>
+		<p>前言：在实际项目或者自己编写小工具(比如新闻聚合,商品价格监控,比价)的过程中, 通常需要从第3方网站或者API接口获取数据, 在需要处理1个URL队列时, 为了提高性能, 可以采用cURL提供的curl_multi_*族函数实现简单的并发.</p>
 <p>本文将探讨两种具体的实现方法, 并对不同的方法做简单的性能对比.<br><a id="more"></a></p>
-<h2 id="经典cURL并发机制及其存在的问题"><a href="#经典cURL并发机制及其存在的问题" class="headerlink" title="经典cURL并发机制及其存在的问题"></a>经典cURL并发机制及其存在的问题</h2><p>经典的cURL实现机制在网上很容易找到, 比如参考<a href="http://php.net/manual/en/function.curl-multi-init.php" target="_blank" rel="external">PHP在线手册</a>在线手册，不过这里我附上我们BI项目中使用的多并发方式:</p>
+<h2 id="经典cURL并发机制及其存在的问题"><a href="#经典cURL并发机制及其存在的问题" class="headerlink" title="经典cURL并发机制及其存在的问题"></a>经典cURL并发机制及其存在的问题</h2><p>经典的cURL实现机制在网上很容易找到, 比如参考<a href="http://php.net/manual/en/function.curl-multi-init.php" target="_blank" rel="noopener">PHP在线手册</a>在线手册，不过这里我附上我们BI项目中使用的多并发方式:</p>
 <pre><code>public static function multi_curl_new($requests) {
     $mh = curl_multi_init();
     $chs = array();
@@ -198,7 +198,7 @@
     curl_multi_close($queue);
     return $responses;
 }
-</code></pre><p><em>引自文章 <a href="http://www.searchtb.com/2012/06/rolling-curl-best-practices.html" target="_blank" rel="external">http://www.searchtb.com/2012/06/rolling-curl-best-practices.html</a></em></p>
+</code></pre><p><em>引自文章 <a href="http://www.searchtb.com/2012/06/rolling-curl-best-practices.html" target="_blank" rel="noopener">http://www.searchtb.com/2012/06/rolling-curl-best-practices.html</a></em></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -287,7 +287,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -307,11 +307,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -335,11 +335,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -347,7 +347,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -359,11 +359,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

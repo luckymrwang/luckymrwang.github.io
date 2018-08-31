@@ -103,16 +103,16 @@
 		</div>
 		
 		<p>TableTools是一个DataTables中的插件，它能够将table表中的数据拷贝到粘贴板，导出到excel甚至是pdf格式。</p>
-<p><a href="https://www.datatables.net/download/packages" target="_blank" rel="external">下载</a>以及<a href="https://www.datatables.net/extensions/tabletools/" target="_blank" rel="external">使用方法</a>：<em>官网给出的初始化如下</em></p>
+<p><a href="https://www.datatables.net/download/packages" target="_blank" rel="noopener">下载</a>以及<a href="https://www.datatables.net/extensions/tabletools/" target="_blank" rel="noopener">使用方法</a>：<em>官网给出的初始化如下</em></p>
 <a id="more"></a>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//Example initialisation</span></div><div class="line">$(<span class="built_in">document</span>).ready( <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">   	$(<span class="string">'#example'</span>).dataTable( &#123;</div><div class="line">   	    <span class="string">"dom"</span>: <span class="string">'T&lt;"clear"&gt;lfrtip'</span>,</div><div class="line">   	    <span class="string">"tableTools"</span>: &#123;</div><div class="line">   	        <span class="string">"sSwfPath"</span>: <span class="string">"/swf/copy_csv_xls_pdf.swf"</span></div><div class="line">   	    &#125;</div><div class="line">   	&#125; );</div><div class="line">&#125; );</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Example initialisation</span></span><br><span class="line">$(<span class="built_in">document</span>).ready( <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">   	$(<span class="string">'#example'</span>).dataTable( &#123;</span><br><span class="line">   	    <span class="string">"dom"</span>: <span class="string">'T&lt;"clear"&gt;lfrtip'</span>,</span><br><span class="line">   	    <span class="string">"tableTools"</span>: &#123;</span><br><span class="line">   	        <span class="string">"sSwfPath"</span>: <span class="string">"/swf/copy_csv_xls_pdf.swf"</span></span><br><span class="line">   	    &#125;</span><br><span class="line">   	&#125; );</span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
 <h3 id="出现的问题及解决办法："><a href="#出现的问题及解决办法：" class="headerlink" title="出现的问题及解决办法："></a>出现的问题及解决办法：</h3><p>1.</p>
 <ul>
 <li>描述：引入js文件和css文件后，相应的Button会出现在table的右上角，但是只有<code>Print</code>按钮起作用</li>
 <li>原因：<code>sSwfPath</code>后面的<code>swf</code>文件没有引用到</li>
 <li>解决办法<em>这是用PHP输出的全路径</em>：</li>
 </ul>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="string">"sSwfPath"</span>: <span class="string">"&lt;?php echo base_url(); ?&gt;assets/swf/copy_csv_xls_pdf.swf"</span></div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"sSwfPath"</span>: <span class="string">"&lt;?php echo base_url(); ?&gt;assets/swf/copy_csv_xls_pdf.swf"</span></span><br></pre></td></tr></table></figure>
 <p>2.</p>
 <ul>
 <li>导出excel时中文乱码的</li>
@@ -125,7 +125,7 @@
 <ul>
 <li>自定义按钮以及文字描述</li>
 </ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="string">"tableTools"</span>: &#123;</div><div class="line">	<span class="string">"sSwfPath"</span>: <span class="string">"&lt;?php echo base_url(); ?&gt;assets/swf/copy_csv_xls_pdf.swf"</span>,</div><div class="line">	<span class="string">"aButtons"</span>:[</div><div class="line">		&#123;<span class="string">"sExtends"</span>:<span class="string">"copy"</span>, <span class="string">"sButtonText"</span>:<span class="string">"拷贝到粘贴板"</span>&#125;,</div><div class="line">		&#123;<span class="string">"sExtends"</span>:<span class="string">"xls"</span>, <span class="string">"sButtonText"</span>:<span class="string">"导出Excel"</span>&#125;,</div><div class="line">		&#123;<span class="string">"sExtends"</span>:<span class="string">"print"</span>, <span class="string">"sButtonText"</span>:<span class="string">"打印预览"</span>&#125;</div><div class="line">	]</div><div class="line">&#125;</div></pre></td></tr></table></figure>  
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"tableTools"</span>: &#123;</span><br><span class="line">	<span class="string">"sSwfPath"</span>: <span class="string">"&lt;?php echo base_url(); ?&gt;assets/swf/copy_csv_xls_pdf.swf"</span>,</span><br><span class="line">	<span class="string">"aButtons"</span>:[</span><br><span class="line">		&#123;<span class="string">"sExtends"</span>:<span class="string">"copy"</span>, <span class="string">"sButtonText"</span>:<span class="string">"拷贝到粘贴板"</span>&#125;,</span><br><span class="line">		&#123;<span class="string">"sExtends"</span>:<span class="string">"xls"</span>, <span class="string">"sButtonText"</span>:<span class="string">"导出Excel"</span>&#125;,</span><br><span class="line">		&#123;<span class="string">"sExtends"</span>:<span class="string">"print"</span>, <span class="string">"sButtonText"</span>:<span class="string">"打印预览"</span>&#125;</span><br><span class="line">	]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -213,7 +213,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -233,11 +233,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -261,11 +261,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -273,7 +273,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -285,11 +285,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

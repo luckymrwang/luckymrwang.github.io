@@ -110,31 +110,31 @@
 <h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ul>
 <li>Stop the service/daemon of mysql running</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root ~]# service mysql stop   </div><div class="line">mysql stop/waiting</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root ~]# service mysql stop   </span><br><span class="line">mysql stop/waiting</span><br></pre></td></tr></table></figure>
 <ul>
 <li>Start mysql without any privileges using the following option; This option is used to boot up and do not use the privilege system of MySQL.</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[root ~]# mysqld_safe --skip-grant-tables &amp;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root ~]# mysqld_safe --skip-grant-tables &amp;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>enter the mysql command prompt</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root ~]# mysql -u root</div><div class="line">mysql&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root ~]# mysql -u root</span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>Fix the permission setting of the root user ;</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">mysql&gt; use mysql;</div><div class="line">Database changed</div><div class="line">mysql&gt; select * from  user;</div><div class="line">Empty set (0.00 sec)</div><div class="line">mysql&gt; truncate table user;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line">mysql&gt; flush privileges;</div><div class="line">Query OK, 0 rows affected (0.01 sec)</div><div class="line">mysql&gt; grant all privileges on *.* to root@localhost identified by &apos;YourNewPassword&apos; with grant option;</div><div class="line">Query OK, 0 rows affected (0.01 sec)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; use mysql;</span><br><span class="line">Database changed</span><br><span class="line">mysql&gt; select * from  user;</span><br><span class="line">Empty set (0.00 sec)</span><br><span class="line">mysql&gt; truncate table user;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line">Query OK, 0 rows affected (0.01 sec)</span><br><span class="line">mysql&gt; grant all privileges on *.* to root@localhost identified by &apos;YourNewPassword&apos; with grant option;</span><br><span class="line">Query OK, 0 rows affected (0.01 sec)</span><br></pre></td></tr></table></figure>
 <p><em>if you don`t want any password or rather an empty password</em></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mysql&gt; grant all privileges on *.* to root@localhost identified by &apos;&apos; with grant option;</div><div class="line">Query OK, 0 rows affected (0.01 sec)*</div><div class="line">mysql&gt; flush privileges;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; grant all privileges on *.* to root@localhost identified by &apos;&apos; with grant option;</span><br><span class="line">Query OK, 0 rows affected (0.01 sec)*</span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line">Query OK, 0 rows affected (0.00 sec)</span><br></pre></td></tr></table></figure>
 <p>Confirm the results:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"> mysql&gt; select host, user from user;</div><div class="line">+-----------+------+</div><div class="line">| host      | user |</div><div class="line">+-----------+------+</div><div class="line">| localhost | root |</div><div class="line">+-----------+------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> mysql&gt; select host, user from user;</span><br><span class="line">+-----------+------+</span><br><span class="line">| host      | user |</span><br><span class="line">+-----------+------+</span><br><span class="line">| localhost | root |</span><br><span class="line">+-----------+------+</span><br><span class="line">1 row in set (0.00 sec)</span><br></pre></td></tr></table></figure>
 <ul>
 <li>Exit the shell and restart mysql in normal mode.</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mysql&gt; quit;</div><div class="line">[root ~]# kill -KILL [PID of mysqld_safe]</div><div class="line">[root ~]# kill -KILL [PID of mysqld]</div><div class="line">[root ~]# service mysql start</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; quit;</span><br><span class="line">[root ~]# kill -KILL [PID of mysqld_safe]</span><br><span class="line">[root ~]# kill -KILL [PID of mysqld]</span><br><span class="line">[root ~]# service mysql start</span><br></pre></td></tr></table></figure>
 <ul>
 <li>Now you can successfully login as root user with the password you set</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">[root ~]# mysql -u root -pYourNewPassword </div><div class="line">mysql&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root ~]# mysql -u root -pYourNewPassword </span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -223,7 +223,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -243,11 +243,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -271,11 +271,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -283,7 +283,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -295,11 +295,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

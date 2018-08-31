@@ -104,7 +104,7 @@
 		
 		<h3 id="思路分析"><a href="#思路分析" class="headerlink" title="思路分析"></a>思路分析</h3><p>在要排序的一组数中，选出最小的一个数与第一个位置的数交换。然后在剩下的数当中再找最小的与第二个位置的数交换，如此循环到倒数第二个数和最后一个数比较为止。</p>
 <a id="more"></a>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">$arr = <span class="keyword">array</span>(<span class="number">12</span>, <span class="number">242</span>, <span class="number">3</span>, <span class="number">20</span>, <span class="number">11</span>,<span class="number">50</span>);</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">xuanzhi</span><span class="params">($arr)</span></span>&#123;</div><div class="line">    $len = count($arr);</div><div class="line">    <span class="keyword">for</span>($i=<span class="number">0</span>; $i&lt;$len; $i++)&#123;</div><div class="line">        <span class="comment">//假设最小的位置</span></div><div class="line">        $p = $i;</div><div class="line">        <span class="comment">//循环比较</span></div><div class="line">        <span class="keyword">for</span>($j=$i+<span class="number">1</span>; $j&lt;$len; $j++)&#123;</div><div class="line">            <span class="keyword">if</span>($arr[$p] &gt; $arr[$j])&#123;</div><div class="line">                $p = $j;    <span class="comment">//交换最小值位置</span></div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//经过上面循环比较后，已经确定了最小值位置</span></div><div class="line">        <span class="comment">//判断最小值是否和假设一致</span></div><div class="line">        <span class="comment">//不一致，则交换位置</span></div><div class="line">        <span class="keyword">if</span>($p != $i)&#123;</div><div class="line">            $tmp = $arr[$p];</div><div class="line">            $arr[$p] = $arr[$i];</div><div class="line">            $arr[$i] = $tmp;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> $arr;</div><div class="line">&#125;</div><div class="line"><span class="keyword">echo</span> implode(<span class="string">','</span>, xuanzhi($arr));</div></pre></td></tr></table></figure>  
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$arr = <span class="keyword">array</span>(<span class="number">12</span>, <span class="number">242</span>, <span class="number">3</span>, <span class="number">20</span>, <span class="number">11</span>,<span class="number">50</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">xuanzhi</span><span class="params">($arr)</span></span>&#123;</span><br><span class="line">    $len = count($arr);</span><br><span class="line">    <span class="keyword">for</span>($i=<span class="number">0</span>; $i&lt;$len; $i++)&#123;</span><br><span class="line">        <span class="comment">//假设最小的位置</span></span><br><span class="line">        $p = $i;</span><br><span class="line">        <span class="comment">//循环比较</span></span><br><span class="line">        <span class="keyword">for</span>($j=$i+<span class="number">1</span>; $j&lt;$len; $j++)&#123;</span><br><span class="line">            <span class="keyword">if</span>($arr[$p] &gt; $arr[$j])&#123;</span><br><span class="line">                $p = $j;    <span class="comment">//交换最小值位置</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//经过上面循环比较后，已经确定了最小值位置</span></span><br><span class="line">        <span class="comment">//判断最小值是否和假设一致</span></span><br><span class="line">        <span class="comment">//不一致，则交换位置</span></span><br><span class="line">        <span class="keyword">if</span>($p != $i)&#123;</span><br><span class="line">            $tmp = $arr[$p];</span><br><span class="line">            $arr[$p] = $arr[$i];</span><br><span class="line">            $arr[$i] = $tmp;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> $arr;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> implode(<span class="string">','</span>, xuanzhi($arr));</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -192,7 +192,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -212,11 +212,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -240,11 +240,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -252,7 +252,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -264,11 +264,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

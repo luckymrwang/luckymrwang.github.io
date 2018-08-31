@@ -112,14 +112,14 @@
 <h4 id="实现方式上"><a href="#实现方式上" class="headerlink" title="实现方式上"></a>实现方式上</h4><ul>
 <li>mysql的分表是真正的分表，一张表分成很多表后，每一个小表都是完正的一张表，都对应三个文件，一个.MYD数据文件，.MYI索引文件，.frm表结构文件。</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@BlackGhost <span class="built_in">test</span>]<span class="comment"># ls |grep user  </span></div><div class="line">alluser.MRG  </div><div class="line">alluser.frm  </div><div class="line">user1.MYD  </div><div class="line">user1.MYI  </div><div class="line">user1.frm  </div><div class="line">user2.MYD  </div><div class="line">user2.MYI  </div><div class="line">user2.frm</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@BlackGhost <span class="built_in">test</span>]<span class="comment"># ls |grep user  </span></span><br><span class="line">alluser.MRG  </span><br><span class="line">alluser.frm  </span><br><span class="line">user1.MYD  </span><br><span class="line">user1.MYI  </span><br><span class="line">user1.frm  </span><br><span class="line">user2.MYD  </span><br><span class="line">user2.MYI  </span><br><span class="line">user2.frm</span><br></pre></td></tr></table></figure>
 <p>简单说明一下，上面的分表是利用了merge存储引擎（分表的一种），alluser是总表，下面有二个分表，user1，user2。他们二个都是独立的表，取数据的时候，我们可以通过总表来取。这里总表是没有.MYD,.MYI这二个文件的，也就是说，总表他不是一张表，没有数据，数据都放在分表里面。我们来看看.MRG到底是什么东西</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@BlackGhost <span class="built_in">test</span>]<span class="comment"># cat alluser.MRG |more  </span></div><div class="line">user1  </div><div class="line">user2  </div><div class="line"><span class="comment">#INSERT_METHOD=LAST</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@BlackGhost <span class="built_in">test</span>]<span class="comment"># cat alluser.MRG |more  </span></span><br><span class="line">user1  </span><br><span class="line">user2  </span><br><span class="line"><span class="comment">#INSERT_METHOD=LAST</span></span><br></pre></td></tr></table></figure>
 <p>从上面我们可以看出，alluser.MRG里面就存了一些分表的关系，以及插入数据的方式。可以把总表理解成一个外壳，或者是联接池。</p>
 <ul>
 <li>分区不一样，一张大表进行分区后，他还是一张表，不会变成二张表，但是他存放数据的区块变多了。</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@BlackGhost <span class="built_in">test</span>]<span class="comment"># ls |grep aa  </span></div><div class="line">aa<span class="comment">#P#p1.MYD  </span></div><div class="line">aa<span class="comment">#P#p1.MYI  </span></div><div class="line">aa<span class="comment">#P#p3.MYD  </span></div><div class="line">aa<span class="comment">#P#p3.MYI  </span></div><div class="line">aa.frm  </div><div class="line">aa.par</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@BlackGhost <span class="built_in">test</span>]<span class="comment"># ls |grep aa  </span></span><br><span class="line">aa<span class="comment">#P#p1.MYD  </span></span><br><span class="line">aa<span class="comment">#P#p1.MYI  </span></span><br><span class="line">aa<span class="comment">#P#p3.MYD  </span></span><br><span class="line">aa<span class="comment">#P#p3.MYI  </span></span><br><span class="line">aa.frm  </span><br><span class="line">aa.par</span><br></pre></td></tr></table></figure>
 <p>从上面我们可以看出，aa这张表，分为二个区，p1和p3，本来是三个区，被我删了一个区。我们都知道一张表对应三个文件.MYD,.MYI,.frm。分区呢根据一定的规则把数据文件和索引文件进行了分割，还多出了一个.par文件，打开.par文件后你可以看出他记录了，这张表的分区信息，根分表中的.MRG有点像。分区后，还是一张，而不是多张表。</p>
 <h4 id="数据处理上"><a href="#数据处理上" class="headerlink" title="数据处理上"></a>数据处理上</h4><ul>
 <li><p>分表后，数据都是存放在分表里，总表只是一个外壳，存取数据发生在一个一个的分表里面。看下面的例子：</p>
@@ -148,7 +148,7 @@
 <li><p>分表和分区不矛盾，可以相互配合的，对于那些大访问量，并且表数据比较多的表，我们可以采取分表和分区结合的方式（如果merge这种分表方式，不能和分区配合的话，可以用其他的分表试），访问量不大，但是表数据很多的表，我们可以采取分区的方式等。</p>
 </li>
 </ul>
-<p>引自<a href="http://blog.51yip.com/mysql/1029.html" target="_blank" rel="external">海底苍鹰</a></p>
+<p>引自<a href="http://blog.51yip.com/mysql/1029.html" target="_blank" rel="noopener">海底苍鹰</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -237,7 +237,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -257,11 +257,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -285,11 +285,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -297,7 +297,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -309,11 +309,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

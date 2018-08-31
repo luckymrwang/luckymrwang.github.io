@@ -82,6 +82,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/11/23/Read-Files/" title="Read_Files" itemprop="url">Read_Files</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-23T04:08:17.000Z" itemprop="datePublished"> 发表于 2016-11-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bufio"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(e error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(e)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	dat, err := ioutil.ReadFile(<span class="string">"/tmp/dat"</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Print(<span class="keyword">string</span>(dat))</span><br><span class="line"></span><br><span class="line">	f, err := os.Open(<span class="string">"/tmp/dat"</span>)</span><br><span class="line">	check(err)</span><br><span class="line"></span><br><span class="line">	b1 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">5</span>)</span><br><span class="line">	n1, err := f.Read(b1)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"%d bytes: %s\n"</span>, n1, <span class="keyword">string</span>(b1))</span><br><span class="line"></span><br><span class="line">	o2, err := f.Seek(<span class="number">6</span>, <span class="number">0</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	b2 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">2</span>)</span><br><span class="line">	n2, err := f.Read(b2)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"%d bytes @ %d: %s\n"</span>, n2, o2, <span class="keyword">string</span>(b2))</span><br><span class="line"></span><br><span class="line">	o3, err := f.Seek(<span class="number">6</span>, <span class="number">0</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	b3 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">2</span>)</span><br><span class="line">	n3, err := io.ReadAtLeast(f, b3, <span class="number">2</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"%d bytes @ %d: %s\n"</span>, n3, o3, <span class="keyword">string</span>(b3))</span><br><span class="line"></span><br><span class="line">	_, err = f.Seek(<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">	check(err)</span><br><span class="line"></span><br><span class="line">	r4 := bufio.NewReader(f)</span><br><span class="line">	b4, err := r4.Peek(<span class="number">5</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"5 bytes: %s\n"</span>, <span class="keyword">string</span>(b4))</span><br><span class="line"></span><br><span class="line">	f.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/11/23/Read-Files/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GoExample/">GoExample</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/23/Read-Files/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/23/Read-Files/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/11/23/URL-Parsing/" title="URL Parsing" itemprop="url">URL Parsing</a>
   </h1>
   <p class="article-author">By
@@ -95,7 +154,7 @@
 </header>
     <div class="article-content">
         
-        <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"net"</span></div><div class="line">	<span class="string">"net/url"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	s := <span class="string">"postgres://user:pass@host.com:5432/path?k=v#f"</span></div><div class="line">	u, err := url.Parse(s)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	fmt.Println(u.Scheme)</div><div class="line"></div><div class="line">	fmt.Println(u.User)</div><div class="line">	fmt.Println(u.User.Username())</div><div class="line">	p, _ := u.User.Password()</div><div class="line">	fmt.Println(p)</div><div class="line"></div><div class="line">	fmt.Println(u.Host)</div><div class="line">	host, port, _ := net.SplitHostPort(u.Host)</div><div class="line">	fmt.Println(host)</div><div class="line">	fmt.Println(port)</div><div class="line"></div><div class="line">	fmt.Println(u.Path)</div><div class="line">	fmt.Println(u.Fragment)</div><div class="line"></div><div class="line">	fmt.Println(u.RawQuery)</div><div class="line">	m, _ := url.ParseQuery(u.RawQuery)</div><div class="line">	fmt.Println(m)</div><div class="line">	fmt.Println(m[<span class="string">"k"</span>][<span class="number">0</span>])</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">	<span class="string">"net/url"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="string">"postgres://user:pass@host.com:5432/path?k=v#f"</span></span><br><span class="line">	u, err := url.Parse(s)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.Scheme)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.User)</span><br><span class="line">	fmt.Println(u.User.Username())</span><br><span class="line">	p, _ := u.User.Password()</span><br><span class="line">	fmt.Println(p)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.Host)</span><br><span class="line">	host, port, _ := net.SplitHostPort(u.Host)</span><br><span class="line">	fmt.Println(host)</span><br><span class="line">	fmt.Println(port)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.Path)</span><br><span class="line">	fmt.Println(u.Fragment)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.RawQuery)</span><br><span class="line">	m, _ := url.ParseQuery(u.RawQuery)</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">	fmt.Println(m[<span class="string">"k"</span>][<span class="number">0</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -217,10 +276,10 @@
 </header>
     <div class="article-content">
         
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Package testing provides support for automated testing of Go packages. It is intended to be used in concert with the “go test” command, which automates execution of any function of the form.</div></pre></td></tr></table></figure>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Package testing provides support for automated testing of Go packages. It is intended to be used in concert with the “go test” command, which automates execution of any function of the form.</span><br></pre></td></tr></table></figure>
 <p>testing 包提供了对Go包的自动测试支持。 这是和go test 命令相呼应的功能， go test 命令会自动执行所以符合格式</p>
 <pre><code>func TestXXX(t *testing.T) 
-</code></pre><h3 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Functions of the form</div><div class="line"></div><div class="line">func BenchmarkXxx(b *testing.B)</div><div class="line"></div><div class="line">are considered benchmarks, and are executed by the “go test” command when &gt;its -bench flag is provided. Benchmarks are run sequentially.</div></pre></td></tr></table></figure>
+</code></pre><h3 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Functions of the form</span><br><span class="line"></span><br><span class="line">func BenchmarkXxx(b *testing.B)</span><br><span class="line"></span><br><span class="line">are considered benchmarks, and are executed by the “go test” command when &gt;its -bench flag is provided. Benchmarks are run sequentially.</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -406,7 +465,7 @@
     <div class="article-content">
         
         <h3 id="记录网络服务名和它们对应使用的端口号及协议"><a href="#记录网络服务名和它们对应使用的端口号及协议" class="headerlink" title="记录网络服务名和它们对应使用的端口号及协议"></a>记录网络服务名和它们对应使用的端口号及协议</h3><pre><code>cat /etc/services
-</code></pre><h3 id="查看某个端口号的使用状态"><a href="#查看某个端口号的使用状态" class="headerlink" title="查看某个端口号的使用状态"></a>查看某个端口号的使用状态</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">lsof -i :6000 （查看哪个进程正在监听6000这个端口）</div><div class="line">lsof -i TCP:6000 （只显示监听此端口的TCP连接，上面不加选项的就是指TCP&amp;UDP）</div></pre></td></tr></table></figure>
+</code></pre><h3 id="查看某个端口号的使用状态"><a href="#查看某个端口号的使用状态" class="headerlink" title="查看某个端口号的使用状态"></a>查看某个端口号的使用状态</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lsof -i :6000 （查看哪个进程正在监听6000这个端口）</span><br><span class="line">lsof -i TCP:6000 （只显示监听此端口的TCP连接，上面不加选项的就是指TCP&amp;UDP）</span><br></pre></td></tr></table></figure>
 <p><code>lsof</code> 命令还可以用来显示谁在使用某个文件或文件夹，例如：</p>
 <pre><code>lsof  /root/michael/unp（会显示谁当前在用/root/michael/unp文件夹）
 </code></pre>
@@ -601,8 +660,8 @@
 </header>
     <div class="article-content">
         
-        <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"bufio"</span></div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"io/ioutil"</span></div><div class="line">	<span class="string">"os"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(e error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(e)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	d1 := []<span class="keyword">byte</span>(<span class="string">"hello\ngo\n"</span>)</div><div class="line">	err := ioutil.WriteFile(<span class="string">"/tmp/dat1"</span>, d1, <span class="number">0644</span>)</div><div class="line">	check(err)</div><div class="line">	f, err := os.Create(<span class="string">"/tmp/dat2"</span>)</div><div class="line">	check(err)</div><div class="line">	<span class="keyword">defer</span> f.Close()</div><div class="line"></div><div class="line">	d2 := []<span class="keyword">byte</span>&#123;<span class="number">115</span>, <span class="number">111</span>, <span class="number">109</span>, <span class="number">101</span>, <span class="number">10</span>&#125;</div><div class="line">	n2, err := f.Write(d2)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n2)</div><div class="line"></div><div class="line">	n3, err := f.WriteString(<span class="string">"writes\n"</span>)</div><div class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n3)</div><div class="line">	f.Sync()</div><div class="line">	w := bufio.NewWriter(f)</div><div class="line"></div><div class="line">	n4, err := w.WriteString(<span class="string">"buffered\n"</span>)</div><div class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n4)</div><div class="line">	w.Flush()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">	</div><div class="line">$ go run writing-files.go </div><div class="line">wrote 5 bytes</div><div class="line">wrote 7 bytes</div><div class="line">wrote 9 bytes</div><div class="line"></div><div class="line">$ cat /tmp/dat1</div><div class="line">hello</div><div class="line">go</div><div class="line">$ cat /tmp/dat2</div><div class="line">some</div><div class="line">writes</div><div class="line">buffered</div></pre></td></tr></table></figure>
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bufio"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(e error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(e)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	d1 := []<span class="keyword">byte</span>(<span class="string">"hello\ngo\n"</span>)</span><br><span class="line">	err := ioutil.WriteFile(<span class="string">"/tmp/dat1"</span>, d1, <span class="number">0644</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	f, err := os.Create(<span class="string">"/tmp/dat2"</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	<span class="keyword">defer</span> f.Close()</span><br><span class="line"></span><br><span class="line">	d2 := []<span class="keyword">byte</span>&#123;<span class="number">115</span>, <span class="number">111</span>, <span class="number">109</span>, <span class="number">101</span>, <span class="number">10</span>&#125;</span><br><span class="line">	n2, err := f.Write(d2)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n2)</span><br><span class="line"></span><br><span class="line">	n3, err := f.WriteString(<span class="string">"writes\n"</span>)</span><br><span class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n3)</span><br><span class="line">	f.Sync()</span><br><span class="line">	w := bufio.NewWriter(f)</span><br><span class="line"></span><br><span class="line">	n4, err := w.WriteString(<span class="string">"buffered\n"</span>)</span><br><span class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n4)</span><br><span class="line">	w.Flush()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line">$ go run writing-files.go </span><br><span class="line">wrote 5 bytes</span><br><span class="line">wrote 7 bytes</span><br><span class="line">wrote 9 bytes</span><br><span class="line"></span><br><span class="line">$ cat /tmp/dat1</span><br><span class="line">hello</span><br><span class="line">go</span><br><span class="line">$ cat /tmp/dat2</span><br><span class="line">some</span><br><span class="line">writes</span><br><span class="line">buffered</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -627,64 +686,6 @@
 	
 	  	<span></span>
 		<a href="/2016/11/11/Writing-Files/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/11/Writing-Files/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/11/11/String-Functions/" title="String Functions" itemprop="url">String Functions</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-11-11T09:29:58.000Z" itemprop="datePublished"> 发表于 2016-11-11</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> s <span class="string">"strings"</span></div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> p = fmt.Println</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	p(<span class="string">"Contains:  "</span>, s.Contains(<span class="string">"test"</span>, <span class="string">"es"</span>))</div><div class="line">	p(<span class="string">"Count:     "</span>, s.Count(<span class="string">"test"</span>, <span class="string">"t"</span>))</div><div class="line">	p(<span class="string">"HasPrefix: "</span>, s.HasPrefix(<span class="string">"test"</span>, <span class="string">"te"</span>))</div><div class="line">	p(<span class="string">"HasSuffix: "</span>, s.HasSuffix(<span class="string">"test"</span>, <span class="string">"st"</span>))</div><div class="line">	p(<span class="string">"Index:     "</span>, s.Index(<span class="string">"test"</span>, <span class="string">"e"</span>))</div><div class="line">	p(<span class="string">"Join:      "</span>, s.Join([]<span class="keyword">string</span>&#123;<span class="string">"a"</span>, <span class="string">"b"</span>&#125;, <span class="string">"-"</span>))</div><div class="line">	p(<span class="string">"Repeat:    "</span>, s.Repeat(<span class="string">"a"</span>, <span class="number">5</span>))</div><div class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">-1</span>))</div><div class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">1</span>))</div><div class="line">	p(<span class="string">"Split:     "</span>, s.Split(<span class="string">"a-b-c-d-e"</span>, <span class="string">"-"</span>))</div><div class="line">	p(<span class="string">"ToLower:   "</span>, s.ToLower(<span class="string">"TEST"</span>))</div><div class="line">	p(<span class="string">"ToUpper:   "</span>, s.ToUpper(<span class="string">"test"</span>))</div><div class="line">	p()</div><div class="line">	p(<span class="string">"Len: "</span>, <span class="built_in">len</span>(<span class="string">"hello"</span>))</div><div class="line">	p(<span class="string">"Char:"</span>, <span class="string">"hello"</span>[<span class="number">1</span>])</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">$ go run string-functions.go</div><div class="line">Contains:   true</div><div class="line">Count:      2</div><div class="line">HasPrefix:  true</div><div class="line">HasSuffix:  true</div><div class="line">Index:      1</div><div class="line">Join:       a-b</div><div class="line">Repeat:     aaaaa</div><div class="line">Replace:    f00</div><div class="line">Replace:    f0o</div><div class="line">Split:      [a b c d e]</div><div class="line">toLower:    test</div><div class="line">ToUpper:    TEST</div><div class="line">Len:  5</div><div class="line">Char: 101</div></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/GoExample/">GoExample</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/11/11/String-Functions/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/11/String-Functions/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
@@ -729,7 +730,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -749,11 +750,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -777,11 +778,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -789,7 +790,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -801,11 +802,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

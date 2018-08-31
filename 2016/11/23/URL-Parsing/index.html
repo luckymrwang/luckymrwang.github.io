@@ -102,9 +102,9 @@
 		
 		</div>
 		
-		<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"net"</span></div><div class="line">	<span class="string">"net/url"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	s := <span class="string">"postgres://user:pass@host.com:5432/path?k=v#f"</span></div><div class="line">	u, err := url.Parse(s)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(err)</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	fmt.Println(u.Scheme)</div><div class="line"></div><div class="line">	fmt.Println(u.User)</div><div class="line">	fmt.Println(u.User.Username())</div><div class="line">	p, _ := u.User.Password()</div><div class="line">	fmt.Println(p)</div><div class="line"></div><div class="line">	fmt.Println(u.Host)</div><div class="line">	host, port, _ := net.SplitHostPort(u.Host)</div><div class="line">	fmt.Println(host)</div><div class="line">	fmt.Println(port)</div><div class="line"></div><div class="line">	fmt.Println(u.Path)</div><div class="line">	fmt.Println(u.Fragment)</div><div class="line"></div><div class="line">	fmt.Println(u.RawQuery)</div><div class="line">	m, _ := url.ParseQuery(u.RawQuery)</div><div class="line">	fmt.Println(m)</div><div class="line">	fmt.Println(m[<span class="string">"k"</span>][<span class="number">0</span>])</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+		<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">	<span class="string">"net/url"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="string">"postgres://user:pass@host.com:5432/path?k=v#f"</span></span><br><span class="line">	u, err := url.Parse(s)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.Scheme)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.User)</span><br><span class="line">	fmt.Println(u.User.Username())</span><br><span class="line">	p, _ := u.User.Password()</span><br><span class="line">	fmt.Println(p)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.Host)</span><br><span class="line">	host, port, _ := net.SplitHostPort(u.Host)</span><br><span class="line">	fmt.Println(host)</span><br><span class="line">	fmt.Println(port)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.Path)</span><br><span class="line">	fmt.Println(u.Fragment)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.RawQuery)</span><br><span class="line">	m, _ := url.ParseQuery(u.RawQuery)</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">	fmt.Println(m[<span class="string">"k"</span>][<span class="number">0</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">$ go run url-parsing.go </div><div class="line">postgres</div><div class="line">user:pass</div><div class="line">user</div><div class="line">pass</div><div class="line">host.com:5432</div><div class="line">host.com</div><div class="line">5432</div><div class="line">/path</div><div class="line">f</div><div class="line">k=v</div><div class="line">map[k:[v]]</div><div class="line">v</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ go run url-parsing.go </span><br><span class="line">postgres</span><br><span class="line">user:pass</span><br><span class="line">user</span><br><span class="line">pass</span><br><span class="line">host.com:5432</span><br><span class="line">host.com</span><br><span class="line">5432</span><br><span class="line">/path</span><br><span class="line">f</span><br><span class="line">k=v</span><br><span class="line">map[k:[v]]</span><br><span class="line">v</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -193,7 +193,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -213,11 +213,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -241,11 +241,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -253,7 +253,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -265,11 +265,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

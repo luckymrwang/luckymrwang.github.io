@@ -102,13 +102,13 @@
 		
 		</div>
 		
-		<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">UDF - 2016-11-29 00:00:35 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348772878&quot;,&quot;spreadurl&quot;:&quot;dMxpxx&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;adnetname&quot;:&quot;UC&quot;,&quot;osversion&quot;:&quot;10.1.1&quot;,&quot;idfa&quot;:&quot;DE055F0E-72D7-4A72-B7A0-C3E45A3A33XX&quot;,&quot;clicktime&quot;:&quot;1480348581122&quot;,&quot;ip&quot;:&quot;117.38.163.147&quot;&#125;UDF - 2016-11-29 00:00:41 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348766255&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;osversion&quot;:&quot;10.0.2&quot;,&quot;idfa&quot;:&quot;93271665-1341-499C-BDD6-6797699B9AXX&quot;,&quot;ip&quot;:&quot;58.59.64.234&quot;&#125;</div></pre></td></tr></table></figure>
+		<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UDF - 2016-11-29 00:00:35 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348772878&quot;,&quot;spreadurl&quot;:&quot;dMxpxx&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;adnetname&quot;:&quot;UC&quot;,&quot;osversion&quot;:&quot;10.1.1&quot;,&quot;idfa&quot;:&quot;DE055F0E-72D7-4A72-B7A0-C3E45A3A33XX&quot;,&quot;clicktime&quot;:&quot;1480348581122&quot;,&quot;ip&quot;:&quot;117.38.163.147&quot;&#125;UDF - 2016-11-29 00:00:41 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348766255&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;osversion&quot;:&quot;10.0.2&quot;,&quot;idfa&quot;:&quot;93271665-1341-499C-BDD6-6797699B9AXX&quot;,&quot;ip&quot;:&quot;58.59.64.234&quot;&#125;</span><br></pre></td></tr></table></figure>
 <p>有以上格式的数据，需要将其中的<code>eventtime</code>时间戳筛选出来并格式化</p>
 <a id="more"></a>
 <h3 id="方法1——命令行"><a href="#方法1——命令行" class="headerlink" title="方法1——命令行"></a>方法1——命令行</h3><p>将数据保存到<code>1.txt</code>中，执行如下命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">awk &apos;&#123;print substr($0,80,10)&#125;&apos; 1.txt | xargs -I &#123;&#125; date -d @&#123;&#125;  &quot;+%Y-%m-%d %H:%M:%S&quot;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk &apos;&#123;print substr($0,80,10)&#125;&apos; 1.txt | xargs -I &#123;&#125; date -d @&#123;&#125;  &quot;+%Y-%m-%d %H:%M:%S&quot;</span><br></pre></td></tr></table></figure>
 <p>上述命令中<code>xargs</code>表示将之前的内容作为参数，<code>{}</code>为其参数别名，然后调用系统命令<code>date</code>将日期格式化</p>
-<h3 id="方法2——shell脚本"><a href="#方法2——shell脚本" class="headerlink" title="方法2——shell脚本"></a>方法2——shell脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash#grep &quot;tdParam&quot; $1 | while read line cat $1 | while read line do        eventtime=$&#123;line:79:10&#125;        pos=$(echo $line | sed &apos;s/\(.*clicktime\)\(.*\)/\1/&apos;)        p=$(($&#123;#pos&#125; + 3))        clicktime=$&#123;line:p:10&#125;        echo $&#123;line:6:19&#125;&quot; &quot;`date -d @$&#123;eventtime&#125; &quot;+%Y-%m-%d %H:%M:%S&quot;`&quot; &quot;`date -d @$&#123;clicktime&#125; &quot;+%Y-%m-%d %H:%M:%S&quot;`done</div></pre></td></tr></table></figure>
+<h3 id="方法2——shell脚本"><a href="#方法2——shell脚本" class="headerlink" title="方法2——shell脚本"></a>方法2——shell脚本</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash#grep &quot;tdParam&quot; $1 | while read line cat $1 | while read line do        eventtime=$&#123;line:79:10&#125;        pos=$(echo $line | sed &apos;s/\(.*clicktime\)\(.*\)/\1/&apos;)        p=$(($&#123;#pos&#125; + 3))        clicktime=$&#123;line:p:10&#125;        echo $&#123;line:6:19&#125;&quot; &quot;`date -d @$&#123;eventtime&#125; &quot;+%Y-%m-%d %H:%M:%S&quot;`&quot; &quot;`date -d @$&#123;clicktime&#125; &quot;+%Y-%m-%d %H:%M:%S&quot;`done</span><br></pre></td></tr></table></figure>
 <p>其中<code>pos</code>那一表示获取关键字<code>clicktime</code>在行中的位置</p>
   
 	</div>
@@ -198,7 +198,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -218,11 +218,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -246,11 +246,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -258,7 +258,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -270,11 +270,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

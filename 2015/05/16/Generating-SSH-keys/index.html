@@ -108,23 +108,23 @@
 		
 		</div>
 		
-		<h2 id="Step-1-Check-for-SSH-keys"><a href="#Step-1-Check-for-SSH-keys" class="headerlink" title="Step 1: Check for SSH keys"></a>Step 1: Check for SSH keys</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ ls -al ~/.ssh</div><div class="line"><span class="comment"># Lists the files in your .ssh directory, if they exist</span></div></pre></td></tr></table></figure>
+		<h2 id="Step-1-Check-for-SSH-keys"><a href="#Step-1-Check-for-SSH-keys" class="headerlink" title="Step 1: Check for SSH keys"></a>Step 1: Check for SSH keys</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls -al ~/.ssh</span><br><span class="line"><span class="comment"># Lists the files in your .ssh directory, if they exist</span></span><br></pre></td></tr></table></figure>
 <p>Check the directory listing to see if you already have a public SSH key. By default, the filenames of the public keys are one of the following:<br><code>&gt;</code> id_dsa.pub<br><code>&gt;</code> id_ecdsa.pub<br><code>&gt;</code> id_ed25519.pub<br><code>&gt;</code> id_rsa.pub<br><a id="more"></a></p>
 <h2 id="Step-2-Generate-a-new-SSH-key"><a href="#Step-2-Generate-a-new-SSH-key" class="headerlink" title="Step 2: Generate a new SSH key"></a>Step 2: Generate a new SSH key</h2><ul>
 <li><p>With Git Bash still open, copy and paste the text below. Make sure you substitute in your GitHub email address.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ ssh-keygen -t rsa -b 4096 -C <span class="string">"your_email@example.com"</span></div><div class="line"><span class="comment"># Creates a new ssh key, using the provided email as a label</span></div><div class="line">Generating public/private rsa key pair.</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen -t rsa -b 4096 -C <span class="string">"your_email@example.com"</span></span><br><span class="line"><span class="comment"># Creates a new ssh key, using the provided email as a label</span></span><br><span class="line">Generating public/private rsa key pair.</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>We strongly suggest keeping the default settings as they are, so when you’re prompted to “Enter a file in which to save the key”, just press Enter to continue.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/Users/you/.ssh/id_rsa): [Press enter]</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/Users/you/.ssh/id_rsa): [Press enter]</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>You’ll be asked to enter a passphrase.</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</div><div class="line">Enter same passphrase again: [Type passphrase again]</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): [Type a passphrase]</span><br><span class="line">Enter same passphrase again: [Type passphrase again]</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>After you enter a passphrase, you’ll be given the fingerprint, or id, of your SSH key. It will look something like this:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Your identification has been saved <span class="keyword">in</span> /Users/you/.ssh/id_rsa.</div><div class="line">Your public key has been saved <span class="keyword">in</span> /Users/you/.ssh/id_rsa.pub.</div><div class="line">The key fingerprint is:</div><div class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Your identification has been saved <span class="keyword">in</span> /Users/you/.ssh/id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /Users/you/.ssh/id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">01:0f:f4:3b:ca:85:d6:17:a1:7d:f0:68:9d:f0:a2:db your_email@example.com</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
-<h2 id="Step-3-Add-your-SSH-key-to-your-account"><a href="#Step-3-Add-your-SSH-key-to-your-account" class="headerlink" title="Step 3: Add your SSH key to your account"></a>Step 3: Add your SSH key to your account</h2><p>Copy the SSH key to your clipboard. If your key is named id_dsa.pub, id_ecdsa.pub or id_ed25519.pub, then change the filename below from id_rsa.pub to the one that matches your key:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ clip &lt; ~/.ssh/id_rsa.pub</div><div class="line"><span class="comment"># Copies the contents of the id_rsa.pub file to your clipboard</span></div></pre></td></tr></table></figure></p>
+<h2 id="Step-3-Add-your-SSH-key-to-your-account"><a href="#Step-3-Add-your-SSH-key-to-your-account" class="headerlink" title="Step 3: Add your SSH key to your account"></a>Step 3: Add your SSH key to your account</h2><p>Copy the SSH key to your clipboard. If your key is named id_dsa.pub, id_ecdsa.pub or id_ed25519.pub, then change the filename below from id_rsa.pub to the one that matches your key:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ clip &lt; ~/.ssh/id_rsa.pub</span><br><span class="line"><span class="comment"># Copies the contents of the id_rsa.pub file to your clipboard</span></span><br></pre></td></tr></table></figure></p>
 <p>Add the copied key to GitHub:</p>
 <ul>
 <li><p>In the top right corner of any page, click <code>setting</code>.<br><img src="/images/userbar-account-settings.png" alt="setting"></p>
@@ -145,13 +145,13 @@
 <h2 id="Step-4-Test-the-connection"><a href="#Step-4-Test-the-connection" class="headerlink" title="Step 4: Test the connection"></a>Step 4: Test the connection</h2><p>To make sure everything is working, you’ll now try to SSH into . When you do this, you will be asked to authenticate this action using your password, which is the SSH key passphrase you created earlier.</p>
 <ul>
 <li><p>Open Git Bash and enter:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ ssh -T git@github.com</div><div class="line"><span class="comment"># Attempts to ssh to GitHub</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@github.com</span><br><span class="line"><span class="comment"># Attempts to ssh to GitHub</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>You may see this warning:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">The authenticity of host <span class="string">'github.com (207.97.227.239)'</span> can<span class="string">'t be established.</span></div><div class="line"><span class="string">RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.</span></div><div class="line"><span class="string">Are you sure you want to continue connecting (yes/no)?</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">The authenticity of host <span class="string">'github.com (207.97.227.239)'</span> can<span class="string">'t be established.</span></span><br><span class="line"><span class="string">RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.</span></span><br><span class="line"><span class="string">Are you sure you want to continue connecting (yes/no)?</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>Verify the fingerprint in the message you see matches the following message, then type yes:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Hi username! You<span class="string">'ve successfully authenticated, but GitHub does not</span></div><div class="line"><span class="string">provide shell access.</span></div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Hi username! You<span class="string">'ve successfully authenticated, but GitHub does not</span></span><br><span class="line"><span class="string">provide shell access.</span></span><br></pre></td></tr></table></figure>
 </li>
 <li><p>If the username in the message is yours, you’ve successfully set up your SSH key!</p>
 </li>
@@ -249,7 +249,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -269,11 +269,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -297,11 +297,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -309,7 +309,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -321,11 +321,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

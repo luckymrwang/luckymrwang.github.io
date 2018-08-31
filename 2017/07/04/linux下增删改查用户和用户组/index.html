@@ -127,6 +127,8 @@
 <li><p>查看组</p>
 <blockquote>
 <p>查看当前登录用户所在的组 groups，查看apacheuser所在组groups apacheuser</p>
+</blockquote>
+<blockquote>
 <p>查看所有组 cat /etc/group</p>
 </blockquote>
 <p>  有的linux系统没有/etc/group文件的，这个时候看下面的这个方法</p>
@@ -138,9 +140,11 @@
 <h3 id="二、用户操作"><a href="#二、用户操作" class="headerlink" title="二、用户操作"></a>二、用户操作</h3><ul>
 <li>增加用户</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">[root@krlcgcms01 mytest]# useradd --help  </div><div class="line">Usage: useradd [options] LOGIN  </div><div class="line">  </div><div class="line">Options:  </div><div class="line"> -b, --base-dir BASE_DIR       设置基本路径作为用户的登录目录  </div><div class="line"> -c, --comment COMMENT         对用户的注释  </div><div class="line"> -d, --home-dir HOME_DIR       设置用户的登录目录  </div><div class="line"> -D, --defaults                改变设置  </div><div class="line"> -e, --expiredate EXPIRE_DATE  设置用户的有效期  </div><div class="line"> -f, --inactive INACTIVE       用户过期后，让密码无效  </div><div class="line"> -g, --gid GROUP               使用户只属于某个组  </div><div class="line"> -G, --groups GROUPS           使用户加入某个组  </div><div class="line"> -h, --help                    帮助  </div><div class="line"> -k, --skel SKEL_DIR           指定其他的skel目录  </div><div class="line"> -K, --key KEY=VALUE           覆盖 /etc/login.defs 配置文件  </div><div class="line"> -m, --create-home             自动创建登录目录  </div><div class="line"> -l,                           不把用户加入到lastlog文件中  </div><div class="line"> -M,                           不自动创建登录目录  </div><div class="line"> -r,                           建立系统账号  </div><div class="line"> -o, --non-unique              允许用户拥有相同的UID  </div><div class="line"> -p, --password PASSWORD       为新用户使用加密密码  </div><div class="line"> -s, --shell SHELL             登录时候的shell  </div><div class="line"> -u, --uid UID                 为新用户指定一个UID  </div><div class="line"> -Z, --selinux-user SEUSER     use a specific SEUSER for the SELinux user mapping</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@krlcgcms01 mytest]# useradd --help  </span><br><span class="line">Usage: useradd [options] LOGIN  </span><br><span class="line">  </span><br><span class="line">Options:  </span><br><span class="line"> -b, --base-dir BASE_DIR       设置基本路径作为用户的登录目录  </span><br><span class="line"> -c, --comment COMMENT         对用户的注释  </span><br><span class="line"> -d, --home-dir HOME_DIR       设置用户的登录目录  </span><br><span class="line"> -D, --defaults                改变设置  </span><br><span class="line"> -e, --expiredate EXPIRE_DATE  设置用户的有效期  </span><br><span class="line"> -f, --inactive INACTIVE       用户过期后，让密码无效  </span><br><span class="line"> -g, --gid GROUP               使用户只属于某个组  </span><br><span class="line"> -G, --groups GROUPS           使用户加入某个组  </span><br><span class="line"> -h, --help                    帮助  </span><br><span class="line"> -k, --skel SKEL_DIR           指定其他的skel目录  </span><br><span class="line"> -K, --key KEY=VALUE           覆盖 /etc/login.defs 配置文件  </span><br><span class="line"> -m, --create-home             自动创建登录目录  </span><br><span class="line"> -l,                           不把用户加入到lastlog文件中  </span><br><span class="line"> -M,                           不自动创建登录目录  </span><br><span class="line"> -r,                           建立系统账号  </span><br><span class="line"> -o, --non-unique              允许用户拥有相同的UID  </span><br><span class="line"> -p, --password PASSWORD       为新用户使用加密密码  </span><br><span class="line"> -s, --shell SHELL             登录时候的shell  </span><br><span class="line"> -u, --uid UID                 为新用户指定一个UID  </span><br><span class="line"> -Z, --selinux-user SEUSER     use a specific SEUSER for the SELinux user mapping</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>useradd test</p>
+</blockquote>
+<blockquote>
 <p>passwd test</p>
 </blockquote>
 <p>增加用户test，有一点要注意的，useradd增加一个用户后，不要忘了给他设置密码，不然不能登录的</p>
@@ -177,21 +181,27 @@
 <p>  查看单个用户信息</p>
 <blockquote>
 <p>finger apacheuser</p>
+</blockquote>
+<blockquote>
 <p>id apacheuser</p>
 </blockquote>
 <p>  查看用户登录记录</p>
 <blockquote>
 <p>last    // 查看登录成功的用户记录</p>
+</blockquote>
+<blockquote>
 <p>lastb // 查看登录不成功的用户记录</p>
 </blockquote>
 <p>  查看所有用户</p>
 <blockquote>
 <p>cut -d : -f 1 /etc/passwd</p>
+</blockquote>
+<blockquote>
 <p>cat /etc/passwd |awk -F \: ‘{print $1}’</p>
 </blockquote>
 </li>
 </ul>
-<p>本文引自<a href="http://blog.51yip.com/linux/1137.html" target="_blank" rel="external">这里</a></p>
+<p>本文引自<a href="http://blog.51yip.com/linux/1137.html" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -280,7 +290,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -300,11 +310,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -328,11 +338,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -340,7 +350,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -352,11 +362,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

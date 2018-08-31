@@ -104,7 +104,7 @@
 		
 		<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>我们知道，下载文件是一个非常常见的需求，但由于浏览器的安全策略的限制，我们通常只能通过一个额外的页面，访问某个文件的 url 来实现下载功能，但是这种用户体验非常不好。<br>幸好，HTML 5 里面为 <code>&lt;a&gt;</code> 标签添加了一个 <code>download</code> 的属性，我们可以轻易的利用它来实现下载功能，再也不需要用以前的笨办法了。</p>
 <h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>我们先看看 <code>download</code> 的使用方法：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://somehost/somefile.zip"</span> <span class="attr">download</span>=<span class="string">"filename.zip"</span>&gt;</span>Download file<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://somehost/somefile.zip"</span> <span class="attr">download</span>=<span class="string">"filename.zip"</span>&gt;</span>Download file<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>看看上面的代码，只要为 <code>&lt;a&gt;</code> 标签添加 <code>download</code> 属性，我们点击这个链接的时候就会自动下载文件了~<br>顺便说下，<code>download</code> 的属性值是可选的，它用来指定下载文件的文件名。像上面的例子中，我们下载到本地的文件名就会是 <code>filename.zip</code> 拉，如果不指定的话，它就会是 <code>somefile.zip</code> 这个名字拉！</p>
 <p>看到这里，你可能会说，坑爹啊，这明明是用 HTML 5 的新特性来实现下载文件嘛，说好的用 JavaScript 下载文件呢？</p>
@@ -116,7 +116,7 @@
 <li>用 <code>JavaScript</code> 来触发这个它的 <code>click</code> 事件</li>
 </ul>
 <p>翻译成 JavaScript 代码就是：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> a = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</div><div class="line"><span class="keyword">var</span> url = <span class="built_in">window</span>.URL.createObjectURL(blob);</div><div class="line"><span class="keyword">var</span> filename = <span class="string">'what-you-want.txt'</span>;</div><div class="line">a.href = url;</div><div class="line">a.download = filename;</div><div class="line">a.click();</div><div class="line"><span class="built_in">window</span>.URL.revokeObjectURL(url);</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line"><span class="keyword">var</span> url = <span class="built_in">window</span>.URL.createObjectURL(blob);</span><br><span class="line"><span class="keyword">var</span> filename = <span class="string">'what-you-want.txt'</span>;</span><br><span class="line">a.href = url;</span><br><span class="line">a.download = filename;</span><br><span class="line">a.click();</span><br><span class="line"><span class="built_in">window</span>.URL.revokeObjectURL(url);</span><br></pre></td></tr></table></figure>
 <h3 id="window-URL"><a href="#window-URL" class="headerlink" title="window.URL"></a>window.URL</h3><p><code>window.URL</code> 里面有两个方法：</p>
 <ul>
 <li><code>createObjectURL</code> 用 blob 对象来创建一个 object URL(它是一个 DOMString)，我们可以用这个 object URL 来表示某个 blob 对象，这个 object URL 可以用在 href 和 src 之类的属性上。</li>
@@ -124,26 +124,26 @@
 </ul>
 <p>知道了这两个方法之后，我们再回去看看上面的例子就很容易理解了吧！只是用 blob 对象来创建一条 URL，然后让 <code>&lt;a&gt;</code> 标签引用该 URL，然后触发个点击事件，就可以下载文件了！</p>
 <p>那么问题来了，blob 对象哪里来？</p>
-<h3 id="Blob-对象"><a href="#Blob-对象" class="headerlink" title="Blob 对象"></a>Blob 对象</h3><p><code>Blob</code> 全称是 <code>Binary large object</code>，它表示一个类文件对象，可以用它来表示一个文件。根据 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob" target="_blank" rel="external">MDN</a> 上面的说法，<code>File API</code> 也是基于 blob 来实现的。</p>
+<h3 id="Blob-对象"><a href="#Blob-对象" class="headerlink" title="Blob 对象"></a>Blob 对象</h3><p><code>Blob</code> 全称是 <code>Binary large object</code>，它表示一个类文件对象，可以用它来表示一个文件。根据 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob" target="_blank" rel="noopener">MDN</a> 上面的说法，<code>File API</code> 也是基于 blob 来实现的。</p>
 <p>由于本文的主题是讲 JavaScript 下载文件，那我们构建 blob 的方式就是通过服务器返回的文件来创建 blob 拉！<br>而最简单的方式就是用 fetch API 了，我们可以整合上面的例子：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">fetch(<span class="string">'http://somehost/somefile.zip'</span>).then(<span class="function"><span class="params">res</span> =&gt;</span> res.blob().then(<span class="function"><span class="params">blob</span> =&gt;</span> &#123;</div><div class="line">    <span class="keyword">var</span> a = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</div><div class="line">    <span class="keyword">var</span> url = <span class="built_in">window</span>.URL.createObjectURL(blob);</div><div class="line">    <span class="keyword">var</span> filename = <span class="string">'myfile.zip'</span>;</div><div class="line">    a.href = url;</div><div class="line">    a.download = filename;</div><div class="line">    a.click();</div><div class="line">    <span class="built_in">window</span>.URL.revokeObjectURL(url);</div><div class="line">&#125;))</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fetch(<span class="string">'http://somehost/somefile.zip'</span>).then(<span class="function"><span class="params">res</span> =&gt;</span> res.blob().then(<span class="function"><span class="params">blob</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> a = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line">    <span class="keyword">var</span> url = <span class="built_in">window</span>.URL.createObjectURL(blob);</span><br><span class="line">    <span class="keyword">var</span> filename = <span class="string">'myfile.zip'</span>;</span><br><span class="line">    a.href = url;</span><br><span class="line">    a.download = filename;</span><br><span class="line">    a.click();</span><br><span class="line">    <span class="built_in">window</span>.URL.revokeObjectURL(url);</span><br><span class="line">&#125;))</span><br></pre></td></tr></table></figure>
 <p>很简单对吧！</p>
 <p>你可能会问，何必这么麻烦呢？直接写成下面这样不就好了：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://somehost/somefile.zip"</span> <span class="attr">download</span>=<span class="string">"myfile.zip"</span>&gt;</span>Download file<span class="tag">&lt;/<span class="name">a</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"http://somehost/somefile.zip"</span> <span class="attr">download</span>=<span class="string">"myfile.zip"</span>&gt;</span>Download file<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>嗯，对于这种写法，我只能说，你做的太正确了！如果你要下载的是已经存在服务器上面的静态文件的话，那么写成这样是最方便的。浏览器会帮你处理整个下载过程，不需要你干涉。如果你用 blob 的方式来下载文件的话，会有下面这些限制的：</p>
-<h4 id="限制一：不同浏览器对-blob-对象有不同的限制"><a href="#限制一：不同浏览器对-blob-对象有不同的限制" class="headerlink" title="限制一：不同浏览器对 blob 对象有不同的限制"></a>限制一：不同浏览器对 blob 对象有不同的限制</h4><p>详看具体表格转到 <a href="https://github.com/eligrey/FileSaver.js#supported-browsers" target="_blank" rel="external">FileSaver.js</a></p>
+<h4 id="限制一：不同浏览器对-blob-对象有不同的限制"><a href="#限制一：不同浏览器对-blob-对象有不同的限制" class="headerlink" title="限制一：不同浏览器对 blob 对象有不同的限制"></a>限制一：不同浏览器对 blob 对象有不同的限制</h4><p>详看具体表格转到 <a href="https://github.com/eligrey/FileSaver.js#supported-browsers" target="_blank" rel="noopener">FileSaver.js</a></p>
 <h4 id="限制二：构建完-blob-对象后才会转换成文件"><a href="#限制二：构建完-blob-对象后才会转换成文件" class="headerlink" title="限制二：构建完 blob 对象后才会转换成文件"></a>限制二：构建完 blob 对象后才会转换成文件</h4><p>这一点限制对小文件(几十kb)可能没什么影响，但对稍微大一点的文件影响就很大了。试想，用户要下载一个 100mb 的文件，如果他点击了下载按钮之后没看到下载提示的话，他肯定会继续按，等他按了几次之后还没看到下载提示时，他就会抱怨我们的网站，然后离开了。</p>
 <p>然而事实上下载的的确确发生了，只是要等到下载完文件之后才能构建 blob 对象，再转化成文件。而且，用户再触发多几次下载就会造成一些资源上的浪费。</p>
 <p>因此，如果是要下载大文件的话，还是推荐直接创建一个 <code>&lt;a&gt;</code> 标签拉~<br>写 html 也好，写 JavaScript 动态创建也好，用自己喜欢的方式去创建就好了。</p>
 <h3 id="为什么要用-JavaScript-下载文件"><a href="#为什么要用-JavaScript-下载文件" class="headerlink" title="为什么要用 JavaScript 下载文件"></a>为什么要用 JavaScript 下载文件</h3><p>好拉，说了半天，其实我们一直说的都是：「不要用 JavaScript 下载文件拉，限制多多，又不好用，直接用 html 就好拉，简单方便又快捷」这个论调。<br>事实上也确实如此，但有些时候我们确实需要通过 JavaScript 来做一些预处理。</p>
 <h4 id="权限校验"><a href="#权限校验" class="headerlink" title="权限校验"></a>权限校验</h4><p>有些时候，我们需要对下载做一些限制，最常见的就是权限校验了，如检查该用户是否有下载的权限，是否有高速下载的权限等等。这时候，我们可以利用 JavaScript 做一些预处理。如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">fetch(<span class="string">'http://somehost/check-permission'</span>, options).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</div><div class="line">    <span class="keyword">if</span> (res.code === <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">var</span> a = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</div><div class="line">        <span class="keyword">var</span> url = res.data.url;</div><div class="line">        <span class="keyword">var</span> filename = <span class="string">'myfile.zip'</span>;</div><div class="line">        a.href = url;</div><div class="line">        a.download = filename;</div><div class="line">        a.click();</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        alert(<span class="string">'You have no permission to download the file!'</span>);</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">fetch(<span class="string">'http://somehost/check-permission'</span>, options).then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (res.code === <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> a = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line">        <span class="keyword">var</span> url = res.data.url;</span><br><span class="line">        <span class="keyword">var</span> filename = <span class="string">'myfile.zip'</span>;</span><br><span class="line">        a.href = url;</span><br><span class="line">        a.download = filename;</span><br><span class="line">        a.click();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        alert(<span class="string">'You have no permission to download the file!'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>在这个例子里面，我们没有用 blob 来构建 URL，而是通过后端服务器来计算出用户的下载链接，然后再利用之前提到的动态创建 <code>&lt;a&gt;</code> 标签的方式来实现下载，很简单吧！</p>
 <h4 id="动态文件"><a href="#动态文件" class="headerlink" title="动态文件"></a>动态文件</h4><p>动态生成文件然后返回给客户端也是一个很常见的需求，譬如我们有时候需要做导出数据的功能，把数据库中的某些数据导出到 Excel 中，然后再返回客户端。<br>这时候我们就不能简单的指定 href 属性，因为对应的 URL 并不存在。<br>我们只能通过 JavaScript 对服务器发出一个请求，通知它去生成某个文件，然后把对应的 URL 返回给客户端。<br>有没有感觉这个过程和上面「权限校验」一节很像？肯定拉，因为我们只是对 URL 做了一些预处理而已嘛~</p>
 <h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>由于 <code>download</code> 属性是 HTML 5 的新特性，因此它不支持旧版本的浏览器。</p>
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>HTML 5 新的 <code>download</code> 特性真的很好用，结合 JavaScript 的动态能力我们可以很方便的做出复杂的下载功能~</p>
-<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://github.com/eligrey/FileSaver.js/blob/master/FileSaver.js" target="_blank" rel="external">https://github.com/eligrey/FileSaver.js/blob/master/FileSaver.js</a><br><a href="https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL" target="_blank" rel="external">https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL</a><br><a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob" target="_blank" rel="external">https://developer.mozilla.org/en-US/docs/Web/API/Blob</a><br><a href="http://stackoverflow.com/questions/19327749/javascript-blob-filename-without-link" target="_blank" rel="external">http://stackoverflow.com/questions/19327749/javascript-blob-filename-without-link</a><br><a href="http://stackoverflow.com/questions/24501358/how-to-set-a-header-for-a-http-get-request-and-trigger-file-download" target="_blank" rel="external">http://stackoverflow.com/questions/24501358/how-to-set-a-header-for-a-http-get-request-and-trigger-file-download</a><br><a href="http://blog.bguiz.com/2014/07/03/file-download-with-http-request-header/" target="_blank" rel="external">http://blog.bguiz.com/2014/07/03/file-download-with-http-request-header/</a></p>
-<p>本文引自<a href="https://scarletsky.github.io/2016/07/03/download-file-using-javascript/" target="_blank" rel="external">这里</a></p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a href="https://github.com/eligrey/FileSaver.js/blob/master/FileSaver.js" target="_blank" rel="noopener">https://github.com/eligrey/FileSaver.js/blob/master/FileSaver.js</a><br><a href="https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL" target="_blank" rel="noopener">https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL</a><br><a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob" target="_blank" rel="noopener">https://developer.mozilla.org/en-US/docs/Web/API/Blob</a><br><a href="http://stackoverflow.com/questions/19327749/javascript-blob-filename-without-link" target="_blank" rel="noopener">http://stackoverflow.com/questions/19327749/javascript-blob-filename-without-link</a><br><a href="http://stackoverflow.com/questions/24501358/how-to-set-a-header-for-a-http-get-request-and-trigger-file-download" target="_blank" rel="noopener">http://stackoverflow.com/questions/24501358/how-to-set-a-header-for-a-http-get-request-and-trigger-file-download</a><br><a href="http://blog.bguiz.com/2014/07/03/file-download-with-http-request-header/" target="_blank" rel="noopener">http://blog.bguiz.com/2014/07/03/file-download-with-http-request-header/</a></p>
+<p>本文引自<a href="https://scarletsky.github.io/2016/07/03/download-file-using-javascript/" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -232,7 +232,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -252,11 +252,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -280,11 +280,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -292,7 +292,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -304,11 +304,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

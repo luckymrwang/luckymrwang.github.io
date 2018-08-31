@@ -109,11 +109,11 @@
 		<p>所有应用软件之中，数据库可能是最复杂的。</p>
 <p>MySQL的手册有3000多页，PostgreSQL的手册有2000多页，Oracle的手册更是比它们相加还要厚。</p>
 <p><img src="/images/mysql_.jpg" alt="MySQL"></p>
-<p>但是，自己写一个最简单的数据库，做起来并不难。Reddit上面有一个帖子，只用了几百个字，就把原理讲清楚了。下面是我根据这个<a href="http://www.reddit.com/r/Database/comments/27u6dy/how_do_you_build_a_database/ciggal8" target="_blank" rel="external">帖子</a>整理的内容。<br><a id="more"></a></p>
+<p>但是，自己写一个最简单的数据库，做起来并不难。Reddit上面有一个帖子，只用了几百个字，就把原理讲清楚了。下面是我根据这个<a href="http://www.reddit.com/r/Database/comments/27u6dy/how_do_you_build_a_database/ciggal8" target="_blank" rel="noopener">帖子</a>整理的内容。<br><a id="more"></a></p>
 <h3 id="数据以文本形式保存"><a href="#数据以文本形式保存" class="headerlink" title="数据以文本形式保存"></a>数据以文本形式保存</h3><p>第一步，就是将所要保存的数据，写入文本文件。这个文本文件就是你的数据库。</p>
 <p>为了方便读取，数据必须分成记录，每一条记录的长度规定为等长。比如，假定每条记录的长度是800字节，那么第5条记录的开始位置就在3200字节。</p>
-<p>大多数时候，我们不知道某一条记录在第几个位置，只知道<a href="http://zh.wikipedia.org/zh/%E5%85%B3%E7%B3%BB%E9%94%AE" target="_blank" rel="external">主键</a>（primary key）的值。这时为了读取数据，可以一条条比对记录。但是这样做效率太低，实际应用中，数据库往往采用<a href="http://en.wikipedia.org/wiki/B-tree" target="_blank" rel="external">B树</a>（B-tree）格式储存数据。</p>
-<h3 id="什么是B树？"><a href="#什么是B树？" class="headerlink" title="什么是B树？"></a>什么是B树？</h3><p>要理解B树，必须从<a href="http://zh.wikipedia.org/wiki/%E4%BA%8C%E5%85%83%E6%90%9C%E5%B0%8B%E6%A8%B9" target="_blank" rel="external">二叉查找树</a>（Binary search tree）讲起。</p>
+<p>大多数时候，我们不知道某一条记录在第几个位置，只知道<a href="http://zh.wikipedia.org/zh/%E5%85%B3%E7%B3%BB%E9%94%AE" target="_blank" rel="noopener">主键</a>（primary key）的值。这时为了读取数据，可以一条条比对记录。但是这样做效率太低，实际应用中，数据库往往采用<a href="http://en.wikipedia.org/wiki/B-tree" target="_blank" rel="noopener">B树</a>（B-tree）格式储存数据。</p>
+<h3 id="什么是B树？"><a href="#什么是B树？" class="headerlink" title="什么是B树？"></a>什么是B树？</h3><p>要理解B树，必须从<a href="http://zh.wikipedia.org/wiki/%E4%BA%8C%E5%85%83%E6%90%9C%E5%B0%8B%E6%A8%B9" target="_blank" rel="noopener">二叉查找树</a>（Binary search tree）讲起。</p>
 <p><img src="/images/mysql_bst.png" alt="MySQL"></p>
 <p>二叉查找树是一种查找效率非常高的数据结构，它有三个特点。</p>
 <ul>
@@ -133,7 +133,7 @@
 <p>这种数据结构，非常有利于减少读取硬盘的次数。假定一个节点可以容纳100个值，那么3层的B树可以容纳100万个数据，如果换成二叉查找树，则需要20层！假定操作系统一次读取一个节点，并且根节点保留在内存中，那么B树在100万个数据中查找目标值，只需要读取两次硬盘。</p>
 <h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><p>数据库以B树格式储存，只解决了按照”主键”查找数据的问题。如果想查找其他字段，就需要建立索引（index）。</p>
 <p>所谓索引，就是以某个字段为关键字的B树文件。假定有一张”雇员表”，包含了员工号（主键）和姓名两个字段。可以对姓名建立索引文件，该文件以B树格式对姓名进行储存，每个姓名后面是其在数据库中的位置（即第几条记录）。查找姓名的时候，先从索引中找到对应第几条记录，然后再从表格中读取。</p>
-<p>这种索引查找方法，叫做<a href="http://en.wikipedia.org/wiki/ISAM" target="_blank" rel="external">“索引顺序存取方法”</a>（Indexed Sequential Access Method），缩写为ISAM。它已经有多种实现（比如C-ISAM库和D-ISAM库），只要使用这些代码库，就能自己写一个最简单的数据库。</p>
+<p>这种索引查找方法，叫做<a href="http://en.wikipedia.org/wiki/ISAM" target="_blank" rel="noopener">“索引顺序存取方法”</a>（Indexed Sequential Access Method），缩写为ISAM。它已经有多种实现（比如C-ISAM库和D-ISAM库），只要使用这些代码库，就能自己写一个最简单的数据库。</p>
 <h3 id="高级功能"><a href="#高级功能" class="headerlink" title="高级功能"></a>高级功能</h3><p>部署了最基本的数据存取（包括索引）以后，还可以实现一些高级功能。</p>
 <ul>
 <li>SQL语言是数据库通用操作语言，所以需要一个SQL解析器，将SQL命令解析为对应的ISAM操作。</li>
@@ -142,7 +142,7 @@
 <li>备份机制：保存数据库的副本。</li>
 <li>远程操作：使得用户可以在不同的机器上，通过TCP/IP协议操作数据库。</li>
 </ul>
-<p>本文引自<a href="http://www.ruanyifeng.com/blog/2014/07/database_implementation.html" target="_blank" rel="external">阮一峰</a></p>
+<p>本文引自<a href="http://www.ruanyifeng.com/blog/2014/07/database_implementation.html" target="_blank" rel="noopener">阮一峰</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -231,7 +231,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -251,11 +251,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -279,11 +279,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -291,7 +291,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -303,11 +303,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

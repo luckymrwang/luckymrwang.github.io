@@ -104,8 +104,8 @@
 		
 		<h3 id="思路分析"><a href="#思路分析" class="headerlink" title="思路分析"></a>思路分析</h3><p>选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。</p>
 <a id="more"></a>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">$arr = <span class="keyword">array</span>(<span class="number">12</span>, <span class="number">242</span>, <span class="number">3</span>, <span class="number">20</span>, <span class="number">11</span>,<span class="number">50</span>);</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">kuaisu</span><span class="params">($arr)</span></span>&#123;</div><div class="line">    $len = count($arr);</div><div class="line">    <span class="keyword">if</span>($len &lt;= <span class="number">1</span>)&#123;</div><div class="line">        <span class="keyword">return</span> $arr;</div><div class="line">    &#125;</div><div class="line">    $left = $right = <span class="keyword">array</span>();</div><div class="line">    <span class="comment">//选择基准值</span></div><div class="line">    $mark = $arr[<span class="number">0</span>];</div><div class="line">    <span class="comment">//依次循环比较</span></div><div class="line">    <span class="keyword">for</span>($i=<span class="number">1</span>; $i&lt;$len; $i++)&#123;</div><div class="line">        <span class="comment">//把小值放入左边，把大值放入右边</span></div><div class="line">        ($mark &gt; $arr[$i]) ? ($left[] = $arr[$i]) : ($right[] = $arr[$i]);</div><div class="line">    &#125;</div><div class="line">    <span class="comment">//对$left/$right进行递归循环比较</span></div><div class="line">    $left = kuaisu($left);</div><div class="line">    $right = kuaisu($right);</div><div class="line">    <span class="comment">//合并</span></div><div class="line">    <span class="keyword">return</span> array_merge($left, <span class="keyword">array</span>($mark), $right);</div><div class="line">&#125;</div><div class="line"><span class="keyword">echo</span> implode(<span class="string">','</span>, kuaisu($arr));</div></pre></td></tr></table></figure>
-<p><a href="http://www.ruanyifeng.com/blog/2011/04/quicksort_in_javascript.html" target="_blank" rel="external">快速排序的JavaScript实现</a></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">$arr = <span class="keyword">array</span>(<span class="number">12</span>, <span class="number">242</span>, <span class="number">3</span>, <span class="number">20</span>, <span class="number">11</span>,<span class="number">50</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">kuaisu</span><span class="params">($arr)</span></span>&#123;</span><br><span class="line">    $len = count($arr);</span><br><span class="line">    <span class="keyword">if</span>($len &lt;= <span class="number">1</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> $arr;</span><br><span class="line">    &#125;</span><br><span class="line">    $left = $right = <span class="keyword">array</span>();</span><br><span class="line">    <span class="comment">//选择基准值</span></span><br><span class="line">    $mark = $arr[<span class="number">0</span>];</span><br><span class="line">    <span class="comment">//依次循环比较</span></span><br><span class="line">    <span class="keyword">for</span>($i=<span class="number">1</span>; $i&lt;$len; $i++)&#123;</span><br><span class="line">        <span class="comment">//把小值放入左边，把大值放入右边</span></span><br><span class="line">        ($mark &gt; $arr[$i]) ? ($left[] = $arr[$i]) : ($right[] = $arr[$i]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//对$left/$right进行递归循环比较</span></span><br><span class="line">    $left = kuaisu($left);</span><br><span class="line">    $right = kuaisu($right);</span><br><span class="line">    <span class="comment">//合并</span></span><br><span class="line">    <span class="keyword">return</span> array_merge($left, <span class="keyword">array</span>($mark), $right);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> implode(<span class="string">','</span>, kuaisu($arr));</span><br></pre></td></tr></table></figure>
+<p><a href="http://www.ruanyifeng.com/blog/2011/04/quicksort_in_javascript.html" target="_blank" rel="noopener">快速排序的JavaScript实现</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -194,7 +194,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -214,11 +214,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -242,11 +242,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -254,7 +254,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -266,11 +266,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

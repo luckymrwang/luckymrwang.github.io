@@ -102,9 +102,9 @@
 		
 		</div>
 		
-		<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"bufio"</span></div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"io"</span></div><div class="line">	<span class="string">"io/ioutil"</span></div><div class="line">	<span class="string">"os"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(e error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(e)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	dat, err := ioutil.ReadFile(<span class="string">"/tmp/dat"</span>)</div><div class="line">	check(err)</div><div class="line">	fmt.Print(<span class="keyword">string</span>(dat))</div><div class="line"></div><div class="line">	f, err := os.Open(<span class="string">"/tmp/dat"</span>)</div><div class="line">	check(err)</div><div class="line"></div><div class="line">	b1 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">5</span>)</div><div class="line">	n1, err := f.Read(b1)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"%d bytes: %s\n"</span>, n1, <span class="keyword">string</span>(b1))</div><div class="line"></div><div class="line">	o2, err := f.Seek(<span class="number">6</span>, <span class="number">0</span>)</div><div class="line">	check(err)</div><div class="line">	b2 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">2</span>)</div><div class="line">	n2, err := f.Read(b2)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"%d bytes @ %d: %s\n"</span>, n2, o2, <span class="keyword">string</span>(b2))</div><div class="line"></div><div class="line">	o3, err := f.Seek(<span class="number">6</span>, <span class="number">0</span>)</div><div class="line">	check(err)</div><div class="line">	b3 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">2</span>)</div><div class="line">	n3, err := io.ReadAtLeast(f, b3, <span class="number">2</span>)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"%d bytes @ %d: %s\n"</span>, n3, o3, <span class="keyword">string</span>(b3))</div><div class="line"></div><div class="line">	_, err = f.Seek(<span class="number">0</span>, <span class="number">0</span>)</div><div class="line">	check(err)</div><div class="line"></div><div class="line">	r4 := bufio.NewReader(f)</div><div class="line">	b4, err := r4.Peek(<span class="number">5</span>)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"5 bytes: %s\n"</span>, <span class="keyword">string</span>(b4))</div><div class="line"></div><div class="line">	f.Close()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+		<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bufio"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(e error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(e)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	dat, err := ioutil.ReadFile(<span class="string">"/tmp/dat"</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Print(<span class="keyword">string</span>(dat))</span><br><span class="line"></span><br><span class="line">	f, err := os.Open(<span class="string">"/tmp/dat"</span>)</span><br><span class="line">	check(err)</span><br><span class="line"></span><br><span class="line">	b1 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">5</span>)</span><br><span class="line">	n1, err := f.Read(b1)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"%d bytes: %s\n"</span>, n1, <span class="keyword">string</span>(b1))</span><br><span class="line"></span><br><span class="line">	o2, err := f.Seek(<span class="number">6</span>, <span class="number">0</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	b2 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">2</span>)</span><br><span class="line">	n2, err := f.Read(b2)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"%d bytes @ %d: %s\n"</span>, n2, o2, <span class="keyword">string</span>(b2))</span><br><span class="line"></span><br><span class="line">	o3, err := f.Seek(<span class="number">6</span>, <span class="number">0</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	b3 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">2</span>)</span><br><span class="line">	n3, err := io.ReadAtLeast(f, b3, <span class="number">2</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"%d bytes @ %d: %s\n"</span>, n3, o3, <span class="keyword">string</span>(b3))</span><br><span class="line"></span><br><span class="line">	_, err = f.Seek(<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">	check(err)</span><br><span class="line"></span><br><span class="line">	r4 := bufio.NewReader(f)</span><br><span class="line">	b4, err := r4.Peek(<span class="number">5</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"5 bytes: %s\n"</span>, <span class="keyword">string</span>(b4))</span><br><span class="line"></span><br><span class="line">	f.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">$ echo &quot;hello&quot; &gt; /tmp/dat</div><div class="line">$ echo &quot;go&quot; &gt;&gt;   /tmp/dat</div><div class="line">$ go run reading-files.go </div><div class="line">hello</div><div class="line">go</div><div class="line">5 bytes: hello</div><div class="line">2 bytes @ 6: go</div><div class="line">2 bytes @ 6: go</div><div class="line">5 bytes: hello</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ echo &quot;hello&quot; &gt; /tmp/dat</span><br><span class="line">$ echo &quot;go&quot; &gt;&gt;   /tmp/dat</span><br><span class="line">$ go run reading-files.go </span><br><span class="line">hello</span><br><span class="line">go</span><br><span class="line">5 bytes: hello</span><br><span class="line">2 bytes @ 6: go</span><br><span class="line">2 bytes @ 6: go</span><br><span class="line">5 bytes: hello</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -193,7 +193,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -213,11 +213,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -241,11 +241,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -253,7 +253,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -265,11 +265,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

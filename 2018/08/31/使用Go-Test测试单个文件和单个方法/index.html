@@ -4,25 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>CSS3 TRANSFORM 居中 | iBlog</title>
+    <title>使用Go Test测试单个文件和单个方法 | iBlog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="luckymrwang">
     
 
     
-    <meta name="description" content="水平居中：12left:50%;transform: translateX(-50%); 垂直居中12top:50%;transform: translateY(-50%); 水平垂直居中123left:50%;top:50%;transform: translate(-50%,-50%);">
-<meta name="keywords" content="CSS3">
+    <meta name="description" content="文件名须以”_test.go”结尾 方法名须以”Test”打头，并且形参为 (t *testing.T)  举例：/hello_test.go 1234567891011121314package main import (	&quot;testing&quot;	&quot;fmt&quot;) func TestHello(t *testing.T) &amp;#123;	fmt.Println(&quot;TestHello&quot;)&amp;#125; fu">
+<meta name="keywords" content="Go">
 <meta property="og:type" content="article">
-<meta property="og:title" content="CSS3 TRANSFORM 居中">
-<meta property="og:url" content="https://luckymrwang.github.io/2016/01/11/CSS3-TRANSFORM-居中/index.html">
+<meta property="og:title" content="使用Go Test测试单个文件和单个方法">
+<meta property="og:url" content="https://luckymrwang.github.io/2018/08/31/使用Go-Test测试单个文件和单个方法/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="水平居中：12left:50%;transform: translateX(-50%); 垂直居中12top:50%;transform: translateY(-50%); 水平垂直居中123left:50%;top:50%;transform: translate(-50%,-50%);">
+<meta property="og:description" content="文件名须以”_test.go”结尾 方法名须以”Test”打头，并且形参为 (t *testing.T)  举例：/hello_test.go 1234567891011121314package main import (	&quot;testing&quot;	&quot;fmt&quot;) func TestHello(t *testing.T) &amp;#123;	fmt.Println(&quot;TestHello&quot;)&amp;#125; fu">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2016-01-11T05:08:18.000Z">
+<meta property="og:updated_time" content="2018-08-31T02:02:55.752Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="CSS3 TRANSFORM 居中">
-<meta name="twitter:description" content="水平居中：12left:50%;transform: translateX(-50%); 垂直居中12top:50%;transform: translateY(-50%); 水平垂直居中123left:50%;top:50%;transform: translate(-50%,-50%);">
+<meta name="twitter:title" content="使用Go Test测试单个文件和单个方法">
+<meta name="twitter:description" content="文件名须以”_test.go”结尾 方法名须以”Test”打头，并且形参为 (t *testing.T)  举例：/hello_test.go 1234567891011121314package main import (	&quot;testing&quot;	&quot;fmt&quot;) func TestHello(t *testing.T) &amp;#123;	fmt.Println(&quot;TestHello&quot;)&amp;#125; fu">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -82,14 +82,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/01/11/CSS3-TRANSFORM-居中/" title="CSS3 TRANSFORM 居中" itemprop="url">CSS3 TRANSFORM 居中</a>
+      <a href="/2018/08/31/使用Go-Test测试单个文件和单个方法/" title="使用Go Test测试单个文件和单个方法" itemprop="url">使用Go Test测试单个文件和单个方法</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
 		
   <p class="article-time">
-    <time datetime="2016-01-11T05:05:38.000Z" itemprop="datePublished"> 发表于 2016-01-11</time>
+    <time datetime="2018-08-31T01:56:35.000Z" itemprop="datePublished"> 发表于 2018-08-31</time>
     
   </p>
 </header>
@@ -98,14 +98,21 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#水平居中："><span class="toc-number">1.</span> <span class="toc-text">水平居中：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#垂直居中"><span class="toc-number">2.</span> <span class="toc-text">垂直居中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#水平垂直居中"><span class="toc-number">3.</span> <span class="toc-text">水平垂直居中</span></a></li></ol>
+			
 		
 		</div>
 		
-		<h3 id="水平居中："><a href="#水平居中：" class="headerlink" title="水平居中："></a>水平居中：</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">left</span><span class="selector-pseudo">:50</span>%;</span><br><span class="line"><span class="selector-tag">transform</span>: <span class="selector-tag">translateX</span>(<span class="selector-tag">-50</span>%);</span><br></pre></td></tr></table></figure>
-<h3 id="垂直居中"><a href="#垂直居中" class="headerlink" title="垂直居中"></a>垂直居中</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">top</span><span class="selector-pseudo">:50</span>%;</span><br><span class="line"><span class="selector-tag">transform</span>: <span class="selector-tag">translateY</span>(<span class="selector-tag">-50</span>%);</span><br></pre></td></tr></table></figure>
-<h3 id="水平垂直居中"><a href="#水平垂直居中" class="headerlink" title="水平垂直居中"></a>水平垂直居中</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">left</span><span class="selector-pseudo">:50</span>%;</span><br><span class="line"><span class="selector-tag">top</span><span class="selector-pseudo">:50</span>%;</span><br><span class="line"><span class="selector-tag">transform</span>: <span class="selector-tag">translate</span>(<span class="selector-tag">-50</span>%,<span class="selector-tag">-50</span>%);</span><br></pre></td></tr></table></figure>
-  
+		<blockquote>
+<p>文件名须以”_test.go”结尾</p>
+<p>方法名须以”Test”打头，并且形参为 (t *testing.T)</p>
+</blockquote>
+<p>举例：/hello_test.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"testing"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestHello</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"TestHello"</span>)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestWorld</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"TestWorld"</span>)</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>测试整个文件：<code>$ go test -v hello_test.go</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">=== RUN   TestHello</span><br><span class="line">TestHello</span><br><span class="line">--- PASS: TestHello (0.00s)</span><br><span class="line">=== RUN   TestWorld</span><br><span class="line">TestWorld</span><br><span class="line">--- PASS: TestWorld (0.00s)</span><br><span class="line">PASS</span><br><span class="line">ok  	command-line-arguments	0.007s</span><br></pre></td></tr></table></figure>
+<p>测试单个函数：<code>$ go test -v hello_test.go -test.run TestHello</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">=== RUN   TestHello</span><br><span class="line">TestHello</span><br><span class="line">--- PASS: TestHello (0.00s)</span><br><span class="line">PASS</span><br><span class="line">ok  	command-line-arguments	0.008s</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -113,7 +120,7 @@
 
   <div class="article-tags">
   
-  <span></span> <a href="/tags/CSS3/">CSS3</a>
+  <span></span> <a href="/tags/Go/">Go</a>
   </div>
 
 </div>
@@ -122,7 +129,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://luckymrwang.github.io/2016/01/11/CSS3-TRANSFORM-居中/" data-title="CSS3 TRANSFORM 居中 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  <div data-url="https://luckymrwang.github.io/2018/08/31/使用Go-Test测试单个文件和单个方法/" data-title="使用Go Test测试单个文件和单个方法 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -135,19 +142,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2016/01/11/HTML-DOM-position-属性/" title="HTML DOM position 属性">
-  <strong>上一篇：</strong><br/>
-  <span>
-  HTML DOM position 属性</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2016/01/08/PHP-全局变量：global与��区别和使用/"  title="[PHP]全局变量：global与��区别和使用">
+<a href="/2018/08/02/Golang-在-Mac、Linux、Windows-下交叉编译/"  title="Golang 在 Mac、Linux、Windows 下交叉编译">
  <strong>下一篇：</strong><br/> 
- <span>[PHP]全局变量：global与��区别和使用
+ <span>Golang 在 Mac、Linux、Windows 下交叉编译
 </span>
 </a>
 </div>
@@ -156,7 +155,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2016/01/11/CSS3-TRANSFORM-居中/" data-title="CSS3 TRANSFORM 居中" data-url="https://luckymrwang.github.io/2016/01/11/CSS3-TRANSFORM-居中/"></div>
+	<div class="ds-thread" data-thread-key="2018/08/31/使用Go-Test测试单个文件和单个方法/" data-title="使用Go Test测试单个文件和单个方法" data-url="https://luckymrwang.github.io/2018/08/31/使用Go-Test测试单个文件和单个方法/"></div>
 </section>
 
 
@@ -166,7 +165,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#水平居中："><span class="toc-number">1.</span> <span class="toc-text">水平居中：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#垂直居中"><span class="toc-number">2.</span> <span class="toc-text">垂直居中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#水平垂直居中"><span class="toc-number">3.</span> <span class="toc-text">水平垂直居中</span></a></li></ol>
+ 
  
   </div>
 

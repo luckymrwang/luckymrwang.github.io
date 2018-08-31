@@ -116,7 +116,7 @@ DHE：不支持 ECC。非常消耗 CPU 资源 。
 <p>建议优先支持 RSA 和 ECDH_RSA 密钥交换算法。原因是：</p>
 <p>1，  ECDHE 支持 ECC 加速，计算速度更快。支持 PFS，更加安全。支持 false start，用户访问速度更快。</p>
 <p>2，  目前还有至少 20% 以上的客户端不支持 ECDHE，我们推荐使用 RSA 而不是 DH 或者 DHE，因为 DH 系列算法非常消耗 CPU（相当于要做两次 RSA 计算）。</p>
-<p>更改其配置如下（参照 Nginx Performance Tuning for SSL（ <a href="http://dojo.techsamurais.com/?p=1384" target="_blank" rel="external">http://dojo.techsamurais.com/?p=1384</a> ）：</p>
+<p>更改其配置如下（参照 Nginx Performance Tuning for SSL（ <a href="http://dojo.techsamurais.com/?p=1384" target="_blank" rel="noopener">http://dojo.techsamurais.com/?p=1384</a> ）：</p>
 <pre><code>ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
 ssl_ciphers ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4:HIGH:!MD5:!aNULL:!eNULL:!NULL:!DH:!EDH:!AESGCM;
 ssl_prefer_server_ciphers on;
@@ -125,17 +125,17 @@ ssl_session_timeout 10m;
 </code></pre><p>或者</p>
 <pre><code>ssl_ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-RC4-SHA:!ECDHE-RSA-RC4-SHA:ECDH-ECDSA-RC4-SHA:ECDH-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:!RC4-SHA:HIGH:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!CBC:!EDH:!kEDH:!PSK:!SRP:!kECDH;
 </code></pre><p><em>（禁用了RC4，sha1，MD5等算法）</em></p>
-<h4 id="辅助加速："><a href="#辅助加速：" class="headerlink" title="辅助加速："></a>辅助加速：</h4><h5 id="1-启用SPDY"><a href="#1-启用SPDY" class="headerlink" title="1. 启用SPDY"></a>1. 启用SPDY</h5><p>SPDY 是 Google 推出的优化 HTTP 传输效率的协议（ <a href="https://www.chromium.org/spdy" target="_blank" rel="external">https://www.chromium.org/spdy</a> ）, 它基本上沿用了 HTTP 协议的语义, 但是通过使用帧控制实现了多个特性，显著提升了 HTTP 协议的传输效率。<br>SPDY 最大的特性就是多路复用，能将多个 HTTP 请求在同一个连接上一起发出去，不像目前的 HTTP 协议一样，只能串行地逐个发送请求。<br>可以 在编译Nginx带上参数 –with-http_spdy_module 支持SPDY协议，然后可在配置中启用： </p>
+<h4 id="辅助加速："><a href="#辅助加速：" class="headerlink" title="辅助加速："></a>辅助加速：</h4><h5 id="1-启用SPDY"><a href="#1-启用SPDY" class="headerlink" title="1. 启用SPDY"></a>1. 启用SPDY</h5><p>SPDY 是 Google 推出的优化 HTTP 传输效率的协议（ <a href="https://www.chromium.org/spdy" target="_blank" rel="noopener">https://www.chromium.org/spdy</a> ）, 它基本上沿用了 HTTP 协议的语义, 但是通过使用帧控制实现了多个特性，显著提升了 HTTP 协议的传输效率。<br>SPDY 最大的特性就是多路复用，能将多个 HTTP 请求在同一个连接上一起发出去，不像目前的 HTTP 协议一样，只能串行地逐个发送请求。<br>可以 在编译Nginx带上参数 –with-http_spdy_module 支持SPDY协议，然后可在配置中启用： </p>
 <pre><code>listen 443 ssl spdy;
-</code></pre><p><em>检测是否使用SPDY的网址（ <a href="https://spdycheck.org/" target="_blank" rel="external">https://spdycheck.org/</a> ）</em></p>
-<h5 id="2-HSTS"><a href="#2-HSTS" class="headerlink" title="2. HSTS"></a>2. HSTS</h5><p>HSTS(HTTP Strict Transport Security)。服务端返回一个 HSTS 的 http header，浏览器获取到 HSTS 头部之后，在一段时间内，不管用户输入 www.baidu.com 还是 <a href="http://www.baidu.com" target="_blank" rel="external">http://www.baidu.com</a> ，都会默认将请求内部跳转成 <a href="https://www.baidu.com；" target="_blank" rel="external">https://www.baidu.com；</a><br>将下述行添加到你的 HTTPS 配置的 server 块中：</p>
+</code></pre><p><em>检测是否使用SPDY的网址（ <a href="https://spdycheck.org/" target="_blank" rel="noopener">https://spdycheck.org/</a> ）</em></p>
+<h5 id="2-HSTS"><a href="#2-HSTS" class="headerlink" title="2. HSTS"></a>2. HSTS</h5><p>HSTS(HTTP Strict Transport Security)。服务端返回一个 HSTS 的 http header，浏览器获取到 HSTS 头部之后，在一段时间内，不管用户输入 <a href="http://www.baidu.com" target="_blank" rel="noopener">www.baidu.com</a> 还是 <a href="http://www.baidu.com" target="_blank" rel="noopener">http://www.baidu.com</a> ，都会默认将请求内部跳转成 <a href="https://www.baidu.com；" target="_blank" rel="noopener">https://www.baidu.com；</a><br>将下述行添加到你的 HTTPS 配置的 server 块中：</p>
 <pre><code>add_header Strict-Transport-Security &quot;max-age=31536000&quot;;
 </code></pre><h5 id="3-Session-cache"><a href="#3-Session-cache" class="headerlink" title="3. Session cache"></a>3. Session cache</h5><p>Session cache 的原理是使用 client hello 中的 session id 查询服务端的 session cache, 如果服务端有对应的缓存，则直接使用已有的 session 信息提前完成握手，称为简化握手。</p>
 <p>Session cache 有两个缺点：</p>
 <p>1，    需要消耗服务端内存来存储 session 内容。</p>
 <p>2，    目前的开源软件包括 nginx,apache 只支持单机多进程间共享缓存，不支持多机间分布式缓存，对于百度或者其他大型互联网公司而言，单机 session cache 几乎没有作用。<br>Session cache 也有一个非常大的优点：session id 是 TLS 协议的标准字段，市面上的浏览器全部都支持 session cache。</p>
 <p>ssl_session_cache    shared:SSL:20m;<br>ssl_session_timeout  20m;<br>参照Nginx的官方文档1MB内存大约可以存储4000个session，按例配置20M大约可以存储80000。根据需求合理设置</p>
-<ol>
+<ol start="4">
 <li>Ocsp stapling<br>Ocsp 全称在线证书状态检查协议 (rfc6960)，用来向 CA 站点查询证书状态，比如是否撤销。通常情况下，浏览器使用 OCSP 协议发起查询请求，CA 返回证书状态内容，然后浏览器接受证书是否可信的状态。 将证书保存下来，浏览器请求时候直接通过自己的服务器发送回去，防止验证服务器出问题，还能加快访问速度。</li>
 </ol>
 <p>查看OSCP验证服务器地址：</p>
@@ -277,7 +277,7 @@ error_page 497 https://$host$request_uri;  通过497错误将http转跳到https
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -297,11 +297,11 @@ error_page 497 https://$host$request_uri;  通过497错误将http转跳到https
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -325,11 +325,11 @@ error_page 497 https://$host$request_uri;  通过497错误将http转跳到https
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -337,7 +337,7 @@ error_page 497 https://$host$request_uri;  通过497错误将http转跳到https
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -349,11 +349,11 @@ error_page 497 https://$host$request_uri;  通过497错误将http转跳到https
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

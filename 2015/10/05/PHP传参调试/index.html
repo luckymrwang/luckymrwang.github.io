@@ -103,10 +103,10 @@
 		</div>
 		
 		<p>通过调用系统环境变量$_SERVER，可以查看到HTTP请求的信息，如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$_SERVER[<span class="string">"REMOTE_ADDR"</span>]   <span class="comment">//记录来访者的IP</span></div><div class="line">$_SERVER[<span class="string">"QUERY_STRING"</span>]  <span class="comment">//查询请求字符串</span></div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$_SERVER[<span class="string">"REMOTE_ADDR"</span>]   <span class="comment">//记录来访者的IP</span></span><br><span class="line">$_SERVER[<span class="string">"QUERY_STRING"</span>]  <span class="comment">//查询请求字符串</span></span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>把其加入代上面的代码中，并且将其写入到本地文件中来，全部代码如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">traceHttp</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">$this</span>-&gt;logger(<span class="string">"REMOTE_ADDR:"</span>.$_SERVER[<span class="string">"REMOTE_ADDR"</span>].((strpos($_SERVER[<span class="string">"REMOTE_ADDR"</span>], <span class="string">"101.226"</span>))?<span class="string">" From Weixin"</span>:<span class="string">" Unknown IP"</span>));</div><div class="line">	<span class="keyword">$this</span>-&gt;logger(<span class="string">"QUERY_STRING:"</span>.$_SERVER[<span class="string">"QUERY_STRING"</span>]);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">logger</span><span class="params">($contentStr)</span></span>&#123;</div><div class="line">	file_put_contents(<span class="string">"log.html"</span>, date(<span class="string">'Y-m-d H:i:s '</span>).$contentStr.<span class="string">"&lt;br&gt;"</span>, FILE_APPEND);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">traceHttp</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">$this</span>-&gt;logger(<span class="string">"REMOTE_ADDR:"</span>.$_SERVER[<span class="string">"REMOTE_ADDR"</span>].((strpos($_SERVER[<span class="string">"REMOTE_ADDR"</span>], <span class="string">"101.226"</span>))?<span class="string">" From Weixin"</span>:<span class="string">" Unknown IP"</span>));</span><br><span class="line">	<span class="keyword">$this</span>-&gt;logger(<span class="string">"QUERY_STRING:"</span>.$_SERVER[<span class="string">"QUERY_STRING"</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">logger</span><span class="params">($contentStr)</span></span>&#123;</span><br><span class="line">	file_put_contents(<span class="string">"log.html"</span>, date(<span class="string">'Y-m-d H:i:s '</span>).$contentStr.<span class="string">"&lt;br&gt;"</span>, FILE_APPEND);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>以<code>CodeIgniter</code>为例，生成的文件与<code>index.php</code>同级目录</p>
   
 	</div>
@@ -196,7 +196,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -216,11 +216,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -244,11 +244,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -256,7 +256,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -268,11 +268,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

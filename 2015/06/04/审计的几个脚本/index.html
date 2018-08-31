@@ -102,9 +102,9 @@
 		
 		</div>
 		
-		<h2 id="Clear-sh"><a href="#Clear-sh" class="headerlink" title="Clear.sh"></a>Clear.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">	<span class="comment">#!/bin/bash</span></div><div class="line"></div><div class="line">	folders=(everyone snapshot top total_100 total_250)</div><div class="line"></div><div class="line">	<span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</div><div class="line">&lt;!-- more --&gt;</div><div class="line">	<span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></div><div class="line">	ls <span class="variable">$&#123;var&#125;</span>/*.txt | grep -v <span class="string">"unit"</span></div><div class="line">	mv -f <span class="variable">$&#123;var&#125;</span>/*.txt <span class="variable">$&#123;var&#125;</span>/old</div><div class="line">	<span class="keyword">done</span></div><div class="line"></div><div class="line">	<span class="built_in">echo</span> <span class="string">"Success."</span></div></pre></td></tr></table></figure>
-<h2 id="Merge-sh"><a href="#Merge-sh" class="headerlink" title="Merge.sh"></a>Merge.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">games=(tank world_war toy_war red_fire war_commander)</div><div class="line"></div><div class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga/total</div><div class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;games[@]&#125;</span>;<span class="keyword">do</span></div><div class="line">:&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</div><div class="line"><span class="keyword">for</span> (( i=1; i&lt;250; i=i+50 ));<span class="keyword">do</span></div><div class="line"><span class="keyword">if</span> [ -f <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span> ]</div><div class="line"><span class="keyword">then</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span></div><div class="line">cat <span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt &gt;&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="keyword">if</span> [ <span class="variable">$i</span> == 51 ]</div><div class="line"><span class="keyword">then</span></div><div class="line">cp <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_100/<span class="variable">$&#123;var&#125;</span>_order_100.txt</div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="keyword">done</span></div><div class="line">mv -f <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_250</div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">"Success."</span></div></pre></td></tr></table></figure>
-<h2 id="tar-sh"><a href="#tar-sh" class="headerlink" title="tar.sh"></a>tar.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">folders=(everyone snapshot top total_100 total_250)</div><div class="line"></div><div class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</div><div class="line"></div><div class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></div><div class="line">tar -cvzf <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz <span class="variable">$&#123;var&#125;</span>/*.txt</div><div class="line">mv -f <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz download</div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">"Success.\n"</span></div></pre></td></tr></table></figure>  
+		<h2 id="Clear-sh"><a href="#Clear-sh" class="headerlink" title="Clear.sh"></a>Clear.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">	folders=(everyone snapshot top total_100 total_250)</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</span><br><span class="line">&lt;!-- more --&gt;</span><br><span class="line">	<span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></span><br><span class="line">	ls <span class="variable">$&#123;var&#125;</span>/*.txt | grep -v <span class="string">"unit"</span></span><br><span class="line">	mv -f <span class="variable">$&#123;var&#125;</span>/*.txt <span class="variable">$&#123;var&#125;</span>/old</span><br><span class="line">	<span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"Success."</span></span><br></pre></td></tr></table></figure>
+<h2 id="Merge-sh"><a href="#Merge-sh" class="headerlink" title="Merge.sh"></a>Merge.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">games=(tank world_war toy_war red_fire war_commander)</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga/total</span><br><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;games[@]&#125;</span>;<span class="keyword">do</span></span><br><span class="line">:&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</span><br><span class="line"><span class="keyword">for</span> (( i=1; i&lt;250; i=i+50 ));<span class="keyword">do</span></span><br><span class="line"><span class="keyword">if</span> [ -f <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span></span><br><span class="line">cat <span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt &gt;&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$i</span> == 51 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">cp <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_100/<span class="variable">$&#123;var&#125;</span>_order_100.txt</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line">mv -f <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_250</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Success."</span></span><br></pre></td></tr></table></figure>
+<h2 id="tar-sh"><a href="#tar-sh" class="headerlink" title="tar.sh"></a>tar.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">folders=(everyone snapshot top total_100 total_250)</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></span><br><span class="line">tar -cvzf <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz <span class="variable">$&#123;var&#125;</span>/*.txt</span><br><span class="line">mv -f <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz download</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Success.\n"</span></span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -192,7 +192,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -212,11 +212,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -240,11 +240,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -252,7 +252,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -264,11 +264,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

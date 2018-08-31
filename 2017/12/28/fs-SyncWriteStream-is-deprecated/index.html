@@ -103,18 +103,18 @@
 		</div>
 		
 		<p>今天在运行<code>hexo</code>时又报错了，错误具体信息如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">(node:96650) [DEP0061] DeprecationWarning: fs.SyncWriteStream is deprecated.</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(node:96650) [DEP0061] DeprecationWarning: fs.SyncWriteStream is deprecated.</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>难道是我很久不用它来写博客，闹情绪了？</p>
 <p>在网上查阅后给出的结果是，<code>nodejs</code>从8.0开始已经弃用了<code>fs.SyncWriteStream</code>方法，但是某些插件里面还是用到这个方法。查看Hexo项目也有这个一条<code>issue</code>，在<code>hexo</code>项目中其中有一个<code>hexo-fs</code>的插件调用了这个方法，所以需要更新<code>hexo-fs</code>插件，更新方法如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install hexo-fs --save</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-fs --save</span><br></pre></td></tr></table></figure>
 <p>更新后于是再次运行<code>hexo</code>命令，结果还是报错（尴尬脸）。问题没有解决，<code>hexo</code>命令有个<code>-debug</code>参数，运行命令的时候加上这个参数，可以定位问题：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">SinodeMacBook-Pro:hexo sino$ hexo clean --debug</div><div class="line">06:39:31.262 DEBUG Hexo version: 3.3.9</div><div class="line">06:39:31.264 DEBUG Working directory: ~/Documents/luckymrwang/hexo/</div><div class="line">06:39:31.494 DEBUG Config loaded: ~/Documents/luckymrwang/hexo/_config.yml</div><div class="line">06:39:31.533 DEBUG Plugin loaded: hexo-deployer-git</div><div class="line">(node:96650) [DEP0061] DeprecationWarning: fs.SyncWriteStream is deprecated.</div><div class="line">06:39:31.566 DEBUG Plugin loaded: hexo-fs</div><div class="line">06:39:31.574 DEBUG Plugin loaded: hexo-generator-archive</div><div class="line">06:39:31.576 DEBUG Plugin loaded: hexo-generator-category</div><div class="line">06:39:31.578 DEBUG Plugin loaded: hexo-generator-index</div><div class="line">06:39:31.581 DEBUG Plugin loaded: hexo-generator-tag</div><div class="line">06:39:31.593 DEBUG Plugin loaded: hexo-renderer-ejs</div><div class="line">06:39:31.659 DEBUG Plugin loaded: hexo-renderer-marked</div><div class="line">06:39:31.661 DEBUG Plugin loaded: hexo-renderer-stylus</div><div class="line">06:39:31.851 DEBUG Plugin loaded: hexo-server</div><div class="line">06:39:31.861 DEBUG Script loaded: themes/jacman/scripts/fancybox.js</div><div class="line">06:39:31.863 INFO  Deleted database.</div><div class="line">06:39:31.876 DEBUG Database saved</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">SinodeMacBook-Pro:hexo sino$ hexo clean --debug</span><br><span class="line">06:39:31.262 DEBUG Hexo version: 3.3.9</span><br><span class="line">06:39:31.264 DEBUG Working directory: ~/Documents/luckymrwang/hexo/</span><br><span class="line">06:39:31.494 DEBUG Config loaded: ~/Documents/luckymrwang/hexo/_config.yml</span><br><span class="line">06:39:31.533 DEBUG Plugin loaded: hexo-deployer-git</span><br><span class="line">(node:96650) [DEP0061] DeprecationWarning: fs.SyncWriteStream is deprecated.</span><br><span class="line">06:39:31.566 DEBUG Plugin loaded: hexo-fs</span><br><span class="line">06:39:31.574 DEBUG Plugin loaded: hexo-generator-archive</span><br><span class="line">06:39:31.576 DEBUG Plugin loaded: hexo-generator-category</span><br><span class="line">06:39:31.578 DEBUG Plugin loaded: hexo-generator-index</span><br><span class="line">06:39:31.581 DEBUG Plugin loaded: hexo-generator-tag</span><br><span class="line">06:39:31.593 DEBUG Plugin loaded: hexo-renderer-ejs</span><br><span class="line">06:39:31.659 DEBUG Plugin loaded: hexo-renderer-marked</span><br><span class="line">06:39:31.661 DEBUG Plugin loaded: hexo-renderer-stylus</span><br><span class="line">06:39:31.851 DEBUG Plugin loaded: hexo-server</span><br><span class="line">06:39:31.861 DEBUG Script loaded: themes/jacman/scripts/fancybox.js</span><br><span class="line">06:39:31.863 INFO  Deleted database.</span><br><span class="line">06:39:31.876 DEBUG Database saved</span><br></pre></td></tr></table></figure>
 <p>所以问题很明显了，<code>hexo-deployer-git</code>这个插件也需要更新，于是按照之前的方式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SinodeMacBook-Pro:hexo sino$ npm install hexo-deployer-git --save</div><div class="line">+ hexo-deployer-git@0.1.0</div><div class="line">updated 1 package in 13.266s</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SinodeMacBook-Pro:hexo sino$ npm install hexo-deployer-git --save</span><br><span class="line">+ hexo-deployer-git@0.1.0</span><br><span class="line">updated 1 package in 13.266s</span><br></pre></td></tr></table></figure>
 <p>开开心心地再次运行<code>hexo</code>，最终依旧报错，此时内心早已崩溃~</p>
 <p>于是继续调查问题，看到网上信息一些人的<code>hexo-deployer-git</code>版本是<code>0.3.1</code>，而我的却是<code>0.1.0</code>，于是就尝试升级下插件版本</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SinodeMacBook-Pro:hexo sino$ npm install hexo-deployer-git@0.3.1 --save</div><div class="line">+ hexo-deployer-git@0.3.1</div><div class="line">added 17 packages, removed 7 packages and updated 4 packages in 20.742s</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SinodeMacBook-Pro:hexo sino$ npm install hexo-deployer-git@0.3.1 --save</span><br><span class="line">+ hexo-deployer-git@0.3.1</span><br><span class="line">added 17 packages, removed 7 packages and updated 4 packages in 20.742s</span><br></pre></td></tr></table></figure>
 <p>问题顺利解决，相同问题也会迎刃而解，依此记录。</p>
   
 	</div>
@@ -204,7 +204,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -224,11 +224,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -252,11 +252,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -264,7 +264,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -276,11 +276,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

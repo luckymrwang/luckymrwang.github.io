@@ -102,8 +102,8 @@
 		
 		</div>
 		
-		<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"io/ioutil"</span></div><div class="line">	<span class="string">"net/http"</span></div><div class="line">	<span class="string">"net/url"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="comment">// http get by proxy</span></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetByProxy</span><span class="params">(url_addr, proxy_addr <span class="keyword">string</span>)</span> <span class="params">(*http.Response, error)</span></span> &#123;</div><div class="line">	request, _ := http.NewRequest(<span class="string">"GET"</span>, url_addr, <span class="literal">nil</span>)</div><div class="line">	proxy, err := url.Parse(proxy_addr)</div><div class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</div><div class="line">	&#125;</div><div class="line">	client := &amp;http.Client&#123;</div><div class="line">		Transport: &amp;http.Transport&#123;</div><div class="line">			Proxy: http.ProxyURL(proxy),</div><div class="line">		&#125;,</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> client.Do(request)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	proxy := <span class="string">"http://58.252.56.149:9000/"</span></div><div class="line">	url := <span class="string">"http://www.baidu.com/"</span></div><div class="line">	resp, _ := GetByProxy(url, proxy)</div><div class="line">	fmt.Println(resp)</div><div class="line">	<span class="keyword">defer</span> resp.Body.Close()</div><div class="line">	body, _ := ioutil.ReadAll(resp.Body)</div><div class="line">	fmt.Println(<span class="keyword">string</span>(body))</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>本文引自<a href="https://my.oschina.net/tonywang/blog/184628" target="_blank" rel="external">这里</a></p>
+		<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line">	<span class="string">"net/url"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// http get by proxy</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetByProxy</span><span class="params">(url_addr, proxy_addr <span class="keyword">string</span>)</span> <span class="params">(*http.Response, error)</span></span> &#123;</span><br><span class="line">	request, _ := http.NewRequest(<span class="string">"GET"</span>, url_addr, <span class="literal">nil</span>)</span><br><span class="line">	proxy, err := url.Parse(proxy_addr)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	client := &amp;http.Client&#123;</span><br><span class="line">		Transport: &amp;http.Transport&#123;</span><br><span class="line">			Proxy: http.ProxyURL(proxy),</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> client.Do(request)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	proxy := <span class="string">"http://58.252.56.149:9000/"</span></span><br><span class="line">	url := <span class="string">"http://www.baidu.com/"</span></span><br><span class="line">	resp, _ := GetByProxy(url, proxy)</span><br><span class="line">	fmt.Println(resp)</span><br><span class="line">	<span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line">	body, _ := ioutil.ReadAll(resp.Body)</span><br><span class="line">	fmt.Println(<span class="keyword">string</span>(body))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本文引自<a href="https://my.oschina.net/tonywang/blog/184628" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -192,7 +192,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -212,11 +212,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -240,11 +240,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -252,7 +252,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -264,11 +264,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

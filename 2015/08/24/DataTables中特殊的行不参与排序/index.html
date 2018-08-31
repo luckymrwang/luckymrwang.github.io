@@ -115,7 +115,7 @@
 <li><p>在 <code>&lt;script type=&quot;text/script&quot;&gt;</code> 中的代码如下：</p>
 </li>
 </ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</div><div class="line">	jQuery(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123;</div><div class="line">		<span class="keyword">var</span> $tr = $(<span class="string">'.no-sort'</span>);</div><div class="line">		<span class="keyword">var</span> mySpecialRow = $tr.html();</div><div class="line">		$tr.remove();</div><div class="line">		<span class="keyword">var</span> table = $(<span class="string">'#example'</span>).dataTable(&#123;</div><div class="line">			<span class="string">"fnDrawCallback"</span>: <span class="function"><span class="keyword">function</span>(<span class="params"> oSettings </span>) </span>&#123;</div><div class="line">				$(<span class="string">'#example tbody'</span>).prepend(mySpecialRow);</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">&#125;);</div><div class="line">&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">	jQuery(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123;</span><br><span class="line">		<span class="keyword">var</span> $tr = $(<span class="string">'.no-sort'</span>);</span><br><span class="line">		<span class="keyword">var</span> mySpecialRow = $tr.html();</span><br><span class="line">		$tr.remove();</span><br><span class="line">		<span class="keyword">var</span> table = $(<span class="string">'#example'</span>).dataTable(&#123;</span><br><span class="line">			<span class="string">"fnDrawCallback"</span>: <span class="function"><span class="keyword">function</span>(<span class="params"> oSettings </span>) </span>&#123;</span><br><span class="line">				$(<span class="string">'#example tbody'</span>).prepend(mySpecialRow);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">&#125;);</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
 <h3 id="多行时："><a href="#多行时：" class="headerlink" title="多行时："></a>多行时：</h3><ul>
 <li><p>在<code>&lt;tbody&gt;</code>中<code>&lt;tr&gt;</code>添加class类 如：</p>
 <p>  <code>&lt;tr class=&quot;no-sort&quot;&gt;</code> <em>这是不参与排序的行</em></p>
@@ -123,7 +123,7 @@
 <li><p>在 <code>&lt;script type=&quot;text/script&quot;&gt;</code> 中的代码如下：</p>
 </li>
 </ul>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</div><div class="line">	jQuery(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123;</div><div class="line">		<span class="keyword">var</span> mySpecialRow;		$tr.each(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;			mySpecialRow = mySpecialRow+<span class="string">"&lt;tr&gt;"</span>+$(<span class="keyword">this</span>).html()+<span class="string">"&lt;/tr&gt;"</span>;			$(<span class="keyword">this</span>).remove();</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">var</span> table = $(<span class="string">'#example'</span>).dataTable(&#123;</div><div class="line">			<span class="string">"fnDrawCallback"</span>: <span class="function"><span class="keyword">function</span>(<span class="params"> oSettings </span>) </span>&#123;</div><div class="line">				$(<span class="string">'#example tbody'</span>).prepend(mySpecialRow);</div><div class="line">			&#125;</div><div class="line">		&#125;);</div><div class="line">&#125;);</div><div class="line">&lt;<span class="regexp">/script&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;script type=<span class="string">"text/javascript"</span>&gt;</span><br><span class="line">	jQuery(<span class="function"><span class="keyword">function</span>(<span class="params">$</span>) </span>&#123;</span><br><span class="line">		<span class="keyword">var</span> mySpecialRow;		$tr.each(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;			mySpecialRow = mySpecialRow+<span class="string">"&lt;tr&gt;"</span>+$(<span class="keyword">this</span>).html()+<span class="string">"&lt;/tr&gt;"</span>;			$(<span class="keyword">this</span>).remove();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">var</span> table = $(<span class="string">'#example'</span>).dataTable(&#123;</span><br><span class="line">			<span class="string">"fnDrawCallback"</span>: <span class="function"><span class="keyword">function</span>(<span class="params"> oSettings </span>) </span>&#123;</span><br><span class="line">				$(<span class="string">'#example tbody'</span>).prepend(mySpecialRow);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">&#125;);</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br></pre></td></tr></table></figure>
 <h3 id="效果如下："><a href="#效果如下：" class="headerlink" title="效果如下："></a>效果如下：</h3><p>之前：<br><img src="/images/no-sort_foot.png" alt="no-sort"></p>
 <p>之后：<br><img src="/images/no-sort_body.png" alt="no-sort"></p>
   
@@ -214,7 +214,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -234,11 +234,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -262,11 +262,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -274,7 +274,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -286,11 +286,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

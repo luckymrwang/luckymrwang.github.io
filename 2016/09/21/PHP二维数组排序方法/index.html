@@ -103,13 +103,13 @@
 		</div>
 		
 		<p>例如像下面的数组：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$users = <span class="keyword">array</span>(</div><div class="line">    <span class="keyword">array</span>(<span class="string">'name'</span> =&gt; <span class="string">'tom'</span>, <span class="string">'age'</span> =&gt; <span class="number">20</span>),</div><div class="line">    <span class="keyword">array</span>(<span class="string">'name'</span> =&gt; <span class="string">'anny'</span>, <span class="string">'age'</span> =&gt; <span class="number">18</span>)，</div><div class="line">    <span class="keyword">array</span>(<span class="string">'name'</span> =&gt; <span class="string">'jack'</span>, <span class="string">'age'</span> =&gt; <span class="number">22</span>)</div><div class="line">);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$users = <span class="keyword">array</span>(</span><br><span class="line">    <span class="keyword">array</span>(<span class="string">'name'</span> =&gt; <span class="string">'tom'</span>, <span class="string">'age'</span> =&gt; <span class="number">20</span>),</span><br><span class="line">    <span class="keyword">array</span>(<span class="string">'name'</span> =&gt; <span class="string">'anny'</span>, <span class="string">'age'</span> =&gt; <span class="number">18</span>)，</span><br><span class="line">    <span class="keyword">array</span>(<span class="string">'name'</span> =&gt; <span class="string">'jack'</span>, <span class="string">'age'</span> =&gt; <span class="number">22</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
 <h4 id="使用array-multisort"><a href="#使用array-multisort" class="headerlink" title="使用array_multisort"></a>使用array_multisort</h4><p>先将age提取出来存储到一维数组里，然后按照age升序排列。具体代码如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ages = <span class="keyword">array</span>();</div><div class="line"><span class="keyword">foreach</span> ($users <span class="keyword">as</span> $user) &#123;</div><div class="line">    $ages[] = $user[<span class="string">'age'</span>];</div><div class="line">&#125;</div><div class="line">array_multisort($ages, SORT_ASC, $users);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ages = <span class="keyword">array</span>();</span><br><span class="line"><span class="keyword">foreach</span> ($users <span class="keyword">as</span> $user) &#123;</span><br><span class="line">    $ages[] = $user[<span class="string">'age'</span>];</span><br><span class="line">&#125;</span><br><span class="line">array_multisort($ages, SORT_ASC, $users);</span><br></pre></td></tr></table></figure>
 <p>执行后，$users就是排序好的数组了，可以打印出来看看。如果需要先按年龄升序排列，再按照名称升序排列，方法同上，就是多提取一个名称数组出来，最后的排序方法这样调用：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">array_multisort($ages, SORT_ASC, $names, SORT_ASC, $users);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array_multisort($ages, SORT_ASC, $names, SORT_ASC, $users);</span><br></pre></td></tr></table></figure>
 <h4 id="使用usort"><a href="#使用usort" class="headerlink" title="使用usort"></a>使用usort</h4><p>使用这个方法最大的好处就是可以自定义一些比较复杂的排序方法。例如按照名称的长度降序排列：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">usort($users, <span class="function"><span class="keyword">function</span><span class="params">($a, $b)</span> </span>&#123;</div><div class="line">      $al = strlen($a[<span class="string">'name'</span>]);</div><div class="line">      $bl = strlen($b[<span class="string">'name'</span>]);</div><div class="line">      <span class="keyword">if</span> ($al == $bl)</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">      <span class="keyword">return</span> ($al &gt; $bl) ? <span class="number">-1</span> : <span class="number">1</span>;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">usort($users, <span class="function"><span class="keyword">function</span><span class="params">($a, $b)</span> </span>&#123;</span><br><span class="line">      $al = strlen($a[<span class="string">'name'</span>]);</span><br><span class="line">      $bl = strlen($b[<span class="string">'name'</span>]);</span><br><span class="line">      <span class="keyword">if</span> ($al == $bl)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">return</span> ($al &gt; $bl) ? <span class="number">-1</span> : <span class="number">1</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>这里使用了匿名函数，如果有需要也可以单独提取出来。其中$a, $b可以理解为$users数组下的元素，可以直接索引name值，并计算长度，而后比较长度就可以了。</p>
   
 	</div>
@@ -199,7 +199,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -219,11 +219,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -247,11 +247,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -259,7 +259,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -271,11 +271,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

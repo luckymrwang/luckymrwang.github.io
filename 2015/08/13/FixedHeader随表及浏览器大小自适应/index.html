@@ -102,14 +102,14 @@
 		
 		</div>
 		
-		<p>DataTables中有一个浮动表头的扩展<a href="http://datatables.net/extensions/fixedheader/" target="_blank" rel="external">FixedHeader</a>,他的作用就是在浏览器滚动时使其表头能够浮动。</p>
+		<p>DataTables中有一个浮动表头的扩展<a href="http://datatables.net/extensions/fixedheader/" target="_blank" rel="noopener">FixedHeader</a>,他的作用就是在浏览器滚动时使其表头能够浮动。</p>
 <p>使用方法：</p>
 <p>在引入js文件后，初始化一下命令：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$(<span class="built_in">document</span>).ready( <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">	<span class="keyword">var</span> table = $(<span class="string">'#example'</span>).DataTable();</div><div class="line">	<span class="keyword">new</span> $.fn.dataTable.FixedHeader( table );</div><div class="line">&#125; );</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="built_in">document</span>).ready( <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">	<span class="keyword">var</span> table = $(<span class="string">'#example'</span>).DataTable();</span><br><span class="line">	<span class="keyword">new</span> $.fn.dataTable.FixedHeader( table );</span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p><em>它的实现原理就是在表格形成后，复制一份表头覆盖在原来的表头上</em>    </p>
 <p>这样初始化后是没有问题的，但是在改变浏览器大小之后，它就一直是默认的长度，不能自适应了。结局办法就是添加如下代码：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">	<span class="keyword">var</span> oFH = <span class="keyword">new</span> $.fn.dataTable.FixedHeader( table );	$(<span class="built_in">window</span>).resize(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;		oFH._fnUpdateClones(<span class="literal">true</span>);		oFH._fnUpdatePositions();	&#125;);</div><div class="line"><span class="string">``</span><span class="string">`*通过JS来监听浏览器窗口改变之后，表的结构已经自适应了，然后它再依据表头重新绘制一份*	</span></div><div class="line"><span class="string">下面这段代码是BI系统中缩小sidebar后使其自适应</span></div><div class="line"><span class="string">`</span><span class="string">``</span>js	$(<span class="string">'#sidebar-collapse'</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;		oFH._fnUpdateClones(<span class="literal">true</span>);		oFH._fnUpdatePositions();	&#125;);</div><div class="line"><span class="string">``</span><span class="string">`解决办法参考[这里](http://datatables.net/forums/discussion/19124/simple-solution-for-fixedheader-column-headers-not-changing-on-window-resize#)</span></div><div class="line"><span class="string">`</span><span class="string">``</span>js	<span class="keyword">var</span> fixedHeaders = [];</div><div class="line">	$(<span class="string">'.table-fixed-header'</span>).each(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">		fixedHeaders.push(</div><div class="line">			<span class="keyword">new</span> FixedHeader(<span class="keyword">this</span>, &#123;</div><div class="line">			<span class="string">'offsetTop'</span>: <span class="number">51</span> <span class="comment">// offset for my bootstrap .navbar-fixed-top</span></div><div class="line">        	&#125;)</div><div class="line">    	);</div><div class="line">	&#125;);</div><div class="line"></div><div class="line">	$(<span class="built_in">window</span>).resize(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">		<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; fixedHeaders.length; i++)&#123;</div><div class="line">			fixedHeaders[i]._fnUpdateClones(<span class="literal">true</span>); <span class="comment">// force redraw</span></div><div class="line">			fixedHeaders[i]._fnUpdatePositions();</div><div class="line">		&#125;</div><div class="line">	&#125;);</div></pre></td></tr></table></figure>  
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">	<span class="keyword">var</span> oFH = <span class="keyword">new</span> $.fn.dataTable.FixedHeader( table );	$(<span class="built_in">window</span>).resize(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;		oFH._fnUpdateClones(<span class="literal">true</span>);		oFH._fnUpdatePositions();	&#125;);</span><br><span class="line"><span class="string">``</span><span class="string">`*通过JS来监听浏览器窗口改变之后，表的结构已经自适应了，然后它再依据表头重新绘制一份*	</span></span><br><span class="line"><span class="string">下面这段代码是BI系统中缩小sidebar后使其自适应</span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>js	$(<span class="string">'#sidebar-collapse'</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;		oFH._fnUpdateClones(<span class="literal">true</span>);		oFH._fnUpdatePositions();	&#125;);</span><br><span class="line"><span class="string">``</span><span class="string">`解决办法参考[这里](http://datatables.net/forums/discussion/19124/simple-solution-for-fixedheader-column-headers-not-changing-on-window-resize#)</span></span><br><span class="line"><span class="string">`</span><span class="string">``</span>js	<span class="keyword">var</span> fixedHeaders = [];</span><br><span class="line">	$(<span class="string">'.table-fixed-header'</span>).each(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		fixedHeaders.push(</span><br><span class="line">			<span class="keyword">new</span> FixedHeader(<span class="keyword">this</span>, &#123;</span><br><span class="line">			<span class="string">'offsetTop'</span>: <span class="number">51</span> <span class="comment">// offset for my bootstrap .navbar-fixed-top</span></span><br><span class="line">        	&#125;)</span><br><span class="line">    	);</span><br><span class="line">	&#125;);</span><br><span class="line"></span><br><span class="line">	$(<span class="built_in">window</span>).resize(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; fixedHeaders.length; i++)&#123;</span><br><span class="line">			fixedHeaders[i]._fnUpdateClones(<span class="literal">true</span>); <span class="comment">// force redraw</span></span><br><span class="line">			fixedHeaders[i]._fnUpdatePositions();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -197,7 +197,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -217,11 +217,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -245,11 +245,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -257,7 +257,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -269,11 +269,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

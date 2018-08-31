@@ -111,11 +111,11 @@
 </ul>
 <p>上面的是我们经常会使用的方法，这里再分享一个带参数的<code>UrlFor</code>或者<code>urlfor</code>的用法。</p>
 <a id="more"></a>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"github.com/astaxie/beego"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="keyword">type</span> UserController <span class="keyword">struct</span> &#123;</div><div class="line">	beego.Controller</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this UserController)</span> <span class="title">List</span><span class="params">()</span></span> &#123;</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	userController := UserController&#123;&#125;</div><div class="line"></div><div class="line">	<span class="comment">//注册路由</span></div><div class="line">	beego.Router(<span class="string">"/user/list/:name/:age"</span>, &amp;userController, <span class="string">"*:List"</span>)</div><div class="line">	beego.Router(<span class="string">"/user/list"</span>, &amp;userController, <span class="string">"*:List"</span>)</div><div class="line"></div><div class="line">	<span class="comment">//创建url</span></div><div class="line">	<span class="comment">//&#123;&#123;urlfor "UserController.List" ":name" "astaxie" ":age" "25"&#125;&#125;</span></div><div class="line">	url := userController.UrlFor(<span class="string">"UserController.List"</span>, <span class="string">":name"</span>, <span class="string">"astaxie"</span>, <span class="string">":age"</span>, <span class="string">"25"</span>)</div><div class="line">	<span class="comment">//输出 /user/list/astaxie/25</span></div><div class="line">	fmt.Println(url)</div><div class="line"></div><div class="line">	<span class="comment">//&#123;&#123;urlfor "UserController.List" "name" "astaxie" "age" "25"&#125;&#125;</span></div><div class="line">	url = userController.UrlFor(<span class="string">"UserController.List"</span>, <span class="string">"name"</span>, <span class="string">"astaxie"</span>, <span class="string">"age"</span>, <span class="string">"25"</span>)</div><div class="line">	<span class="comment">//输出 /user/list?name=astaxie&amp;age=25</span></div><div class="line">	fmt.Println(url) </div><div class="line">	</div><div class="line">	<span class="comment">// 也可以直接这样写,不带参数不接收返回值</span></div><div class="line">	beego.UrlFor(<span class="string">"UserController.List"</span>)</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"github.com/astaxie/beego"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> UserController <span class="keyword">struct</span> &#123;</span><br><span class="line">	beego.Controller</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this UserController)</span> <span class="title">List</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	userController := UserController&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//注册路由</span></span><br><span class="line">	beego.Router(<span class="string">"/user/list/:name/:age"</span>, &amp;userController, <span class="string">"*:List"</span>)</span><br><span class="line">	beego.Router(<span class="string">"/user/list"</span>, &amp;userController, <span class="string">"*:List"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//创建url</span></span><br><span class="line">	<span class="comment">//&#123;&#123;urlfor "UserController.List" ":name" "astaxie" ":age" "25"&#125;&#125;</span></span><br><span class="line">	url := userController.UrlFor(<span class="string">"UserController.List"</span>, <span class="string">":name"</span>, <span class="string">"astaxie"</span>, <span class="string">":age"</span>, <span class="string">"25"</span>)</span><br><span class="line">	<span class="comment">//输出 /user/list/astaxie/25</span></span><br><span class="line">	fmt.Println(url)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//&#123;&#123;urlfor "UserController.List" "name" "astaxie" "age" "25"&#125;&#125;</span></span><br><span class="line">	url = userController.UrlFor(<span class="string">"UserController.List"</span>, <span class="string">"name"</span>, <span class="string">"astaxie"</span>, <span class="string">"age"</span>, <span class="string">"25"</span>)</span><br><span class="line">	<span class="comment">//输出 /user/list?name=astaxie&amp;age=25</span></span><br><span class="line">	fmt.Println(url) </span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 也可以直接这样写,不带参数不接收返回值</span></span><br><span class="line">	beego.UrlFor(<span class="string">"UserController.List"</span>)</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们上面分别使用了路由参数的方式和表单参数的方式来分别创建了两个<code>url</code>。对应的注释中是它们在模板中的使用方法。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">/user/list/astaxie/25</span></div><div class="line"><span class="comment">*/</span></div><div class="line">&#123;&#123;urlfor <span class="string">"UserController.List"</span> <span class="string">":name"</span> <span class="string">"astaxie"</span> <span class="string">":age"</span> <span class="string">"25"</span>&#125;&#125;</div><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">/user/list?name=astaxie&amp;age=25</span></div><div class="line"><span class="comment">*/</span></div><div class="line">&#123;&#123;urlfor <span class="string">"UserController.List"</span> <span class="string">"name"</span> <span class="string">"astaxie"</span> <span class="string">"age"</span> <span class="string">"25"</span>&#125;&#125;</div><div class="line"></div><div class="line"><span class="comment">/*</span></div><div class="line"><span class="comment">/user/list</span></div><div class="line"><span class="comment">*/</span></div><div class="line">&#123;&#123;urlfor <span class="string">"UserController.List"</span>&#125;&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">/user/list/astaxie/25</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">&#123;&#123;urlfor <span class="string">"UserController.List"</span> <span class="string">":name"</span> <span class="string">"astaxie"</span> <span class="string">":age"</span> <span class="string">"25"</span>&#125;&#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">/user/list?name=astaxie&amp;age=25</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">&#123;&#123;urlfor <span class="string">"UserController.List"</span> <span class="string">"name"</span> <span class="string">"astaxie"</span> <span class="string">"age"</span> <span class="string">"25"</span>&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">/user/list</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">&#123;&#123;urlfor <span class="string">"UserController.List"</span>&#125;&#125;</span><br></pre></td></tr></table></figure>
 <p>需要注意的是，在模板中给方法提供的参数中间是用空格隔开的，另外注意路由参数和表单参数两种方式下，路由的注册方式和参数名称的提供方式。带冒号<code>(:)</code>的参数名是路由参数。另外参数的提供方式是依次以<code>key-value</code>方式提供的。</p>
-<p>本文引自<a href="http://golanghome.com/post/364" target="_blank" rel="external">这里</a></p>
+<p>本文引自<a href="http://golanghome.com/post/364" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -204,7 +204,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -224,11 +224,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -252,11 +252,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -264,7 +264,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -276,11 +276,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

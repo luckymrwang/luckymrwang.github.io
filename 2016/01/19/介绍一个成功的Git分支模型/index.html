@@ -112,8 +112,8 @@
 		<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在这篇文章中，我提出一个开发模型。我已经将这个开发模型引入到我所有的项目里（无论在工作还是私人）已经一年有余，并且它被证明是非常成功的。我打算写这些已经很久了，但我一直找不到时间来做，现在终于有时间了。我不会讲任何项目的具体细节，仅是关于分支策略和释放管理相关内容。</p>
 <p><img src="/images/git_pkcl.png" alt="Git"></p>
 <p>它主要体现了Git对我们源代码版本的管理。<br><a id="more"></a></p>
-<h3 id="为何是Git"><a href="#为何是Git" class="headerlink" title="为何是Git"></a>为何是Git</h3><p>对于Git与其他集中式代码管理工具相比的优缺点的全面讨论，请参见<a href="https://git.wiki.kernel.org/index.php/GitSvnComparsion" target="_blank" rel="external">这里</a>。这样的争论总是喋喋不休。作为一个开发者，与现今的其他开发工具相比较，我更喜欢Git。Git真得改变了开发者对于合并和分支的思考。我曾经使用经典的CVS/Subversion，然而每次的合并/分支和其他行为总让人担惊受怕（“小心合并里的冲突，简直要命！”）。</p>
-<p>但是对于Git来说，这些行为非常简单和搞笑，它们被认为是日常工作中的核心部分。例如，在很多CVS/Subversion<a href="http://svnbook.red-bean.com/" target="_blank" rel="external">书</a>里，分支与合并总是在后面的章节中被讨论（对于高级用户使用），然而在每个Git书中，在第3章就已经完全涵盖了（作为基础）。</p>
+<h3 id="为何是Git"><a href="#为何是Git" class="headerlink" title="为何是Git"></a>为何是Git</h3><p>对于Git与其他集中式代码管理工具相比的优缺点的全面讨论，请参见<a href="https://git.wiki.kernel.org/index.php/GitSvnComparsion" target="_blank" rel="noopener">这里</a>。这样的争论总是喋喋不休。作为一个开发者，与现今的其他开发工具相比较，我更喜欢Git。Git真得改变了开发者对于合并和分支的思考。我曾经使用经典的CVS/Subversion，然而每次的合并/分支和其他行为总让人担惊受怕（“小心合并里的冲突，简直要命！”）。</p>
+<p>但是对于Git来说，这些行为非常简单和搞笑，它们被认为是日常工作中的核心部分。例如，在很多CVS/Subversion<a href="http://svnbook.red-bean.com/" target="_blank" rel="noopener">书</a>里，分支与合并总是在后面的章节中被讨论（对于高级用户使用），然而在每个Git书中，在第3章就已经完全涵盖了（作为基础）。</p>
 <p>简单和重复的特性带来的结果是：分支与合并不再是什么可以害怕的东西。分支/合并被认为对于版本管理工具比其他功能更重要。<br>关于工具，不再多说，让我们直接看开发模型吧。这个模型并不是如下模型：在管理软件开发进度方面，面对每个开发过程，每个队员必须按一定次序开发。</p>
 <h3 id="分布式而非集中式"><a href="#分布式而非集中式" class="headerlink" title="分布式而非集中式"></a>分布式而非集中式</h3><p>对于这种分支模型，我们设置了一个版本库，它运转良好，这是一个”事实上” 版本库。不过请注意，这个版本库只是被认为是中心版本库（因为Git是一个分布式版本管理系统，从技术上来讲，并没有一个中心版本库）。我们将把这个版本库称为原始库，这个名字对所有的Git用户来说都很容易理解。</p>
 <p><img src="/images/git_woDR.png" alt="Git"></p>
@@ -144,9 +144,9 @@
 <p>功能分支（有时被称为topic分支）通常为即将发布或者未来发布版开发新的功能。当新功能开始研发，包含该功能的发布版本在这个还是无法确定发布时间的。功能版本的实质是只要这个功能处于开发状态它就会存在，但是最终会或合并到develop分支（确定将新功能添加到不久的发布版中）或取消（譬如一次令人失望的测试）。</p>
 <p>功能分支通常存在于开发者的软件库，而不是在源代码库中。</p>
 <h4 id="创建一个功能分支"><a href="#创建一个功能分支" class="headerlink" title="创建一个功能分支"></a>创建一个功能分支</h4><p>开始一项功能的开发工作时，基于develop创建分支。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git checkout -b myfeature develop</div><div class="line">Switched to a new branch &quot;myfeature&quot;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b myfeature develop</span><br><span class="line">Switched to a new branch &quot;myfeature&quot;</span><br></pre></td></tr></table></figure>
 <h4 id="合并一个功能到develop分支"><a href="#合并一个功能到develop分支" class="headerlink" title="合并一个功能到develop分支"></a>合并一个功能到develop分支</h4><p>完成的功能可以合并进develop分支，以明确加入到未来的发布：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$ git checkout develop</div><div class="line">Switched to branch &apos;develop&apos;</div><div class="line">$ git merge --no-ff myfeature</div><div class="line">Updating ea1b82a..05e9557</div><div class="line">(Summary of changes)</div><div class="line">$ git branch -d myfeature</div><div class="line">Deleted branch myfeature (was 05e9557).</div><div class="line">$ git push origin develop</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch &apos;develop&apos;</span><br><span class="line">$ git merge --no-ff myfeature</span><br><span class="line">Updating ea1b82a..05e9557</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git branch -d myfeature</span><br><span class="line">Deleted branch myfeature (was 05e9557).</span><br><span class="line">$ git push origin develop</span><br></pre></td></tr></table></figure>
 <p>–no-ff标志导致合并操作创建一个新commit对象，即使该合并操作可以fast-forward。这避免了丢失这个功能分支存在的历史信息，将该功能的所有提交组合在一起。 比较:</p>
 <p><img src="/images/git_b6mx.png" alt="Git"></p>
 <p>后一种情况，不可能从Git历史中看到哪些提交一起实现了一个功能——你必须手工阅读全部的日志信息。如果对整个功能进行回退 (比如一组提交)，后一种方式会是一种真正头痛的问题，而使用–no-ffflag的情况则很容易.</p>
@@ -157,40 +157,40 @@
 <p>从develop分支创建新的Release分支的关键时刻是develop分支达到了发布的理想状态。至少所有这次要发布的features必须在这个点及时合并到develop分支。对于所有未来准备发布的features必须等到Release分支创建以后再合并。</p>
 <p>在Release分支创建的时候要为即将发行版本分配一个版本号，一点都不早。直到那时，develop分支反映的变化都是为了下一个发行版，但是在Release分支创建之前，下一个发行版到底叫0.3还是1.0是不明确的。这个决定是在Release分支创建时根据项目在版本号上的规则制定的。</p>
 <h4 id="创建一个release分支"><a href="#创建一个release分支" class="headerlink" title="创建一个release分支"></a>创建一个release分支</h4><p>Release分支是从develop分支创建的。例如，当前产品的发行版本号为1.1.5，同事我们有一个大的版本即将发行。develop 分支已经为下次发行做好了准备，我们得决定下一个版本是1.2（而不是1.1.6或者2.0）。所以我们将Release分支分离出来，给一个能够反映新版本号的分支名。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ git checkout -b release-1.2 develop</div><div class="line">Switched to a new branch &quot;release-1.2&quot;</div><div class="line">$ ./bump-version.sh 1.2</div><div class="line">Files modified successfully, version bumped to 1.2.</div><div class="line">$ git commit -a -m &quot;Bumped version number to 1.2&quot;</div><div class="line">[release-1.2 74d9424] Bumped version number to 1.2</div><div class="line">1 files changed, 1 insertions(+), 1 deletions(-)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b release-1.2 develop</span><br><span class="line">Switched to a new branch &quot;release-1.2&quot;</span><br><span class="line">$ ./bump-version.sh 1.2</span><br><span class="line">Files modified successfully, version bumped to 1.2.</span><br><span class="line">$ git commit -a -m &quot;Bumped version number to 1.2&quot;</span><br><span class="line">[release-1.2 74d9424] Bumped version number to 1.2</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
 <p>创建新分支以后，切换到该分支，添加版本号。这里，bump-version.sh 是一个虚构的shell脚本，它可以复制一些文件来反映新的版本（这当然可以手动改变–目的就是修改一些文件）。然后版本号被提交。</p>
 <p>这个新分支可能会存在一段时间，直到该发行版到达它的预定目标。在此期间，bug的修复可能被提交到该分支上（而不是提交到develop分支上）。在这里严格禁止增加大的新features。他们必须合并到develop分支上，然后等待下一次大的发行版。</p>
 <h4 id="完成一个release分支"><a href="#完成一个release分支" class="headerlink" title="完成一个release分支"></a>完成一个release分支</h4><p>当一个release分支准备好成为一个真正的发行版的时候，有一些工作必须完成。首先，release分支要合并到master上（因为每一次提交到master上的都是一个新定义的发行版，记住）。然后，提交到master上必须打一个标签，以便以后更加方便的引用这个历史版本。最后，在release分支上的修改必须合并到develop分支上，以便未来发行版也包含这些bugs的修复。</p>
 <p>在Git中的前两步是：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ git checkout master</div><div class="line">Switched to branch &apos;master&apos;</div><div class="line">$ git merge --no-ff release-1.2</div><div class="line">Merge made by recursive.</div><div class="line">(Summary of changes)</div><div class="line">$ git tag -a 1.2</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch &apos;master&apos;</span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag -a 1.2</span><br></pre></td></tr></table></figure>
 <p>发行版现在已经完成，为以后引用打上标签。</p>
 <p><strong>编辑</strong>：你可能也想使用the-sor-u <key>flags来标记你的标签。</key></p>
 <p>为了是修改保持在release分支上，我们需要合并这些到develop分支上去，在Git上：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ git checkout develop</div><div class="line">Switched to branch &apos;develop&apos;</div><div class="line">$ git merge --no-ff release-1.2</div><div class="line">Merge made by recursive.</div><div class="line">(Summary of changes)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch &apos;develop&apos;</span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br></pre></td></tr></table></figure>
 <p>这个步骤可能会导致合并冲突（可能由于改变版本号更是如此）。如果是这样，修复它然后提交。</p>
 <p>现在我们真正的完成了，这个release分支将被删除，因为我们不再需要它了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git branch -d release-1.2</div><div class="line">Deleted branch release-1.2 (was ff452fe).</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d release-1.2</span><br><span class="line">Deleted branch release-1.2 (was ff452fe).</span><br></pre></td></tr></table></figure>
 <p><img src="/images/git_Nulv.png" alt="Git"></p>
 <p>可以基于master分支，必须合并回develop和master分支。<br>分支名约定：hotfix-*</p>
 <p>热修复分支与发布分支很相似，他们都为新的生成环境发布做准备，尽管这是未经计划的。他们来自生产环境的处于异常状态压力。当生成环境验证缺陷必须马上修复是，热修复分支可以基于master分支上对应与线上版本的tag创建。</p>
 <p>其本质是团队成员（在develop分支上）的工作可以继续，而另一个人准备生产环境的快速修复。</p>
 <h4 id="创建修补bug分支"><a href="#创建修补bug分支" class="headerlink" title="创建修补bug分支"></a>创建修补bug分支</h4><p>hotfix branch(修补bug分支)是从Master分支上面分出来的。例如，1.2版本是当前生产环境的版本并且有bug。但是开发分支（develop）变化还不稳定。我们需要分出来一个修补bug分支（hotfix branch）来解决这种情况。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$ git checkout -b hotfix-1.2.1 master</div><div class="line">Switched to a new branch &quot;hotfix-1.2.1&quot;</div><div class="line">$ ./bump-version.sh 1.2.1</div><div class="line">Files modified successfully, version bumped to 1.2.1.</div><div class="line">$ git commit -a -m &quot;Bumped version number to 1.2.1&quot;</div><div class="line">[hotfix-1.2.1 41e61bb] Bumped version number to 1.2.1</div><div class="line">1 files changed, 1 insertions(+), 1 deletions(-)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b hotfix-1.2.1 master</span><br><span class="line">Switched to a new branch &quot;hotfix-1.2.1&quot;</span><br><span class="line">$ ./bump-version.sh 1.2.1</span><br><span class="line">Files modified successfully, version bumped to 1.2.1.</span><br><span class="line">$ git commit -a -m &quot;Bumped version number to 1.2.1&quot;</span><br><span class="line">[hotfix-1.2.1 41e61bb] Bumped version number to 1.2.1</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
 <p>分支关闭的时侯不要忘了更新版本号(bump the version)</p>
 <p>然后，修复bug，一次提交或者多次分开提交。</p>
 <p>$ git commit -m “Fixed severe production problem”<br>[hotfix-1.2.1 abbe5d6] Fixed severe production problem<br>5 files changed, 32 insertions(+), 17 deletions(-)</p>
 <h4 id="完成一个hotfix分支"><a href="#完成一个hotfix分支" class="headerlink" title="完成一个hotfix分支"></a>完成一个hotfix分支</h4><p>完成一个bugfix之后，需要把butfix合并到master和develop分支去，这样就可以保证修复的这个bug也包含到下一个发行版中。这一点和完成release分支很相似。</p>
 <p>首先，更新master并对release打上tag：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ git checkout master</div><div class="line">Switched to branch &apos;master&apos;</div><div class="line">$ git merge --no-ff hotfix-1.2.1</div><div class="line">Merge made by recursive.</div><div class="line">(Summary of changes)</div><div class="line">$ git tag -a 1.2.1</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch &apos;master&apos;</span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag -a 1.2.1</span><br></pre></td></tr></table></figure>
 <p><strong>编辑</strong>：你可能也会想使用 -sor-u <key>参数来对你的tag进行加密</key></p>
 <p>下一步，把bugfix添加到develop分支中：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">$ git checkout develop</div><div class="line">Switched to branch &apos;develop&apos;</div><div class="line">$ git merge --no-ff hotfix-1.2.1</div><div class="line">Merge made by recursive.</div><div class="line">(Summary of changes)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch &apos;develop&apos;</span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br></pre></td></tr></table></figure>
 <p>规则的一个例外是： 如果一个release分支已经存在，那么应该把hotfix合并到这个release分支，而不是合并到develop分支。当release分支完成后， 将bugfix分支合并回release分支也会使得bugfix被合并到develop分支。（如果在develop分支的工作急需这个bugfix，等不到release分支的完成，那你也可以把bugfix合并到develop分支）<br>最后，删除临时分支：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ git branch -d hotfix-1.2.1</div><div class="line">Deleted branch hotfix-1.2.1 (was abbe5d6).</div></pre></td></tr></table></figure>
-<p>更新： 如果有人需要: 这是主图表的<a href="http://github.com/downloads/nvie/gitflow/Git-branching-model-src.key.zip" target="_blank" rel="external">gitflow-model.src.key</a> (Apple Keynote格式).</p>
-<p><a href="http://nvie.com/files/Git-branching-model.pdf" target="_blank" rel="external">PDF</a></p>
-<p>本文引自<a href="http://www.oschina.net/translate/a-successful-git-branching-model" target="_blank" rel="external">这里</a></p>
-<p>原文来自<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="external">这里</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d hotfix-1.2.1</span><br><span class="line">Deleted branch hotfix-1.2.1 (was abbe5d6).</span><br></pre></td></tr></table></figure>
+<p>更新： 如果有人需要: 这是主图表的<a href="http://github.com/downloads/nvie/gitflow/Git-branching-model-src.key.zip" target="_blank" rel="noopener">gitflow-model.src.key</a> (Apple Keynote格式).</p>
+<p><a href="http://nvie.com/files/Git-branching-model.pdf" target="_blank" rel="noopener">PDF</a></p>
+<p>本文引自<a href="http://www.oschina.net/translate/a-successful-git-branching-model" target="_blank" rel="noopener">这里</a></p>
+<p>原文来自<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -279,7 +279,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -299,11 +299,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -327,11 +327,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -339,7 +339,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -351,11 +351,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

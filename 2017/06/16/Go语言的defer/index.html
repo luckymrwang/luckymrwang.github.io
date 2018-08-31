@@ -102,22 +102,22 @@
 		
 		</div>
 		
-		<h3 id="eg1"><a href="#eg1" class="headerlink" title="eg1"></a>eg1</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(result <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">        result++</div><div class="line">    &#125;()</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="eg2"><a href="#eg2" class="headerlink" title="eg2"></a>eg2</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">     t := <span class="number">5</span></div><div class="line">     <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">       t = t + <span class="number">5</span></div><div class="line">     &#125;()</div><div class="line">     <span class="keyword">return</span> t</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+		<h3 id="eg1"><a href="#eg1" class="headerlink" title="eg1"></a>eg1</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(result <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        result++</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="eg2"><a href="#eg2" class="headerlink" title="eg2"></a>eg2</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">     t := <span class="number">5</span></span><br><span class="line">     <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">       t = t + <span class="number">5</span></span><br><span class="line">     &#125;()</span><br><span class="line">     <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
-<h3 id="eg3"><a href="#eg3" class="headerlink" title="eg3"></a>eg3</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">          r = r + <span class="number">5</span></div><div class="line">    &#125;(r)</div><div class="line">    <span class="keyword">return</span> <span class="number">1</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="eg3"><a href="#eg3" class="headerlink" title="eg3"></a>eg3</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">          r = r + <span class="number">5</span></span><br><span class="line">    &#125;(r)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>明确一点：<code>defer是在return之前执行的</code></p>
 <p><code>defer的实现方式</code>大致就是在defer出现的地方，插入指令CALL runtime.deferproc，然后在函数返回之前的地方，插入指令CALL runtime.deferreturn。再就是明确go返回值的方式跟C是不一样的，为了支持多值返回，go是用栈返回值的，而C是用寄存器。</p>
 <p>重要的一点就是：<code>return xxx这一条语句并不是一条原子指令</code></p>
 <p>整个return过程，没有defer之前，先在栈中写一个值，这个值会被当作返回值，然后再调用RET指令返回。return xxx语句汇编后是先给返回值赋值，再做一个空的return，( 赋值指令 ＋ RET指令)。defer的执行是被插入到return指令之前的，有了defer之后，就变成了(赋值指令 + CALL defer指令 + RET指令)。而在CALL defer函数中，有可能将最终的返回值改写了…也有可能没改写。总之，如果改写了，那么看上去就像defer是在return xxx之后执行的~</p>
-<p>可以利用简单的转换规则，将return语句分开成两句写，return xxx会被改写成:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">返回值 = xxx</div><div class="line">调用defer函数</div><div class="line">空的return</div></pre></td></tr></table></figure></p>
-<h3 id="eg1-改写后"><a href="#eg1-改写后" class="headerlink" title="eg1 改写后"></a>eg1 改写后</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(result <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">     result = <span class="number">0</span>  <span class="comment">//return语句不是一条原子调用，return xxx其实是赋值＋RET指令</span></div><div class="line">     <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="comment">//defer被插入到return之前执行，也就是赋返回值和RET指令之间</span></div><div class="line">         result++</div><div class="line">     &#125;()</div><div class="line">     <span class="keyword">return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以利用简单的转换规则，将return语句分开成两句写，return xxx会被改写成:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">返回值 = xxx</span><br><span class="line">调用defer函数</span><br><span class="line">空的return</span><br></pre></td></tr></table></figure></p>
+<h3 id="eg1-改写后"><a href="#eg1-改写后" class="headerlink" title="eg1 改写后"></a>eg1 改写后</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(result <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">     result = <span class="number">0</span>  <span class="comment">//return语句不是一条原子调用，return xxx其实是赋值＋RET指令</span></span><br><span class="line">     <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="comment">//defer被插入到return之前执行，也就是赋返回值和RET指令之间</span></span><br><span class="line">         result++</span><br><span class="line">     &#125;()</span><br><span class="line">     <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>返回值为1</p>
-<h3 id="eg2-改写后"><a href="#eg2-改写后" class="headerlink" title="eg2 改写后"></a>eg2 改写后</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">     t := <span class="number">5</span></div><div class="line">     r = t <span class="comment">//赋值指令</span></div><div class="line">     <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;        <span class="comment">//defer被插入到赋值与返回之间执行，这个例子中返回值r没被修改过</span></div><div class="line">         t = t + <span class="number">5</span></div><div class="line">     &#125;</div><div class="line">     <span class="keyword">return</span>        <span class="comment">//空的return指令</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="eg2-改写后"><a href="#eg2-改写后" class="headerlink" title="eg2 改写后"></a>eg2 改写后</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">     t := <span class="number">5</span></span><br><span class="line">     r = t <span class="comment">//赋值指令</span></span><br><span class="line">     <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;        <span class="comment">//defer被插入到赋值与返回之间执行，这个例子中返回值r没被修改过</span></span><br><span class="line">         t = t + <span class="number">5</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span>        <span class="comment">//空的return指令</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>返回值为5</p>
-<h3 id="eg3-改写后"><a href="#eg3-改写后" class="headerlink" title="eg3 改写后"></a>eg3 改写后</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">     r = <span class="number">1</span>  <span class="comment">//给返回值赋值</span></div><div class="line">     <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">int</span>)</span></span> &#123;        <span class="comment">//这里改的r是传值传进去的r，不会改变要返回的那个r值</span></div><div class="line">          r = r + <span class="number">5</span></div><div class="line">     &#125;(r)</div><div class="line">     <span class="keyword">return</span>        <span class="comment">//空的return</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="eg3-改写后"><a href="#eg3-改写后" class="headerlink" title="eg3 改写后"></a>eg3 改写后</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">     r = <span class="number">1</span>  <span class="comment">//给返回值赋值</span></span><br><span class="line">     <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">int</span>)</span></span> &#123;        <span class="comment">//这里改的r是传值传进去的r，不会改变要返回的那个r值</span></span><br><span class="line">          r = r + <span class="number">5</span></span><br><span class="line">     &#125;(r)</span><br><span class="line">     <span class="keyword">return</span>        <span class="comment">//空的return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>返回值为1</p>
-<p>本文引自<a href="http://www.zenlife.tk/golang-defer.md" target="_blank" rel="external">这里</a></p>
+<p>本文引自<a href="http://www.zenlife.tk/golang-defer.md" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -206,7 +206,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -226,11 +226,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -254,11 +254,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -266,7 +266,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -278,11 +278,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

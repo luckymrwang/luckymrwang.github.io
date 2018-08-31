@@ -103,15 +103,15 @@
 		</div>
 		
 		<h3 id="记录网络服务名和它们对应使用的端口号及协议"><a href="#记录网络服务名和它们对应使用的端口号及协议" class="headerlink" title="记录网络服务名和它们对应使用的端口号及协议"></a>记录网络服务名和它们对应使用的端口号及协议</h3><pre><code>cat /etc/services
-</code></pre><h3 id="查看某个端口号的使用状态"><a href="#查看某个端口号的使用状态" class="headerlink" title="查看某个端口号的使用状态"></a>查看某个端口号的使用状态</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">lsof -i :6000 （查看哪个进程正在监听6000这个端口）</div><div class="line">lsof -i TCP:6000 （只显示监听此端口的TCP连接，上面不加选项的就是指TCP&amp;UDP）</div></pre></td></tr></table></figure>
+</code></pre><h3 id="查看某个端口号的使用状态"><a href="#查看某个端口号的使用状态" class="headerlink" title="查看某个端口号的使用状态"></a>查看某个端口号的使用状态</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lsof -i :6000 （查看哪个进程正在监听6000这个端口）</span><br><span class="line">lsof -i TCP:6000 （只显示监听此端口的TCP连接，上面不加选项的就是指TCP&amp;UDP）</span><br></pre></td></tr></table></figure>
 <p><code>lsof</code> 命令还可以用来显示谁在使用某个文件或文件夹，例如：</p>
 <pre><code>lsof  /root/michael/unp（会显示谁当前在用/root/michael/unp文件夹）
 </code></pre><a id="more"></a>
 <h3 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h3><p>netstat 默认情况下，绑定在INADDR_ANY的服务器的套接字是不列出来的，不过可以用 -a 选项改变默认设置（解释：不加-a选项，netstat命令不显示LISTEN状态的条目，所以如果需要显示LISTEN，就需要加上-a）</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">netstat -apt（-p选项表示输出PID，-t选项表示监听tcp端口），这个命令可以很方便地显示套接字上程序的PID和名字</div><div class="line"></div><div class="line">netstat -apu：显示监听在udp端口的信息</div><div class="line"></div><div class="line">netstat -napt（加上-n选项表示以数字形式表示地址和端口号，而不是别名）</div><div class="line"></div><div class="line">netstat -nr：可以显示路由表</div><div class="line"></div><div class="line">netstat -i：可以获得计算机基本的网络接口信息</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">netstat -apt（-p选项表示输出PID，-t选项表示监听tcp端口），这个命令可以很方便地显示套接字上程序的PID和名字</span><br><span class="line"></span><br><span class="line">netstat -apu：显示监听在udp端口的信息</span><br><span class="line"></span><br><span class="line">netstat -napt（加上-n选项表示以数字形式表示地址和端口号，而不是别名）</span><br><span class="line"></span><br><span class="line">netstat -nr：可以显示路由表</span><br><span class="line"></span><br><span class="line">netstat -i：可以获得计算机基本的网络接口信息</span><br></pre></td></tr></table></figure>
 <p>这些命令输出中的*是表示通配地址（INADDR_ANY）</p>
 <p>Netstat 命令用于显示各种网络相关信息，如网络连接，路由表，接口状态 (Interface Statistics)，masquerade 连接，多播成员 (Multicast Memberships) 等等</p>
-<p>本文引自<a href="http://michaelyou.github.io/2015/03/10/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E8%B0%83%E8%AF%95/" target="_blank" rel="external">这里</a></p>
+<p>本文引自<a href="http://michaelyou.github.io/2015/03/10/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E8%B0%83%E8%AF%95/" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -200,7 +200,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -220,11 +220,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -248,11 +248,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -260,7 +260,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -272,11 +272,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

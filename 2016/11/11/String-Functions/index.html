@@ -102,8 +102,8 @@
 		
 		</div>
 		
-		<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> s <span class="string">"strings"</span></div><div class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></div><div class="line"></div><div class="line"><span class="keyword">var</span> p = fmt.Println</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	p(<span class="string">"Contains:  "</span>, s.Contains(<span class="string">"test"</span>, <span class="string">"es"</span>))</div><div class="line">	p(<span class="string">"Count:     "</span>, s.Count(<span class="string">"test"</span>, <span class="string">"t"</span>))</div><div class="line">	p(<span class="string">"HasPrefix: "</span>, s.HasPrefix(<span class="string">"test"</span>, <span class="string">"te"</span>))</div><div class="line">	p(<span class="string">"HasSuffix: "</span>, s.HasSuffix(<span class="string">"test"</span>, <span class="string">"st"</span>))</div><div class="line">	p(<span class="string">"Index:     "</span>, s.Index(<span class="string">"test"</span>, <span class="string">"e"</span>))</div><div class="line">	p(<span class="string">"Join:      "</span>, s.Join([]<span class="keyword">string</span>&#123;<span class="string">"a"</span>, <span class="string">"b"</span>&#125;, <span class="string">"-"</span>))</div><div class="line">	p(<span class="string">"Repeat:    "</span>, s.Repeat(<span class="string">"a"</span>, <span class="number">5</span>))</div><div class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">-1</span>))</div><div class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">1</span>))</div><div class="line">	p(<span class="string">"Split:     "</span>, s.Split(<span class="string">"a-b-c-d-e"</span>, <span class="string">"-"</span>))</div><div class="line">	p(<span class="string">"ToLower:   "</span>, s.ToLower(<span class="string">"TEST"</span>))</div><div class="line">	p(<span class="string">"ToUpper:   "</span>, s.ToUpper(<span class="string">"test"</span>))</div><div class="line">	p()</div><div class="line">	p(<span class="string">"Len: "</span>, <span class="built_in">len</span>(<span class="string">"hello"</span>))</div><div class="line">	p(<span class="string">"Char:"</span>, <span class="string">"hello"</span>[<span class="number">1</span>])</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">$ go run string-functions.go</div><div class="line">Contains:   true</div><div class="line">Count:      2</div><div class="line">HasPrefix:  true</div><div class="line">HasSuffix:  true</div><div class="line">Index:      1</div><div class="line">Join:       a-b</div><div class="line">Repeat:     aaaaa</div><div class="line">Replace:    f00</div><div class="line">Replace:    f0o</div><div class="line">Split:      [a b c d e]</div><div class="line">toLower:    test</div><div class="line">ToUpper:    TEST</div><div class="line">Len:  5</div><div class="line">Char: 101</div></pre></td></tr></table></figure>  
+		<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> s <span class="string">"strings"</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> p = fmt.Println</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	p(<span class="string">"Contains:  "</span>, s.Contains(<span class="string">"test"</span>, <span class="string">"es"</span>))</span><br><span class="line">	p(<span class="string">"Count:     "</span>, s.Count(<span class="string">"test"</span>, <span class="string">"t"</span>))</span><br><span class="line">	p(<span class="string">"HasPrefix: "</span>, s.HasPrefix(<span class="string">"test"</span>, <span class="string">"te"</span>))</span><br><span class="line">	p(<span class="string">"HasSuffix: "</span>, s.HasSuffix(<span class="string">"test"</span>, <span class="string">"st"</span>))</span><br><span class="line">	p(<span class="string">"Index:     "</span>, s.Index(<span class="string">"test"</span>, <span class="string">"e"</span>))</span><br><span class="line">	p(<span class="string">"Join:      "</span>, s.Join([]<span class="keyword">string</span>&#123;<span class="string">"a"</span>, <span class="string">"b"</span>&#125;, <span class="string">"-"</span>))</span><br><span class="line">	p(<span class="string">"Repeat:    "</span>, s.Repeat(<span class="string">"a"</span>, <span class="number">5</span>))</span><br><span class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">-1</span>))</span><br><span class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">1</span>))</span><br><span class="line">	p(<span class="string">"Split:     "</span>, s.Split(<span class="string">"a-b-c-d-e"</span>, <span class="string">"-"</span>))</span><br><span class="line">	p(<span class="string">"ToLower:   "</span>, s.ToLower(<span class="string">"TEST"</span>))</span><br><span class="line">	p(<span class="string">"ToUpper:   "</span>, s.ToUpper(<span class="string">"test"</span>))</span><br><span class="line">	p()</span><br><span class="line">	p(<span class="string">"Len: "</span>, <span class="built_in">len</span>(<span class="string">"hello"</span>))</span><br><span class="line">	p(<span class="string">"Char:"</span>, <span class="string">"hello"</span>[<span class="number">1</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ go run string-functions.go</span><br><span class="line">Contains:   true</span><br><span class="line">Count:      2</span><br><span class="line">HasPrefix:  true</span><br><span class="line">HasSuffix:  true</span><br><span class="line">Index:      1</span><br><span class="line">Join:       a-b</span><br><span class="line">Repeat:     aaaaa</span><br><span class="line">Replace:    f00</span><br><span class="line">Replace:    f0o</span><br><span class="line">Split:      [a b c d e]</span><br><span class="line">toLower:    test</span><br><span class="line">ToUpper:    TEST</span><br><span class="line">Len:  5</span><br><span class="line">Char: 101</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -191,7 +191,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -211,11 +211,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -239,11 +239,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -251,7 +251,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -263,11 +263,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

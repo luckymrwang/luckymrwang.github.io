@@ -106,11 +106,11 @@
 <a id="more"></a>
 <p>如果直接使用ajax访问，会有以下错误：</p>
 <pre><code>XMLHttpRequest cannot load http://server.runoob.com/server.php. No &apos;Access-Control-Allow-Origin&apos; header is present on the requested resource.Origin &apos;http://client.runoob.com&apos; is therefore not allowed access.
-</code></pre><h3 id="1、允许单个域名访问"><a href="#1、允许单个域名访问" class="headerlink" title="1、允许单个域名访问"></a>1、允许单个域名访问</h3><p>指定某域名（<a href="http://client.runoob.com）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：" target="_blank" rel="external">http://client.runoob.com）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：</a></p>
+</code></pre><h3 id="1、允许单个域名访问"><a href="#1、允许单个域名访问" class="headerlink" title="1、允许单个域名访问"></a>1、允许单个域名访问</h3><p>指定某域名（<a href="http://client.runoob.com）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：" target="_blank" rel="noopener">http://client.runoob.com）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：</a></p>
 <pre><code>header(&apos;Access-Control-Allow-Origin:http://client.runoob.com&apos;);
-</code></pre><h3 id="2、允许多个域名访问"><a href="#2、允许多个域名访问" class="headerlink" title="2、允许多个域名访问"></a>2、允许多个域名访问</h3><p>指定多个域名（<a href="http://client1.runoob.com、http://client2.runoob.com等）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：" target="_blank" rel="external">http://client1.runoob.com、http://client2.runoob.com等）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">$origin = isset($_SERVER[&apos;HTTP_ORIGIN&apos;])? $_SERVER[&apos;HTTP_ORIGIN&apos;] : &apos;&apos;;  </div><div class="line">  </div><div class="line">$allow_origin = array(  </div><div class="line">    &apos;http://client1.runoob.com&apos;,  </div><div class="line">    &apos;http://client2.runoob.com&apos;  </div><div class="line">);  </div><div class="line">  </div><div class="line">if(in_array($origin, $allow_origin))&#123;  </div><div class="line">    header(&apos;Access-Control-Allow-Origin:&apos;.$origin);       </div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="3、允许所有域名访问"><a href="#3、允许所有域名访问" class="headerlink" title="3、允许所有域名访问"></a>3、允许所有域名访问</h3><p>允许所有域名访问则只需在<a href="http://server.runoob.com/server.php文件头部添加如下代码：" target="_blank" rel="external">http://server.runoob.com/server.php文件头部添加如下代码：</a></p>
+</code></pre><h3 id="2、允许多个域名访问"><a href="#2、允许多个域名访问" class="headerlink" title="2、允许多个域名访问"></a>2、允许多个域名访问</h3><p>指定多个域名（<a href="http://client1.runoob.com、http://client2.runoob.com等）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：" target="_blank" rel="noopener">http://client1.runoob.com、http://client2.runoob.com等）跨域访问，则只需在http://server.runoob.com/server.php文件头部添加如下代码：</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$origin = isset($_SERVER[&apos;HTTP_ORIGIN&apos;])? $_SERVER[&apos;HTTP_ORIGIN&apos;] : &apos;&apos;;  </span><br><span class="line">  </span><br><span class="line">$allow_origin = array(  </span><br><span class="line">    &apos;http://client1.runoob.com&apos;,  </span><br><span class="line">    &apos;http://client2.runoob.com&apos;  </span><br><span class="line">);  </span><br><span class="line">  </span><br><span class="line">if(in_array($origin, $allow_origin))&#123;  </span><br><span class="line">    header(&apos;Access-Control-Allow-Origin:&apos;.$origin);       </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3、允许所有域名访问"><a href="#3、允许所有域名访问" class="headerlink" title="3、允许所有域名访问"></a>3、允许所有域名访问</h3><p>允许所有域名访问则只需在<a href="http://server.runoob.com/server.php文件头部添加如下代码：" target="_blank" rel="noopener">http://server.runoob.com/server.php文件头部添加如下代码：</a></p>
 <pre><code>header(&apos;Access-Control-Allow-Origin:*&apos;); 
 </code></pre>  
 	</div>
@@ -200,7 +200,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -220,11 +220,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -248,11 +248,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -260,7 +260,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -272,11 +272,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

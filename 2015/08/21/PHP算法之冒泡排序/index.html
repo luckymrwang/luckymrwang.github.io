@@ -103,7 +103,7 @@
 		</div>
 		
 		<h3 id="思路分析"><a href="#思路分析" class="headerlink" title="思路分析"></a>思路分析</h3><p>在要排序的一组数中，对当前还未排好的序列，从前往后对相邻的两个数依次进行比较和调整，让较大的数往下沉，较小的往上冒。即，每当两相邻的数比较后发现它们的排序与排序要求相反时，就将它们互换。<br><a id="more"></a></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">$arr = <span class="keyword">array</span>(<span class="number">12</span>, <span class="number">242</span>, <span class="number">3</span>, <span class="number">20</span>, <span class="number">11</span>,<span class="number">50</span>);</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">maopao</span><span class="params">($arr)</span></span>&#123;</div><div class="line">   $len = count($arr);</div><div class="line">    <span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;$len;$i++)&#123;</div><div class="line">        <span class="keyword">for</span>($j=$i+<span class="number">1</span>;$j&lt;$len;$j++)&#123;</div><div class="line">            <span class="keyword">if</span>($arr[$i]&gt;$arr[$j])&#123;</div><div class="line">                $tmp = $arr[$i];</div><div class="line">                $arr[$i] = $arr[$j];</div><div class="line">                $arr[$j] = $tmp;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> $arr;</div><div class="line">&#125;</div><div class="line"><span class="keyword">echo</span> implode(<span class="string">','</span>, maopao($arr));</div></pre></td></tr></table></figure>  
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$arr = <span class="keyword">array</span>(<span class="number">12</span>, <span class="number">242</span>, <span class="number">3</span>, <span class="number">20</span>, <span class="number">11</span>,<span class="number">50</span>);</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">maopao</span><span class="params">($arr)</span></span>&#123;</span><br><span class="line">   $len = count($arr);</span><br><span class="line">    <span class="keyword">for</span>($i=<span class="number">0</span>;$i&lt;$len;$i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>($j=$i+<span class="number">1</span>;$j&lt;$len;$j++)&#123;</span><br><span class="line">            <span class="keyword">if</span>($arr[$i]&gt;$arr[$j])&#123;</span><br><span class="line">                $tmp = $arr[$i];</span><br><span class="line">                $arr[$i] = $arr[$j];</span><br><span class="line">                $arr[$j] = $tmp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> $arr;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> implode(<span class="string">','</span>, maopao($arr));</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -191,7 +191,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -211,11 +211,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -239,11 +239,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -251,7 +251,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -263,11 +263,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

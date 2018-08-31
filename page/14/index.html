@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/07/07/使用DataTables提示warning的解决办法/" title="使用DataTables提示warning的解决办法" itemprop="url">使用DataTables提示warning的解决办法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-07-07T02:07:28.000Z" itemprop="datePublished"> 发表于 2015-07-07</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在使用DataTables插件时打开一些页面后会提示warning信息，内容如下：</p>
+<p><img src="/images/warning.jpg" alt="warning"></p>
+<p>官网给的解释信息，<a href="http://datatables.net/manual/tech-notes/4" target="_blank" rel="noopener">点击这里</a><br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/07/07/使用DataTables提示warning的解决办法/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/DataTables/">DataTables</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/07/07/使用DataTables提示warning的解决办法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/07/07/使用DataTables提示warning的解决办法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/06/21/Html与MySQL空格的转换/" title="Html与MySQL空格的转换" itemprop="url">Html与MySQL空格的转换</a>
   </h1>
   <p class="article-author">By
@@ -214,9 +275,9 @@
 </header>
     <div class="article-content">
         
-        <h2 id="Clear-sh"><a href="#Clear-sh" class="headerlink" title="Clear.sh"></a>Clear.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">	<span class="comment">#!/bin/bash</span></div><div class="line"></div><div class="line">	folders=(everyone snapshot top total_100 total_250)</div><div class="line"></div><div class="line">	<span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</div><div class="line">&lt;!-- more --&gt;</div><div class="line">	<span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></div><div class="line">	ls <span class="variable">$&#123;var&#125;</span>/*.txt | grep -v <span class="string">"unit"</span></div><div class="line">	mv -f <span class="variable">$&#123;var&#125;</span>/*.txt <span class="variable">$&#123;var&#125;</span>/old</div><div class="line">	<span class="keyword">done</span></div><div class="line"></div><div class="line">	<span class="built_in">echo</span> <span class="string">"Success."</span></div></pre></td></tr></table></figure>
-<h2 id="Merge-sh"><a href="#Merge-sh" class="headerlink" title="Merge.sh"></a>Merge.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">games=(tank world_war toy_war red_fire war_commander)</div><div class="line"></div><div class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga/total</div><div class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;games[@]&#125;</span>;<span class="keyword">do</span></div><div class="line">:&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</div><div class="line"><span class="keyword">for</span> (( i=1; i&lt;250; i=i+50 ));<span class="keyword">do</span></div><div class="line"><span class="keyword">if</span> [ -f <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span> ]</div><div class="line"><span class="keyword">then</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span></div><div class="line">cat <span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt &gt;&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="keyword">if</span> [ <span class="variable">$i</span> == 51 ]</div><div class="line"><span class="keyword">then</span></div><div class="line">cp <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_100/<span class="variable">$&#123;var&#125;</span>_order_100.txt</div><div class="line"><span class="keyword">fi</span></div><div class="line"><span class="keyword">done</span></div><div class="line">mv -f <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_250</div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">"Success."</span></div></pre></td></tr></table></figure>
-<h2 id="tar-sh"><a href="#tar-sh" class="headerlink" title="tar.sh"></a>tar.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">folders=(everyone snapshot top total_100 total_250)</div><div class="line"></div><div class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</div><div class="line"></div><div class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></div><div class="line">tar -cvzf <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz <span class="variable">$&#123;var&#125;</span>/*.txt</div><div class="line">mv -f <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz download</div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">"Success.\n"</span></div></pre></td></tr></table></figure>
+        <h2 id="Clear-sh"><a href="#Clear-sh" class="headerlink" title="Clear.sh"></a>Clear.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">	folders=(everyone snapshot top total_100 total_250)</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</span><br><span class="line">&lt;!-- more --&gt;</span><br><span class="line">	<span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></span><br><span class="line">	ls <span class="variable">$&#123;var&#125;</span>/*.txt | grep -v <span class="string">"unit"</span></span><br><span class="line">	mv -f <span class="variable">$&#123;var&#125;</span>/*.txt <span class="variable">$&#123;var&#125;</span>/old</span><br><span class="line">	<span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"Success."</span></span><br></pre></td></tr></table></figure>
+<h2 id="Merge-sh"><a href="#Merge-sh" class="headerlink" title="Merge.sh"></a>Merge.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">games=(tank world_war toy_war red_fire war_commander)</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga/total</span><br><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;games[@]&#125;</span>;<span class="keyword">do</span></span><br><span class="line">:&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</span><br><span class="line"><span class="keyword">for</span> (( i=1; i&lt;250; i=i+50 ));<span class="keyword">do</span></span><br><span class="line"><span class="keyword">if</span> [ -f <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span></span><br><span class="line">cat <span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt &gt;&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$i</span> == 51 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">cp <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_100/<span class="variable">$&#123;var&#125;</span>_order_100.txt</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line">mv -f <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_250</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Success."</span></span><br></pre></td></tr></table></figure>
+<h2 id="tar-sh"><a href="#tar-sh" class="headerlink" title="tar.sh"></a>tar.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">folders=(everyone snapshot top total_100 total_250)</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></span><br><span class="line">tar -cvzf <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz <span class="variable">$&#123;var&#125;</span>/*.txt</span><br><span class="line">mv -f <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz download</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Success.\n"</span></span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -463,7 +524,7 @@
 </header>
     <div class="article-content">
         
-        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="http://ethanschoonover.com/solarized" target="_blank" rel="external">Solarized</a> 是目前最完整的 Terminal/Editor/IDE 配色项目，几乎覆盖所有主流操作系统（Mac OS X, Linux, Windows）、编辑器和 IDE（Vim, Emacs, Xcode, TextMate, NetBeans, Visual Studio 等），终端（iTerm2, Terminal.app, Putty 等）。类似的项目还有 <a href="https://github.com/chriskempson/tomorrow-theme" target="_blank" rel="external">Tomorrow Theme</a>.<br>
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><a href="http://ethanschoonover.com/solarized" target="_blank" rel="noopener">Solarized</a> 是目前最完整的 Terminal/Editor/IDE 配色项目，几乎覆盖所有主流操作系统（Mac OS X, Linux, Windows）、编辑器和 IDE（Vim, Emacs, Xcode, TextMate, NetBeans, Visual Studio 等），终端（iTerm2, Terminal.app, Putty 等）。类似的项目还有 <a href="https://github.com/chriskempson/tomorrow-theme" target="_blank" rel="noopener">Tomorrow Theme</a>.<br>
         
         
         <p class="article-more-link">
@@ -625,66 +686,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/" title="Apache&amp;Nginx 虚拟主机 VirtualHost 配置" itemprop="url">Apache&amp;Nginx 虚拟主机 VirtualHost 配置</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-06-03T06:35:04.000Z" itemprop="datePublished"> 发表于 2015-06-03</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p><strong>虚拟主机 (Virtual Host)</strong> 是在同一台机器搭建属于不同域名或者基于不同 IP 的多个网站服务的技术. 可以为运行在同一物理机器上的各个网站指配不同的 IP 和端口, 也可让多个网站拥有不同的域名。</p>
-<p><em>重要：Apache 在接受到请求时，首先会默认第一个VirtualHost，然后再找匹配的，如果没有匹配的，就是第一个VirtualHost起作用。因此在httpd.conf中，将<dicrectory>（这个是所有目录的默认配置)和<direcotry opt="" lampp="" htdocs="">的权限，都是deny from all.作为默认。</direcotry></dicrectory></em><br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Apache/">Apache</a><a href="/tags/Nginx/">Nginx</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/03/Apache-Nginx-虚拟主机-VirtualHost-配置/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/13/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/15/">Next<span></span></a>
@@ -716,7 +717,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -736,11 +737,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -764,11 +765,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -776,7 +777,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -788,11 +789,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

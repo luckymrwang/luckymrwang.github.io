@@ -82,6 +82,64 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2017/06/20/Urlooker流程图/" title="Urlooker流程图" itemprop="url">Urlooker流程图</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-06-20T06:47:56.000Z" itemprop="datePublished"> 发表于 2017-06-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><img src="/images/urlooker.svg" alt="Urlooker"></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Urlooker/">Urlooker</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/06/20/Urlooker流程图/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/06/20/Urlooker流程图/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2017/06/16/Go语言的defer/" title="Go语言的defer" itemprop="url">Go语言的defer</a>
   </h1>
   <p class="article-author">By
@@ -95,8 +153,8 @@
 </header>
     <div class="article-content">
         
-        <h3 id="eg1"><a href="#eg1" class="headerlink" title="eg1"></a>eg1</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(result <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">        result++</div><div class="line">    &#125;()</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<h3 id="eg2"><a href="#eg2" class="headerlink" title="eg2"></a>eg2</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">     t := <span class="number">5</span></div><div class="line">     <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</div><div class="line">       t = t + <span class="number">5</span></div><div class="line">     &#125;()</div><div class="line">     <span class="keyword">return</span> t</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <h3 id="eg1"><a href="#eg1" class="headerlink" title="eg1"></a>eg1</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(result <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        result++</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="eg2"><a href="#eg2" class="headerlink" title="eg2"></a>eg2</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span> <span class="params">(r <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">     t := <span class="number">5</span></span><br><span class="line">     <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">       t = t + <span class="number">5</span></span><br><span class="line">     &#125;()</span><br><span class="line">     <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -215,7 +273,7 @@
 </header>
     <div class="article-content">
         
-        <h3 id="Map-根据键名排序"><a href="#Map-根据键名排序" class="headerlink" title="Map 根据键名排序"></a>Map 根据键名排序</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"sort"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	<span class="comment">// To create a map as input</span></div><div class="line">	m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>)</div><div class="line">	m[<span class="number">1</span>] = <span class="string">"a"</span></div><div class="line">	m[<span class="number">2</span>] = <span class="string">"c"</span></div><div class="line">	m[<span class="number">0</span>] = <span class="string">"b"</span></div><div class="line"></div><div class="line">	<span class="comment">// To store the keys in slice in sorted order</span></div><div class="line">	<span class="keyword">var</span> keys []<span class="keyword">int</span></div><div class="line">	<span class="keyword">for</span> k := <span class="keyword">range</span> m &#123;</div><div class="line">		keys = <span class="built_in">append</span>(keys, k)</div><div class="line">	&#125;</div><div class="line">	sort.Ints(keys)</div><div class="line"></div><div class="line">	<span class="comment">// To perform the opertion you want</span></div><div class="line">	<span class="keyword">for</span> _, k := <span class="keyword">range</span> keys &#123;</div><div class="line">		fmt.Println(<span class="string">"Key:"</span>, k, <span class="string">"Value:"</span>, m[k])</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <h3 id="Map-根据键名排序"><a href="#Map-根据键名排序" class="headerlink" title="Map 根据键名排序"></a>Map 根据键名排序</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"sort"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// To create a map as input</span></span><br><span class="line">	m := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">int</span>]<span class="keyword">string</span>)</span><br><span class="line">	m[<span class="number">1</span>] = <span class="string">"a"</span></span><br><span class="line">	m[<span class="number">2</span>] = <span class="string">"c"</span></span><br><span class="line">	m[<span class="number">0</span>] = <span class="string">"b"</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// To store the keys in slice in sorted order</span></span><br><span class="line">	<span class="keyword">var</span> keys []<span class="keyword">int</span></span><br><span class="line">	<span class="keyword">for</span> k := <span class="keyword">range</span> m &#123;</span><br><span class="line">		keys = <span class="built_in">append</span>(keys, k)</span><br><span class="line">	&#125;</span><br><span class="line">	sort.Ints(keys)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// To perform the opertion you want</span></span><br><span class="line">	<span class="keyword">for</span> _, k := <span class="keyword">range</span> keys &#123;</span><br><span class="line">		fmt.Println(<span class="string">"Key:"</span>, k, <span class="string">"Value:"</span>, m[k])</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -402,19 +460,19 @@
         <h3 id="一、使用包管理器进行安装"><a href="#一、使用包管理器进行安装" class="headerlink" title="一、使用包管理器进行安装"></a>一、使用包管理器进行安装</h3><ul>
 <li>更新 Homebrew的package数据库（macosx上的软件包管理工具）</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ brew update</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew update</span><br></pre></td></tr></table></figure>
 <ul>
 <li>安装MongoDb</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ brew install mongodb</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install mongodb</span><br></pre></td></tr></table></figure>
 <ul>
 <li>启动MongoDb（安装成功后命令行有提示）</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ sudo mongod --config /usr/local/etc/mongod.conf</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mongod --config /usr/local/etc/mongod.conf</span><br></pre></td></tr></table></figure>
 <ul>
 <li>连接到mongo</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ mongo</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mongo</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -474,7 +532,7 @@
     <div class="article-content">
         
         <h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><pre><code>ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
-</code></pre><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">brew search &lt;package_name&gt;      # 搜索</div><div class="line">brew install &lt;package_name&gt;     # 安装一个软件</div><div class="line">brew update                     # 从服务器上拉取，并更新本地 brew 的包目录</div><div class="line">brew upgrade &lt;package_name&gt;     # 更新软件</div><div class="line">brew outdated                   # 查看你的软件中哪些有新版本可用</div><div class="line">brew cleanup                    # 清理老版本。使用 `-n` 参数，不会真正执行，只是打印出真正运行时会做什么。</div><div class="line">brew list --versions            # 查看你安装过的包列表（包括版本号）</div><div class="line">brew link &lt;package_name&gt;        # 将软件的当前最新版本软链到`/usr/local`目录下</div><div class="line">brew unlink &lt;package_name&gt;      # 将软件在`/usr/local`目录下的软链接删除。</div><div class="line">brew info                       # 显示软件的信息 </div><div class="line">brew deps                       # 显示包依赖</div></pre></td></tr></table></figure>
+</code></pre><h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">brew search &lt;package_name&gt;      # 搜索</span><br><span class="line">brew install &lt;package_name&gt;     # 安装一个软件</span><br><span class="line">brew update                     # 从服务器上拉取，并更新本地 brew 的包目录</span><br><span class="line">brew upgrade &lt;package_name&gt;     # 更新软件</span><br><span class="line">brew outdated                   # 查看你的软件中哪些有新版本可用</span><br><span class="line">brew cleanup                    # 清理老版本。使用 `-n` 参数，不会真正执行，只是打印出真正运行时会做什么。</span><br><span class="line">brew list --versions            # 查看你安装过的包列表（包括版本号）</span><br><span class="line">brew link &lt;package_name&gt;        # 将软件的当前最新版本软链到`/usr/local`目录下</span><br><span class="line">brew unlink &lt;package_name&gt;      # 将软件在`/usr/local`目录下的软链接删除。</span><br><span class="line">brew info                       # 显示软件的信息 </span><br><span class="line">brew deps                       # 显示包依赖</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -595,7 +653,7 @@
 </header>
     <div class="article-content">
         
-        <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">UDF - 2016-11-29 00:00:35 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348772878&quot;,&quot;spreadurl&quot;:&quot;dMxpxx&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;adnetname&quot;:&quot;UC&quot;,&quot;osversion&quot;:&quot;10.1.1&quot;,&quot;idfa&quot;:&quot;DE055F0E-72D7-4A72-B7A0-C3E45A3A33XX&quot;,&quot;clicktime&quot;:&quot;1480348581122&quot;,&quot;ip&quot;:&quot;117.38.163.147&quot;&#125;UDF - 2016-11-29 00:00:41 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348766255&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;osversion&quot;:&quot;10.0.2&quot;,&quot;idfa&quot;:&quot;93271665-1341-499C-BDD6-6797699B9AXX&quot;,&quot;ip&quot;:&quot;58.59.64.234&quot;&#125;</div></pre></td></tr></table></figure>
+        <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UDF - 2016-11-29 00:00:35 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348772878&quot;,&quot;spreadurl&quot;:&quot;dMxpxx&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;adnetname&quot;:&quot;UC&quot;,&quot;osversion&quot;:&quot;10.1.1&quot;,&quot;idfa&quot;:&quot;DE055F0E-72D7-4A72-B7A0-C3E45A3A33XX&quot;,&quot;clicktime&quot;:&quot;1480348581122&quot;,&quot;ip&quot;:&quot;117.38.163.147&quot;&#125;UDF - 2016-11-29 00:00:41 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348766255&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;osversion&quot;:&quot;10.0.2&quot;,&quot;idfa&quot;:&quot;93271665-1341-499C-BDD6-6797699B9AXX&quot;,&quot;ip&quot;:&quot;58.59.64.234&quot;&#125;</span><br></pre></td></tr></table></figure>
 <p>有以上格式的数据，需要将其中的<code>eventtime</code>时间戳筛选出来并格式化</p>
         
         
@@ -623,65 +681,6 @@
 	
 	  	<span></span>
 		<a href="/2016/12/05/Bash-日期时间戳格式化/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/12/05/Bash-日期时间戳格式化/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/11/23/Read-Files/" title="Read_Files" itemprop="url">Read_Files</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-11-23T04:08:17.000Z" itemprop="datePublished"> 发表于 2016-11-23</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">import</span> (</div><div class="line">	<span class="string">"bufio"</span></div><div class="line">	<span class="string">"fmt"</span></div><div class="line">	<span class="string">"io"</span></div><div class="line">	<span class="string">"io/ioutil"</span></div><div class="line">	<span class="string">"os"</span></div><div class="line">)</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(e error)</span></span> &#123;</div><div class="line">	<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</div><div class="line">		<span class="built_in">panic</span>(e)</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">	dat, err := ioutil.ReadFile(<span class="string">"/tmp/dat"</span>)</div><div class="line">	check(err)</div><div class="line">	fmt.Print(<span class="keyword">string</span>(dat))</div><div class="line"></div><div class="line">	f, err := os.Open(<span class="string">"/tmp/dat"</span>)</div><div class="line">	check(err)</div><div class="line"></div><div class="line">	b1 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">5</span>)</div><div class="line">	n1, err := f.Read(b1)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"%d bytes: %s\n"</span>, n1, <span class="keyword">string</span>(b1))</div><div class="line"></div><div class="line">	o2, err := f.Seek(<span class="number">6</span>, <span class="number">0</span>)</div><div class="line">	check(err)</div><div class="line">	b2 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">2</span>)</div><div class="line">	n2, err := f.Read(b2)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"%d bytes @ %d: %s\n"</span>, n2, o2, <span class="keyword">string</span>(b2))</div><div class="line"></div><div class="line">	o3, err := f.Seek(<span class="number">6</span>, <span class="number">0</span>)</div><div class="line">	check(err)</div><div class="line">	b3 := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">2</span>)</div><div class="line">	n3, err := io.ReadAtLeast(f, b3, <span class="number">2</span>)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"%d bytes @ %d: %s\n"</span>, n3, o3, <span class="keyword">string</span>(b3))</div><div class="line"></div><div class="line">	_, err = f.Seek(<span class="number">0</span>, <span class="number">0</span>)</div><div class="line">	check(err)</div><div class="line"></div><div class="line">	r4 := bufio.NewReader(f)</div><div class="line">	b4, err := r4.Peek(<span class="number">5</span>)</div><div class="line">	check(err)</div><div class="line">	fmt.Printf(<span class="string">"5 bytes: %s\n"</span>, <span class="keyword">string</span>(b4))</div><div class="line"></div><div class="line">	f.Close()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/11/23/Read-Files/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/GoExample/">GoExample</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/11/23/Read-Files/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/23/Read-Files/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
@@ -726,7 +725,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -746,11 +745,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -774,11 +773,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -786,7 +785,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -798,11 +797,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

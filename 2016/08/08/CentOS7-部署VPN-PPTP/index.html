@@ -105,32 +105,32 @@
 		<p>安装需要用的包</p>
 <pre><code>yum install -y pptpd iptables
 </code></pre><p>配置PPTP的设置。首先配置<code>/etc/ppp/options.pptpd</code>文件，找到网络和路由设置，我们设置<code>ms-dns</code>为<code>8.8.8.8</code>和<code>8.8.4.4</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"># Network and Routing</div><div class="line"></div><div class="line"># If pppd is acting as a server for Microsoft Windows clients, this</div><div class="line"># option allows pppd to supply one or two DNS (Domain Name Server)</div><div class="line"># addresses to the clients.  The first instance of this option</div><div class="line"># specifies the primary DNS address; the second instance (if given)</div><div class="line"># specifies the secondary DNS address.</div><div class="line">#ms-dns 10.0.0.1</div><div class="line">#ms-dns 10.0.0.2</div><div class="line">ms-dns 8.8.8.8</div><div class="line">ms-dns 8.8.4.4</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># Network and Routing</span><br><span class="line"></span><br><span class="line"># If pppd is acting as a server for Microsoft Windows clients, this</span><br><span class="line"># option allows pppd to supply one or two DNS (Domain Name Server)</span><br><span class="line"># addresses to the clients.  The first instance of this option</span><br><span class="line"># specifies the primary DNS address; the second instance (if given)</span><br><span class="line"># specifies the secondary DNS address.</span><br><span class="line">#ms-dns 10.0.0.1</span><br><span class="line">#ms-dns 10.0.0.2</span><br><span class="line">ms-dns 8.8.8.8</span><br><span class="line">ms-dns 8.8.4.4</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>接下来，让我们创建PPTP VPN的用户，编辑<code>/etc/ppp/chap-secrets</code>。按照格式来创建用户，设置密码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># Secrets for authentication using CHAP</div><div class="line"># client        server  secret                  IP addresses</div><div class="line">vultr  pptpd  password  *</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># Secrets for authentication using CHAP</span><br><span class="line"># client        server  secret                  IP addresses</span><br><span class="line">vultr  pptpd  password  *</span><br></pre></td></tr></table></figure>
 <p>设置pptpd的守护进程，编辑<code>/etc/pptpd.conf</code>，把<code>localip，remoteip</code>的注释打开即可，注意localip并不是服务器真实的ip，remoteip，是VPN连接上后为用户分配的ip段，更详细的信息，在配置文件上有说明。这里提醒一下如果你需要链接很多设备，或者要把VPN分享给朋友，可以适当修改remoteip段</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">#localip 192.168.0.1</div><div class="line">#remoteip 192.168.0.234-238,192.168.0.245</div><div class="line">localip 192.168.0.1</div><div class="line">remoteip 192.168.0.234-238,192.168.0.245</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#localip 192.168.0.1</span><br><span class="line">#remoteip 192.168.0.234-238,192.168.0.245</span><br><span class="line">localip 192.168.0.1</span><br><span class="line">remoteip 192.168.0.234-238,192.168.0.245</span><br></pre></td></tr></table></figure>
 <p>接下来，编辑<code>/etc/sysctl.conf</code>文件，允许IP forwarding，添加<code>net.ipv4.ip_forward=1</code>到文件结尾</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># System default settings live in /usr/lib/sysctl.d/00-system.conf.</div><div class="line"># To override those settings, enter new settings here, or in an /etc/sysctl.d/&lt;name&gt;.conf file</div><div class="line">#</div><div class="line"># For more information, see sysctl.conf(5) and sysctl.d(5).</div><div class="line">net.ipv4.ip_forward=1</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># System default settings live in /usr/lib/sysctl.d/00-system.conf.</span><br><span class="line"># To override those settings, enter new settings here, or in an /etc/sysctl.d/&lt;name&gt;.conf file</span><br><span class="line">#</span><br><span class="line"># For more information, see sysctl.conf(5) and sysctl.d(5).</span><br><span class="line">net.ipv4.ip_forward=1</span><br></pre></td></tr></table></figure>
 <p>执行如下命令使其生效</p>
 <pre><code>sysctl -p
 </code></pre><p>接下来配置iptables，这里提醒大家一下，centos7默认使用的防火墙是firewalld，我们先关闭掉</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">systemctl stop firewalld.service #停止firewall</div><div class="line"></div><div class="line">systemctl disable firewalld.service #禁止firewall开机启动</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service #停止firewall</span><br><span class="line"></span><br><span class="line">systemctl disable firewalld.service #禁止firewall开机启动</span><br></pre></td></tr></table></figure>
 <p>设置 iptables service</p>
 <pre><code>yum -y install iptables-services
 </code></pre><p>添加iptables规则</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iptables -A INPUT -m state --state NEW -m tcp -p tcp --dport 1723 -j ACCEPT</div><div class="line">iptables -t nat -A POSTROUTING -o eth0 -s 192.168.0.0/24 -j MASQUERADE</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">iptables -A INPUT -m state --state NEW -m tcp -p tcp --dport 1723 -j ACCEPT</span><br><span class="line">iptables -t nat -A POSTROUTING -o eth0 -s 192.168.0.0/24 -j MASQUERADE</span><br></pre></td></tr></table></figure>
 <p>保存配置</p>
 <pre><code>service iptables save
 </code></pre><p>打开iptables配置文件确认</p>
 <pre><code>vi /etc/sysconfig/iptables 
 </code></pre><p>如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"># Generated by iptables-save v1.4.21 on Mon Aug  8 09:12:16 2016</div><div class="line">*nat</div><div class="line">:PREROUTING ACCEPT [15:868]</div><div class="line">:INPUT ACCEPT [15:868]</div><div class="line">:OUTPUT ACCEPT [41:3514]</div><div class="line">:POSTROUTING ACCEPT [41:3514]</div><div class="line">-A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE</div><div class="line">COMMIT</div><div class="line"># Completed on Mon Aug  8 09:12:16 2016</div><div class="line"># Generated by iptables-save v1.4.21 on Mon Aug  8 09:12:16 2016</div><div class="line">*filter</div><div class="line">:INPUT ACCEPT [369:39332]</div><div class="line">:FORWARD ACCEPT [0:0]</div><div class="line">:OUTPUT ACCEPT [365:71586]</div><div class="line">-A INPUT -p tcp -m state --state NEW -m tcp --dport 1723 -j ACCEPT</div><div class="line">COMMIT</div><div class="line"># Completed on Mon Aug  8 09:12:16 2016</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"># Generated by iptables-save v1.4.21 on Mon Aug  8 09:12:16 2016</span><br><span class="line">*nat</span><br><span class="line">:PREROUTING ACCEPT [15:868]</span><br><span class="line">:INPUT ACCEPT [15:868]</span><br><span class="line">:OUTPUT ACCEPT [41:3514]</span><br><span class="line">:POSTROUTING ACCEPT [41:3514]</span><br><span class="line">-A POSTROUTING -s 192.168.0.0/24 -o eth0 -j MASQUERADE</span><br><span class="line">COMMIT</span><br><span class="line"># Completed on Mon Aug  8 09:12:16 2016</span><br><span class="line"># Generated by iptables-save v1.4.21 on Mon Aug  8 09:12:16 2016</span><br><span class="line">*filter</span><br><span class="line">:INPUT ACCEPT [369:39332]</span><br><span class="line">:FORWARD ACCEPT [0:0]</span><br><span class="line">:OUTPUT ACCEPT [365:71586]</span><br><span class="line">-A INPUT -p tcp -m state --state NEW -m tcp --dport 1723 -j ACCEPT</span><br><span class="line">COMMIT</span><br><span class="line"># Completed on Mon Aug  8 09:12:16 2016</span><br></pre></td></tr></table></figure>
 <p>重启防火墙服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">systemctl restart iptables.service #重启防火墙使配置生效</div><div class="line"></div><div class="line">systemctl enable iptables.service #设置防火墙开机启动</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl restart iptables.service #重启防火墙使配置生效</span><br><span class="line"></span><br><span class="line">systemctl enable iptables.service #设置防火墙开机启动</span><br></pre></td></tr></table></figure>
 <p>启动pptpd服务，并设置为开机自动启动</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">systemctl start pptpd.service</div><div class="line"></div><div class="line">systemctl enable pptpd.service</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl start pptpd.service</span><br><span class="line"></span><br><span class="line">systemctl enable pptpd.service</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -219,7 +219,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -239,11 +239,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -267,11 +267,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -279,7 +279,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -291,11 +291,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

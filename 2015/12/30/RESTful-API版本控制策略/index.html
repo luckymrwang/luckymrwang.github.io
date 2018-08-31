@@ -118,11 +118,11 @@
 <p><img src="/images/compatible-versioning.png" alt="compatible-versioning"></p>
 <p>三种策略对整个平台在升级API的开销对比如下：</p>
 <p><img src="/images/api.png" alt="api"></p>
-<p>以上信息来源于<a href="http://www.ebpml.org/blog2/index.php/2013/11/25/understanding-the-costs-of-versioning" target="_blank" rel="external">这里</a></p>
+<p>以上信息来源于<a href="http://www.ebpml.org/blog2/index.php/2013/11/25/understanding-the-costs-of-versioning" target="_blank" rel="noopener">这里</a></p>
 <p>针对上面的论述，首先，API一定得有版本，否则升级对于用户来说将是噩梦。其次，要做到Compatible Versioning有现实的限制，毕竟API升级时，不可避免的会出现无法兼容老版本的状况，因此，版本控制需要结合第二种和第三种模式，即提供一个统一的兼容版本入口，同时对于不能兼容历史版本的API保留历史版本，支持用户能够调用到历史版本的API。另外，对历史版本的API支持一定要有时间和用户限制，即老版API支持到一定时间就删除，新用户必须使用新版API，否则一个API有10个版本会让平台的维护非常痛苦。 </p>
 <h3 id="URI-vs-Request-Parameter-vs-Media-Type"><a href="#URI-vs-Request-Parameter-vs-Media-Type" class="headerlink" title="URI vs Request Parameter vs Media Type"></a>URI vs Request Parameter vs Media Type</h3><p>在RESTful API领域，关于如何做版本控制，目前业界比较主流的有3种做法： </p>
 <p>第一种：URI， 即在URI中直接标记使用的是哪个版本，无版本号URI默认使用最新版本。如下： </p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">http:<span class="comment">//server:port/api/customers/1234</span></div><div class="line">http:<span class="comment">//server:port/api/v3.0/customers/1234</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//server:port/api/customers/1234</span></span><br><span class="line">http:<span class="comment">//server:port/api/v3.0/customers/1234</span></span><br></pre></td></tr></table></figure>
 <p>好处：</p>
 <ul>
 <li>直接可以在URI中直观的看到API版本</li>
@@ -134,10 +134,10 @@
 <li>版本号和资源之间并无直接关系</li>
 </ul>
 <p>第二种：Request Parameter， 即在每个请求后添加一个version参数，表示请求的是哪个版本。如下：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http:<span class="comment">//server:port/api/customer/123?version=2</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//server:port/api/customer/123?version=2</span></span><br></pre></td></tr></table></figure>
 <p>这种做法其实就是URI方式的变种，好坏处也都一样。</p>
 <p>第三种： Mdedia Type， 即在HTTP请求的header中使用Media Type标记该请求想获取的资源， 同样的可以不设置或设置通用的Media Type表示最新版本的API。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">===&gt;</div><div class="line">GET /customer/<span class="number">123</span> HTTP/<span class="number">1.1</span></div><div class="line">Accept: application/vnd.xianlinbox.customer-v3+json</div><div class="line"></div><div class="line">&lt;===</div><div class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</div><div class="line">Content-Type: application/vnd.xianlinbox.customer-v3+json</div><div class="line"></div><div class="line">&#123;<span class="string">"customer"</span>:</div><div class="line">	&#123;<span class="string">"name"</span>:<span class="string">"Xianlinbox"</span>&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">===&gt;</span><br><span class="line">GET /customer/<span class="number">123</span> HTTP/<span class="number">1.1</span></span><br><span class="line">Accept: application/vnd.xianlinbox.customer-v3+json</span><br><span class="line"></span><br><span class="line">&lt;===</span><br><span class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</span><br><span class="line">Content-Type: application/vnd.xianlinbox.customer-v3+json</span><br><span class="line"></span><br><span class="line">&#123;<span class="string">"customer"</span>:</span><br><span class="line">	&#123;<span class="string">"name"</span>:<span class="string">"Xianlinbox"</span>&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>好处：</p>
 <ul>
 <li>遵循了REST的设计风格， </li>
@@ -234,7 +234,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -254,11 +254,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -282,11 +282,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -294,7 +294,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -306,11 +306,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

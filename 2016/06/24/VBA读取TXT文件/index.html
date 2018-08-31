@@ -103,7 +103,7 @@
 		</div>
 		
 		<p>用VBA读取TXT文件到EXCEL</p>
-<figure class="highlight vb"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">Dim</span> objStream, strData<span class="keyword">Set</span> objStream = CreateObject(<span class="string">"ADODB.Stream"</span>)objStream.Charset = <span class="string">"utf-8"</span></div><div class="line"></div><div class="line">‘ LINUX 换行符 objStream.LineSeparator = <span class="number">10</span>  默认是 <span class="number">-1</span> 回车换行符</div><div class="line">objStream.OpenobjStream.LoadFromFile (<span class="string">"C:\Users\Administrator\Desktop\test.txt"</span>)rowNo = <span class="number">1</span><span class="keyword">Do</span> <span class="keyword">While</span> <span class="keyword">Not</span> (objStream.EOS)    Worksheets(<span class="string">"Sheet1"</span>).Cells(rowNo, <span class="number">1</span>).Value = objStream.ReadText(<span class="number">-2</span>) <span class="comment">'每次读一行</span>    rowNo = rowNo + <span class="number">1</span><span class="keyword">Loop</span><span class="comment">' 关闭</span>objStream.Close<span class="keyword">Set</span> objStream = <span class="literal">Nothing</span></div></pre></td></tr></table></figure>  
+<figure class="highlight vb"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Dim</span> objStream, strData<span class="keyword">Set</span> objStream = CreateObject(<span class="string">"ADODB.Stream"</span>)objStream.Charset = <span class="string">"utf-8"</span></span><br><span class="line"></span><br><span class="line">‘ LINUX 换行符 objStream.LineSeparator = <span class="number">10</span>  默认是 <span class="number">-1</span> 回车换行符</span><br><span class="line">objStream.OpenobjStream.LoadFromFile (<span class="string">"C:\Users\Administrator\Desktop\test.txt"</span>)rowNo = <span class="number">1</span><span class="keyword">Do</span> <span class="keyword">While</span> <span class="keyword">Not</span> (objStream.EOS)    Worksheets(<span class="string">"Sheet1"</span>).Cells(rowNo, <span class="number">1</span>).Value = objStream.ReadText(<span class="number">-2</span>) <span class="comment">'每次读一行</span>    rowNo = rowNo + <span class="number">1</span><span class="keyword">Loop</span><span class="comment">' 关闭</span>objStream.Close<span class="keyword">Set</span> objStream = <span class="literal">Nothing</span></span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -191,7 +191,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -211,11 +211,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -239,11 +239,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -251,7 +251,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -263,11 +263,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>

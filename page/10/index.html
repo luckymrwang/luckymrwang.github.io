@@ -82,6 +82,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/12/28/PHP-Ajax-跨域问题最佳解决方案/" title="PHP Ajax 跨域问题最佳解决方案" itemprop="url">PHP Ajax 跨域问题最佳解决方案</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-28T08:47:26.000Z" itemprop="datePublished"> 发表于 2015-12-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="本文通过设置Access-Control-Allow-Origin来实现跨域。"><a href="#本文通过设置Access-Control-Allow-Origin来实现跨域。" class="headerlink" title="本文通过设置Access-Control-Allow-Origin来实现跨域。"></a>本文通过设置Access-Control-Allow-Origin来实现跨域。</h3><p>例如：客户端的域名是client.runoob.com，而请求的域名是server.runoob.com。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/12/28/PHP-Ajax-跨域问题最佳解决方案/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a><a href="/tags/Ajax/">Ajax</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/28/PHP-Ajax-跨域问题最佳解决方案/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/28/PHP-Ajax-跨域问题最佳解决方案/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/12/28/AngularJS学习笔记（环境配置）/" title="AngularJS学习笔记（环境配置）" itemprop="url">AngularJS学习笔记（环境配置）</a>
   </h1>
   <p class="article-author">By
@@ -167,17 +226,17 @@
 <li>所有以 symbol 为属性键的属性都会被完全忽略掉，即便 replacer 参数中强制指定包含了它们。</li>
 <li>不可枚举的属性会被忽略</li>
 </ul>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">JSON</span>.stringify(&#123;&#125;);                        <span class="comment">// '&#123;&#125;'</span></div><div class="line"><span class="built_in">JSON</span>.stringify(<span class="literal">true</span>);                      <span class="comment">// 'true'</span></div><div class="line"><span class="built_in">JSON</span>.stringify(<span class="string">"foo"</span>);                     <span class="comment">// '"foo"'</span></div><div class="line"><span class="built_in">JSON</span>.stringify([<span class="number">1</span>, <span class="string">"false"</span>, <span class="literal">false</span>]);       <span class="comment">// '[1,"false",false]'</span></div><div class="line"><span class="built_in">JSON</span>.stringify(&#123; <span class="attr">x</span>: <span class="number">5</span> &#125;);                  <span class="comment">// '&#123;"x":5&#125;'</span></div><div class="line"></div><div class="line"><span class="built_in">JSON</span>.stringify(&#123;<span class="attr">x</span>: <span class="number">5</span>, <span class="attr">y</span>: <span class="number">6</span>&#125;);              </div><div class="line"><span class="comment">// '&#123;"x":5,"y":6&#125;' 或者 '&#123;"y":6,"x":5&#125;' 都可能</span></div><div class="line"><span class="built_in">JSON</span>.stringify([<span class="keyword">new</span> <span class="built_in">Number</span>(<span class="number">1</span>), <span class="keyword">new</span> <span class="built_in">String</span>(<span class="string">"false"</span>), <span class="keyword">new</span> <span class="built_in">Boolean</span>(<span class="literal">false</span>)]); </div><div class="line"><span class="comment">// '[1,"false",false]'</span></div><div class="line"><span class="built_in">JSON</span>.stringify(&#123;<span class="attr">x</span>: <span class="literal">undefined</span>, <span class="attr">y</span>: <span class="built_in">Object</span>, <span class="attr">z</span>: <span class="built_in">Symbol</span>(<span class="string">""</span>)&#125;); </div><div class="line"><span class="comment">// '&#123;&#125;'</span></div><div class="line"><span class="built_in">JSON</span>.stringify([<span class="literal">undefined</span>, <span class="built_in">Object</span>, <span class="built_in">Symbol</span>(<span class="string">""</span>)]);          </div><div class="line"><span class="comment">// '[null,null,null]' </span></div><div class="line"><span class="built_in">JSON</span>.stringify(&#123;[<span class="built_in">Symbol</span>(<span class="string">"foo"</span>)]: <span class="string">"foo"</span>&#125;);                 </div><div class="line"><span class="comment">// '&#123;&#125;'</span></div><div class="line"><span class="built_in">JSON</span>.stringify(&#123;[<span class="built_in">Symbol</span>.for(<span class="string">"foo"</span>)]: <span class="string">"foo"</span>&#125;, [<span class="built_in">Symbol</span>.for(<span class="string">"foo"</span>)]);</div><div class="line"><span class="comment">// '&#123;&#125;'</span></div><div class="line"><span class="built_in">JSON</span>.stringify(&#123;[<span class="built_in">Symbol</span>.for(<span class="string">"foo"</span>)]: <span class="string">"foo"</span>&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">k, v</span>) </span>&#123;</div><div class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> k === <span class="string">"symbol"</span>)&#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">"a symbol"</span>;</div><div class="line">  &#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line"><span class="comment">// '&#123;&#125;'  </span></div><div class="line"></div><div class="line"><span class="comment">// 不可枚举的属性默认会被忽略：</span></div><div class="line"><span class="built_in">JSON</span>.stringify( <span class="built_in">Object</span>.create(<span class="literal">null</span>, &#123; <span class="attr">x</span>: &#123; <span class="attr">value</span>: <span class="string">'x'</span>, <span class="attr">enumerable</span>: <span class="literal">false</span> &#125;, <span class="attr">y</span>: &#123; <span class="attr">value</span>: <span class="string">'y'</span>, <span class="attr">enumerable</span>: <span class="literal">true</span> &#125; &#125;) );</div><div class="line"><span class="comment">// '&#123;"y":"y"&#125;'</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(&#123;&#125;);                        <span class="comment">// '&#123;&#125;'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(<span class="literal">true</span>);                      <span class="comment">// 'true'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(<span class="string">"foo"</span>);                     <span class="comment">// '"foo"'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify([<span class="number">1</span>, <span class="string">"false"</span>, <span class="literal">false</span>]);       <span class="comment">// '[1,"false",false]'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123; <span class="attr">x</span>: <span class="number">5</span> &#125;);                  <span class="comment">// '&#123;"x":5&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;<span class="attr">x</span>: <span class="number">5</span>, <span class="attr">y</span>: <span class="number">6</span>&#125;);              </span><br><span class="line"><span class="comment">// '&#123;"x":5,"y":6&#125;' 或者 '&#123;"y":6,"x":5&#125;' 都可能</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify([<span class="keyword">new</span> <span class="built_in">Number</span>(<span class="number">1</span>), <span class="keyword">new</span> <span class="built_in">String</span>(<span class="string">"false"</span>), <span class="keyword">new</span> <span class="built_in">Boolean</span>(<span class="literal">false</span>)]); </span><br><span class="line"><span class="comment">// '[1,"false",false]'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;<span class="attr">x</span>: <span class="literal">undefined</span>, <span class="attr">y</span>: <span class="built_in">Object</span>, <span class="attr">z</span>: <span class="built_in">Symbol</span>(<span class="string">""</span>)&#125;); </span><br><span class="line"><span class="comment">// '&#123;&#125;'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify([<span class="literal">undefined</span>, <span class="built_in">Object</span>, <span class="built_in">Symbol</span>(<span class="string">""</span>)]);          </span><br><span class="line"><span class="comment">// '[null,null,null]' </span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;[<span class="built_in">Symbol</span>(<span class="string">"foo"</span>)]: <span class="string">"foo"</span>&#125;);                 </span><br><span class="line"><span class="comment">// '&#123;&#125;'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;[<span class="built_in">Symbol</span>.for(<span class="string">"foo"</span>)]: <span class="string">"foo"</span>&#125;, [<span class="built_in">Symbol</span>.for(<span class="string">"foo"</span>)]);</span><br><span class="line"><span class="comment">// '&#123;&#125;'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;[<span class="built_in">Symbol</span>.for(<span class="string">"foo"</span>)]: <span class="string">"foo"</span>&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">k, v</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> k === <span class="string">"symbol"</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"a symbol"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// '&#123;&#125;'  </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不可枚举的属性默认会被忽略：</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify( <span class="built_in">Object</span>.create(<span class="literal">null</span>, &#123; <span class="attr">x</span>: &#123; <span class="attr">value</span>: <span class="string">'x'</span>, <span class="attr">enumerable</span>: <span class="literal">false</span> &#125;, <span class="attr">y</span>: &#123; <span class="attr">value</span>: <span class="string">'y'</span>, <span class="attr">enumerable</span>: <span class="literal">true</span> &#125; &#125;) );</span><br><span class="line"><span class="comment">// '&#123;"y":"y"&#125;'</span></span><br></pre></td></tr></table></figure>
 <h3 id="space-参数"><a href="#space-参数" class="headerlink" title="space 参数"></a>space 参数</h3><p>space 参数用来控制结果字符串里面的间距。如果是一个数字, 则在字符串化时每一级别会比上一级别缩进多这个数字值的空格（最多10个空格）；如果是一个字符串，则每一级别会比上一级别多缩进用该字符串（或该字符串的前十个字符）。</p>
 <pre><code>JSON.stringify({ a: 2 }, null, &quot; &quot;);   // &apos;{\n &quot;a&quot;: 2\n}&apos;
 </code></pre><p>使用制表符（\t）来缩进：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">JSON</span>.stringify(&#123; <span class="attr">uno</span>: <span class="number">1</span>, <span class="attr">dos</span> : <span class="number">2</span> &#125;, <span class="literal">null</span>, <span class="string">'\t'</span>)</div><div class="line"><span class="comment">// '&#123;            \</span></div><div class="line"><span class="comment">//     "uno": 1, \</span></div><div class="line"><span class="comment">//     "dos": 2  \</span></div><div class="line"><span class="comment">// &#125;'</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(&#123; <span class="attr">uno</span>: <span class="number">1</span>, <span class="attr">dos</span> : <span class="number">2</span> &#125;, <span class="literal">null</span>, <span class="string">'\t'</span>)</span><br><span class="line"><span class="comment">// '&#123;            \</span></span><br><span class="line"><span class="comment">//     "uno": 1, \</span></span><br><span class="line"><span class="comment">//     "dos": 2  \</span></span><br><span class="line"><span class="comment">// &#125;'</span></span><br></pre></td></tr></table></figure>
 <h3 id="toJSON-方法"><a href="#toJSON-方法" class="headerlink" title="toJSON 方法"></a>toJSON 方法</h3><p>如果一个被序列化的对象拥有 toJSON 方法，那么该 toJSON 方法就会覆盖该对象默认的序列化行为：不是那个对象被序列化，而是调用 toJSON 方法后的返回值会被序列化，例如：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> obj = &#123;</div><div class="line">  foo: <span class="string">'foo'</span>,</div><div class="line">  toJSON: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="string">'bar'</span>;</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line"><span class="built_in">JSON</span>.stringify(obj);      <span class="comment">// '"bar"'</span></div><div class="line"><span class="built_in">JSON</span>.stringify(&#123;<span class="attr">x</span>: obj&#125;); <span class="comment">// '&#123;"x":"bar"&#125;'</span></div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  foo: <span class="string">'foo'</span>,</span><br><span class="line">  toJSON: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'bar'</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">JSON</span>.stringify(obj);      <span class="comment">// '"bar"'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;<span class="attr">x</span>: obj&#125;); <span class="comment">// '&#123;"x":"bar"&#125;'</span></span><br></pre></td></tr></table></figure>
 <h3 id="使用-JSON-stringify-结合-localStorage-的例子"><a href="#使用-JSON-stringify-结合-localStorage-的例子" class="headerlink" title="使用 JSON.stringify 结合 localStorage 的例子"></a>使用 JSON.stringify 结合 localStorage 的例子</h3><p>一些时候，你想存储用户创建的一个对象，并且，即使在浏览器被关闭后仍能恢复该对象。下面的例子是 JSON.stringify 适用于这种情形的一个样板：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 创建一个示例数据</span></div><div class="line"><span class="keyword">var</span> session = &#123;</div><div class="line">    <span class="string">'screens'</span> : [],</div><div class="line">    <span class="string">'state'</span> : <span class="literal">true</span></div><div class="line">&#125;;</div><div class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenA"</span>, <span class="string">"width"</span>:<span class="number">450</span>, <span class="string">"height"</span>:<span class="number">250</span>&#125;);</div><div class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenB"</span>, <span class="string">"width"</span>:<span class="number">650</span>, <span class="string">"height"</span>:<span class="number">350</span>&#125;);</div><div class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenC"</span>, <span class="string">"width"</span>:<span class="number">750</span>, <span class="string">"height"</span>:<span class="number">120</span>&#125;);</div><div class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenD"</span>, <span class="string">"width"</span>:<span class="number">250</span>, <span class="string">"height"</span>:<span class="number">60</span>&#125;);</div><div class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenE"</span>, <span class="string">"width"</span>:<span class="number">390</span>, <span class="string">"height"</span>:<span class="number">120</span>&#125;);</div><div class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenF"</span>, <span class="string">"width"</span>:<span class="number">1240</span>, <span class="string">"height"</span>:<span class="number">650</span>&#125;);</div><div class="line"></div><div class="line"><span class="comment">// 使用 JSON.stringify 转换为 JSON 字符串</span></div><div class="line"><span class="comment">// 然后使用 localStorage 保存在 session 名称里</span></div><div class="line">localStorage.setItem(<span class="string">'session'</span>, <span class="built_in">JSON</span>.stringify(session));</div><div class="line"></div><div class="line"><span class="comment">// 然后是如何转换通过 JSON.stringify 生成的字符串，该字符串以 JSON 格式保存在 localStorage 里</span></div><div class="line"><span class="keyword">var</span> restoredSession = <span class="built_in">JSON</span>.parse(localStorage.getItem(<span class="string">'session'</span>));</div><div class="line"></div><div class="line"><span class="comment">// 现在 restoredSession 包含了保存在 localStorage 里的对象</span></div><div class="line"><span class="built_in">console</span>.log(restoredSession);</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个示例数据</span></span><br><span class="line"><span class="keyword">var</span> session = &#123;</span><br><span class="line">    <span class="string">'screens'</span> : [],</span><br><span class="line">    <span class="string">'state'</span> : <span class="literal">true</span></span><br><span class="line">&#125;;</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenA"</span>, <span class="string">"width"</span>:<span class="number">450</span>, <span class="string">"height"</span>:<span class="number">250</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenB"</span>, <span class="string">"width"</span>:<span class="number">650</span>, <span class="string">"height"</span>:<span class="number">350</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenC"</span>, <span class="string">"width"</span>:<span class="number">750</span>, <span class="string">"height"</span>:<span class="number">120</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenD"</span>, <span class="string">"width"</span>:<span class="number">250</span>, <span class="string">"height"</span>:<span class="number">60</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenE"</span>, <span class="string">"width"</span>:<span class="number">390</span>, <span class="string">"height"</span>:<span class="number">120</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenF"</span>, <span class="string">"width"</span>:<span class="number">1240</span>, <span class="string">"height"</span>:<span class="number">650</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 JSON.stringify 转换为 JSON 字符串</span></span><br><span class="line"><span class="comment">// 然后使用 localStorage 保存在 session 名称里</span></span><br><span class="line">localStorage.setItem(<span class="string">'session'</span>, <span class="built_in">JSON</span>.stringify(session));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后是如何转换通过 JSON.stringify 生成的字符串，该字符串以 JSON 格式保存在 localStorage 里</span></span><br><span class="line"><span class="keyword">var</span> restoredSession = <span class="built_in">JSON</span>.parse(localStorage.getItem(<span class="string">'session'</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 现在 restoredSession 包含了保存在 localStorage 里的对象</span></span><br><span class="line"><span class="built_in">console</span>.log(restoredSession);</span><br></pre></td></tr></table></figure>
 <h3 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h3><ul>
-<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_native_JSON" target="_blank" rel="external">使用原生得JSON对象</a></li>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_native_JSON" target="_blank" rel="noopener">使用原生得JSON对象</a></li>
 </ul>
 
         
@@ -237,9 +296,9 @@
     <div class="article-content">
         
         <p>JS获取url：<br>    window.location.href;</p>
-<p>有个url格式如下：<br><a href="http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;appid=1009" target="_blank" rel="external">http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;appid=1009</a></p>
-<h3 id="通过正则"><a href="#通过正则" class="headerlink" title="通过正则"></a>通过正则</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getQueryString</span>(<span class="params">name</span>) </span>&#123;</div><div class="line">	<span class="keyword">var</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"(^|&amp;)"</span> + name + <span class="string">"=([^&amp;]*)(&amp;|$)"</span>, <span class="string">"i"</span>);</div><div class="line">	<span class="keyword">var</span> r = <span class="built_in">window</span>.location.search.substr(<span class="number">1</span>).match(reg);</div><div class="line">	<span class="keyword">if</span> (r != <span class="literal">null</span>) <span class="keyword">return</span> <span class="built_in">unescape</span>(r[<span class="number">2</span>]); <span class="keyword">return</span> <span class="literal">null</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> <span class="keyword">from</span> = getQueryString(<span class="string">"game"</span>);</div><div class="line"></div><div class="line">alert(<span class="keyword">from</span>);</div></pre></td></tr></table></figure>
-<h3 id="通过切串放进数组"><a href="#通过切串放进数组" class="headerlink" title="通过切串放进数组"></a>通过切串放进数组</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">GetRequest</span>(<span class="params"></span>) </span>&#123; </div><div class="line">	<span class="keyword">var</span> url = location.search; <span class="comment">//获取url中"?"符后的字串 </span></div><div class="line">	<span class="keyword">var</span> theRequest = <span class="keyword">new</span> <span class="built_in">Object</span>(); </div><div class="line">	<span class="keyword">if</span> (url.indexOf(<span class="string">"?"</span>) != <span class="number">-1</span>) &#123;</div><div class="line">		<span class="keyword">var</span> str = url.substr(<span class="number">1</span>); </div><div class="line">		strs = str.split(<span class="string">"&amp;"</span>); </div><div class="line">		<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; strs.length; i ++) &#123;</div><div class="line">			theRequest[strs[i].split(<span class="string">"="</span>)[<span class="number">0</span>]]=<span class="built_in">unescape</span>(strs[i].split(<span class="string">"="</span>)[<span class="number">1</span>]); </div><div class="line">		&#125; </div><div class="line">	&#125; </div><div class="line">	<span class="keyword">return</span> theRequest; </div><div class="line">&#125; </div><div class="line"></div><div class="line"><span class="keyword">var</span> req = GetRequest(); </div><div class="line"></div><div class="line"><span class="keyword">var</span> <span class="keyword">from</span> = req[<span class="string">'game'</span>];</div><div class="line"></div><div class="line">alert(<span class="keyword">from</span>);</div></pre></td></tr></table></figure>
+<p>有个url格式如下：<br><a href="http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;appid=1009" target="_blank" rel="noopener">http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;appid=1009</a></p>
+<h3 id="通过正则"><a href="#通过正则" class="headerlink" title="通过正则"></a>通过正则</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getQueryString</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">var</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"(^|&amp;)"</span> + name + <span class="string">"=([^&amp;]*)(&amp;|$)"</span>, <span class="string">"i"</span>);</span><br><span class="line">	<span class="keyword">var</span> r = <span class="built_in">window</span>.location.search.substr(<span class="number">1</span>).match(reg);</span><br><span class="line">	<span class="keyword">if</span> (r != <span class="literal">null</span>) <span class="keyword">return</span> <span class="built_in">unescape</span>(r[<span class="number">2</span>]); <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> <span class="keyword">from</span> = getQueryString(<span class="string">"game"</span>);</span><br><span class="line"></span><br><span class="line">alert(<span class="keyword">from</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="通过切串放进数组"><a href="#通过切串放进数组" class="headerlink" title="通过切串放进数组"></a>通过切串放进数组</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">GetRequest</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">	<span class="keyword">var</span> url = location.search; <span class="comment">//获取url中"?"符后的字串 </span></span><br><span class="line">	<span class="keyword">var</span> theRequest = <span class="keyword">new</span> <span class="built_in">Object</span>(); </span><br><span class="line">	<span class="keyword">if</span> (url.indexOf(<span class="string">"?"</span>) != <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="keyword">var</span> str = url.substr(<span class="number">1</span>); </span><br><span class="line">		strs = str.split(<span class="string">"&amp;"</span>); </span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; strs.length; i ++) &#123;</span><br><span class="line">			theRequest[strs[i].split(<span class="string">"="</span>)[<span class="number">0</span>]]=<span class="built_in">unescape</span>(strs[i].split(<span class="string">"="</span>)[<span class="number">1</span>]); </span><br><span class="line">		&#125; </span><br><span class="line">	&#125; </span><br><span class="line">	<span class="keyword">return</span> theRequest; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> req = GetRequest(); </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> <span class="keyword">from</span> = req[<span class="string">'game'</span>];</span><br><span class="line"></span><br><span class="line">alert(<span class="keyword">from</span>);</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -297,7 +356,7 @@
     <div class="article-content">
         
         <p>Draggable时阻止单击事件</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$(<span class="string">'.selector'</span>).draggable(&#123;</div><div class="line">    stop: <span class="function"><span class="keyword">function</span>(<span class="params">event, ui</span>) </span>&#123;</div><div class="line">        <span class="comment">// event.toElement is the element that was responsible</span></div><div class="line">        <span class="comment">// for triggering this event. The handle, in case of a draggable.</span></div><div class="line">        $( event.toElement ).one(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123; e.stopImmediatePropagation(); &#125; );</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'.selector'</span>).draggable(&#123;</span><br><span class="line">    stop: <span class="function"><span class="keyword">function</span>(<span class="params">event, ui</span>) </span>&#123;</span><br><span class="line">        <span class="comment">// event.toElement is the element that was responsible</span></span><br><span class="line">        <span class="comment">// for triggering this event. The handle, in case of a draggable.</span></span><br><span class="line">        $( event.toElement ).one(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123; e.stopImmediatePropagation(); &#125; );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p>This works because “one-listeners” are fired before “normal” listeners. So if a one-listener stops propagation, it will never reach your previously set listeners.</p>
 
         
@@ -357,9 +416,9 @@
     <div class="article-content">
         
         <p>将<code>go.js</code>格式化，修改如下代码：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//a.ax = d[u.Da("7eba17a4ca3b1a8346")][u.Da("78a118b7")](d, u.wl, 4, 4);</span>a.ax= <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> <span class="literal">true</span>;&#125; <span class="comment">// 去水印</span></div></pre></td></tr></table></figure>
-<p>具体GOJS简介<a href="http://www.devtalking.com/articles/gojs-simple-diagram/" target="_blank" rel="external">点击这里</a></p>
-<p>源码Github,<a href="https://github.com/luckymrwang/GoJS" target="_blank" rel="external">点击这里</a></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//a.ax = d[u.Da("7eba17a4ca3b1a8346")][u.Da("78a118b7")](d, u.wl, 4, 4);</span>a.ax= <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;<span class="keyword">return</span> <span class="literal">true</span>;&#125; <span class="comment">// 去水印</span></span><br></pre></td></tr></table></figure>
+<p>具体GOJS简介<a href="http://www.devtalking.com/articles/gojs-simple-diagram/" target="_blank" rel="noopener">点击这里</a></p>
+<p>源码Github,<a href="https://github.com/luckymrwang/GoJS" target="_blank" rel="noopener">点击这里</a></p>
 
         
         
@@ -418,8 +477,8 @@
     <div class="article-content">
         
         <p>使用jQuery UI 拖动控件克隆后继续能拖动，代码如下：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span> <span class="attr">style</span>=<span class="string">"float:left;"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"form-field-1"</span> <span class="attr">placeholder</span>=<span class="string">"input"</span> <span class="attr">class</span>=<span class="string">"col-xs-10 col-sm-5"</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"widget-main"</span> <span class="attr">style</span>=<span class="string">"height:800px;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">$(<span class="string">".form-group"</span>).draggable(&#123;</div><div class="line">		appendTo: <span class="string">".widget-main"</span>,</div><div class="line">		helper: <span class="string">"clone"</span>,</div><div class="line">		revert: <span class="string">"invalid"</span>,</div><div class="line">		cursor: <span class="string">"move"</span></div><div class="line">	&#125;);</div><div class="line">    $( <span class="string">".widget-main"</span> ).droppable(&#123;</div><div class="line">      activeClass: <span class="string">"bg"</span>,</div><div class="line">      hoverClass: <span class="string">""</span>,</div><div class="line">      accept: <span class="string">".form-group"</span>,</div><div class="line">      drop: <span class="function"><span class="keyword">function</span>(<span class="params">event, ui</span>) </span>&#123;</div><div class="line">		<span class="comment">// $(this).append($(ui.draggable).clone()); </span></div><div class="line">       $(ui.helper).clone().appendTo($(<span class="keyword">this</span>)).draggable(&#123;<span class="attr">appendTo</span>: <span class="string">".widget-main"</span>,<span class="attr">revert</span>: <span class="string">"invalid"</span>&#125;); <span class="comment">//继续有拖动功能</span></div><div class="line">		$(ui.helper).remove(); <span class="comment">//去掉克隆功能</span></div><div class="line">      &#125;</div><div class="line">    &#125;).sortable(&#123;</div><div class="line">      items: <span class="string">"li:not(.placeholder)"</span>,</div><div class="line">      sort: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">        <span class="comment">// 获取由 droppable 与 sortable 交互而加入的条目</span></div><div class="line">        <span class="comment">// 使用 connectWithSortable 可以解决这个问题，但不允许您自定义 active/hoverClass 选项</span></div><div class="line">        $(<span class="keyword">this</span>).removeClass(<span class="string">"ui-state-default"</span>);</div><div class="line">      &#125;</div><div class="line">    &#125;);</div></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span> <span class="attr">style</span>=<span class="string">"float:left;"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"form-field-1"</span> <span class="attr">placeholder</span>=<span class="string">"input"</span> <span class="attr">class</span>=<span class="string">"col-xs-10 col-sm-5"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"widget-main"</span> <span class="attr">style</span>=<span class="string">"height:800px;"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">".form-group"</span>).draggable(&#123;</span><br><span class="line">		appendTo: <span class="string">".widget-main"</span>,</span><br><span class="line">		helper: <span class="string">"clone"</span>,</span><br><span class="line">		revert: <span class="string">"invalid"</span>,</span><br><span class="line">		cursor: <span class="string">"move"</span></span><br><span class="line">	&#125;);</span><br><span class="line">    $( <span class="string">".widget-main"</span> ).droppable(&#123;</span><br><span class="line">      activeClass: <span class="string">"bg"</span>,</span><br><span class="line">      hoverClass: <span class="string">""</span>,</span><br><span class="line">      accept: <span class="string">".form-group"</span>,</span><br><span class="line">      drop: <span class="function"><span class="keyword">function</span>(<span class="params">event, ui</span>) </span>&#123;</span><br><span class="line">		<span class="comment">// $(this).append($(ui.draggable).clone()); </span></span><br><span class="line">       $(ui.helper).clone().appendTo($(<span class="keyword">this</span>)).draggable(&#123;<span class="attr">appendTo</span>: <span class="string">".widget-main"</span>,<span class="attr">revert</span>: <span class="string">"invalid"</span>&#125;); <span class="comment">//继续有拖动功能</span></span><br><span class="line">		$(ui.helper).remove(); <span class="comment">//去掉克隆功能</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;).sortable(&#123;</span><br><span class="line">      items: <span class="string">"li:not(.placeholder)"</span>,</span><br><span class="line">      sort: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">// 获取由 droppable 与 sortable 交互而加入的条目</span></span><br><span class="line">        <span class="comment">// 使用 connectWithSortable 可以解决这个问题，但不允许您自定义 active/hoverClass 选项</span></span><br><span class="line">        $(<span class="keyword">this</span>).removeClass(<span class="string">"ui-state-default"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -477,7 +536,7 @@
     <div class="article-content">
         
         <p>PHPExcel隐藏Sheet语句：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">$objPHPExcel-&gt;createSheet();</div><div class="line"></div><div class="line"><span class="comment">//在07版以上不起作用，在excel中取消隐藏后即可显示</span></div><div class="line">$objPHPExcel-&gt;getSheetByName(<span class="string">'Worksheet'</span>)-&gt;setSheetState(PHPExcel_Worksheet::SHEETSTATE_HIDDEN);</div><div class="line"></div><div class="line"><span class="comment">//适用于07版及以上，在excel中不能取消隐藏，可在visual_basic中查看</span></div><div class="line">$objPHPExcel-&gt;getSheetByName(<span class="string">'Worksheet'</span>)-&gt;setSheetState(PHPExcel_Worksheet::SHEETSTATE_VERYHIDDEN);</div></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$objPHPExcel-&gt;createSheet();</span><br><span class="line"></span><br><span class="line"><span class="comment">//在07版以上不起作用，在excel中取消隐藏后即可显示</span></span><br><span class="line">$objPHPExcel-&gt;getSheetByName(<span class="string">'Worksheet'</span>)-&gt;setSheetState(PHPExcel_Worksheet::SHEETSTATE_HIDDEN);</span><br><span class="line"></span><br><span class="line"><span class="comment">//适用于07版及以上，在excel中不能取消隐藏，可在visual_basic中查看</span></span><br><span class="line">$objPHPExcel-&gt;getSheetByName(<span class="string">'Worksheet'</span>)-&gt;setSheetState(PHPExcel_Worksheet::SHEETSTATE_VERYHIDDEN);</span><br></pre></td></tr></table></figure>
         
         
         <p class="article-more-link">
@@ -635,65 +694,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/11/19/自动化测试基本流程/" title="自动化测试基本流程" itemprop="url">自动化测试基本流程</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-19T05:17:55.000Z" itemprop="datePublished"> 发表于 2015-11-19</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><img src="/images/autotest.jpg" alt="自动化测试基本流程"></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/11/19/自动化测试基本流程/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/测试/">测试</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/11/19/自动化测试基本流程/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/19/自动化测试基本流程/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/9/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/11/">Next<span></span></a>
@@ -725,7 +725,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>25</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
 			
 		
 			
@@ -745,11 +745,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -773,11 +773,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -785,7 +785,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
@@ -797,11 +797,11 @@
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
 			
 		
 		</ul>
