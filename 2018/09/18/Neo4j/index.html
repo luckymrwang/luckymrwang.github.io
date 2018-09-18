@@ -19,12 +19,12 @@
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="介绍图形数据库（Graph Database）用于存储丰富的关系数据，Neo4j 是目前最流行的图形数据库，支持完整的事务，在属性图中，图是由顶点（Vertex），边（Edge）和属性（Property）组成的，顶点和边都可以设置属性，顶点也称作节点，边也称作关系，每个节点和关系都可以由一个或多个属性。Neo4j 创建的图是用顶点和边构建一个有向图，其查询语言 cypher 已经成为事实上的标准">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://luckymrwang.github.io/2018/09/18/Neo4j/images/neo4j_1.jpeg">
-<meta property="og:updated_time" content="2018-09-18T10:10:04.512Z">
+<meta property="og:image" content="https://luckymrwang.github.io/images/neo4j_1.jpeg">
+<meta property="og:updated_time" content="2018-09-18T11:20:19.982Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Neo4j">
 <meta name="twitter:description" content="介绍图形数据库（Graph Database）用于存储丰富的关系数据，Neo4j 是目前最流行的图形数据库，支持完整的事务，在属性图中，图是由顶点（Vertex），边（Edge）和属性（Property）组成的，顶点和边都可以设置属性，顶点也称作节点，边也称作关系，每个节点和关系都可以由一个或多个属性。Neo4j 创建的图是用顶点和边构建一个有向图，其查询语言 cypher 已经成为事实上的标准">
-<meta name="twitter:image" content="https://luckymrwang.github.io/2018/09/18/Neo4j/images/neo4j_1.jpeg">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/neo4j_1.jpeg">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -114,7 +114,7 @@
 <li>关系具有方向：单向和双向。</li>
 <li>每个关系包含“开始节点”或“从节点”和“到节点”或“结束节点”</li>
 </ul>
-<p><img src="images/neo4j_1.jpeg" alt="neo4j"></p>
+<p><img src="/images/neo4j_1.jpeg" alt="neo4j"></p>
 <h3 id="安装运行"><a href="#安装运行" class="headerlink" title="安装运行"></a>安装运行</h3><p>下载<code>Neo4j Desktop</code>并运行，创建一个新的<code>Graph</code>，<code>local graph</code>的默认用户为<code>neo4j</code>，密码为<code>neo4j</code></p>
 <h3 id="Web访问"><a href="#Web访问" class="headerlink" title="Web访问"></a>Web访问</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:7474/browser/</span><br></pre></td></tr></table></figure>
 <a id="more"></a>
@@ -134,65 +134,65 @@
 <ul>
 <li>label 一个节点有多个label</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE (a:A:B...) ...</span><br><span class="line"></span><br><span class="line">// MATCH</span><br><span class="line">MATCH (a:A:B) 会返回label既是A也是B的node</span><br><span class="line">MATCH(a:A) 会返回A,也返回A:B,即label包含A的节点</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> (a:A:B...) ...</span><br><span class="line"></span><br><span class="line">// <span class="keyword">MATCH</span></span><br><span class="line"><span class="keyword">MATCH</span> (a:A:B) 会返回label既是A也是B的node</span><br><span class="line"><span class="keyword">MATCH</span>(a:A) 会返回A,也返回A:B,即label包含A的节点</span><br></pre></td></tr></table></figure>
 <ul>
 <li>DELETE 删除节点或关系,在删除节点前,必须先删除其相关关系</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE a.p1=v1 DELETE a</span><br><span class="line"></span><br><span class="line">MATCH (a:A) WHERE a.p1=v1 DELETE a.p1</span><br><span class="line"></span><br><span class="line">MATCH (a:A) DELETE a</span><br><span class="line"></span><br><span class="line">// 删除所有A\B之间的R关系</span><br><span class="line">MATCH (a:A)-[r:R]-&gt;(b:B) DELETE r</span><br><span class="line"></span><br><span class="line">// 同时删除关系和节点</span><br><span class="line">MATCH (a:A)-[r:R]-&gt;(b:B) WHERE a.p1=v1 DELETE a,b,r</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE a.p1=v1 <span class="keyword">DELETE</span> a</span><br><span class="line"></span><br><span class="line"><span class="keyword">MATCH</span> (a:A) <span class="keyword">WHERE</span> a.p1=v1 <span class="keyword">DELETE</span> a.p1</span><br><span class="line"></span><br><span class="line"><span class="keyword">MATCH</span> (a:A) <span class="keyword">DELETE</span> a</span><br><span class="line"></span><br><span class="line">// 删除所有A\B之间的R关系</span><br><span class="line"><span class="keyword">MATCH</span> (a:A)-[r:R]-&gt;(b:B) <span class="keyword">DELETE</span> r</span><br><span class="line"></span><br><span class="line">// 同时删除关系和节点</span><br><span class="line"><span class="keyword">MATCH</span> (a:A)-[r:R]-&gt;(b:B) <span class="keyword">WHERE</span> a.p1=v1 <span class="keyword">DELETE</span> a,b,r</span><br></pre></td></tr></table></figure>
 <ul>
 <li>REMOVE 移除节点或关系的属性,可在后面追加RETURN</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">语法基本同DELETE</span><br><span class="line">MATCH (a:A) WHERE ... REMOVE a.p1 RETURN ...</span><br><span class="line"></span><br><span class="line">MATCH (a:A)-[r:R]-&gt;(b:B)  WHERE ... REMOVE r.p2</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">语法基本同<span class="keyword">DELETE</span></span><br><span class="line"><span class="keyword">MATCH</span> (a:A) <span class="keyword">WHERE</span> ... REMOVE a.p1 <span class="keyword">RETURN</span> ...</span><br><span class="line"></span><br><span class="line"><span class="keyword">MATCH</span> (a:A)-[r:R]-&gt;(b:B)  <span class="keyword">WHERE</span> ... REMOVE r.p2</span><br></pre></td></tr></table></figure>
 <ul>
 <li>set 添加或修改属性</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:B) WHERE ... SET a.p1=v1</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:B) WHERE ... <span class="keyword">SET</span> a.p1=v1</span><br></pre></td></tr></table></figure>
 <ul>
 <li>order by 按一个或多个属性值排序返回结果, 默认是按升序,降序就在order列表后追加DESC</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE ... RETURN a.p1, a.p2, a.p3 ORDER BY a.p1,a.p2</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE ... RETURN a.p1, a.p2, a.p3 ORDER BY a.p1,a.p2</span><br></pre></td></tr></table></figure>
 <ul>
 <li>uniON 连接返回结果(名字要相同),去除重复行.注意这里的连接和关系型数据库不相同,这里只是将两个RETURN语句返回的结果列表拼接而已.</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) RETURN a.p1 as p1, a.p2 as p2</span><br><span class="line">UNION</span><br><span class="line">MATCH (b:B) RETURN b.p1 as p1, b.p3 as p2</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) RETURN a.p1 as p1, a.p2 as p2</span><br><span class="line">UNION</span><br><span class="line">MATCH (b:B) RETURN b.p1 as p1, b.p3 as p2</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p>UNION ALL 同上,只是不去除重复行</p>
 </li>
 <li><p>LIMIT 限制返回结果的数量</p>
 </li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) RETURN a LIMIT 10 // 返回前10个结果</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) RETURN a LIMIT 10 // 返回前10个结果</span><br></pre></td></tr></table></figure>
 <ul>
 <li>SKIP 跳过前面的结果数目</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) RETURN a SKIP 10 // 跨过前十条结果</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) RETURN a SKIP 10 // 跨过前十条结果</span><br></pre></td></tr></table></figure>
 <ul>
 <li>MERGE 命令在图中搜索给定模式，如果存在，则返回结果,如果它不存在于图中，则它创建新的节点/关系并返回结果。</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MERGE (a:A&#123;p1:v1&#125;)-[r:R&#123;...&#125;]-&gt;(b:B&#123;...&#125;)</span><br><span class="line"></span><br><span class="line">相当于</span><br><span class="line">MATCH (a:A)-[r:R]-&gt;(b:B) WHERE a.p1=v1 AND r... and b.... RETURN a,r,b</span><br><span class="line">if a或b或r不存在, 就CREATE</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">MERGE</span> (a:A&#123;p1:v1&#125;)-[r:R&#123;...&#125;]-&gt;(b:B&#123;...&#125;)</span><br><span class="line"></span><br><span class="line">相当于</span><br><span class="line"><span class="keyword">MATCH</span> (a:A)-[r:R]-&gt;(b:B) <span class="keyword">WHERE</span> a.p1=v1 <span class="keyword">AND</span> r... <span class="keyword">and</span> b.... <span class="keyword">RETURN</span> a,r,b</span><br><span class="line"><span class="keyword">if</span> a或b或r不存在, 就<span class="keyword">CREATE</span></span><br></pre></td></tr></table></figure>
 <ul>
 <li>NULL 如果RETURN的属性不存在,就会返回一个null作为该属性的值</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE a.name IS NOT NULL // 查询name值不为NULL的节点,即有name属性的节点</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE a.name IS NOT NULL // 查询name值不为NULL的节点,即有name属性的节点</span><br></pre></td></tr></table></figure>
 <ul>
 <li>in 判断属性值是否在列表中</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE a.name IN [&apos;given&apos;, &apos;zeng&apos;]</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE a.name IN ['given', 'zeng']</span><br></pre></td></tr></table></figure>
 <ul>
 <li><p>id “Id”是节点和关系的默认内部属性/home/zjw/Pictures/neo4j_import_relatiONship.png。 这意味着，当我们创建一个新的节点或关系时，Neo4j数据库服务器将为内部使用分配一个数字。 它会自动递增。最大值约为35亿</p>
 </li>
 <li><p>UPPER 转大写字母，LOWER 转小写字母</p>
 </li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE ... RETURN UPPER(a.p1) as p1</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE ... RETURN UPPER(a.p1) as p1</span><br></pre></td></tr></table></figure>
 <ul>
 <li>SUBSTRING 它接受一个字符串作为输入和两个索引：一个是索引的开始，另一个是索引的结束，并返回从StartInded到EndIndex-1的子字符串。</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE ... RETURN SUBSTRING(a.p1,0,10) AS p1</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE ... RETURN SUBSTRING(a.p1,0,10) AS p1</span><br></pre></td></tr></table></figure>
 <ul>
 <li>聚合countmaxsumminavg</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE ... RETURN COUNT(*)</span><br><span class="line"></span><br><span class="line">RETURN MAX(a.age), MIN(a.age), AVG(a.age), SUM(a.age)</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a:A) WHERE ... RETURN COUNT(*)</span><br><span class="line"></span><br><span class="line">RETURN MAX(a.age), MIN(a.age), AVG(a.age), SUM(a.age)</span><br></pre></td></tr></table></figure>
 <ul>
 <li>关系函数<ul>
 <li>startnode 获取关系的开始节点</li>
@@ -202,22 +202,22 @@
 </ul>
 </li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a)-[movie:ACTION_MOVIES]-&gt;(b)</span><br><span class="line">RETURN STARTNODE(movie)</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MATCH (a)-[movie:ACTION_MOVIES]-&gt;(b)</span><br><span class="line">RETURN STARTNODE(movie)</span><br></pre></td></tr></table></figure>
 <ul>
 <li>索引</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CREATE index ON a:A (p1)</span><br><span class="line">CREATE index ON :A (p1)</span><br><span class="line">DROP index ON :A (p1)</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">index</span> <span class="keyword">ON</span> a:A (p1)</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">index</span> <span class="keyword">ON</span> :A (p1)</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">index</span> <span class="keyword">ON</span> :A (p1)</span><br></pre></td></tr></table></figure>
 <ul>
 <li>unique</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE constraint ON (a:A) assert a.p1 is unique</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">constraint</span> <span class="keyword">ON</span> (a:A) assert a.p1 <span class="keyword">is</span> <span class="keyword">unique</span></span><br></pre></td></tr></table></figure>
 <ul>
 <li>其他</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">WHERE exists (a.name) //节点存在属性</span><br><span class="line">WHERE n.name contains &apos;giv&apos; // 属性包含</span><br><span class="line">WHERE a.name starts with &apos;g&apos; // 属性开头</span><br><span class="line">WHERE a.name ends with &apos;n&apos; //属性结尾</span><br><span class="line">WHERE n.name=~&apos;.*ive.*&apos; // 使用正则表达式</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">WHERE exists (a.name) //节点存在属性</span><br><span class="line">WHERE n.name contains 'giv' // 属性包含</span><br><span class="line">WHERE a.name starts with 'g' // 属性开头</span><br><span class="line">WHERE a.name ends with 'n' //属性结尾</span><br><span class="line">WHERE n.name=~'.*ive.*' // 使用正则表达式</span><br></pre></td></tr></table></figure>
 <h3 id="导入数据"><a href="#导入数据" class="headerlink" title="导入数据"></a>导入数据</h3><p>csv格式:第一行是字段名,后面是每个字段的值</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">p1,p2</span><br><span class="line">v1,v2</span><br><span class="line">v1,v2</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">load csv with headers from &quot;file path&quot; as line</span><br><span class="line">merge (a:A&#123;p1:line.p1, p2:line.2&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">p1,p2</span><br><span class="line">v1,v2</span><br><span class="line">v1,v2</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">load</span> csv <span class="keyword">with</span> headers <span class="keyword">from</span> <span class="string">"file path"</span> <span class="keyword">as</span> line</span><br><span class="line"><span class="keyword">merge</span> (a:A&#123;p1:line.p1, p2:line<span class="number">.2</span>&#125;)</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
