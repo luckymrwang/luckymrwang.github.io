@@ -21,10 +21,10 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/neo4j_2.png">
 <meta property="og:image" content="https://luckymrwang.github.io/images/neo4j_3.png">
-<meta property="og:image" content="https://luckymrwang.github.io/2018/09/19/Neo4j实例/neo4j_5.png">
-<meta property="og:image" content="https://luckymrwang.github.io/2018/09/19/Neo4j实例/neo4j_4.png">
-<meta property="og:image" content="https://luckymrwang.github.io/2018/09/19/Neo4j实例/neo4j_6.png">
-<meta property="og:updated_time" content="2018-09-19T08:53:38.615Z">
+<meta property="og:image" content="https://luckymrwang.github.io/images/neo4j_5.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/neo4j_4.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/neo4j_6.png">
+<meta property="og:updated_time" content="2018-09-19T08:59:42.107Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Neo4j实例">
 <meta name="twitter:description" content="实例介绍为了方便用户入门，Neo4j Web管理界面提供了一个官方入门实例“电影关系图”，帮助初学者在自己电脑上一步步创建一个入门级别的图数据库。下面围绕这个“电影关系图”实例一步步介绍、分析其创建和查询等操作。 首先，打开Neo4j Web管理界面后，在引导实例区单即“Write Code”链接进入代码书写引导页，然后单击Movie Graph下的Create a graph链接就进入“电影关系">
@@ -178,13 +178,13 @@
 </ul>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (people:Person)-[relatedTo]-(:Movie &#123;title: "Cloud Atlas"&#125;) RETURN people.name, Type(relatedTo), relatedTo</span><br></pre></td></tr></table></figure>
 <p>上面指令首先匹配节点类型为Person的节点，然后匹配节点类型为Movie、节点属性为{title: “Cloud Atlas”}的节点，最后匹配他们两者之间存在某种关系（无论是导演还是演员关系）的情况，然后将人名、电影的关系类型、电影的关系同时返回。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (people:Person)-[relatedTo]-(movie:Movie &#123;title: "Cloud Atlas"&#125;) RETURN people, movie</span><br><span class="line"></span><br><span class="line">// MATCH (p:Person)-[:ACTED_IN]-&gt;(movie:Movie&#123;title:"Cloud Atlas"&#125;)&lt;-[:DIRECTED]-(p1:Person) RETURN p1,p,movie</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MATCH (people:Person)-[relatedTo]-(movie:Movie &#123;title: "Cloud Atlas"&#125;) RETURN people, movie</span><br><span class="line"></span><br><span class="line">// 另一种写法</span><br><span class="line">MATCH (p:Person)-[:ACTED_IN]-&gt;(movie:Movie&#123;title:"Cloud Atlas"&#125;)&lt;-[:DIRECTED]-(p1:Person) RETURN p1,p,movie</span><br></pre></td></tr></table></figure>
 <h4 id="查询关系路径"><a href="#查询关系路径" class="headerlink" title="查询关系路径"></a>查询关系路径</h4><p>使用Neo4j的关系路径查询可以查找任意深度的关系路径，也就很轻松地能够实现人脉关系的查询了</p>
 <ul>
 <li>查询两人之间的间接关系</li>
 </ul>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH r=(p:Person&#123;name:"Carrie-Anne Moss"&#125;)-[*1..3]-(p1:Person&#123;name:"Lilly Wachowski"&#125;) RETURN r</span><br></pre></td></tr></table></figure>
-<p><img src="neo4j_5.png" alt="neo4j_5"></p>
+<p><img src="/images/neo4j_5.png" alt="neo4j_5"></p>
 <ul>
 <li>查询两人之间的间接关系的另外一种方式</li>
 </ul>
@@ -198,7 +198,7 @@
 </ul>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MATCH p=shortestPath(</span><br><span class="line">  (bacon:Person &#123;name:"Kevin Bacon"&#125;)-[*]-(meg:Person &#123;name:"Meg Ryan"&#125;)</span><br><span class="line">)</span><br><span class="line">RETURN p</span><br></pre></td></tr></table></figure>
 <p>上面指令首先匹配节点类型我Person、属性为{name: “Kevin Bacon”}的节点，再匹配节点类型为Person、属性为{name: “Meg Ryan”}的节点，两者用[*]关系操作符相连代表两者存在任意深度的关系，然后使用shortestPath方法返回两者在所有深度关系遍历路径中最短的一条。返回结果如下图：</p>
-<p><img src="neo4j_4.png" alt="neo4j_4"></p>
+<p><img src="/images/neo4j_4.png" alt="neo4j_4"></p>
 <p>结果可以看出演员Meg Ryan与Tom Hanks同参演过Joe Versus the Volcano电影。而Tom Hanks与Kevin Bacon同参演过Apollo 13电影，这就是他们两者之间的最短关系路径。</p>
 <h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>基于这个“电影关系图”实例，可以考虑一下其他的应用场景：要为Tom Hanks推荐其他合作伙伴，一个比较好的办法就是通过认识Tom Hanks的人的人脉来寻找新的合作伙伴。</p>
 <p>对于Tom Hanks来说，这意味着：</p>
@@ -208,7 +208,7 @@
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MATCH (tom:Person &#123;name:"Tom Hanks"&#125;)-[:ACTED_IN]-&gt;(m)&lt;-[:ACTED_IN]-(coActors),</span><br><span class="line">      (coActors)-[:ACTED_IN]-&gt;(m2)&lt;-[:ACTED_IN]-(cocoActors)</span><br><span class="line">WHERE NOT (tom)-[:ACTED_IN]-&gt;()&lt;-[:ACTED_IN]-(cocoActors) AND tom &lt;&gt; cocoActors</span><br><span class="line">RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC</span><br></pre></td></tr></table></figure>
 <p>找人将Tom Hanks介绍给Tom Cruise</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (tom:Person &#123;name:"Tom Hanks"&#125;)-[:ACTED_IN]-&gt;(m)&lt;-[:ACTED_IN]-(coActors),</span><br><span class="line">      (coActors)-[:ACTED_IN]-&gt;(m2)&lt;-[:ACTED_IN]-(cruise:Person &#123;name:"Tom Cruise"&#125;)</span><br><span class="line">RETURN tom, m, coActors, m2, cruise</span><br></pre></td></tr></table></figure>
-<p><img src="neo4j_6.png" alt="neo4j_6"></p>
+<p><img src="/images/neo4j_6.png" alt="neo4j_6"></p>
 <p>引自<a href="http://www.ywnds.com/?p=11761" target="_blank" rel="noopener">这里</a></p>
   
 	</div>
