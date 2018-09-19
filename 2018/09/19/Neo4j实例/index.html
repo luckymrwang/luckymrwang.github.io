@@ -1,0 +1,589 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Neo4j实例 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="实例介绍为了方便用户入门，Neo4j Web管理界面提供了一个官方入门实例“电影关系图”，帮助初学者在自己电脑上一步步创建一个入门级别的图数据库。下面围绕这个“电影关系图”实例一步步介绍、分析其创建和查询等操作。 首先，打开Neo4j Web管理界面后，在引导实例区单即“Write Code”链接进入代码书写引导页，然后单击Movie Graph下的Create a graph链接就进入“电影关系">
+<meta name="keywords" content="Neo4j">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Neo4j实例">
+<meta property="og:url" content="https://luckymrwang.github.io/2018/09/19/Neo4j实例/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="实例介绍为了方便用户入门，Neo4j Web管理界面提供了一个官方入门实例“电影关系图”，帮助初学者在自己电脑上一步步创建一个入门级别的图数据库。下面围绕这个“电影关系图”实例一步步介绍、分析其创建和查询等操作。 首先，打开Neo4j Web管理界面后，在引导实例区单即“Write Code”链接进入代码书写引导页，然后单击Movie Graph下的Create a graph链接就进入“电影关系">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/neo4j_2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/neo4j_3.png">
+<meta property="og:image" content="https://luckymrwang.github.io/2018/09/19/Neo4j实例/neo4j_5.png">
+<meta property="og:image" content="https://luckymrwang.github.io/2018/09/19/Neo4j实例/neo4j_4.png">
+<meta property="og:image" content="https://luckymrwang.github.io/2018/09/19/Neo4j实例/neo4j_6.png">
+<meta property="og:updated_time" content="2018-09-19T08:53:38.615Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Neo4j实例">
+<meta name="twitter:description" content="实例介绍为了方便用户入门，Neo4j Web管理界面提供了一个官方入门实例“电影关系图”，帮助初学者在自己电脑上一步步创建一个入门级别的图数据库。下面围绕这个“电影关系图”实例一步步介绍、分析其创建和查询等操作。 首先，打开Neo4j Web管理界面后，在引导实例区单即“Write Code”链接进入代码书写引导页，然后单击Movie Graph下的Create a graph链接就进入“电影关系">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/neo4j_2.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/09/19/Neo4j实例/" title="Neo4j实例" itemprop="url">Neo4j实例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2018-09-19T02:43:54.000Z" itemprop="datePublished"> 发表于 2018-09-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例介绍"><span class="toc-number">1.</span> <span class="toc-text">实例介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建图数据"><span class="toc-number">2.</span> <span class="toc-text">创建图数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检索节点"><span class="toc-number">3.</span> <span class="toc-text">检索节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查找关系"><span class="toc-number">4.</span> <span class="toc-text">查找关系</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#查找演员参演的电影"><span class="toc-number">4.1.</span> <span class="toc-text">查找演员参演的电影</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询关系路径"><span class="toc-number">4.2.</span> <span class="toc-text">查询关系路径</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#场景"><span class="toc-number">5.</span> <span class="toc-text">场景</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="实例介绍"><a href="#实例介绍" class="headerlink" title="实例介绍"></a>实例介绍</h3><p>为了方便用户入门，Neo4j Web管理界面提供了一个官方入门实例“电影关系图”，帮助初学者在自己电脑上一步步创建一个入门级别的图数据库。下面围绕这个“电影关系图”实例一步步介绍、分析其创建和查询等操作。</p>
+<p>首先，打开Neo4j Web管理界面后，在引导实例区单即“Write Code”链接进入代码书写引导页，然后单击Movie Graph下的Create a graph链接就进入“电影关系图”实例引导界面了，如下图：</p>
+<p><img src="/images/neo4j_2.png" alt="neo4j"></p>
+<p>电影关系图实例将电影、电影导演、演员之间的复杂网状关系作为蓝本，使用Neo4j创建三者关系的图结构，虽然实例数据规模小但结构是相对完整的。</p>
+<a id="more"></a>
+<h3 id="创建图数据"><a href="#创建图数据" class="headerlink" title="创建图数据"></a>创建图数据</h3><ul>
+<li>创建电影节点</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> (TheMatrix:Movie &#123;title:<span class="string">'The Matrix'</span>, released:<span class="number">1999</span>, tagline:<span class="string">'Welcome to the Real World'</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>上面的Cypher语句使用CREATE指令创建了一个Movie节点，这儿节点上带有三个属性，分别表示这个电影的标题：The Matrix、发布时间：1999、宣传词：Welome to the Real World。</p>
+<p>上述Cypher语句运行后将会在数据库中创建一个Movie节点</p>
+<ul>
+<li>创建人物节点</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> (Keanu:Person &#123;<span class="keyword">name</span>:<span class="string">'Keanu Reeves'</span>, born:<span class="number">1964</span>&#125;)</span><br><span class="line"><span class="keyword">CREATE</span> (Carrie:Person &#123;<span class="keyword">name</span>:<span class="string">'Carrie-Anne Moss'</span>, born:<span class="number">1967</span>&#125;)</span><br><span class="line"><span class="keyword">CREATE</span> (Laurence:Person &#123;<span class="keyword">name</span>:<span class="string">'Laurence Fishburne'</span>, born:<span class="number">1961</span>&#125;)</span><br><span class="line"><span class="keyword">CREATE</span> (Hugo:Person &#123;<span class="keyword">name</span>:<span class="string">'Hugo Weaving'</span>, born:<span class="number">1960</span>&#125;)</span><br><span class="line"><span class="keyword">CREATE</span> (LillyW:Person &#123;<span class="keyword">name</span>:<span class="string">'Lilly Wachowski'</span>, born:<span class="number">1967</span>&#125;)</span><br><span class="line"><span class="keyword">CREATE</span> (LanaW:Person &#123;<span class="keyword">name</span>:<span class="string">'Lana Wachowski'</span>, born:<span class="number">1965</span>&#125;)</span><br><span class="line"><span class="keyword">CREATE</span> (JoelS:Person &#123;<span class="keyword">name</span>:<span class="string">'Joel Silver'</span>, born:<span class="number">1952</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>上面代码使用CREATE指令创建了一个Person节点，节点带有两个属性：名字和出生时间。在后续的6行代码中都使用了同样的CREATE指令分别创建了人物：Carrie、Laurence、Hugo、LillyW、LanaW和JoelS。</p>
+<ul>
+<li>创建演员、导演、制片商关系</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span></span><br><span class="line">  (Keanu)-[:ACTED_IN &#123;<span class="keyword">roles</span>:[<span class="string">'Neo'</span>]&#125;]-&gt;(TheMatrix),</span><br><span class="line">  (Carrie)-[:ACTED_IN &#123;<span class="keyword">roles</span>:[<span class="string">'Trinity'</span>]&#125;]-&gt;(TheMatrix),</span><br><span class="line">  (Laurence)-[:ACTED_IN &#123;<span class="keyword">roles</span>:[<span class="string">'Morpheus'</span>]&#125;]-&gt;(TheMatrix),</span><br><span class="line">  (Hugo)-[:ACTED_IN &#123;<span class="keyword">roles</span>:[<span class="string">'Agent Smith'</span>]&#125;]-&gt;(TheMatrix),</span><br><span class="line">  (LillyW)-[:DIRECTED]-&gt;(TheMatrix),</span><br><span class="line">  (LanaW)-[:DIRECTED]-&gt;(TheMatrix),</span><br><span class="line">  (JoelS)-[:PRODUCED]-&gt;(TheMatrix)</span><br></pre></td></tr></table></figure>
+<p>上面代码中除了使用CREATE指令外，还使用了箭头运算符，如： <code>(Keanu)-[:ACTED_IN {roles:[&#39;Neo&#39;]}]-&gt;(TheMatrix)</code>，这一行的意思是创建一个演员参演电影的关系，演员Keanu以角色 <code>roles:[&#39;Neo&#39;]</code>参演ACTED_IN到电影 TheMatrix中。代码前4行都是创建演员参演电影关系的指令。第5-6行指令意思是创建导演与电影的关系，即LillyW导演了 <code>[:DIRECTED]</code>电影TheMatrix。第7行指令意思是生产商与电影的关系，即JoelS生产了<code>[:PRODUCED]</code>电影TheMatrix。</p>
+<p>上面的指令运行完成后，数据库中会有以下整个关系图存储形态（电影、任务、关系三段代码要一起运行才行貌似）</p>
+<p><img src="/images/neo4j_3.png" alt="neo4j_3"></p>
+<p>这样数据库中一个电影、演员、导演、制片商的关系就创建出来了。官方示例后面代码的同样指令分别创建了电影：TheMatrixReloaded、TheMatrixRevolutions、TheDevilsAdvocate、AFewGoodMen等，然后又创建了与这些电影相关的演员、导演、制片商们之间的关系。</p>
+<p>通过上述的创建指令就把“电影关系图”实例创建出来了</p>
+<h3 id="检索节点"><a href="#检索节点" class="headerlink" title="检索节点"></a>检索节点</h3><ul>
+<li>查找人员</li>
+</ul>
+<p>查找名为“Tom Hanks”的人物：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (tom &#123;name: "Tom Hanks"&#125;) RETURN tom</span><br></pre></td></tr></table></figure>
+<p>上面语句使用MATCH指令查找匹配条件：{name: “Tom Hanks”}的节点</p>
+<ul>
+<li>查找电影节点</li>
+</ul>
+<p>查找名为“Cloud Atlas”的电影：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (cloudAtlas &#123;title: "Cloud Atlas"&#125;) RETURN cloudAtlas</span><br></pre></td></tr></table></figure>
+<ul>
+<li>随机查找多个人物的人名</li>
+</ul>
+<p>随机查找10个人物的名字</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (people:Person) RETURN people.name LIMIT 10</span><br></pre></td></tr></table></figure>
+<ul>
+<li>查找多个电影</li>
+</ul>
+<p>查找1990年到2000年发行的电影的名称</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (nineties:Movie) WHERE nineties.released &gt;= 1990 AND nineties.released &lt; 2000 RETURN nineties.title</span><br></pre></td></tr></table></figure>
+<h3 id="查找关系"><a href="#查找关系" class="headerlink" title="查找关系"></a>查找关系</h3><h4 id="查找演员参演的电影"><a href="#查找演员参演的电影" class="headerlink" title="查找演员参演的电影"></a>查找演员参演的电影</h4><ul>
+<li>查找“Tom Hanks”参演过的电影的名称</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (tom:Person &#123;name: "Tom Hanks"&#125;)-[:ACTED_IN]-&gt;(tomHanksMovies) RETURN tom,tomHanksMovies</span><br></pre></td></tr></table></figure>
+<p>上述指令首先匹配节点类型为Person、属性为{name: “Tom Hanks”}的节点，然后匹配此节点具有关系[:ACTED_IN]，并且此关系指向某个电影节点的节点</p>
+<ul>
+<li>查询汤姆汉克斯导演的所有电影</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">match (p:Person&#123;name:'Tom Hanks'&#125;)-[r:DIRECTED]-(movie:Movie) return p,movie</span><br></pre></td></tr></table></figure>
+<ul>
+<li>查找谁导演了电影“Cloud Atlas”</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (cloudAtlas &#123;title: "Cloud Atlas"&#125;)&lt;-[:DIRECTED]-(directors) RETURN directors.name</span><br></pre></td></tr></table></figure>
+<p>上面指令首先匹配属性为{title: “Cloud Atlas”}的节点，然后匹配此节点具有关系[:DIRECTED]并且是被某个节点指向的节点，再返回匹配节点的name属性。</p>
+<ul>
+<li>查找与“Tom Hanks”同出演过电影的人</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (tom:Person &#123;name:"Tom Hanks"&#125;)-[:ACTED_IN]-&gt;(m)&lt;-[:ACTED_IN]-(coActors) RETURN coActors.name</span><br></pre></td></tr></table></figure>
+<p>上面指令首先匹配节点类型为Person、属性为{name:“Tom Hanks”}的节点，然后匹配此节点通过[:ACTED_IN]关系指向的节点m，并且同时匹配某个节点coActors也通过[:ACTED_IN]关系指向的节点m，然后返回匹配节点m的name属性。这样与Tom Hanks同时出演过电影的人的姓名就查出来了</p>
+<ul>
+<li>查找与电影“Cloud Atlas”相关的所有人</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (people:Person)-[relatedTo]-(:Movie &#123;title: "Cloud Atlas"&#125;) RETURN people.name, Type(relatedTo), relatedTo</span><br></pre></td></tr></table></figure>
+<p>上面指令首先匹配节点类型为Person的节点，然后匹配节点类型为Movie、节点属性为{title: “Cloud Atlas”}的节点，最后匹配他们两者之间存在某种关系（无论是导演还是演员关系）的情况，然后将人名、电影的关系类型、电影的关系同时返回。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (people:Person)-[relatedTo]-(movie:Movie &#123;title: "Cloud Atlas"&#125;) RETURN people, movie</span><br><span class="line"></span><br><span class="line">// MATCH (p:Person)-[:ACTED_IN]-&gt;(movie:Movie&#123;title:"Cloud Atlas"&#125;)&lt;-[:DIRECTED]-(p1:Person) RETURN p1,p,movie</span><br></pre></td></tr></table></figure>
+<h4 id="查询关系路径"><a href="#查询关系路径" class="headerlink" title="查询关系路径"></a>查询关系路径</h4><p>使用Neo4j的关系路径查询可以查找任意深度的关系路径，也就很轻松地能够实现人脉关系的查询了</p>
+<ul>
+<li>查询两人之间的间接关系</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH r=(p:Person&#123;name:"Carrie-Anne Moss"&#125;)-[*1..3]-(p1:Person&#123;name:"Lilly Wachowski"&#125;) RETURN r</span><br></pre></td></tr></table></figure>
+<p><img src="neo4j_5.png" alt="neo4j_5"></p>
+<ul>
+<li>查询两人之间的间接关系的另外一种方式</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p:Person&#123;name:"Carrie-Anne Moss"&#125;),(p1:Person&#123;name:"Lilly Wachowski"&#125;),r=((p)-[*..3]-(p1)) RETURN r</span><br></pre></td></tr></table></figure>
+<ul>
+<li>查询两人之间的间接关系的最短路径</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MATCH (p:Person&#123;name:"Carrie-Anne Moss"&#125;),</span><br><span class="line">(p1:Person&#123;name:"Lilly Wachowski"&#125;),</span><br><span class="line">r=shortestPath((p)-[*..3]-(p1)) </span><br><span class="line">RETURN r</span><br></pre></td></tr></table></figure>
+<ul>
+<li>查找与演员“Kevin Bacon”存在4条及以内关系的任何演员和电影</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MATCH p=shortestPath(</span><br><span class="line">  (bacon:Person &#123;name:"Kevin Bacon"&#125;)-[*]-(meg:Person &#123;name:"Meg Ryan"&#125;)</span><br><span class="line">)</span><br><span class="line">RETURN p</span><br></pre></td></tr></table></figure>
+<p>上面指令首先匹配节点类型我Person、属性为{name: “Kevin Bacon”}的节点，再匹配节点类型为Person、属性为{name: “Meg Ryan”}的节点，两者用[*]关系操作符相连代表两者存在任意深度的关系，然后使用shortestPath方法返回两者在所有深度关系遍历路径中最短的一条。返回结果如下图：</p>
+<p><img src="neo4j_4.png" alt="neo4j_4"></p>
+<p>结果可以看出演员Meg Ryan与Tom Hanks同参演过Joe Versus the Volcano电影。而Tom Hanks与Kevin Bacon同参演过Apollo 13电影，这就是他们两者之间的最短关系路径。</p>
+<h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>基于这个“电影关系图”实例，可以考虑一下其他的应用场景：要为Tom Hanks推荐其他合作伙伴，一个比较好的办法就是通过认识Tom Hanks的人的人脉来寻找新的合作伙伴。</p>
+<p>对于Tom Hanks来说，这意味着：</p>
+<p>第一步，先找到Tom Hanks还没有合作过的演员，但Tom Hanks的合作伙伴曾经与其合作过。</p>
+<p>第二步，找到一个可以向他的潜在合作者介绍Tom Hanks的人。</p>
+<p>查找没有与Tom Hanks合作过的演员</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MATCH (tom:Person &#123;name:"Tom Hanks"&#125;)-[:ACTED_IN]-&gt;(m)&lt;-[:ACTED_IN]-(coActors),</span><br><span class="line">      (coActors)-[:ACTED_IN]-&gt;(m2)&lt;-[:ACTED_IN]-(cocoActors)</span><br><span class="line">WHERE NOT (tom)-[:ACTED_IN]-&gt;()&lt;-[:ACTED_IN]-(cocoActors) AND tom &lt;&gt; cocoActors</span><br><span class="line">RETURN cocoActors.name AS Recommended, count(*) AS Strength ORDER BY Strength DESC</span><br></pre></td></tr></table></figure>
+<p>找人将Tom Hanks介绍给Tom Cruise</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MATCH (tom:Person &#123;name:"Tom Hanks"&#125;)-[:ACTED_IN]-&gt;(m)&lt;-[:ACTED_IN]-(coActors),</span><br><span class="line">      (coActors)-[:ACTED_IN]-&gt;(m2)&lt;-[:ACTED_IN]-(cruise:Person &#123;name:"Tom Cruise"&#125;)</span><br><span class="line">RETURN tom, m, coActors, m2, cruise</span><br></pre></td></tr></table></figure>
+<p><img src="neo4j_6.png" alt="neo4j_6"></p>
+<p>引自<a href="http://www.ywnds.com/?p=11761" target="_blank" rel="noopener">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Neo4j/">Neo4j</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2018/09/19/Neo4j实例/" data-title="Neo4j实例 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2018/09/18/Neo4j/"  title="Neo4j">
+ <strong>下一篇：</strong><br/> 
+ <span>Neo4j
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2018/09/19/Neo4j实例/" data-title="Neo4j实例" data-url="https://luckymrwang.github.io/2018/09/19/Neo4j实例/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例介绍"><span class="toc-number">1.</span> <span class="toc-text">实例介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建图数据"><span class="toc-number">2.</span> <span class="toc-text">创建图数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#检索节点"><span class="toc-number">3.</span> <span class="toc-text">检索节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查找关系"><span class="toc-number">4.</span> <span class="toc-text">查找关系</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#查找演员参演的电影"><span class="toc-number">4.1.</span> <span class="toc-text">查找演员参演的电影</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询关系路径"><span class="toc-number">4.2.</span> <span class="toc-text">查询关系路径</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#场景"><span class="toc-number">5.</span> <span class="toc-text">场景</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>26</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/缓存/" title="缓存">缓存<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Neo4j/" title="Neo4j">Neo4j<sup>2</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m luckymrwang. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/iuckymrwang" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
