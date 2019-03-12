@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2019/03/12/在Mac上使用-sed-的问题/" title="在Mac上使用 sed 的问题" itemprop="url">在Mac上使用 sed 的问题</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-03-12T06:19:04.000Z" itemprop="datePublished"> 发表于 2019-03-12</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i  &apos;s/hello/world/g&apos; hello.php</span><br></pre></td></tr></table></figure>
+<p>上面这行代码，可以在 linux 上运行，作用是将找到的 hello 替换为 world，并且直接保存修改到文件。但是如果在 Mac 上，你会发现这行代码会报错。原因是在 Mac 上，sed 命令直接操作文件的时候，必须指定备份的格式，而在 linux 上，却并没有这个要求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i &apos;&apos; &apos;s/hello/world/g&apos; hello.php</span><br></pre></td></tr></table></figure>
+<p>如上面的代码所示，在 -i 之后加上一对引号，来指定备份格式，如果不需要备份，引号里的内容可以为空。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/Mac/">Mac</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2019/03/12/在Mac上使用-sed-的问题/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/03/12/在Mac上使用-sed-的问题/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2019/01/02/protobuf-import路径问题/" title="protobuf import路径问题" itemprop="url">protobuf import路径问题</a>
   </h1>
   <p class="article-author">By
@@ -638,66 +699,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2018/03/29/Golang中defer细究/" title="Golang中defer细究" itemprop="url">Golang中defer细究</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2018-03-29T09:37:29.000Z" itemprop="datePublished"> 发表于 2018-03-29</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h3><p><code>defer</code> 意为延迟，在 <code>golang</code> 中用于延迟执行一个函数。它可以帮助我们处理容易忽略的问题，如资源释放、连接关闭等。但在实际使用过程中，有一些需要注意的地方（坑），下面我们一一道来。</p>
-<h3 id="匿名与有名返回值"><a href="#匿名与有名返回值" class="headerlink" title="匿名与有名返回值"></a>匿名与有名返回值</h3><h4 id="匿名"><a href="#匿名" class="headerlink" title="匿名"></a>匿名</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"a return:"</span>, a()) <span class="comment">// 打印结果为 a return: 0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">a</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> i <span class="keyword">int</span></span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		i++</span><br><span class="line">		fmt.Println(<span class="string">"a defer2:"</span>, i) <span class="comment">// 打印结果为 a defer2: 2</span></span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		i++</span><br><span class="line">		fmt.Println(<span class="string">"a defer1:"</span>, i) <span class="comment">// 打印结果为 a defer1: 1</span></span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> i</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2018/03/29/Golang中defer细究/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Golang/">Golang</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2018/03/29/Golang中defer细究/#comments" class="ds-thread-count comments-count-link" data-thread-key="2018/03/29/Golang中defer细究/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -737,7 +738,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>9</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>10</sup></a></li>
 			
 		
 			
@@ -749,7 +750,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>5</sup></a></li>
 			
 		
 			
@@ -761,15 +762,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
@@ -777,11 +770,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>3</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -789,19 +782,27 @@
 			
 		
 			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/缓存/" title="缓存">缓存<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			

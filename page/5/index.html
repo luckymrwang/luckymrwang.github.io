@@ -82,6 +82,68 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/11/17/Go语言测试-Test-性能测试-Benchmark/" title="Go语言测试(Test)&amp;性能测试(Benchmark)" itemprop="url">Go语言测试(Test)&amp;性能测试(Benchmark)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-17T03:33:58.000Z" itemprop="datePublished"> 发表于 2016-11-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><h3 id="Test"><a href="#Test" class="headerlink" title="Test"></a>Test</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Package testing provides support for automated testing of Go packages. It is intended to be used in concert with the “go test” command, which automates execution of any function of the form.</span><br></pre></td></tr></table></figure>
+<p>testing 包提供了对Go包的自动测试支持。 这是和go test 命令相呼应的功能， go test 命令会自动执行所以符合格式</p>
+<pre><code>func TestXXX(t *testing.T) 
+</code></pre><h3 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Functions of the form</span><br><span class="line"></span><br><span class="line">func BenchmarkXxx(b *testing.B)</span><br><span class="line"></span><br><span class="line">are considered benchmarks, and are executed by the “go test” command when &gt;its -bench flag is provided. Benchmarks are run sequentially.</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/11/17/Go语言测试-Test-性能测试-Benchmark/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/17/Go语言测试-Test-性能测试-Benchmark/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/17/Go语言测试-Test-性能测试-Benchmark/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/11/15/linux-下使用-curl-访问带多参数，GET掉参数解决方案/" title="linux 下使用 curl 访问带多参数，GET掉参数解决方案" itemprop="url">linux 下使用 curl 访问带多参数，GET掉参数解决方案</a>
   </h1>
   <p class="article-author">By
@@ -634,65 +696,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/10/21/Go实现快速排序和冒泡排序/" title="Go实现快速排序和冒泡排序" itemprop="url">Go实现快速排序和冒泡排序</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-10-21T06:31:25.000Z" itemprop="datePublished"> 发表于 2016-10-21</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">quickSort</span><span class="params">(values []<span class="keyword">int</span>, left <span class="keyword">int</span>, right <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> left &lt; right &#123;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 设置基准值</span></span><br><span class="line">		temp := values[left]</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 设置哨兵</span></span><br><span class="line">		i, j := left, right</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			<span class="comment">// 从右向左找，找到第一个比基准值小的数</span></span><br><span class="line">			<span class="keyword">for</span> values[j] &gt;= temp &amp;&amp; i &lt; j &#123;</span><br><span class="line">				j--</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 从左向右找，找到第一个比基准值大的数</span></span><br><span class="line">			<span class="keyword">for</span> values[i] &lt;= temp &amp;&amp; i &lt; j &#123;</span><br><span class="line">				i++</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 如果哨兵相遇，则退出循环</span></span><br><span class="line">			<span class="keyword">if</span> i &gt;= j &#123;</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 交换左右两侧的值</span></span><br><span class="line">			values[i], values[j] = values[j], values[i]</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 将基准值移到哨兵相遇点</span></span><br><span class="line">		values[left] = values[i]</span><br><span class="line">		values[i] = temp</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 递归，左右两侧分别排序</span></span><br><span class="line">		quickSort(values, left, i<span class="number">-1</span>)</span><br><span class="line">		quickSort(values, i+<span class="number">1</span>, right)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">QuickSort</span><span class="params">(values []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	quickSort(values, <span class="number">0</span>, <span class="built_in">len</span>(values)<span class="number">-1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BubbleSort</span><span class="params">(values []<span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="built_in">len</span>(values); i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(values)-i; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> values[j] &gt; values[j+<span class="number">1</span>] &#123;</span><br><span class="line">				values[j], values[j+<span class="number">1</span>] = values[j+<span class="number">1</span>], values[j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">arr := []<span class="keyword">int</span>&#123;<span class="number">3</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">38</span>, <span class="number">93</span>, <span class="number">12</span>, <span class="number">222</span>, <span class="number">45</span>, <span class="number">93</span>, <span class="number">23</span>, <span class="number">84</span>, <span class="number">65</span>, <span class="number">2</span>&#125;</span><br><span class="line">	QuickSort(arr)</span><br><span class="line">	fmt.Println(arr)</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 结果</span></span><br><span class="line">	[<span class="number">2</span> <span class="number">3</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">12</span> <span class="number">23</span> <span class="number">38</span> <span class="number">45</span> <span class="number">65</span> <span class="number">84</span> <span class="number">93</span> <span class="number">93</span> <span class="number">222</span>]</span><br><span class="line"></span><br><span class="line">	arr2 := []<span class="keyword">int</span>&#123;<span class="number">3</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">38</span>, <span class="number">93</span>, <span class="number">12</span>, <span class="number">222</span>, <span class="number">45</span>, <span class="number">93</span>, <span class="number">23</span>, <span class="number">84</span>, <span class="number">65</span>, <span class="number">2</span>&#125;</span><br><span class="line">	BubbleSort(arr2)</span><br><span class="line">	fmt.Println(arr2)</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 结果</span></span><br><span class="line">	[<span class="number">2</span> <span class="number">3</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">12</span> <span class="number">23</span> <span class="number">38</span> <span class="number">45</span> <span class="number">65</span> <span class="number">84</span> <span class="number">93</span> <span class="number">93</span> <span class="number">222</span>]</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/10/21/Go实现快速排序和冒泡排序/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/10/21/Go实现快速排序和冒泡排序/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/4/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/6/">Next<span></span></a>
@@ -732,7 +735,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>9</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>10</sup></a></li>
 			
 		
 			
@@ -744,7 +747,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>5</sup></a></li>
 			
 		
 			
@@ -756,15 +759,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>4</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
@@ -772,11 +767,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>3</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -784,19 +779,27 @@
 			
 		
 			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/缓存/" title="缓存">缓存<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			
