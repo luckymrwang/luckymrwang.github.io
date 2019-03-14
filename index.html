@@ -82,6 +82,64 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2019/03/14/Specify-SSH-Port-for-Git/" title="Specify SSH Port for Git" itemprop="url">Specify SSH Port for Git</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-03-14T10:25:31.000Z" itemprop="datePublished"> 发表于 2019-03-14</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>当Git服务器的SSH端口不是默认22时，可以修改<code>~/.ssh/config</code>来连接</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">Port <span class="number">22</span></span><br><span class="line"></span><br><span class="line">Host *</span><br><span class="line">User git</span><br><span class="line">Port <span class="number">1234</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Git/">Git</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2019/03/14/Specify-SSH-Port-for-Git/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/03/14/Specify-SSH-Port-for-Git/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2019/03/12/在Mac上使用-sed-的问题/" title="在Mac上使用 sed 的问题" itemprop="url">在Mac上使用 sed 的问题</a>
   </h1>
   <p class="article-author">By
@@ -638,70 +696,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2018/04/19/Postgres-dump-table-into-file/" title="Postgres dump table into file" itemprop="url">Postgres dump table into file</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2018-04-19T04:36:39.000Z" itemprop="datePublished"> 发表于 2018-04-19</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <ul>
-<li>Using <a href="https://github.com/go-pg/pg" target="_blank" rel="noopener">go-pg</a>. To avoid out of memory issue, instead of writing the result to buffer, the result should be written directly to a file. The snippets will be:</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2018/04/19/Postgres-dump-table-into-file/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Postgres/">Postgres</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2018/04/19/Postgres-dump-table-into-file/#comments" class="ds-thread-count comments-count-link" data-thread-key="2018/04/19/Postgres-dump-table-into-file/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
@@ -750,19 +747,19 @@
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>5</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -778,6 +775,14 @@
 			
 		
 			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
@@ -786,23 +791,15 @@
 			
 		
 			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/缓存/" title="缓存">缓存<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			
