@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2018/08/02/Golang-在-Mac、Linux、Windows-下交叉编译/" title="Golang 在 Mac、Linux、Windows 下交叉编译" itemprop="url">Golang 在 Mac、Linux、Windows 下交叉编译</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2018-08-02T02:02:21.000Z" itemprop="datePublished"> 发表于 2018-08-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h4 id="Mac-下编译-Linux-和-Windows-64位可执行程序"><a href="#Mac-下编译-Linux-和-Windows-64位可执行程序" class="headerlink" title="Mac 下编译 Linux 和 Windows 64位可执行程序"></a>Mac 下编译 Linux 和 Windows 64位可执行程序</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=linux GOARCH=amd64 <span class="keyword">go</span> build main.<span class="keyword">go</span></span><br><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=windows GOARCH=amd64 <span class="keyword">go</span> build main.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+<h4 id="Linux-下编译-Mac-和-Windows-64位可执行程序"><a href="#Linux-下编译-Mac-和-Windows-64位可执行程序" class="headerlink" title="Linux 下编译 Mac 和 Windows 64位可执行程序"></a>Linux 下编译 Mac 和 Windows 64位可执行程序</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=darwin GOARCH=amd64 <span class="keyword">go</span> build main.<span class="keyword">go</span></span><br><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=windows GOARCH=amd64 <span class="keyword">go</span> build main.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+<h4 id="Windows-下编译-Mac-和-Linux-64位可执行程序"><a href="#Windows-下编译-Mac-和-Linux-64位可执行程序" class="headerlink" title="Windows 下编译 Mac 和 Linux 64位可执行程序"></a>Windows 下编译 Mac 和 Linux 64位可执行程序</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">SET CGO_ENABLED=<span class="number">0</span></span><br><span class="line">SET GOOS=darwin</span><br><span class="line">SET GOARCH=amd64</span><br><span class="line"><span class="keyword">go</span> build main.<span class="keyword">go</span></span><br><span class="line"></span><br><span class="line">SET CGO_ENABLED=<span class="number">0</span></span><br><span class="line">SET GOOS=linux</span><br><span class="line">SET GOARCH=amd64</span><br><span class="line"><span class="keyword">go</span> build main.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2018/08/02/Golang-在-Mac、Linux、Windows-下交叉编译/#comments" class="ds-thread-count comments-count-link" data-thread-key="2018/08/02/Golang-在-Mac、Linux、Windows-下交叉编译/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2018/04/19/Postgres-dump-table-into-file/" title="Postgres dump table into file" itemprop="url">Postgres dump table into file</a>
   </h1>
   <p class="article-author">By
@@ -613,72 +673,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2017/10/23/Golang-Mgo笔记/" title="Golang Mgo笔记" itemprop="url">Golang Mgo笔记</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2017-10-23T07:06:04.000Z" itemprop="datePublished"> 发表于 2017-10-23</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="mgo概述"><a href="#mgo概述" class="headerlink" title="mgo概述"></a>mgo概述</h3><p>mgo 为 mongodb golang中实现的driver，简单高效，官方地址： <a href="http://labix.org/mgo" target="_blank" rel="noopener">http://labix.org/mgo</a>, 主要实现了三个pkg:</p>
-<ul>
-<li><a href="http://gopkg.in/mgo.v2" target="_blank" rel="noopener">API docs for mgo</a></li>
-<li><a href="http://gopkg.in/mgo.v2/bson" target="_blank" rel="noopener">API docs for mgo/bson</a></li>
-<li><a href="http://gopkg.in/mgo.v2/txn" target="_blank" rel="noopener">API docs for mgo/txn</a> 多文档事务</li>
-</ul>
-<p>安装：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get gopkg.in/mgo.v2</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2017/10/23/Golang-Mgo笔记/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Golang/">Golang</a><a href="/tags/Mgo/">Mgo</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2017/10/23/Golang-Mgo笔记/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/10/23/Golang-Mgo笔记/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
@@ -730,7 +724,7 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -742,7 +736,7 @@
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -762,11 +756,11 @@
 			
 		
 			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
