@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="wrk  wrk is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-22T08:52:36.722Z">
+<meta property="og:updated_time" content="2019-03-22T08:52:36.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="wrk - http性能测试工具使用指南">
 <meta name="twitter:description" content="wrk  wrk is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such">
@@ -112,9 +112,9 @@
 <a id="more"></a>
 <h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install wrk</span><br></pre></td></tr></table></figure>
 <h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>1.使用帮助：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Usage: wrk &lt;options&gt; &lt;url&gt;</span><br><span class="line">  Options:</span><br><span class="line">    -c, --connections &lt;N&gt;  Connections to keep open</span><br><span class="line">    -d, --duration    &lt;T&gt;  Duration of test</span><br><span class="line">    -t, --threads     &lt;N&gt;  Number of threads to use</span><br><span class="line"></span><br><span class="line">    -s, --script      &lt;S&gt;  Load Lua script file</span><br><span class="line">    -H, --header      &lt;H&gt;  Add header to request</span><br><span class="line">        --latency          Print latency statistics</span><br><span class="line">        --timeout     &lt;T&gt;  Socket/request timeout</span><br><span class="line">    -v, --version          Print version details</span><br><span class="line"></span><br><span class="line">  Numeric arguments may include a SI unit (1k, 1M, 1G)</span><br><span class="line">  Time arguments may include a time unit (2s, 2m, 2h)</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Usage: wrk &lt;options&gt; <span class="xml"><span class="tag">&lt;<span class="name">url</span>&gt;</span></span></span><br><span class="line"><span class="xml">  Options:</span></span><br><span class="line">    -c, --connections &lt;N&gt;  Connections to keep open</span><br><span class="line">    -d, --duration    &lt;T&gt;  Duration of test</span><br><span class="line">    -t, --threads     &lt;N&gt;  Number of threads to use</span><br><span class="line"></span><br><span class="line">    -s, --script      &lt;S&gt;  Load Lua script file</span><br><span class="line">    -H, --header      &lt;H&gt;  Add header to request</span><br><span class="line">        --latency          Print latency statistics</span><br><span class="line">        --timeout     &lt;T&gt;  Socket/request timeout</span><br><span class="line">    -v, --version          Print version details</span><br><span class="line"></span><br><span class="line">  Numeric arguments may include a SI unit (1k, 1M, 1G)</span><br><span class="line">  Time arguments may include a time unit (2s, 2m, 2h)</span><br></pre></td></tr></table></figure>
 <p>中文：</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">使用方法: wrk &lt;选项&gt; &lt;被测HTTP服务的URL&gt;                            </span><br><span class="line">  Options:                                            </span><br><span class="line">    -c, --connections &lt;N&gt;  跟服务器建立并保持的TCP连接数量  </span><br><span class="line">    -d, --duration    &lt;T&gt;  压测时间           </span><br><span class="line">    -t, --threads     &lt;N&gt;  使用多少个线程进行压测   </span><br><span class="line">                                                      </span><br><span class="line">    -s, --script      &lt;S&gt;  指定Lua脚本路径       </span><br><span class="line">    -H, --header      &lt;H&gt;  为每一个HTTP请求添加HTTP头      </span><br><span class="line">        --latency          在压测结束后，打印延迟统计信息   </span><br><span class="line">        --timeout     &lt;T&gt;  超时时间     </span><br><span class="line">    -v, --version          打印正在使用的wrk的详细版本信息</span><br><span class="line">                                                      </span><br><span class="line">  &lt;N&gt;代表数字参数，支持国际单位 (1k, 1M, 1G)</span><br><span class="line">  &lt;T&gt;代表时间参数，支持时间单位 (2s, 2m, 2h)</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">使用方法: wrk &lt;选项&gt; <span class="xml"><span class="tag">&lt;<span class="name">被测HTTP服务的URL</span>&gt;</span>                            </span></span><br><span class="line"><span class="xml">  Options:                                            </span></span><br><span class="line">    -c, --connections &lt;N&gt;  跟服务器建立并保持的TCP连接数量  </span><br><span class="line">    -d, --duration    &lt;T&gt;  压测时间           </span><br><span class="line">    -t, --threads     &lt;N&gt;  使用多少个线程进行压测   </span><br><span class="line">                                                      </span><br><span class="line">    -s, --script      &lt;S&gt;  指定Lua脚本路径       </span><br><span class="line">    -H, --header      &lt;H&gt;  为每一个HTTP请求添加HTTP头      </span><br><span class="line">        --latency          在压测结束后，打印延迟统计信息   </span><br><span class="line">        --timeout     &lt;T&gt;  超时时间     </span><br><span class="line">    -v, --version          打印正在使用的wrk的详细版本信息</span><br><span class="line">                                                      </span><br><span class="line">  &lt;N&gt;代表数字参数，支持国际单位 (1k, 1M, 1G)</span><br><span class="line">  &lt;T&gt;代表时间参数，支持时间单位 (2s, 2m, 2h)</span><br></pre></td></tr></table></figure>
 <h3 id="版本查看"><a href="#版本查看" class="headerlink" title="版本查看"></a>版本查看</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">brew info wrk</span><br><span class="line"></span><br><span class="line">wrk: stable <span class="number">4.1</span><span class="number">.0</span> (bottled), HEAD</span><br></pre></td></tr></table></figure>
 <h3 id="压测"><a href="#压测" class="headerlink" title="压测"></a>压测</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">wrk -t12 -c400 -d30s --latency http:<span class="comment">//www.baidu.com</span></span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">Running <span class="number">30</span>s test @ http:<span class="comment">//www.baidu.com（压测时间30s）</span></span><br><span class="line">  <span class="number">12</span> threads and <span class="number">400</span> connections（共<span class="number">12</span>个测试线程，<span class="number">400</span>个连接）</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +<span class="regexp">/- Stdev</span></span><br><span class="line"><span class="regexp">              （平均值） （标准差）（最大值）（正负一个标准差所占比例）</span></span><br><span class="line"><span class="regexp">    Latency   933.14ms  415.00ms   2.00s    77.56%</span></span><br><span class="line"><span class="regexp">    （延迟）</span></span><br><span class="line"><span class="regexp">    Req/</span>Sec    <span class="number">24.77</span>     <span class="number">15.65</span>   <span class="number">121.00</span>     <span class="number">70.04</span>%</span><br><span class="line">    （处理中的请求数）</span><br><span class="line">  Latency Distribution （延迟分布）</span><br><span class="line">     <span class="number">50</span>%  <span class="number">711.85</span>ms</span><br><span class="line">     <span class="number">75</span>%    <span class="number">1.24</span>s</span><br><span class="line">     <span class="number">90</span>%    <span class="number">1.56</span>s</span><br><span class="line">     <span class="number">99</span>%    <span class="number">1.90</span>s （<span class="number">99</span>分位的延迟）</span><br><span class="line">  <span class="number">8181</span> requests <span class="keyword">in</span> <span class="number">30.10</span>s, <span class="number">121.83</span>MB read（<span class="number">30.10</span>秒内共处理完成了<span class="number">8181</span>个请求，读取了<span class="number">121.83</span>MB数据）</span><br><span class="line">  Socket errors: connect <span class="number">0</span>, read <span class="number">0</span>, write <span class="number">0</span>, timeout <span class="number">1545</span></span><br><span class="line">Requests/sec:    <span class="number">271.82</span> （平均每秒处理完成<span class="number">271.82</span>个请求）</span><br><span class="line">Transfer/sec:    <span class="number">4.05</span>MB （平均每秒读取数据<span class="number">4.05</span>MB）</span><br></pre></td></tr></table></figure>
 <p>以上使用12个线程400个连接，对baidu首页进行了30秒的压测，并要求在压测结果中输出响应延迟信息。</p>
@@ -155,6 +155,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2019/04/06/知乎-API-v4-整理/" title="知乎 API v4 整理">
+  <strong>上一篇：</strong><br/>
+  <span>
+  知乎 API v4 整理</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2019/03/14/Specify-SSH-Port-for-Git/"  title="Specify SSH Port for Git">
@@ -241,7 +249,7 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -249,15 +257,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -269,7 +269,15 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
