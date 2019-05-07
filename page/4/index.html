@@ -82,6 +82,76 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2017/07/04/CentOS安装ElasticSearch及其问题解决/" title="CentOS安装ElasticSearch及其问题解决" itemprop="url">CentOS安装ElasticSearch及其问题解决</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-07-04T04:24:28.000Z" itemprop="datePublished"> 发表于 2017-07-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>进入 elasticsearch 的 bin 目录，尝试使用 ./elasticsearch 命令启动 elasticsearch 提示如下错误信息：</p>
+<pre><code>Exception in thread &quot;main&quot; java.lang.RuntimeException: don&apos;t run elasticsearch as root.
+</code></pre><p>解决方法：</p>
+<p>1、指定允许root启动。如：<br>     ./elasticsearch -Des.insecure.allow.root=true</p>
+<p> 可以启动，但会提示<br>     [WARN ][bootstrap] running as ROOT user. this is a bad idea!</p>
+<p>2、创建一个非root elasticsearch相关的账号</p>
+<ul>
+<li>创建一个分组，取名为esgroup，然后，往该分组中添加用户es，并设置es账户的密码</li>
+<li>修改elasticsearch目录权限</li>
+<li>使用新创建的账号es来登录终端启动</li>
+</ul>
+<p>使用 <code>curl -X GET http://localhost:9200</code> 查看信息</p>
+<p>推荐使用方法二启动，另外如果要在浏览器中查看，需要修改 elasticsearch.yml 中的 <code>network.host: 127.0.0.1</code> 为 <code>network.host: 0.0.0.0</code></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CentOS/">CentOS</a><a href="/tags/ES/">ES</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/07/04/CentOS安装ElasticSearch及其问题解决/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/07/04/CentOS安装ElasticSearch及其问题解决/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2017/06/20/Urlooker流程图/" title="Urlooker流程图" itemprop="url">Urlooker流程图</a>
   </h1>
   <p class="article-author">By
@@ -634,66 +704,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/12/05/Bash-日期时间戳格式化/" title="Bash 日期时间戳格式化" itemprop="url">Bash 日期时间戳格式化</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-12-05T04:09:45.000Z" itemprop="datePublished"> 发表于 2016-12-05</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UDF - 2016-11-29 00:00:35 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348772878&quot;,&quot;spreadurl&quot;:&quot;dMxpxx&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;adnetname&quot;:&quot;UC&quot;,&quot;osversion&quot;:&quot;10.1.1&quot;,&quot;idfa&quot;:&quot;DE055F0E-72D7-4A72-B7A0-C3E45A3A33XX&quot;,&quot;clicktime&quot;:&quot;1480348581122&quot;,&quot;ip&quot;:&quot;117.38.163.147&quot;&#125;UDF - 2016-11-29 00:00:41 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348766255&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;osversion&quot;:&quot;10.0.2&quot;,&quot;idfa&quot;:&quot;93271665-1341-499C-BDD6-6797699B9AXX&quot;,&quot;ip&quot;:&quot;58.59.64.234&quot;&#125;</span><br></pre></td></tr></table></figure>
-<p>有以上格式的数据，需要将其中的<code>eventtime</code>时间戳筛选出来并格式化</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/12/05/Bash-日期时间戳格式化/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/Bash/">Bash</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/12/05/Bash-日期时间戳格式化/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/12/05/Bash-日期时间戳格式化/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/3/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/5/">Next<span></span></a>
@@ -745,11 +755,11 @@
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -761,7 +771,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -769,19 +779,7 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -789,7 +787,19 @@
 			
 		
 			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
 			
