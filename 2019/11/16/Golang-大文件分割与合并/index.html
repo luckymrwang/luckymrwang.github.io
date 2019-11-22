@@ -11,18 +11,18 @@
     
 
     
-    <meta name="description" content="123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263package mainimport (	&quot;fmt&quot;	&quot;io/ioutil&quot;	&quot;math&quot;	&quot;os&quot;	&quot;strconv&quot;)const chunkSize = 1 &amp;l">
+    <meta name="description" content="大文件分割与合并例子">
 <meta name="keywords" content="Go">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Golang 大文件分割与合并">
 <meta property="og:url" content="https://luckymrwang.github.io/2019/11/16/Golang-大文件分割与合并/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263package mainimport (	&quot;fmt&quot;	&quot;io/ioutil&quot;	&quot;math&quot;	&quot;os&quot;	&quot;strconv&quot;)const chunkSize = 1 &amp;l">
+<meta property="og:description" content="大文件分割与合并例子">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-22T06:25:54.405Z">
+<meta property="og:updated_time" content="2019-11-22T06:47:41.643Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Golang 大文件分割与合并">
-<meta name="twitter:description" content="123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263package mainimport (	&quot;fmt&quot;	&quot;io/ioutil&quot;	&quot;math&quot;	&quot;os&quot;	&quot;strconv&quot;)const chunkSize = 1 &amp;l">
+<meta name="twitter:description" content="大文件分割与合并例子">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -102,7 +102,9 @@
 		
 		</div>
 		
-		<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"math"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">	<span class="string">"strconv"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> chunkSize = <span class="number">1</span> &lt;&lt; (<span class="number">10</span> * <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileInfo, err := os.Stat(<span class="string">"cbd.mp4"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	num := math.Ceil(<span class="keyword">float64</span>(fileInfo.Size()) / chunkSize)</span><br><span class="line"></span><br><span class="line">	fi, err := os.OpenFile(<span class="string">"cbd.mp4"</span>, os.O_RDONLY, os.ModePerm)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, chunkSize)</span><br><span class="line">	<span class="keyword">var</span> i <span class="keyword">int64</span> = <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> ; i &lt;= <span class="keyword">int64</span>(num); i++ &#123;</span><br><span class="line">		fi.Seek((i<span class="number">-1</span>)*chunkSize, <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(b) &gt; <span class="keyword">int</span>(fileInfo.Size()-(i<span class="number">-1</span>)*chunkSize) &#123;</span><br><span class="line">			b = <span class="built_in">make</span>([]<span class="keyword">byte</span>, fileInfo.Size()-(i<span class="number">-1</span>)*chunkSize)</span><br><span class="line">		&#125;</span><br><span class="line">		fi.Read(b)</span><br><span class="line"></span><br><span class="line">		f, err := os.OpenFile(<span class="string">"./"</span>+strconv.Itoa(<span class="keyword">int</span>(i))+<span class="string">".db"</span>, os.O_CREATE|os.O_WRONLY, os.ModePerm)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		f.Write(b)</span><br><span class="line">		f.Close()</span><br><span class="line">	&#125;</span><br><span class="line">	fi.Close()</span><br><span class="line"></span><br><span class="line">	fii, err := os.OpenFile(<span class="string">"all.mp4"</span>, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt;= <span class="keyword">int</span>(num); i++ &#123;</span><br><span class="line">		f, err := os.OpenFile(<span class="string">"./"</span>+strconv.Itoa(<span class="keyword">int</span>(i))+<span class="string">".db"</span>, os.O_RDONLY, os.ModePerm)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Println(err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		b, err := ioutil.ReadAll(f)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Println(err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		fii.Write(b)</span><br><span class="line">		f.Close()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
+		<p>大文件分割与合并例子</p>
+<a id="more"></a>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"math"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">	<span class="string">"strconv"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> chunkSize = <span class="number">1</span> &lt;&lt; (<span class="number">10</span> * <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileInfo, err := os.Stat(<span class="string">"cbd.mp4"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	num := math.Ceil(<span class="keyword">float64</span>(fileInfo.Size()) / chunkSize)</span><br><span class="line"></span><br><span class="line">	fi, err := os.OpenFile(<span class="string">"cbd.mp4"</span>, os.O_RDONLY, os.ModePerm)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, chunkSize)</span><br><span class="line">	<span class="keyword">var</span> i <span class="keyword">int64</span> = <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> ; i &lt;= <span class="keyword">int64</span>(num); i++ &#123;</span><br><span class="line">		fi.Seek((i<span class="number">-1</span>)*chunkSize, <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(b) &gt; <span class="keyword">int</span>(fileInfo.Size()-(i<span class="number">-1</span>)*chunkSize) &#123;</span><br><span class="line">			b = <span class="built_in">make</span>([]<span class="keyword">byte</span>, fileInfo.Size()-(i<span class="number">-1</span>)*chunkSize)</span><br><span class="line">		&#125;</span><br><span class="line">		fi.Read(b)</span><br><span class="line"></span><br><span class="line">		f, err := os.OpenFile(<span class="string">"./"</span>+strconv.Itoa(<span class="keyword">int</span>(i))+<span class="string">".db"</span>, os.O_CREATE|os.O_WRONLY, os.ModePerm)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		f.Write(b)</span><br><span class="line">		f.Close()</span><br><span class="line">	&#125;</span><br><span class="line">	fi.Close()</span><br><span class="line"></span><br><span class="line">	fii, err := os.OpenFile(<span class="string">"all.mp4"</span>, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt;= <span class="keyword">int</span>(num); i++ &#123;</span><br><span class="line">		f, err := os.OpenFile(<span class="string">"./"</span>+strconv.Itoa(<span class="keyword">int</span>(i))+<span class="string">".db"</span>, os.O_RDONLY, os.ModePerm)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Println(err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		b, err := ioutil.ReadAll(f)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Println(err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		fii.Write(b)</span><br><span class="line">		f.Close()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -132,6 +134,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2019/11/22/Etcd-分布式锁/" title="Etcd 分布式锁">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Etcd 分布式锁</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2019/11/16/Go-分片切割大文件的例子/"  title="Go 分片切割大文件的例子">
@@ -198,19 +208,11 @@
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
 			
 		
 			
@@ -218,11 +220,15 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -231,6 +237,10 @@
 		
 			
 				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -246,7 +256,7 @@
 			
 		
 			
-				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			
@@ -254,7 +264,7 @@
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
 			

@@ -82,6 +82,60 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2019/11/22/Etcd-分布式锁/" title="Etcd 分布式锁" itemprop="url">Etcd 分布式锁</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-11-22T06:46:16.000Z" itemprop="datePublished"> 发表于 2019-11-22</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Etcd 分布式锁例子</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2019/11/22/Etcd-分布式锁/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2019/11/22/Etcd-分布式锁/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/11/22/Etcd-分布式锁/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2019/11/16/Golang-大文件分割与合并/" title="Golang 大文件分割与合并" itemprop="url">Golang 大文件分割与合并</a>
   </h1>
   <p class="article-author">By
@@ -95,10 +149,12 @@
 </header>
     <div class="article-content">
         
-        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"math"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">	<span class="string">"strconv"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> chunkSize = <span class="number">1</span> &lt;&lt; (<span class="number">10</span> * <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileInfo, err := os.Stat(<span class="string">"cbd.mp4"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	num := math.Ceil(<span class="keyword">float64</span>(fileInfo.Size()) / chunkSize)</span><br><span class="line"></span><br><span class="line">	fi, err := os.OpenFile(<span class="string">"cbd.mp4"</span>, os.O_RDONLY, os.ModePerm)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	b := <span class="built_in">make</span>([]<span class="keyword">byte</span>, chunkSize)</span><br><span class="line">	<span class="keyword">var</span> i <span class="keyword">int64</span> = <span class="number">1</span></span><br><span class="line">	<span class="keyword">for</span> ; i &lt;= <span class="keyword">int64</span>(num); i++ &#123;</span><br><span class="line">		fi.Seek((i<span class="number">-1</span>)*chunkSize, <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(b) &gt; <span class="keyword">int</span>(fileInfo.Size()-(i<span class="number">-1</span>)*chunkSize) &#123;</span><br><span class="line">			b = <span class="built_in">make</span>([]<span class="keyword">byte</span>, fileInfo.Size()-(i<span class="number">-1</span>)*chunkSize)</span><br><span class="line">		&#125;</span><br><span class="line">		fi.Read(b)</span><br><span class="line"></span><br><span class="line">		f, err := os.OpenFile(<span class="string">"./"</span>+strconv.Itoa(<span class="keyword">int</span>(i))+<span class="string">".db"</span>, os.O_CREATE|os.O_WRONLY, os.ModePerm)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		f.Write(b)</span><br><span class="line">		f.Close()</span><br><span class="line">	&#125;</span><br><span class="line">	fi.Close()</span><br><span class="line"></span><br><span class="line">	fii, err := os.OpenFile(<span class="string">"all.mp4"</span>, os.O_CREATE|os.O_WRONLY|os.O_APPEND, os.ModePerm)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt;= <span class="keyword">int</span>(num); i++ &#123;</span><br><span class="line">		f, err := os.OpenFile(<span class="string">"./"</span>+strconv.Itoa(<span class="keyword">int</span>(i))+<span class="string">".db"</span>, os.O_RDONLY, os.ModePerm)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Println(err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		b, err := ioutil.ReadAll(f)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Println(err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		fii.Write(b)</span><br><span class="line">		f.Close()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>大文件分割与合并例子</p>
         
         
         <p class="article-more-link">
+          
+            <a href="/2019/11/16/Golang-大文件分割与合并/#more">阅读更多</a>
           
        </p>
     </div>
@@ -152,10 +208,12 @@
 </header>
     <div class="article-content">
         
-        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"math"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">	<span class="string">"strconv"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fileToBeChunked := <span class="string">"./somebigfile"</span></span><br><span class="line">	file, err := os.Open(fileToBeChunked)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line"></span><br><span class="line">	fileInfo, _ := file.Stat()</span><br><span class="line">	<span class="keyword">var</span> fileSize <span class="keyword">int64</span> = fileInfo.Size()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">const</span> fileChunk = <span class="number">1</span> * (<span class="number">1</span> &lt;&lt; <span class="number">20</span>) <span class="comment">// 1 MB, change this to your requirement</span></span><br><span class="line">	<span class="comment">// calculate total number of parts the file will be chunked into</span></span><br><span class="line">	totalPartsNum := <span class="keyword">uint64</span>(math.Ceil(<span class="keyword">float64</span>(fileSize) / <span class="keyword">float64</span>(fileChunk)))</span><br><span class="line">	fmt.Printf(<span class="string">"Splitting to %d pieces.\n"</span>, totalPartsNum)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="keyword">uint64</span>(<span class="number">1</span>); i &lt; totalPartsNum; i++ &#123;</span><br><span class="line">		partSize := <span class="keyword">int</span>(math.Min(fileChunk, <span class="keyword">float64</span>(fileSize-<span class="keyword">int64</span>(i*fileChunk))))</span><br><span class="line">		partBuffer := <span class="built_in">make</span>([]<span class="keyword">byte</span>, partSize)</span><br><span class="line"></span><br><span class="line">		file.Read(partBuffer)</span><br><span class="line"></span><br><span class="line">		<span class="comment">// write to disk</span></span><br><span class="line">		fileName := <span class="string">"somebigfile_"</span> + strconv.FormatUint(i, <span class="number">10</span>)</span><br><span class="line">		_, err := os.Create(fileName)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Println(err)</span><br><span class="line">			os.Exit(<span class="number">1</span>)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// write/save buffer to disk</span></span><br><span class="line">		ioutil.WriteFile(fileName, partBuffer, os.ModeAppend)</span><br><span class="line">		fmt.Println(<span class="string">"Split to : "</span>, fileName)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>分片切割大文件例子</p>
         
         
         <p class="article-more-link">
+          
+            <a href="/2019/11/16/Go-分片切割大文件的例子/#more">阅读更多</a>
           
        </p>
     </div>
@@ -619,66 +677,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2019/05/07/Mac安装PostgreSQL/" title="Mac安装PostgreSQL" itemprop="url">Mac安装PostgreSQL</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2019-05-07T11:57:06.000Z" itemprop="datePublished"> 发表于 2019-05-07</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="HomeBrew安装"><a href="#HomeBrew安装" class="headerlink" title="HomeBrew安装"></a>HomeBrew安装</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install postgresql</span><br></pre></td></tr></table></figure>
-<h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">initdb /usr/local/var/postgres</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2019/05/07/Mac安装PostgreSQL/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Mac/">Mac</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2019/05/07/Mac安装PostgreSQL/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/05/07/Mac安装PostgreSQL/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -726,19 +724,11 @@
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
 			
 		
 			
@@ -746,11 +736,15 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -759,6 +753,10 @@
 		
 			
 				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -774,7 +772,7 @@
 			
 		
 			
-				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			
@@ -782,7 +780,7 @@
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
 			
