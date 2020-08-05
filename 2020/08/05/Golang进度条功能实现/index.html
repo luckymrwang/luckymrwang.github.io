@@ -4,25 +4,25 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Golang http.Post 用最小的内存发送大文件 | iBlog</title>
+    <title>Golang进度条功能实现 | iBlog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="luckymrwang">
     
 
     
-    <meta name="description" content="在网络编程中，经常用http.Post 发送文件到远程服务器，可以通过自己构造multipart/form-data; boundary来实现。 一般是这么做： 12345678910111213141516buf := new(bytes.Buffer)writer := multipart.NewWriter(buf)defer writer.Close()part, err := write">
+    <meta name="description" content="123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960package mainimport (	&quot;fmt&quot;	&quot;time&quot;)type Bar struct &amp;#123;	percent int64  // 百分比	cur     in">
 <meta name="keywords" content="Go">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Golang http.Post 用最小的内存发送大文件">
-<meta property="og:url" content="https://luckymrwang.github.io/2019/11/16/Golang-http-Post-用最小的内存发送大文件/index.html">
+<meta property="og:title" content="Golang进度条功能实现">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/08/05/Golang进度条功能实现/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="在网络编程中，经常用http.Post 发送文件到远程服务器，可以通过自己构造multipart/form-data; boundary来实现。 一般是这么做： 12345678910111213141516buf := new(bytes.Buffer)writer := multipart.NewWriter(buf)defer writer.Close()part, err := write">
+<meta property="og:description" content="123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960package mainimport (	&quot;fmt&quot;	&quot;time&quot;)type Bar struct &amp;#123;	percent int64  // 百分比	cur     in">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-16T13:02:49.639Z">
+<meta property="og:updated_time" content="2020-08-05T08:35:59.890Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Golang http.Post 用最小的内存发送大文件">
-<meta name="twitter:description" content="在网络编程中，经常用http.Post 发送文件到远程服务器，可以通过自己构造multipart/form-data; boundary来实现。 一般是这么做： 12345678910111213141516buf := new(bytes.Buffer)writer := multipart.NewWriter(buf)defer writer.Close()part, err := write">
+<meta name="twitter:title" content="Golang进度条功能实现">
+<meta name="twitter:description" content="123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960package mainimport (	&quot;fmt&quot;	&quot;time&quot;)type Bar struct &amp;#123;	percent int64  // 百分比	cur     in">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -82,14 +82,14 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/11/16/Golang-http-Post-用最小的内存发送大文件/" title="Golang http.Post 用最小的内存发送大文件" itemprop="url">Golang http.Post 用最小的内存发送大文件</a>
+      <a href="/2020/08/05/Golang进度条功能实现/" title="Golang进度条功能实现" itemprop="url">Golang进度条功能实现</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
 		
   <p class="article-time">
-    <time datetime="2019-11-16T13:01:36.000Z" itemprop="datePublished"> 发表于 2019-11-16</time>
+    <time datetime="2020-08-05T08:19:01.000Z" itemprop="datePublished"> 发表于 2020-08-05</time>
     
   </p>
 </header>
@@ -102,12 +102,7 @@
 		
 		</div>
 		
-		<p>在网络编程中，经常用http.Post 发送文件到远程服务器，可以通过自己构造multipart/form-data; boundary来实现。</p>
-<p>一般是这么做：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">buf := <span class="built_in">new</span>(bytes.Buffer)</span><br><span class="line">writer := multipart.NewWriter(buf)</span><br><span class="line"><span class="keyword">defer</span> writer.Close()</span><br><span class="line">part, err := writer.CreateFormFile(<span class="string">"myFile"</span>, <span class="string">"foo.txt"</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">file, err := os.Open(name)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> file.Close()</span><br><span class="line"><span class="keyword">if</span> _, err = io.Copy(part, file); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">http.Post(url, writer.FormDataContentType(), buf)</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-<p>上面的代码是把整个文件读到buf 里，当文件很大时，就会占用很多内存。在golang 里可以使用io.Pipe 来优化内存占用：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">r, w := io.Pipe()</span><br><span class="line">m := multipart.NewWriter(w)</span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">defer</span> w.Close()</span><br><span class="line">    <span class="keyword">defer</span> m.Close()</span><br><span class="line">    part, err := m.CreateFormFile(<span class="string">"myFile"</span>, <span class="string">"foo.txt"</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    file, err := os.Open(name)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> file.Close()</span><br><span class="line">    <span class="keyword">if</span> _, err = io.Copy(part, file); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;()</span><br><span class="line">http.Post(url, m.FormDataContentType(), r)</span><br></pre></td></tr></table></figure>  
+		<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Bar <span class="keyword">struct</span> &#123;</span><br><span class="line">	percent <span class="keyword">int64</span>  <span class="comment">// 百分比</span></span><br><span class="line">	cur     <span class="keyword">int64</span>  <span class="comment">// 当前进度位置</span></span><br><span class="line">	total   <span class="keyword">int64</span>  <span class="comment">// 总进度</span></span><br><span class="line">	rate    <span class="keyword">string</span> <span class="comment">// 进度条</span></span><br><span class="line">	graph   <span class="keyword">string</span> <span class="comment">// 显示符号</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(bar *Bar)</span> <span class="title">NewOption</span><span class="params">(start, total <span class="keyword">int64</span>)</span></span> &#123;</span><br><span class="line">	bar.cur = start</span><br><span class="line">	bar.total = total</span><br><span class="line">	<span class="keyword">if</span> bar.graph == <span class="string">""</span> &#123;</span><br><span class="line">		bar.graph = <span class="string">"█"</span></span><br><span class="line">	&#125;</span><br><span class="line">	bar.percent = bar.getPercent()</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="keyword">int</span>(bar.percent); i += <span class="number">2</span> &#123;</span><br><span class="line">		bar.rate += bar.graph <span class="comment">// 初始化进度条位置</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(bar *Bar)</span> <span class="title">getPercent</span><span class="params">()</span> <span class="title">int64</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">int64</span>(<span class="keyword">float32</span>(bar.cur) / <span class="keyword">float32</span>(bar.total) * <span class="number">100</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(bar *Bar)</span> <span class="title">NewOptionWithGraph</span><span class="params">(start, total <span class="keyword">int64</span>, graph <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	bar.graph = graph</span><br><span class="line">	bar.NewOption(start, total)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(bar *Bar)</span> <span class="title">Play</span><span class="params">(cur <span class="keyword">int64</span>)</span></span> &#123;</span><br><span class="line">	bar.cur = cur</span><br><span class="line">	last := bar.percent</span><br><span class="line">	bar.percent = bar.getPercent()</span><br><span class="line">	<span class="keyword">if</span> bar.percent != last &amp;&amp; bar.percent%<span class="number">2</span> == <span class="number">0</span> &#123;</span><br><span class="line">		bar.rate += bar.graph</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Printf(<span class="string">"\r[%-50s]%3d%%  %8d/%d"</span>, bar.rate, bar.percent, bar.cur, bar.total)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(bar *Bar)</span> <span class="title">Finish</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Println()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> bar Bar</span><br><span class="line">	bar.NewOption(<span class="number">0</span>, <span class="number">100</span>)</span><br><span class="line">	<span class="comment">// bar.NewOptionWithGraph(0, 100, "#")</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt;= <span class="number">100</span>; i++ &#123;</span><br><span class="line">		time.Sleep(<span class="number">100</span> * time.Millisecond)</span><br><span class="line">		bar.Play(<span class="keyword">int64</span>(i))</span><br><span class="line">	&#125;</span><br><span class="line">	bar.Finish()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
 	</div>
 		<footer class="article-footer clearfix">
 <div class="article-catetags">
@@ -124,7 +119,7 @@
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="https://luckymrwang.github.io/2019/11/16/Golang-http-Post-用最小的内存发送大文件/" data-title="Golang http.Post 用最小的内存发送大文件 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  <div data-url="https://luckymrwang.github.io/2020/08/05/Golang进度条功能实现/" data-title="Golang进度条功能实现 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
 	  </div>
 	
 	</div>
@@ -137,19 +132,11 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2019/11/16/Go-分片切割大文件的例子/" title="Go 分片切割大文件的例子">
-  <strong>上一篇：</strong><br/>
-  <span>
-  Go 分片切割大文件的例子</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2019/09/18/Viper——Golang配置库/"  title="Viper——Golang配置库">
+<a href="/2020/08/04/Kubernetes-Volume-挂载/"  title="Kubernetes Volume 挂载">
  <strong>下一篇：</strong><br/> 
- <span>Viper——Golang配置库
+ <span>Kubernetes Volume 挂载
 </span>
 </a>
 </div>
@@ -158,7 +145,7 @@
 
 	
 <section id="comments" class="comment">
-	<div class="ds-thread" data-thread-key="2019/11/16/Golang-http-Post-用最小的内存发送大文件/" data-title="Golang http.Post 用最小的内存发送大文件" data-url="https://luckymrwang.github.io/2019/11/16/Golang-http-Post-用最小的内存发送大文件/"></div>
+	<div class="ds-thread" data-thread-key="2020/08/05/Golang进度条功能实现/" data-title="Golang进度条功能实现" data-url="https://luckymrwang.github.io/2020/08/05/Golang进度条功能实现/"></div>
 </section>
 
 

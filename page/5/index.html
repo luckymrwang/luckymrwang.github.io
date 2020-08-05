@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2017/07/24/html2canvas-截屏并下载/" title="html2canvas 截屏并下载" itemprop="url">html2canvas 截屏并下载</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-07-24T06:29:21.000Z" itemprop="datePublished"> 发表于 2017-07-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><a href="http://html2canvas.hertzen.com/" target="_blank" rel="noopener">html2canvas</a> 可以截取当前屏幕网页的内容并生成图片，官网提供的 <a href="http://html2canvas.hertzen.com/examples.html" target="_blank" rel="noopener">example</a> 只能截图并显示在网页底部，<a href="http://html2canvas.hertzen.com/documentation.html" target="_blank" rel="noopener">document</a>也只是一些参数的使用，下面我利用 <code>html5</code> 的新特性将生成的图片自动下载到本地，方法参见 <a href="/2017/07/24/如何用-JavaScript-下载文件/">如何用 JavaScript 下载文件</a></p>
+<p>引入 <code>html2canvas.js</code></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">"#snapshot"</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	html2canvas($(<span class="string">"table"</span>), &#123;</span><br><span class="line">		onrendered: <span class="function"><span class="keyword">function</span>(<span class="params">canvas</span>) </span>&#123;</span><br><span class="line">			<span class="keyword">var</span> img = <span class="built_in">document</span>.createElement(<span class="string">'a'</span>);</span><br><span class="line">			img.href = canvas.toDataURL(<span class="string">"image/jpeg"</span>).replace(<span class="string">"image/jpeg"</span>, <span class="string">"image/octet-stream"</span>);</span><br><span class="line">			img.download = <span class="string">'case.jpg'</span>;</span><br><span class="line">			img.click();</span><br><span class="line">		&#125;,</span><br><span class="line">		background: <span class="string">"#fff"</span></span><br><span class="line">	&#125;);</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>参照资料<a href="https://stackoverflow.com/questions/31656689/how-to-save-img-to-users-local-computer-using-html2canvas" target="_blank" rel="noopener">stackoverflow</a></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/html2canvas/">html2canvas</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/07/24/html2canvas-截屏并下载/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/07/24/html2canvas-截屏并下载/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2017/07/24/如何用-JavaScript-下载文件/" title="如何用 JavaScript 下载文件" itemprop="url">如何用 JavaScript 下载文件</a>
   </h1>
   <p class="article-author">By
@@ -640,66 +701,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/" title="使用 Elastic Stack 来监控和调优 Golang 应用程序" itemprop="url">使用 Elastic Stack 来监控和调优 Golang 应用程序</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2017-03-16T02:25:58.000Z" itemprop="datePublished"> 发表于 2017-03-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>Golang 因为其语法简单，上手快且方便部署正被越来越多的开发者所青睐，一个 Golang 程序开发好了之后，势必要关心其运行情况，今天在这里就给大家介绍一下如果使用 Elastic Stack 来分析 Golang 程序的内存使用情况，方便对 Golang 程序做长期监控进而调优和诊断，甚至发现一些潜在的内存泄露等问题。</p>
-<p>Elastic Stack 其实是一个集合，包含 Elasticsearch、Logstash 和 Beats 这几个开源软件，而 Beats 又包含 Filebeat、Packetbeat、Winlogbeat、Metricbeat 和新出的 Heartbeat，呵呵，有点多吧，恩，每个 beat 做的事情不一样，没关系，今天主要用到 Elasticsearch、Metricbeat 和 Kibana 就行了。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/4/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/6/">Next<span></span></a>
@@ -731,7 +732,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>34</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>35</sup></a></li>
 			
 		
 			
@@ -747,15 +748,11 @@
 			
 		
 			
-				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
 			
 		
 			
@@ -767,6 +764,10 @@
 			
 		
 			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
@@ -775,11 +776,11 @@
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
 			
 		
 			
@@ -795,19 +796,19 @@
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/缓存/" title="缓存">缓存<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Neo4j/" title="Neo4j">Neo4j<sup>2</sup></a></li>
 			
 		
 		</ul>
