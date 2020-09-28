@@ -1,0 +1,522 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>解决 Homebrew 安装软件下载失败 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="当我们使用 Homebrew 安装软件时，由于一些特殊原因会出现软件包下载失败的情况。这种还很常见，我们没法改变环境，但却可以取巧的解决，那就是利用 Homebrew 缓存的特性，手动预先下载软件。">
+<meta name="keywords" content="Brew">
+<meta property="og:type" content="article">
+<meta property="og:title" content="解决 Homebrew 安装软件下载失败">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/09/28/解决-Homebrew-安装软件下载失败/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="当我们使用 Homebrew 安装软件时，由于一些特殊原因会出现软件包下载失败的情况。这种还很常见，我们没法改变环境，但却可以取巧的解决，那就是利用 Homebrew 缓存的特性，手动预先下载软件。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-09-28T01:03:31.650Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="解决 Homebrew 安装软件下载失败">
+<meta name="twitter:description" content="当我们使用 Homebrew 安装软件时，由于一些特殊原因会出现软件包下载失败的情况。这种还很常见，我们没法改变环境，但却可以取巧的解决，那就是利用 Homebrew 缓存的特性，手动预先下载软件。">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/09/28/解决-Homebrew-安装软件下载失败/" title="解决 Homebrew 安装软件下载失败" itemprop="url">解决 Homebrew 安装软件下载失败</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-09-28T00:57:35.000Z" itemprop="datePublished"> 发表于 2020-09-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<blockquote>
+<p>当我们使用 Homebrew 安装软件时，由于一些特殊原因会出现软件包下载失败的情况。这种还很常见，我们没法改变环境，但却可以取巧的解决，那就是利用 Homebrew 缓存的特性，手动预先下载软件。</p>
+</blockquote>
+<a id="more"></a>
+<p>###方法一: 手动下载软件包到缓存目录</p>
+<p>以安装 <code>Dart</code> 为例:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ brew install dart</span><br><span class="line">==&gt; Installing dart from dart-lang/dart</span><br><span class="line">==&gt; Downloading https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip</span><br><span class="line"></span><br><span class="line">curl: (56) LibreSSL SSL_read: SSL_ERROR_SYSCALL, errno 54</span><br><span class="line">Error: An exception occurred within a child process:</span><br><span class="line">  DownloadError: Failed to download resource <span class="string">"dart"</span></span><br><span class="line">Download failed: https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip</span><br></pre></td></tr></table></figure>
+<p>无法成功下载对应的软件包，但 <code>Homebrew</code> 会告知软件的下载地址:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Download failed: https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip</span><br></pre></td></tr></table></figure>
+<p>于是，我们可以手动下载这个软件。然后我们获取缓存目录:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ brew --cache</span><br><span class="line">/Users/shockerli/Library/Caches/Homebrew</span><br></pre></td></tr></table></figure>
+<p>把刚下载好的软件包拷贝到这个目录下:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cp ~/Downloads/dartsdk-macos-x64-release.zip /Users/shockerli/Library/Caches/Homebrew/</span><br></pre></td></tr></table></figure>
+<p>我们再执行安装命令，不出意外，那么恭喜你，成功解决了问题。</p>
+<p>但凡是也就有意外，不幸的你跟我一样，发现还是报错了:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ brew install dart</span><br><span class="line">==&gt; Installing dart from dart-lang/dart</span><br><span class="line">==&gt; Downloading https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos</span><br><span class="line"></span><br><span class="line">curl: (56) LibreSSL SSL_read: SSL_ERROR_SYSCALL, errno 54</span><br><span class="line">Error: An exception occurred within a child process:</span><br><span class="line">  DownloadError: Failed to download resource <span class="string">"dart"</span></span><br><span class="line">Download failed: https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip</span><br></pre></td></tr></table></figure>
+<p>那该怎么解决？我们给命令加个 -v 打印命令的详细日志看看:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">brew install dart -v</span><br><span class="line">==&gt; Installing dart from dart-lang/dart</span><br><span class="line">/usr/bin/sandbox-exec -f /private/tmp/homebrew20190810-60798-mlb2s.sb nice /System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/bin/ruby -W0 -I /usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/simplecov-cobertura-1.3.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ruby-macho-2.2.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rubocop-rspec-1.35.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rubocop-performance-1.4.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rubocop-0.74.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/unicode-display_width-1.6.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ruby-progressbar-1.10.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-wait-0.0.9/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-retry-0.6.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-its-1.3.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-3.8.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-mocks-3.8.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-expectations-3.8.4/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-core-3.8.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-support-3.8.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ronn-0.7.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rdiscount-2.2.0.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/rdiscount-2.2.0.1:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rainbow-3.0.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/plist-3.5.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/parser-2.6.3.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/parallel_tests-2.29.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/parallel-1.17.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mustache-1.1.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mechanize-2.7.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/webrobots-0.1.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ntlm-http-0.1.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/nokogiri-1.10.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/nokogiri-1.10.3:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mini_portile2-2.4.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/net-http-persistent-3.1.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/net-http-digest_auth-1.4.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mime-types-3.2.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mime-types-data-3.2019.0331/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/jaro_winkler-1.5.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/jaro_winkler-1.5.3:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/http-cookie-1.0.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/hpricot-0.8.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/hpricot-0.8.6:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/domain_name-0.5.20190701/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/unf-0.1.4/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/unf_ext-0.0.7.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/unf_ext-0.0.7.6:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/diff-lcs-1.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/coveralls-0.8.23/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/thor-0.20.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/term-ansicolor-1.7.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/tins-1.21.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/simplecov-0.16.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/simplecov-html-0.10.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/docile-1.3.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/json-2.2.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/json-2.2.0:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/connection_pool-2.2.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/backports-3.15.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ast-2.4.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/activesupport-5.2.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/tzinfo-1.2.5/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/thread_safe-0.3.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/minitest-5.11.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/i18n-1.6.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/concurrent-ruby-1.1.5/lib:/Library/Ruby/Site/2.3.0:/Library/Ruby/Site/2.3.0/x86_64-darwin18:/Library/Ruby/Site/2.3.0/universal-darwin18:/Library/Ruby/Site:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby/2.3.0:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby/2.3.0/x86_64-darwin18:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby/2.3.0/universal-darwin18:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/2.3.0:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/2.3.0/x86_64-darwin18:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/2.3.0/universal-darwin18:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew -- /usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/build.rb /usr/<span class="built_in">local</span>/Homebrew/Library/Taps/dart-lang/homebrew-dart/dart.rb --verbose</span><br><span class="line"></span><br><span class="line">==&gt; Downloading https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip</span><br><span class="line">/usr/bin/curl -q --show-error --user-agent Homebrew/2.1.9-21-g625a780\ \(Macintosh\;\ Intel\ Mac\ OS\ X\ 10.14.2\)\ curl/7.54.0 --fail --location --remote-time --<span class="built_in">continue</span>-at 0 --output /Users/shockerli/Library/Caches/Homebrew/downloads/4d2412a5d84521393e0e1ecdce0662569e13c2c47762093a760939fa9dd4a917--dartsdk-macos-x64-release.zip.incomplete https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip</span><br><span class="line">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span><br><span class="line">                                 Dload  Upload   Total   Spent    Left  Speed</span><br><span class="line">  0     0    0     0    0     0      0      0 --:--:--  0:00:43 --:--:--     0</span><br><span class="line">curl: (56) LibreSSL SSL_read: SSL_ERROR_SYSCALL, errno 60</span><br><span class="line">Error: An exception occurred within a child process:</span><br><span class="line">  DownloadError: Failed to download resource <span class="string">"dart"</span></span><br><span class="line">Download failed: https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip</span><br></pre></td></tr></table></figure>
+<p>注意到这条信息:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/curl -q --show-error --user-agent Homebrew/2.1.9-21-g625a780\ \(Macintosh\;\ Intel\ Mac\ OS\ X\ 10.14.2\)\ curl/7.54.0 --fail --location --remote-time --<span class="built_in">continue</span>-at 0 --output /Users/shockerli/Library/Caches/Homebrew/downloads/4d2412a5d84521393e0e1ecdce0662569e13c2c47762093a760939fa9dd4a917--dartsdk-macos-x64-release.zip.incomplete https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip</span><br></pre></td></tr></table></figure>
+<p>我们看到 <code>Homebrew</code> 下载 <code>dart</code> 的缓存地址为:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/Users/shockerli/Library/Caches/Homebrew/downloads/4d2412a5d84521393e0e1ecdce0662569e13c2c47762093a760939fa9dd4a917--dartsdk-macos-x64-release.zip.incomplete</span><br></pre></td></tr></table></figure>
+<p><code>XXX.incomplete</code> 表示下载未完成，但这是 <code>Homebrew</code> 期望的下载文件路径。</p>
+<p>那我们就将下载的软件包拷贝到这个路径，并去除 <code>.incomplete</code>:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv ~/Downloads/dartsdk-macos-x64-release.zip /Users/shockerli/Library/Caches/Homebrew/downloads/4d2412a5d84521393e0e1ecdce0662569e13c2c47762093a760939fa9dd4a917--dartsdk-macos-x64-release.zip</span><br></pre></td></tr></table></figure>
+<p>此时我们再执行安装命令:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">brew install dart -v</span><br><span class="line">==&gt; Installing dart from dart-lang/dart</span><br><span class="line">/usr/bin/sandbox-exec -f /private/tmp/homebrew20190811-62563-1rnamem.sb nice /System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/bin/ruby -W0 -I /usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/simplecov-cobertura-1.3.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ruby-macho-2.2.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rubocop-rspec-1.35.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rubocop-performance-1.4.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rubocop-0.74.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/unicode-display_width-1.6.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ruby-progressbar-1.10.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-wait-0.0.9/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-retry-0.6.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-its-1.3.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-3.8.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-mocks-3.8.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-expectations-3.8.4/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-core-3.8.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-support-3.8.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ronn-0.7.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rdiscount-2.2.0.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/rdiscount-2.2.0.1:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rainbow-3.0.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/plist-3.5.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/parser-2.6.3.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/parallel_tests-2.29.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/parallel-1.17.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mustache-1.1.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mechanize-2.7.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/webrobots-0.1.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ntlm-http-0.1.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/nokogiri-1.10.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/nokogiri-1.10.3:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mini_portile2-2.4.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/net-http-persistent-3.1.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/net-http-digest_auth-1.4.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mime-types-3.2.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mime-types-data-3.2019.0331/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/jaro_winkler-1.5.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/jaro_winkler-1.5.3:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/http-cookie-1.0.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/hpricot-0.8.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/hpricot-0.8.6:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/domain_name-0.5.20190701/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/unf-0.1.4/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/unf_ext-0.0.7.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/unf_ext-0.0.7.6:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/diff-lcs-1.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/coveralls-0.8.23/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/thor-0.20.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/term-ansicolor-1.7.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/tins-1.21.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/simplecov-0.16.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/simplecov-html-0.10.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/docile-1.3.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/json-2.2.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/json-2.2.0:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/connection_pool-2.2.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/backports-3.15.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ast-2.4.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/activesupport-5.2.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/tzinfo-1.2.5/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/thread_safe-0.3.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/minitest-5.11.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/i18n-1.6.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/concurrent-ruby-1.1.5/lib:/Library/Ruby/Site/2.3.0:/Library/Ruby/Site/2.3.0/x86_64-darwin18:/Library/Ruby/Site/2.3.0/universal-darwin18:/Library/Ruby/Site:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby/2.3.0:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby/2.3.0/x86_64-darwin18:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby/2.3.0/universal-darwin18:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/2.3.0:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/2.3.0/x86_64-darwin18:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/2.3.0/universal-darwin18:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew -- /usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/build.rb /usr/<span class="built_in">local</span>/Homebrew/Library/Taps/dart-lang/homebrew-dart/dart.rb --verbose</span><br><span class="line">==&gt; Downloading https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Already downloaded: /Users/shockerli/Library/Caches/Homebrew/downloads/4d2412a5d84521393e0e1ecdce0662569e13c2c47762093a760939fa9dd4a917--dartsdk-macos-x64-release.zip</span><br><span class="line">==&gt; Verifying 4d2412a5d84521393e0e1ecdce0662569e13c2c47762093a760939fa9dd4a917--dartsdk-macos-x64-release.zip checksum</span><br><span class="line">unzip /Users/shockerli/Library/Caches/Homebrew/downloads/4d2412a5d84521393e0e1ecdce0662569e13c2c47762093a760939fa9dd4a917--dartsdk-macos-x64-release.zip -d /private/tmp/d20190811-62564-1me3qph</span><br><span class="line">cp -pR /private/tmp/d20190811-62564-1me3qph/dart-sdk/. /private/tmp/dart-20190811-62564-hu8qrn/dart-sdk</span><br><span class="line">chmod -Rf +w /private/tmp/d20190811-62564-1me3qph</span><br><span class="line">==&gt; Cleaning</span><br><span class="line">==&gt; Finishing up</span><br><span class="line">ln -s ../Cellar/dart/2.4.1/bin/dart dart</span><br><span class="line">ln -s ../Cellar/dart/2.4.1/bin/dart2aot dart2aot</span><br><span class="line">ln -s ../Cellar/dart/2.4.1/bin/dart2js dart2js</span><br><span class="line">ln -s ../Cellar/dart/2.4.1/bin/dartanalyzer dartanalyzer</span><br><span class="line">ln -s ../Cellar/dart/2.4.1/bin/dartaotruntime dartaotruntime</span><br><span class="line">ln -s ../Cellar/dart/2.4.1/bin/dartdevc dartdevc</span><br><span class="line">ln -s ../Cellar/dart/2.4.1/bin/dartdoc dartdoc</span><br><span class="line">ln -s ../Cellar/dart/2.4.1/bin/dartfmt dartfmt</span><br><span class="line">ln -s ../Cellar/dart/2.4.1/bin/pub pub</span><br><span class="line">/usr/bin/sandbox-exec -f /private/tmp/homebrew20190811-62996-w9cwbv.sb nice /System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/bin/ruby -W0 -I /usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/simplecov-cobertura-1.3.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ruby-macho-2.2.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rubocop-rspec-1.35.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rubocop-performance-1.4.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rubocop-0.74.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/unicode-display_width-1.6.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ruby-progressbar-1.10.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-wait-0.0.9/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-retry-0.6.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-its-1.3.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-3.8.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-mocks-3.8.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-expectations-3.8.4/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-core-3.8.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rspec-support-3.8.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ronn-0.7.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rdiscount-2.2.0.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/rdiscount-2.2.0.1:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/rainbow-3.0.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/plist-3.5.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/parser-2.6.3.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/parallel_tests-2.29.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/parallel-1.17.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mustache-1.1.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mechanize-2.7.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/webrobots-0.1.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ntlm-http-0.1.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/nokogiri-1.10.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/nokogiri-1.10.3:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mini_portile2-2.4.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/net-http-persistent-3.1.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/net-http-digest_auth-1.4.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mime-types-3.2.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/mime-types-data-3.2019.0331/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/jaro_winkler-1.5.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/jaro_winkler-1.5.3:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/http-cookie-1.0.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/hpricot-0.8.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/hpricot-0.8.6:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/domain_name-0.5.20190701/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/unf-0.1.4/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/unf_ext-0.0.7.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/unf_ext-0.0.7.6:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/diff-lcs-1.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/coveralls-0.8.23/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/thor-0.20.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/term-ansicolor-1.7.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/tins-1.21.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/simplecov-0.16.1/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/simplecov-html-0.10.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/docile-1.3.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/json-2.2.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/extensions/universal-darwin-18/2.3.0/json-2.2.0:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/connection_pool-2.2.2/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/backports-3.15.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/ast-2.4.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/activesupport-5.2.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/tzinfo-1.2.5/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/thread_safe-0.3.6/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/minitest-5.11.3/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/i18n-1.6.0/lib:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/vendor/bundle/bundler/../ruby/2.3.0/gems/concurrent-ruby-1.1.5/lib:/Library/Ruby/Site/2.3.0:/Library/Ruby/Site/2.3.0/x86_64-darwin18:/Library/Ruby/Site/2.3.0/universal-darwin18:/Library/Ruby/Site:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby/2.3.0:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby/2.3.0/x86_64-darwin18:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby/2.3.0/universal-darwin18:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/vendor_ruby:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/2.3.0:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/2.3.0/x86_64-darwin18:/System/Library/Frameworks/Ruby.framework/Versions/2.3/usr/lib/ruby/2.3.0/universal-darwin18:/usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew -- /usr/<span class="built_in">local</span>/Homebrew/Library/Homebrew/postinstall.rb /usr/<span class="built_in">local</span>/Homebrew/Library/Taps/dart-lang/homebrew-dart/dart.rb -v</span><br><span class="line">==&gt; Caveats</span><br><span class="line">Please note the path to the Dart SDK:</span><br><span class="line">  /usr/<span class="built_in">local</span>/opt/dart/libexec</span><br><span class="line">==&gt; Summary</span><br><span class="line">🍺  /usr/<span class="built_in">local</span>/Cellar/dart/2.4.1: 387 files, 344.4MB, built <span class="keyword">in</span> 3 minutes 11 seconds</span><br></pre></td></tr></table></figure>
+<p><code>Homebrew</code> 成功用到了缓存并安装成功~祝贺你😆</p>
+<p>###Homebrew 成功用到了缓存并安装成功~祝贺你😆</p>
+<p>具体可见 <code>brew edit</code> 命令</p>
+<p>比如修改 <code>dart</code> 包，<code>brew edit dart</code>:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dart</span> &lt; Formula</span></span><br><span class="line">  desc <span class="string">"The Dart SDK"</span></span><br><span class="line">  homepage <span class="string">"https://www.dartlang.org/"</span></span><br><span class="line"></span><br><span class="line">  version <span class="string">"2.4.1"</span></span><br><span class="line">  <span class="keyword">if</span> Hardware::CPU.is_64_bit?</span><br><span class="line">    url <span class="string">"https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-x64-release.zip"</span></span><br><span class="line">    sha256 <span class="string">"62006127bd3acd1b7eb2e4fc7baed061eb19b80c4ba4af481db5244a081fff3e"</span></span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    url <span class="string">"https://storage.googleapis.com/dart-archive/channels/stable/release/2.4.1/sdk/dartsdk-macos-ia32-release.zip"</span></span><br><span class="line">    sha256 <span class="string">"3591578902f3b3ee155aa90bf893f3d0b50fd12567454a8f980440fa8dd1ff23"</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  devel <span class="keyword">do</span></span><br><span class="line">    version <span class="string">"2.5.0-dev.1.0"</span></span><br><span class="line">    <span class="keyword">if</span> Hardware::CPU.is_64_bit?</span><br><span class="line">      url <span class="string">"https://storage.googleapis.com/dart-archive/channels/dev/release/2.5.0-dev.1.0/sdk/dartsdk-macos-x64-release.zip"</span></span><br><span class="line">      sha256 <span class="string">"2fc3967437e8a3e2f5ee9d0abbf15ebf5823fdc6a648ee58a72bed550f93281f"</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      url <span class="string">"https://storage.googleapis.com/dart-archive/channels/dev/release/2.5.0-dev.1.0/sdk/dartsdk-macos-ia32-release.zip"</span></span><br><span class="line">      sha256 <span class="string">"6c0b7c6719ded33eb9ada8a6f52d80b3fe94ab43e008bb432ef8f7fd4997145b"</span></span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">install</span></span></span><br><span class="line">    libexec.install Dir[<span class="string">"*"</span>]</span><br><span class="line">    bin.install_symlink <span class="string">"<span class="subst">#&#123;libexec&#125;</span>/bin/dart"</span></span><br><span class="line">    bin.write_exec_script Dir[<span class="string">"<span class="subst">#&#123;libexec&#125;</span>/bin/&#123;pub,dart?*&#125;"</span>]</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">shim_script</span><span class="params">(target)</span></span></span><br><span class="line">    &lt;&lt;~EOS</span><br><span class="line">      <span class="comment">#!/usr/bin/env bash</span></span><br><span class="line">      exec <span class="string">"<span class="subst">#&#123;prefix&#125;</span>/<span class="subst">#&#123;target&#125;</span>"</span> <span class="string">"$@"</span></span><br><span class="line">    EOS</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">caveats</span>;</span> &lt;&lt;~EOS</span><br><span class="line">    Please note the path to the Dart <span class="symbol">SDK:</span></span><br><span class="line">      <span class="comment">#&#123;opt_libexec&#125;</span></span><br><span class="line">    EOS</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">  test <span class="keyword">do</span></span><br><span class="line">    (testpath/<span class="string">"sample.dart"</span>).write &lt;&lt;~EOS</span><br><span class="line">      void main() &#123;</span><br><span class="line">        print(r<span class="string">"test message"</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    EOS</span><br><span class="line"></span><br><span class="line">    assert_equal <span class="string">"test message\n"</span>, shell_output(<span class="string">"<span class="subst">#&#123;bin&#125;</span>/dart sample.dart"</span>)</span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>我们把 <code>tap</code> 里包对应的 <code>url</code> 给改成可用的地址即可。当然这种方法的前提是有可用的下载地址，比如清华大学、中科大等国内镜像源提供的加速地址，否则依然无效。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Brew/">Brew</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2020/09/28/解决-Homebrew-安装软件下载失败/" data-title="解决 Homebrew 安装软件下载失败 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/09/28/macOS-系统-DS-Store-文件详解/" title="macOS 系统 .DS_Store 文件详解">
+  <strong>上一篇：</strong><br/>
+  <span>
+  macOS 系统 .DS_Store 文件详解</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/09/28/Go-挖坑指南-“cannot-take-the-address-of-XXX”-and-“cannot-call-pointer-method-on-XXX”/"  title="Go 挖坑指南: “cannot take the address of XXX” and “cannot call pointer method on XXX”">
+ <strong>下一篇：</strong><br/> 
+ <span>Go 挖坑指南: “cannot take the address of XXX” and “cannot call pointer method on XXX”
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2020/09/28/解决-Homebrew-安装软件下载失败/" data-title="解决 Homebrew 安装软件下载失败" data-url="https://luckymrwang.github.io/2020/09/28/解决-Homebrew-安装软件下载失败/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>38</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello ,I&#39;m luckymrwang. <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/iuckymrwang" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
