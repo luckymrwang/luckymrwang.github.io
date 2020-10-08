@@ -82,6 +82,186 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/10/08/var-Interface-Struct/" title="var _ Interface = &amp;Struct{}" itemprop="url">var _ Interface = &amp;Struct{}</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-08T01:13:20.000Z" itemprop="datePublished"> 发表于 2020-10-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>检查struct是否实现了某个interface。因为golang里的接口实现不是侵入式，所以这样可以在编译的时候知道是否实现了对应的接口</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Reader <span class="keyword">interface</span> &#123;</span><br><span class="line">    Read()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Writer <span class="keyword">interface</span> &#123;</span><br><span class="line">    Write()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> A <span class="keyword">struct</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a A)</span> <span class="title">Read</span><span class="params">()</span></span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> _ Reader = &amp;A&#123;&#125;  <span class="comment">// 编译通过，确保A实现了 Reader 接口</span></span><br><span class="line"><span class="keyword">var</span> _ Writer = &amp;A&#123;&#125;   <span class="comment">// 编译通不过，A没有实现 Writer 接口</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/10/08/var-Interface-Struct/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/10/08/var-Interface-Struct/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/09/30/Security-Context/" title="Security Context" itemprop="url">Security Context</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-09-30T10:30:14.000Z" itemprop="datePublished"> 发表于 2020-09-30</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>###Security Context（安全上下文）</p>
+<p>用来限制容器对宿主节点的可访问范围，以避免容器非法操作宿主节点的系统级别的内容，使得节点的系统或者节点上其他容器组受到影响。</p>
+<p>Kubernetes 提供了三种配置 Security Context 的方法：</p>
+<ul>
+<li>Container-level Security Context：仅应用到指定的容器</li>
+<li>Pod-level Security Context：应用到 Pod 内所有容器以及 Volume</li>
+<li>Pod Security Policies（PSP）：应用到集群内部所有 Pod 以及 Volume</li>
+</ul>
+<p>###Container-level Security Context<br>容器的定义中包含 securityContext 字段。通过指定该字段，可以为容器设定安全相关的配置，当该字段的配置与 Pod 级别的 securityContext 配置相冲突时，容器级别的配置将覆盖 Pod 级别的配置。容器级别的 securityContext 不影响 Pod 中的数据卷。</p>
+<p>1、下面的示例中的 Pod 包含一个 Container，且 Pod 和 Container 都有定义 securityContext 字段：</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 9:14:37.png</p>
+<p>2、创建 Pod 并进入容器执行 ps aux 查看所有进程，容器的进程以 userID 2000 的身份运行。该取值由 spec.containers[*].securityContext.runAsUser 容器组中的字段定义。Pod 中定义的 spec.securityContext.runAsUser 取值 1000 被覆盖。输出结果如下所示：</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 9:31:2.png</p>
+<p>可以设置的安全策略类型如下：</p>
+<p>控制字段    字段说明<br>privileged    以 privileged 模式运行容器。此时容器中的进程本质上等价于宿主节点上的 root 用户。默认值为 false<br>允许扩大特权<br>allowPrivilegeEscalation    该字段控制了进程是否可以获取比父进程更多的特权。直接作用是为容器进程设置 no_new_privs标记。当如下情况发生时，该字段始终为 true：</p>
+<ol>
+<li>以 privileged 模式运行</li>
+<li>进程拥有 CAP_SYS_ADMIN 的 Linux capability<br>文件系统root只读<br>readOnlyRootFilesystem    该容器的文件系统根路径是否为只读。默认为 false<br>非Root<br>runAsNonRoot    如果为 true，则 kubernetes 在运行容器之前将执行检查，以确保容器进程不是以 root 用户（UID为0）运行，否则将不能启动容器；如果此字段不设置或者为 false，则不执行此检查。也可以在Pod的SecurityContext中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。<br>用户<br>runAsUser    执行容器 entrypoint 进程的 UID。默认为 docker 引擎的 GID。也可以在Pod的SecurityContext中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。<br>用户组<br>runAsGroup    执行容器 entrypoint 进程的 GID。默认为 docker 引擎的 GID。也可以在Pod的SecurityContext中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。<br>procMount</li>
+</ol>
+<p>procMount 代表了容器的 proc mount 的类型。默认值是 DefaultProcMount（使用容器引擎的默认值）。该字段需要激活 Kubernetes 的ProcMountType 特性<br>capabilities    为容器进程 add/drop Linux capabilities。默认使用容器引擎的设定。<br>seLinuxOptions    此字段设定的 SELinux 上下文将被应用到 Pod 中所有容器。如果不指定，容器引擎将为每个容器分配一个随机的 SELinux 上下文。也可以在Pod的SecurityContext中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。</p>
+<p>为容器设置 Linux Capabilities<br>使用 Linux Capabilities 可以为容器内的进程授予某些特定的权限（而不是 root 用户的所有权限）。在容器定义的 securityContext 中添加 capabilities 字段，可以向容器添加或删除 Linux Capability。 </p>
+<p>示例先运行一个不包含 capabilities 字段的容器，观察容器内进程的 linux capabilities 位图的情况；然后再运行一个包含 capabilities 字段的容器，比较其 linux capabilities 位图与前者的不同。 </p>
+<p>1、无 capabilities 字段时 </p>
+<p> ICM项目组 &gt; Security Context &gt; image2020-4-14 13:49:45.png</p>
+<p>2、创建 Pod 并进入容器执行 ps aux 查看所有进程， 输出结果中展示了容器中进程的 process ID（PID），如下所示：</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 13:51:20.png</p>
+<p>3、在容器的命令行界面中查看 process 1 的状态 cd /proc/1  cat status，输出结果中展示了该进程 Linux Capabilities 的位图，如下所示：</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 13:52:23.png</p>
+<p>4、有 capabilities 字段时，下面是 yaml 配置文件，该配置中为进程添加了两个 Linux Capability： CAP_NET_ADMIN 和 CAP_SYS_TIME：</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 13:53:14.png</p>
+<p>5、相同操作展示 process 1 的 Linux Capabilities 的位图</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 13:54:8.png</p>
+<p>6、第一次运行时，位图的 12 位和 25 为是 0。第二次运行时，12 位和 25 位是 1.查看 Linux Capabilities 的常量定义文件 capability.h 可知：12 位代表 CAP_NET_ADMIN，25 位代表 CAP_SYS_TIME。</p>
+<p>LinuxCapability常量</p>
+<p>Linux Capabilities 常量格式为 CAP_XXX。然而，在容器定义中添加或删除 Linux Capabilities 时，必须去除常量的前缀 CAP_。例如：向容器中添加 CAP_SYS_TIME 时，只需要填写 SYS_TIME。</p>
+<p>下面是从 capabilities man page 中摘取的 Capabilites 列表：</p>
+<p>Capability 名称    描述<br>CAP_CHOWN    修改文件所有者的权限<br>CAP_DAC_OVERRIDE    忽略文件的 DAC 访问限制    影响<br>CAP_KILL    允许对不属于自己的进程发送信号<br>CAP_SYS_CHROOT    允许使用 chroot() 系统调用<br>CAP_NET_BIND_SERVICE    允许绑定到小于 1024 的端口<br>CAP_SETUID    允许改变进程的 UID<br>CAP_SETGID    允许改变进程的 GID<br>CAP_FSETID    允许设置文件的 setuid 位    影响<br>CAP_FOWNER    忽略文件属主 ID 必须和进程用户 ID 相匹配的限制<br>CAP_SETFCAP    允许为文件设置任意的 capabilities    影响<br>CAP_SETPCAP    允许向其它进程转移能力以及删除其它进程的任意能力(只限init进程)<br>CAP_NET_RAW    允许使用原始套接字<br>CAP_MKNOD    允许使用 mknod() 系统调用    影响<br>CAP_AUDIT_WRITE    将记录写入内核审计日志    影响</p>
+<p>CAP_NET_ADMIN    允许执行网络管理任务    影响<br>CAP_AUDIT_CONTROL    启用和禁用内核审计；改变审计过滤规则；检索审计状态和过滤规则    影响<br>CAP_AUDIT_READ    允许通过 multicast netlink 套接字读取审计日志<br>CAP_BLOCK_SUSPEND    使用可以阻止系统挂起的特性<br>CAP_DAC_READ_SEARCH    忽略文件读及目录搜索的 DAC 访问限制<br>CAP_IPC_LOCK    允许锁定共享内存片段    影响<br>CAP_IPC_OWNER    忽略 IPC 所有权检查<br>CAP_LEASE    允许修改文件锁的 FL_LEASE 标志    影响<br>CAP_LINUX_IMMUTABLE    允许修改文件的 IMMUTABLE 和 APPEND 属性标志    影响<br>CAP_MAC_ADMIN    允许 MAC 配置或状态更改    影响<br>CAP_MAC_OVERRIDE    覆盖 MAC(Mandatory Access Control)    影响<br>CAP_NET_BROADCAST    允许网络广播和多播访问<br>CAP_SYS_ADMIN    允许执行系统管理任务，如加载或卸载文件系统、设置磁盘配额等    影响<br>CAP_SYS_BOOT    允许重新启动系统<br>CAP_SYS_MODULE    允许插入和删除内核模块    影响<br>CAP_SYS_NICE    允许提升优先级及设置其他进程的优先级<br>CAP_SYS_PACCT    允许执行进程的 BSD 式审计<br>CAP_SYS_PTRACE    允许跟踪任何进程<br>CAP_SYS_RAWIO    允许直接访问 /devport、/dev/mem、/dev/kmem 及原始块设备<br>CAP_SYS_RESOURCE    忽略资源限制<br>CAP_SYS_TIME    允许改变系统时钟    影响<br>CAP_SYS_TTY_CONFIG    允许配置 TTY 设备<br>CAP_SYSLOG    允许使用 syslog() 系统调用    影响<br>CAP_WAKE_ALARM    允许触发一些能唤醒系统的东西(比如 CLOCK_BOOTTIME_ALARM 计时器)    </p>
+<p>Pod-level Security Context<br>在 Pod 的定义中增加 securityContext 字段。通过该字段指定的内容将对该 Pod 中所有的容器生效，并且还会影响Volume（包括 fsGroup 和 selinuxOptions ）</p>
+<p>1、示例</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 9:36:35.png</p>
+<p>在上面的例子中：</p>
+<p>spec.securityContext.runAsUser 字段指定了该 Pod 中所有容器的进程都以 UserID 1000 的身份运行，spec.securityContext.runAsGroup 字段指定了该 Pod 中所有容器的进程都以 GroupID 3000 的身份运行<br>如果该字段被省略，容器进程的GroupID为 root(0)<br>容器中创建的文件，其所有者为 userID 1000，groupID 3000<br>spec.securityContext.fsGroup 字段指定了该 Pod 的 fsGroup 为 2000<br>数据卷 （本例中，对应挂载点 /data/demo 的数据卷为 sec-ctx-demo） 的所有者以及在该数据卷下创建的任何文件，其 GroupID 为 2000<br>2、创建 Pod 并进入容器执行 ps aux 查看所有进程，所有的进程都以 user 1000 的身份运行（由 runAsUser 指定），输出结果如下所示：</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 9:53:24.png</p>
+<p>3、执行 cd /data 切换到目录 /data，并查看目录中的文件列表 ls -l</p>
+<p>  /data/demo 目录的 groupID 为 2000（由 fsGroup 指定），输出结果如下所示：</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 9:57:1.png</p>
+<p>4、在命令行界面中，切换到目录 /data/demo，并创建一个文件 echo hello &gt; testfile</p>
+<p>  testfile 的 groupID 为 2000 （由 FSGroup 指定），输出结果如下所示：</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 9:59:14.png</p>
+<p>5、在命令行界面中执行 id 命令，输出结果如下所示：</p>
+<p>ICM项目组 &gt; Security Context &gt; image2020-4-14 9:59:49.png</p>
+<p>gid 为 3000，与 runAsGroup 字段所指定的一致<br>如果 runAsGroup 字段被省略，则 gid 取值为 0（即 root），此时容器中的进程将可以操作 root Group 的文件<br>可以设置的安全策略类型如下：</p>
+<p>控制字段<br>非Root<br>runAsNonRoot    如果为 true，则 kubernetes 在运行容器之前将执行检查，以确保容器进程不是以 root 用户（UID为0）运行，否则将不能启动容器；如果此字段不设置或者为 false，则不执行此检查。该字段也可以在容器的 securityContext 中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。<br>用户<br>runAsUser    执行容器 entrypoint 进程的 UID。默认为镜像元数据中定义的用户（dockerfile 中通过 USER 指令指定）。该字段也可以在容器的 securityContext 中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。<br>用户组<br>runAsGroup    执行容器 entrypoint 进程的 GID。默认为 docker 引擎的 GID。该字段也可以在容器的 securityContext 中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。<br>fsGroup    一个特殊的补充用户组，将被应用到 Pod 中所有容器。某些类型的数据卷允许 kubelet 修改数据卷的 ownership：</p>
+<ol>
+<li>修改后的 GID 取值来自于 fsGroup</li>
+<li>setgid 标记位被设为 1（此时，数据卷中新创建的文件 owner 为 fsGroup）</li>
+<li>permission 标记将与 rw-rw—- 执行或运算<br>如果该字段不设置，kubelete 将不会修改数据卷的 ownership 和 permission<br>补充用户组<br>supplementalGroups    该列表中的用户组将被作为容器的主 GID 的补充，添加到 Pod 中容器的 enrtypoint 进程。可以不设置。<br>seLinuxOptions    此字段设定的 SELinux 上下文将被应用到 Pod 中所有容器。如果不指定，容器引擎将为每个容器分配一个随机的 SELinux 上下文。该字段也可以在容器的 securityContext 中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。<br>sysctls    该列表中的所有 sysctl 将被应用到 Pod 中的容器。如果定义了容器引擎不支持的 sysctl，Pod 启动将会失败</li>
+</ol>
+<p>关于存储卷<br>Pod 的 securityContext 作用于 Pod 中所有的容器，同时对 Pod 的数据卷也同样生效。具体来说，fsGroup 和 seLinuxOptions 将被按照如下方式应用到 Pod 中的数据卷：</p>
+<p>fsGroup：对于支持 ownership 管理的数据卷，通过 fsGroup 指定的 GID 将被设置为该数据卷的 owner，并且可被 fsGroup 写入。更多细节请参考 Ownership Management design document<br>seLinuxOptions：对于支持 SELinux 标签的数据卷，将按照 seLinuxOptions 的设定重新打标签，以使 Pod 可以访问数据卷内容。通常只需要设置 seLinuxOptions 中 level 这一部分内容。该设定为 Pod 中所有容器及数据卷设置 Multi-Category Security (MCS) 标签。<br>Pod Security Policies<br>Pod Security Policies（PSP）是集群级的 Pod 安全策略，自动为集群内的 Pod 和 Volume 设置Security Context。<br>使用 PSP 需要在 kube-apiserver 服务的启动参数 –enable-admission-plugins 中进行设置： </p>
+<p>–enable-admission-plugins=PodSecurityPolicy</p>
+<p>在开启 PodSecurityPolicy 准入控制器后， Kubernetes 默认不允许创建任何 Pod，需要创建 PodSecurityPolicy 策略和相应的 RBAC 授权策略（Authorizing Policies），Pod 才能创建成功。</p>
+<p>PodSecurityPolicy 对象定义了一组条件，指示 Pod 必须按系统所能接受的顺序运行。 它们允许管理员控制如下方面：</p>
+<p>控制字段    字段名称<br>已授权容器的运行    privileged<br>为容器添加默认的一组能力    defaultAddCapabilities<br>为容器去掉某些能力    requiredDropCapabilities<br>容器能够请求添加某些能力    allowedCapabilities<br>控制卷类型的使用    volumes<br>主机网络的使用    hostNetwork<br>主机端口的使用    hostPorts<br>主机 PID namespace 的使用    hostPID<br>主机 IPC namespace 的使用    hostIPC<br>主机路径的使用    allowedHostPaths<br>容器的 SELinux 上下文    seLinux<br>用户 ID    runAsUser<br>配置允许的补充组    supplementalGroups<br>分配拥有 Pod 数据卷的 FSGroup    fsGroup<br>必须使用一个只读的 root 文件系统    readOnlyRootFilesystem</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/09/30/Security-Context/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/09/30/Security-Context/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/09/28/macOS-系统-DS-Store-文件详解/" title="macOS 系统 .DS_Store 文件详解" itemprop="url">macOS 系统 .DS_Store 文件详解</a>
   </h1>
   <p class="article-author">By
@@ -570,134 +750,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/" title="扩展golang的sync mutex的trylock及islocked" itemprop="url">扩展golang的sync mutex的trylock及islocked</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-02-11T08:24:31.000Z" itemprop="datePublished"> 发表于 2020-02-11</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>  Golang的 sync mutex是阻塞互斥锁，在一个 goroutine 获得 Mutex 后，其他 goroutine 只能等到这个 goroutine 释放该 Mutex，使用 Lock() 加锁后，不能再继续对其加锁，直到利用 Unlock() 解锁后才能再加锁。但有时逻辑里面需要 非阻塞模式的拿锁 及 非阻塞得知锁的状态。trylock, 可以用非阻塞的模型进行拿锁，要么拿到锁，要么锁被别人拿到。 islocked, 就是判断锁的状态。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/02/11/扩展golang的sync-mutex的trylock及islocked/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/01/07/Go-module-如何发布-v2-及以上版本/" title="Go module 如何发布 v2 及以上版本" itemprop="url">Go module 如何发布 v2 及以上版本</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-01-07T08:52:05.000Z" itemprop="datePublished"> 发表于 2020-01-07</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><img src="/images/gomod.png" alt="go mod"></p>
-<blockquote>
-<p>用上 Go module 之后，发布的版本都在 v1 上面，用了这么长时间遇到了升级 v2 版本的问题。记录一下</p>
-</blockquote>
-<ul>
-<li>Go module 版本号</li>
-<li>Go 项目如何升级 v2</li>
-<li>incompatible</li>
-<li>v0.0.0-20190312205133-abcdefghijklm</li>
-<li>tag 删除了重建为什么没效果</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/01/07/Go-module-如何发布-v2-及以上版本/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/01/07/Go-module-如何发布-v2-及以上版本/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/01/07/Go-module-如何发布-v2-及以上版本/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -729,7 +781,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>38</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>39</sup></a></li>
 			
 		
 			
@@ -745,11 +797,11 @@
 			
 		
 			
-				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
 			
 		
 			
@@ -757,15 +809,11 @@
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -781,11 +829,7 @@
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
 			
 		
 			
@@ -793,19 +837,27 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 		</ul>
