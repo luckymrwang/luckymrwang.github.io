@@ -95,15 +95,14 @@
 </header>
     <div class="article-content">
         
-        <p>###Security Context（安全上下文）</p>
-<p>用来限制容器对宿主节点的可访问范围，以避免容器非法操作宿主节点的系统级别的内容，使得节点的系统或者节点上其他容器组受到影响。</p>
+        <h3 id="Security-Context（安全上下文）"><a href="#Security-Context（安全上下文）" class="headerlink" title="Security Context（安全上下文）"></a>Security Context（安全上下文）</h3><p>用来限制容器对宿主节点的可访问范围，以避免容器非法操作宿主节点的系统级别的内容，使得节点的系统或者节点上其他容器组受到影响。</p>
 <p>Kubernetes 提供了三种配置 Security Context 的方法：</p>
 <ul>
 <li>Container-level Security Context：仅应用到指定的容器</li>
 <li>Pod-level Security Context：应用到 Pod 内所有容器以及 Volume</li>
 <li>Pod Security Policies（PSP）：应用到集群内部所有 Pod 以及 Volume</li>
 </ul>
-<p>###Container-level Security Context<br>容器的定义中包含 securityContext 字段。通过指定该字段，可以为容器设定安全相关的配置，当该字段的配置与 Pod 级别的 securityContext 配置相冲突时，容器级别的配置将覆盖 Pod 级别的配置。容器级别的 securityContext 不影响 Pod 中的数据卷。</p>
+<h3 id="Container-level-Security-Context"><a href="#Container-level-Security-Context" class="headerlink" title="Container-level Security Context"></a>Container-level Security Context</h3><p>容器的定义中包含 securityContext 字段。通过指定该字段，可以为容器设定安全相关的配置，当该字段的配置与 Pod 级别的 securityContext 配置相冲突时，容器级别的配置将覆盖 Pod 级别的配置。容器级别的 securityContext 不影响 Pod 中的数据卷。</p>
 <p>1、下面的示例中的 Pod 包含一个 Container，且 Pod 和 Container 都有定义 securityContext 字段：</p>
 <p>ICM项目组 &gt; Security Context &gt; image2020-4-14 9:14:37.png</p>
 <p>2、创建 Pod 并进入容器执行 ps aux 查看所有进程，容器的进程以 userID 2000 的身份运行。该取值由 spec.containers[*].securityContext.runAsUser 容器组中的字段定义。Pod 中定义的 spec.securityContext.runAsUser 取值 1000 被覆盖。输出结果如下所示：</p>
@@ -217,10 +216,8 @@
 </header>
     <div class="article-content">
         
-        <p>###.DS_Store 文件</p>
-<p><code>.DS_Store</code> 是 <code>Finder</code> 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。</p>
-<p>###显示/隐藏 Mac 隐藏文件</p>
-<ul>
+        <h3 id="DS-Store-文件"><a href="#DS-Store-文件" class="headerlink" title=".DS_Store 文件"></a>.DS_Store 文件</h3><p><code>.DS_Store</code> 是 <code>Finder</code> 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。</p>
+<h3 id="显示-隐藏-Mac-隐藏文件"><a href="#显示-隐藏-Mac-隐藏文件" class="headerlink" title="显示/隐藏 Mac 隐藏文件"></a>显示/隐藏 Mac 隐藏文件</h3><ul>
 <li>显示：defaults write com.apple.finder AppleShowAllFiles -bool true</li>
 <li>隐藏：defaults write com.apple.finder AppleShowAllFiles -bool false</li>
 </ul>
@@ -810,15 +807,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -830,11 +823,11 @@
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
 			
 		
 			
@@ -842,7 +835,19 @@
 			
 		
 			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>2</sup></a></li>
 			
 		
 			
@@ -850,15 +855,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 		</ul>

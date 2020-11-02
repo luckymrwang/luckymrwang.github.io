@@ -11,18 +11,18 @@
     
 
     
-    <meta name="description" content="###.DS_Store 文件 .DS_Store 是 Finder 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。 ###显示/隐藏 Mac 隐藏文件  显示：defaults write com.apple.finder AppleShowAllFiles -bool true 隐藏：defaults write com.apple.finder AppleShowAllFiles">
+    <meta name="description" content=".DS_Store 文件.DS_Store 是 Finder 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。 显示/隐藏 Mac 隐藏文件 显示：defaults write com.apple.finder AppleShowAllFiles -bool true 隐藏：defaults write com.apple.finder AppleShowAllFiles -bool fa">
 <meta name="keywords" content="macOS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="macOS 系统 .DS_Store 文件详解">
 <meta property="og:url" content="https://luckymrwang.github.io/2020/09/28/macOS-系统-DS-Store-文件详解/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="###.DS_Store 文件 .DS_Store 是 Finder 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。 ###显示/隐藏 Mac 隐藏文件  显示：defaults write com.apple.finder AppleShowAllFiles -bool true 隐藏：defaults write com.apple.finder AppleShowAllFiles">
+<meta property="og:description" content=".DS_Store 文件.DS_Store 是 Finder 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。 显示/隐藏 Mac 隐藏文件 显示：defaults write com.apple.finder AppleShowAllFiles -bool true 隐藏：defaults write com.apple.finder AppleShowAllFiles -bool fa">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-09-28T01:09:46.600Z">
+<meta property="og:updated_time" content="2020-11-02T02:50:58.833Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="macOS 系统 .DS_Store 文件详解">
-<meta name="twitter:description" content="###.DS_Store 文件 .DS_Store 是 Finder 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。 ###显示/隐藏 Mac 隐藏文件  显示：defaults write com.apple.finder AppleShowAllFiles -bool true 隐藏：defaults write com.apple.finder AppleShowAllFiles">
+<meta name="twitter:description" content=".DS_Store 文件.DS_Store 是 Finder 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。 显示/隐藏 Mac 隐藏文件 显示：defaults write com.apple.finder AppleShowAllFiles -bool true 隐藏：defaults write com.apple.finder AppleShowAllFiles -bool fa">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -98,32 +98,26 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#DS-Store-文件"><span class="toc-number">1.</span> <span class="toc-text">.DS_Store 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#显示-隐藏-Mac-隐藏文件"><span class="toc-number">2.</span> <span class="toc-text">显示/隐藏 Mac 隐藏文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除-DS-Store-文件"><span class="toc-number">3.</span> <span class="toc-text">删除 .DS_Store 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-SVN-忽略-DS-Store-文件"><span class="toc-number">4.</span> <span class="toc-text">配置 SVN 忽略 .DS_Store 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#防止-DS-Store-文件生成"><span class="toc-number">5.</span> <span class="toc-text">防止 .DS_Store 文件生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-Git-忽略-DS-Store-文件"><span class="toc-number">6.</span> <span class="toc-text">配置 Git 忽略 .DS_Store 文件</span></a></li></ol>
 		
 		</div>
 		
-		<p>###.DS_Store 文件</p>
-<p><code>.DS_Store</code> 是 <code>Finder</code> 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。</p>
-<p>###显示/隐藏 Mac 隐藏文件</p>
-<ul>
+		<h3 id="DS-Store-文件"><a href="#DS-Store-文件" class="headerlink" title=".DS_Store 文件"></a>.DS_Store 文件</h3><p><code>.DS_Store</code> 是 <code>Finder</code> 用来存储这个文件夹的显示属性的：比如文件图标的摆放位置。</p>
+<h3 id="显示-隐藏-Mac-隐藏文件"><a href="#显示-隐藏-Mac-隐藏文件" class="headerlink" title="显示/隐藏 Mac 隐藏文件"></a>显示/隐藏 Mac 隐藏文件</h3><ul>
 <li>显示：defaults write com.apple.finder AppleShowAllFiles -bool true</li>
 <li>隐藏：defaults write com.apple.finder AppleShowAllFiles -bool false</li>
 </ul>
 <a id="more"></a>
-<p>###删除 .DS_Store 文件</p>
-<ul>
+<h3 id="删除-DS-Store-文件"><a href="#删除-DS-Store-文件" class="headerlink" title="删除 .DS_Store 文件"></a>删除 .DS_Store 文件</h3><ul>
 <li>find /path/to/files -name “.DS_Store” -delete</li>
 <li>find /path/to/files –type f –name “.DS_Store” -print –delete</li>
 <li>find /path/to/files –type f –name “.DS_Store” -print0 | xargs –0 rm -rdf</li>
 </ul>
-<p>###配置 SVN 忽略 .DS_Store 文件</p>
-<p>1、编辑<code>~/.subversion/config</code>文件；<br>2、找到global-ignores配置项，取消注释；<br>3、添加上自己要忽略的文件，用空格隔开</p>
+<h3 id="配置-SVN-忽略-DS-Store-文件"><a href="#配置-SVN-忽略-DS-Store-文件" class="headerlink" title="配置 SVN 忽略 .DS_Store 文件"></a>配置 SVN 忽略 .DS_Store 文件</h3><p>1、编辑<code>~/.subversion/config</code>文件；<br>2、找到global-ignores配置项，取消注释；<br>3、添加上自己要忽略的文件，用空格隔开</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">global-ignores = *.iml .idea .DS_Store .sass-cache node_modules *.o *.lo *.la *.al .libs *.so *.so.[0-9]* *.a *.pyc *.pyo</span><br></pre></td></tr></table></figure>
 <p>这是针对客户端的全局修改，不会对 SVN 服务端有影响，忽略的文件列表不会再出现在 SVN 的操作中。</p>
-<p>###防止 .DS_Store 文件生成</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">defaults write com.apple.desktopservices DSDontWriteNetworkStorestrue <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<p>###配置 Git 忽略 .DS_Store 文件</p>
-<ul>
+<h3 id="防止-DS-Store-文件生成"><a href="#防止-DS-Store-文件生成" class="headerlink" title="防止 .DS_Store 文件生成"></a>防止 .DS_Store 文件生成</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">defaults write com.apple.desktopservices DSDontWriteNetworkStorestrue <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置-Git-忽略-DS-Store-文件"><a href="#配置-Git-忽略-DS-Store-文件" class="headerlink" title="配置 Git 忽略 .DS_Store 文件"></a>配置 Git 忽略 .DS_Store 文件</h3><ul>
 <li><code>.gitignore</code> 配置文件用于配置不需要加入版本管理的文件</li>
 <li>语法<ul>
 <li>以斜杠”/“开头表示目录；</li>
@@ -204,7 +198,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#DS-Store-文件"><span class="toc-number">1.</span> <span class="toc-text">.DS_Store 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#显示-隐藏-Mac-隐藏文件"><span class="toc-number">2.</span> <span class="toc-text">显示/隐藏 Mac 隐藏文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除-DS-Store-文件"><span class="toc-number">3.</span> <span class="toc-text">删除 .DS_Store 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-SVN-忽略-DS-Store-文件"><span class="toc-number">4.</span> <span class="toc-text">配置 SVN 忽略 .DS_Store 文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#防止-DS-Store-文件生成"><span class="toc-number">5.</span> <span class="toc-text">防止 .DS_Store 文件生成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-Git-忽略-DS-Store-文件"><span class="toc-number">6.</span> <span class="toc-text">配置 Git 忽略 .DS_Store 文件</span></a></li></ol>
  
   </div>
 
@@ -259,15 +253,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -279,11 +269,11 @@
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
 			
 		
 			
@@ -291,7 +281,19 @@
 			
 		
 			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>2</sup></a></li>
 			
 		
 			
@@ -299,15 +301,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 		</ul>
