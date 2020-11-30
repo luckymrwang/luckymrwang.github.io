@@ -82,69 +82,6 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2019/08/27/Golang-跳转语句goto-break-continue的使用及区别/" title="Golang 跳转语句goto,break,continue的使用及区别" itemprop="url">Golang 跳转语句goto,break,continue的使用及区别</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2019-08-27T01:21:09.000Z" itemprop="datePublished"> 发表于 2019-08-27</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="goto"><a href="#goto" class="headerlink" title="goto"></a>goto</h3><p>goto 语句可以无条件地转移到过程中指定的行。</p>
-<p>通常与条件语句配合使用。可用来实现条件转移，构成循环，跳出循环体等功能。</p>
-<p>在结构化程序设计中一般不主张使用goto语句，以免造成程序流程的混乱。</p>
-<p>goto对应(标签)既可以定义在for循环前面,也可以定义在for循环后面，当跳转到标签地方时，继续执行标签下面的代码。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//  放在for前面，此例会一直循环下去</span></span><br><span class="line">    Loop:</span><br><span class="line">    fmt.Println(<span class="string">"test"</span>)</span><br><span class="line">    <span class="keyword">for</span> a:=<span class="number">0</span>;a&lt;<span class="number">5</span>;a++&#123;</span><br><span class="line">        fmt.Println(a)</span><br><span class="line">        <span class="keyword">if</span> a&gt;<span class="number">3</span>&#123;</span><br><span class="line">            <span class="keyword">goto</span> Loop</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> a:=<span class="number">0</span>;a&lt;<span class="number">5</span>;a++&#123;</span><br><span class="line">        fmt.Println(a)</span><br><span class="line">        <span class="keyword">if</span> a&gt;<span class="number">3</span>&#123;</span><br><span class="line">            <span class="keyword">goto</span> Loop</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    Loop:           <span class="comment">//放在for后边</span></span><br><span class="line">    fmt.Println(<span class="string">"test"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2019/08/27/Golang-跳转语句goto-break-continue的使用及区别/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Golang/">Golang</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2019/08/27/Golang-跳转语句goto-break-continue的使用及区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/08/27/Golang-跳转语句goto-break-continue的使用及区别/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
       <a href="/2019/08/13/docker-搭建-gitlab-ce-教程/" title="docker 搭建 gitlab-ce 教程" itemprop="url">docker 搭建 gitlab-ce 教程</a>
   </h1>
   <p class="article-author">By
@@ -691,6 +628,67 @@
 
 
 
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/01/02/protobuf-import路径问题/" title="protobuf import路径问题" itemprop="url">protobuf import路径问题</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-01-02T03:39:18.000Z" itemprop="datePublished"> 发表于 2019-01-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>比如有这样的一个目录结构</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">--protobuf</span><br><span class="line">	--main.proto</span><br><span class="line">	--main.pb.go</span><br><span class="line">	--storyboard</span><br><span class="line">		--storyboard.proto</span><br></pre></td></tr></table></figure>
+<p>怎样在<code>storyboard.proto</code>中引入<code>main.proto</code>？</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2019/01/02/protobuf-import路径问题/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Protobuf/">Protobuf</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2019/01/02/protobuf-import路径问题/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/01/02/protobuf-import路径问题/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
@@ -778,15 +776,15 @@
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>3</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			
@@ -798,7 +796,7 @@
 			
 		
 			
-				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>2</sup></a></li>
 			
 		
 		</ul>
