@@ -82,6 +82,64 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/06/24/VBA读取TXT文件/" title="VBA读取TXT文件" itemprop="url">VBA读取TXT文件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-06-24T06:41:07.000Z" itemprop="datePublished"> 发表于 2016-06-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>用VBA读取TXT文件到EXCEL</p>
+<figure class="highlight vb"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Dim</span> objStream, strData<span class="keyword">Set</span> objStream = CreateObject(<span class="string">"ADODB.Stream"</span>)objStream.Charset = <span class="string">"utf-8"</span></span><br><span class="line"></span><br><span class="line">‘ LINUX 换行符 objStream.LineSeparator = <span class="number">10</span>  默认是 <span class="number">-1</span> 回车换行符</span><br><span class="line">objStream.OpenobjStream.LoadFromFile (<span class="string">"C:\Users\Administrator\Desktop\test.txt"</span>)rowNo = <span class="number">1</span><span class="keyword">Do</span> <span class="keyword">While</span> <span class="keyword">Not</span> (objStream.EOS)    Worksheets(<span class="string">"Sheet1"</span>).Cells(rowNo, <span class="number">1</span>).Value = objStream.ReadText(<span class="number">-2</span>) <span class="comment">'每次读一行</span>    rowNo = rowNo + <span class="number">1</span><span class="keyword">Loop</span><span class="comment">' 关闭</span>objStream.Close<span class="keyword">Set</span> objStream = <span class="literal">Nothing</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/VBA/">VBA</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/06/24/VBA读取TXT文件/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/06/24/VBA读取TXT文件/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/06/13/闭包-closure-与协程共用时要注意的事情/" title=" 闭包(closure)与协程共用时要注意的事情" itemprop="url"> 闭包(closure)与协程共用时要注意的事情</a>
   </h1>
   <p class="article-author">By
@@ -625,65 +683,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/05/01/如何使用PHP编写RESTful接口/" title="如何使用PHP编写RESTful接口" itemprop="url">如何使用PHP编写RESTful接口</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-05-01T04:01:32.000Z" itemprop="datePublished"> 发表于 2016-05-01</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>PHPRS <a href="https://github.com/caoym/phprs" target="_blank" rel="noopener">@github</a><br>这是一个轻量级框架，专为快速开发RESTful接口而设计。如果你和我一样，厌倦了使用传统的MVC框架编写微服务或者前后端分离的API接口，受不了为了一个简单接口而做的很多多余的coding（和CTRL-C/CTRL-V），那么，你肯定会喜欢这个框架！</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/05/01/如何使用PHP编写RESTful接口/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/PHP/">PHP</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/05/01/如何使用PHP编写RESTful接口/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/05/01/如何使用PHP编写RESTful接口/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/10/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/12/">Next<span></span></a>
@@ -715,7 +714,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>39</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>40</sup></a></li>
 			
 		
 			
@@ -767,6 +766,10 @@
 			
 		
 			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
@@ -775,19 +778,15 @@
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/缓存/" title="缓存">缓存<sup>2</sup></a></li>
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			
