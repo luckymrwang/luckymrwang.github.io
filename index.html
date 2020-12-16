@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/12/15/K8s-AdmissionWebhook/" title="K8s AdmissionWebhook" itemprop="url">K8s AdmissionWebhook</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-15T03:08:42.000Z" itemprop="datePublished"> 发表于 2020-12-15</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="AdmissionWebhook"><a href="#AdmissionWebhook" class="headerlink" title="AdmissionWebhook"></a>AdmissionWebhook</h3><p>什么是AdmissionWebhook，就要先了解k8s中的admission controller, 按照官方的解释是：<br><code>admission controller是拦截(经过身份验证)API Server请求的网关，并且可以修改请求对象或拒绝请求。</code></p>
+<p>简而言之，它可以认为是拦截器，类似web框架中的middleware。</p>
+<p>k8s默认提供很多内置的admission controller，通过kube-apiserver启动命令参数可以 查看到支持的admission controller plugin有哪些。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/15/K8s-AdmissionWebhook/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/kubernetes/">kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/15/K8s-AdmissionWebhook/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/15/K8s-AdmissionWebhook/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/12/09/Go性能分析/" title="Go性能分析" itemprop="url">Go性能分析</a>
   </h1>
   <p class="article-author">By
@@ -628,69 +689,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/" title="Dockerfile: ENTRYPOINT和CMD的区别" itemprop="url">Dockerfile: ENTRYPOINT和CMD的区别</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-09-22T10:27:24.000Z" itemprop="datePublished"> 发表于 2020-09-22</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>翻译<a href="https://link.zhihu.com/?target=https%3A//www.ctl.io/developers/blog/post/dockerfile-entrypoint-vs-cmd/" target="_blank" rel="noopener">Dockerfile: ENTRYPOINT vs CMD</a></p>
-<p>在我们查阅Dockerfile的官方文档时, 有可能发现一些命令的功能重复(至少看起来干的事情差不多), 我已经在上文分析过ADD和COPY命令的区别(他们功能类似), 现在我们分析另外2个命令, 他们的功能也非常类似, 是CMD和ENTRYPOINT。尽管ENTRYPOINT和CMD都是在docker image里执行一条命令, 但是他们有一些微妙的区别。在绝大多数情况下, 你只要在这2者之间选择一个调用就可以. 但他们有更高级的应用, CMD和ENTRYPOINT组合起来使用, 完成更加丰富的功能<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Docker/">Docker</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
@@ -735,15 +736,11 @@
 			
 		
 			
-				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
 			
 		
 			
@@ -751,15 +748,11 @@
 			
 		
 			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
@@ -771,7 +764,15 @@
 			
 		
 			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
@@ -783,19 +784,19 @@
 			
 		
 			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 		</ul>
