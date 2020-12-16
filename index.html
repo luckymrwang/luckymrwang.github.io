@@ -95,7 +95,10 @@
 </header>
     <div class="article-content">
         
-        <h3 id="AdmissionWebhook"><a href="#AdmissionWebhook" class="headerlink" title="AdmissionWebhook"></a>AdmissionWebhook</h3><p>什么是AdmissionWebhook，就要先了解k8s中的admission controller, 按照官方的解释是：<br><code>admission controller是拦截(经过身份验证)API Server请求的网关，并且可以修改请求对象或拒绝请求。</code></p>
+        <h3 id="AdmissionWebhook"><a href="#AdmissionWebhook" class="headerlink" title="AdmissionWebhook"></a>AdmissionWebhook</h3><p>什么是AdmissionWebhook，就要先了解k8s中的admission controller, 按照官方的解释是：</p>
+<blockquote>
+<p>admission controller是拦截(经过身份验证)API Server请求的网关，并且可以修改请求对象或拒绝请求</p>
+</blockquote>
 <p>简而言之，它可以认为是拦截器，类似web框架中的middleware。</p>
 <p>k8s默认提供很多内置的admission controller，通过kube-apiserver启动命令参数可以 查看到支持的admission controller plugin有哪些。</p>
         
