@@ -82,6 +82,71 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/06/03/Apache的Order-All-Deny详解/" title="Apache的Order All,Deny详解" itemprop="url">Apache的Order All,Deny详解</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-06-03T03:46:40.000Z" itemprop="datePublished"> 发表于 2015-06-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Allow和Deny可以用于apache的conf文件或者.htaccess文件中（配合Directory, Location, Files等），用来控制目录和文件的访问授权。</p>
+<h2 id="Tips"><a href="#Tips" class="headerlink" title="Tips"></a>Tips</h2><ul>
+<li><p>修改完配置后要保存好并重启Apache服务，配置才能生效</p>
+</li>
+<li><p>开头字母不分大小写</p>
+</li>
+<li><p>Allow、Deny语句不分先后顺序，谁先谁后不影响最终判断结果；但都会被判断到</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/06/03/Apache的Order-All-Deny详解/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Apache/">Apache</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/06/03/Apache的Order-All-Deny详解/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/03/Apache的Order-All-Deny详解/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/05/28/Codeigniter在执行大量查询语句时内存占用过大的问题/" title="Codeigniter在执行大量查询语句时内存占用过大的问题" itemprop="url">Codeigniter在执行大量查询语句时内存占用过大的问题</a>
   </h1>
   <p class="article-author">By
@@ -615,71 +680,6 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/05/16/Generating-SSH-keys/" title="Generating SSH keys" itemprop="url">Generating SSH keys</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-05-16T04:03:03.000Z" itemprop="datePublished"> 发表于 2015-05-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="Step-1-Check-for-SSH-keys"><a href="#Step-1-Check-for-SSH-keys" class="headerlink" title="Step 1: Check for SSH keys"></a>Step 1: Check for SSH keys</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ls -al ~/.ssh</span><br><span class="line"><span class="comment"># Lists the files in your .ssh directory, if they exist</span></span><br></pre></td></tr></table></figure>
-<p>Check the directory listing to see if you already have a public SSH key. By default, the filenames of the public keys are one of the following:<br><code>&gt;</code> id_dsa.pub<br><code>&gt;</code> id_ecdsa.pub<br><code>&gt;</code> id_ed25519.pub<br><code>&gt;</code> id_rsa.pub<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/05/16/Generating-SSH-keys/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/example/">example</a>
-</div>
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/SSH/">SSH</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/05/16/Generating-SSH-keys/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/16/Generating-SSH-keys/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/18/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/20/">Next<span></span></a>
@@ -719,7 +719,7 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>11</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>12</sup></a></li>
 			
 		
 			
@@ -727,15 +727,11 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>6</sup></a></li>
 			
 		
 			
@@ -743,15 +739,11 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -763,7 +755,15 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
 			
 		
 			
@@ -779,15 +779,15 @@ $DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
 			
 		
 			
-				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/PPTP/" title="PPTP">PPTP<sup>2</sup></a></li>
+				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
 		</ul>
