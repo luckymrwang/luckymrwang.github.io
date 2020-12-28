@@ -82,6 +82,68 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/05/20/CI数据库类/" title="CI数据库类" itemprop="url">CI数据库类</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-20T07:51:51.000Z" itemprop="datePublished"> 发表于 2015-05-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用</p>
+<pre><code>$DB1 = $this-&gt;load-&gt;database(&apos;group_one&apos;, TRUE);
+$DB2 = $this-&gt;load-&gt;database(&apos;group_two&apos;, TRUE);
+</code></pre><p>通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/05/20/CI数据库类/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CI/">CI</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/05/20/CI数据库类/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/05/20/CI数据库类/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/05/19/百万级别访问网站前期的技术准备/" title="百万级别访问网站前期的技术准备" itemprop="url">百万级别访问网站前期的技术准备</a>
   </h1>
   <p class="article-author">By
@@ -429,11 +491,7 @@
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
@@ -441,7 +499,11 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -469,15 +531,15 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 			
@@ -664,6 +726,35 @@ ga('send', 'pageview');
 
 <!-- MathJax Begin -->
 <!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 
 
 <!-- MathJax End -->
