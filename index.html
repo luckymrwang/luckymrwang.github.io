@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2021/02/20/探究K8S-Service内部iptables路由规则/" title="探究K8S Service内部iptables路由规则" itemprop="url">探究K8S Service内部iptables路由规则</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-02-20T02:37:20.000Z" itemprop="datePublished"> 发表于 2021-02-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在K8S集群内部，应用常使用Service互访，那么，了解Service技术优缺点将有利于应用规划与部署，鉴于此，本文将通过简单案例以探索Cluster-Ip类型Service服务的利弊。</p>
+<p>为便于讲解，我们先创建如下应用及Service服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl run --image=nginx nginx-web-1 --image-pull-policy='IfNotPresent'</span></span><br><span class="line"><span class="comment"># kubectl expose deployment nginx-web-1 --port=80 --target-port=80</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2021/02/20/探究K8S-Service内部iptables路由规则/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2021/02/20/探究K8S-Service内部iptables路由规则/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/02/20/探究K8S-Service内部iptables路由规则/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2021/01/28/解决-Homebrew-下载更新极慢的问题/" title="解决 Homebrew 下载更新极慢的问题" itemprop="url">解决 Homebrew 下载更新极慢的问题</a>
   </h1>
   <p class="article-author">By
@@ -639,66 +700,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/12/04/Golang-连接池的几种实现案例/" title="Golang 连接池的几种实现案例" itemprop="url">Golang 连接池的几种实现案例</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-12-04T15:08:51.000Z" itemprop="datePublished"> 发表于 2020-12-04</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>因为 TCP 的三只握手等等原因，建立一个连接是一件成本比较高的行为。所以在一个需要多次与特定实体交互的程序中，就需要维持一个连接池，里面有可以复用的连接可供重复使用。</p>
-<p>而维持一个连接池，最基本的要求就是要做到：thread safe（线程安全），尤其是在 Golang 这种特性是 goroutine 的语言中。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/12/04/Golang-连接池的几种实现案例/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/12/04/Golang-连接池的几种实现案例/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/04/Golang-连接池的几种实现案例/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -742,11 +743,11 @@
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
@@ -754,11 +755,15 @@
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
 			
@@ -766,7 +771,7 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>5</sup></a></li>
 			
 		
 			
@@ -778,15 +783,7 @@
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>4</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
@@ -795,6 +792,10 @@
 		
 			
 				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
