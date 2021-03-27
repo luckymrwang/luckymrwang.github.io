@@ -142,6 +142,71 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/12/04/Security Context (安全上下文)/" title="容器 Security Context (安全上下文)" itemprop="url">容器 Security Context (安全上下文)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-04T15:08:51.000Z" itemprop="datePublished"> 发表于 2020-12-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>用来限制容器对宿主节点的可访问范围，以避免容器非法操作宿主节点的系统级别的内容，使得节点的系统或者节点上其他容器组受到影响。</p>
+<p>Kubernetes 提供了三种配置 Security Context 的方法：</p>
+<ul>
+<li>Container-level Security Context：仅应用到指定的容器</li>
+<li>Pod-level Security Context：应用到 Pod 内所有容器以及 Volume</li>
+<li>Pod Security Policies（PSP）：应用到集群内部所有 Pod 以及 Volume</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/04/Security Context (安全上下文)/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a><a href="/tags/Docker/">Docker</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/04/Security Context (安全上下文)/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/04/Security Context (安全上下文)/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/11/10/使用go的io-Pipe优雅的优化中间缓存/" title="使用go的io.Pipe优雅的优化中间缓存" itemprop="url">使用go的io.Pipe优雅的优化中间缓存</a>
   </h1>
   <p class="article-author">By
@@ -624,73 +689,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/09/16/Go中strings的常用方法/" title="Go中strings的常用方法" itemprop="url">Go中strings的常用方法</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-09-16T12:39:05.000Z" itemprop="datePublished"> 发表于 2020-09-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h4 id="Compare"><a href="#Compare" class="headerlink" title="Compare"></a>Compare</h4><ul>
-<li>func Compare(a, b string) int</li>
-</ul>
-<p>按照字典序比较两个字符串，通常情况下直接使用=，&gt;，&lt;会更快一些。</p>
-<h4 id="Contains，ContainsAny-和-ContainsRune"><a href="#Contains，ContainsAny-和-ContainsRune" class="headerlink" title="Contains，ContainsAny 和 ContainsRune"></a>Contains，ContainsAny 和 ContainsRune</h4><ul>
-<li>func Contains(s, substr string) bool</li>
-<li>func ContainsAny(s, chars string) bool</li>
-<li>func ContainsRune(s string, r rune) bool</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/09/16/Go中strings的常用方法/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/09/16/Go中strings的常用方法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/09/16/Go中strings的常用方法/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
@@ -746,7 +744,7 @@
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>6</sup></a></li>
 			
 		
 			
@@ -754,19 +752,15 @@
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>5</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -778,7 +772,7 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -786,7 +780,7 @@
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -794,11 +788,15 @@
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
 		</ul>

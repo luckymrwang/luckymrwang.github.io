@@ -82,6 +82,72 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2021/03/27/理解有状态应用控制器StatefulSet/" title="理解有状态应用控制器StatefulSet" itemprop="url">理解有状态应用控制器StatefulSet</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-03-27T08:47:21.000Z" itemprop="datePublished"> 发表于 2021-03-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="StatefulSet的设计原理"><a href="#StatefulSet的设计原理" class="headerlink" title="StatefulSet的设计原理"></a>StatefulSet的设计原理</h3><p>首先我们先来了解下Kubernetes的一个概念：有状态服务与无状态服务。</p>
+<ul>
+<li><p>无状态服务（Stateless Service）：该服务运行的实例不会在本地存储需要持久化的数据，并且多个实例对于同一个请求响应的结果是完全一致的。这种方式适用于服务间相互没有依赖关系，如Web应用，在Deployment控制器停止掉其中的一个Pod不会对其他Pod造成影响。</p>
+</li>
+<li><p>有状态服务（Stateful Service）：服务运行的实例需要在本地存储持久化数据，比如数据库或者多个实例之间有依赖拓扑关系，比如：主从关系、主备关系。如果停止掉依赖中的一个Pod，就会导致数据丢失或者集群崩溃。这种实例之间有不对等关系，以及实例对外部数据有依赖关系的应用，就被称为“有状态应用”（Stateful Application）。</p>
+</li>
+</ul>
+<p>其中无状态服务在我们前面文章中使用的Deployment编排对象已经可以满足，因为无状态的应用不需要很多要求，只要保持服务正常运行就可以，Deployment删除掉任意中的Pod也不会影响服务的正常，但面对相对复杂的应用，比如有依赖关系或者需要存储数据，Deployment就无法满足条件了，Kubernetes项目也提供了另一个编排对象StatefulSet。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2021/03/27/理解有状态应用控制器StatefulSet/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2021/03/27/理解有状态应用控制器StatefulSet/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/03/27/理解有状态应用控制器StatefulSet/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2021/02/20/探究K8S-Service内部iptables路由规则/" title="探究K8S Service内部iptables路由规则" itemprop="url">探究K8S Service内部iptables路由规则</a>
   </h1>
   <p class="article-author">By
@@ -635,71 +701,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/12/04/Security Context (安全上下文)/" title="容器 Security Context (安全上下文)" itemprop="url">容器 Security Context (安全上下文)</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-12-04T15:08:51.000Z" itemprop="datePublished"> 发表于 2020-12-04</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>用来限制容器对宿主节点的可访问范围，以避免容器非法操作宿主节点的系统级别的内容，使得节点的系统或者节点上其他容器组受到影响。</p>
-<p>Kubernetes 提供了三种配置 Security Context 的方法：</p>
-<ul>
-<li>Container-level Security Context：仅应用到指定的容器</li>
-<li>Pod-level Security Context：应用到 Pod 内所有容器以及 Volume</li>
-<li>Pod Security Policies（PSP）：应用到集群内部所有 Pod 以及 Volume</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/12/04/Security Context (安全上下文)/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a><a href="/tags/Docker/">Docker</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/12/04/Security Context (安全上下文)/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/04/Security Context (安全上下文)/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -755,7 +756,7 @@
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>6</sup></a></li>
 			
 		
 			
@@ -763,19 +764,15 @@
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>5</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -787,7 +784,7 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
@@ -795,7 +792,7 @@
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -803,11 +800,15 @@
 			
 		
 			
-				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
 			
 		
 		</ul>
