@@ -82,6 +82,88 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/12/24/JSON-stringify/" title="JSON.stringify()" itemprop="url">JSON.stringify()</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-24T12:36:05.000Z" itemprop="datePublished"> 发表于 2015-12-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p><strong>JSON.stringify()</strong> 方法可以将任意的 JavaScript 值序列化成 JSON 字符串。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><pre><code>JSON.stringify(value[, replacer [, space]])
+</code></pre><h3 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h3><h4 id="value"><a href="#value" class="headerlink" title="value"></a>value</h4><p>将要序列化成 JSON 字符串的值。</p>
+<h4 id="replacer-可选"><a href="#replacer-可选" class="headerlink" title="replacer  可选"></a>replacer  <code>可选</code></h4><p>如果该参数是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；如果该参数是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中。关于该参数更详细的解释和示例，请参考使用原生的 JSON 对象一文。</p>
+<h4 id="space-可选"><a href="#space-可选" class="headerlink" title="space 可选"></a>space <code>可选</code></h4><p>指定缩进用的空白字符串，用于美化输出（pretty-print）。</p>
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>关于序列化，有下面五点注意事项：</p>
+<ul>
+<li>非数组对象的属性不能保证以特定的顺序出现在序列化后的字符串中。</li>
+<li>布尔值、数字、字符串的包装对象在序列化过程中会自动转换成对应的原始值。</li>
+<li>undefined、任意的函数以及 symbol 值，在序列化过程中会被忽略（出现在非数组对象的属性值中时）或者被转换成 null（出现在数组中时）。</li>
+<li>所有以 symbol 为属性键的属性都会被完全忽略掉，即便 replacer 参数中强制指定包含了它们。</li>
+<li>不可枚举的属性会被忽略</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(&#123;&#125;);                        <span class="comment">// '&#123;&#125;'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(<span class="literal">true</span>);                      <span class="comment">// 'true'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(<span class="string">"foo"</span>);                     <span class="comment">// '"foo"'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify([<span class="number">1</span>, <span class="string">"false"</span>, <span class="literal">false</span>]);       <span class="comment">// '[1,"false",false]'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123; <span class="attr">x</span>: <span class="number">5</span> &#125;);                  <span class="comment">// '&#123;"x":5&#125;'</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;<span class="attr">x</span>: <span class="number">5</span>, <span class="attr">y</span>: <span class="number">6</span>&#125;);              </span><br><span class="line"><span class="comment">// '&#123;"x":5,"y":6&#125;' 或者 '&#123;"y":6,"x":5&#125;' 都可能</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify([<span class="keyword">new</span> <span class="built_in">Number</span>(<span class="number">1</span>), <span class="keyword">new</span> <span class="built_in">String</span>(<span class="string">"false"</span>), <span class="keyword">new</span> <span class="built_in">Boolean</span>(<span class="literal">false</span>)]); </span><br><span class="line"><span class="comment">// '[1,"false",false]'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;<span class="attr">x</span>: <span class="literal">undefined</span>, <span class="attr">y</span>: <span class="built_in">Object</span>, <span class="attr">z</span>: <span class="built_in">Symbol</span>(<span class="string">""</span>)&#125;); </span><br><span class="line"><span class="comment">// '&#123;&#125;'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify([<span class="literal">undefined</span>, <span class="built_in">Object</span>, <span class="built_in">Symbol</span>(<span class="string">""</span>)]);          </span><br><span class="line"><span class="comment">// '[null,null,null]' </span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;[<span class="built_in">Symbol</span>(<span class="string">"foo"</span>)]: <span class="string">"foo"</span>&#125;);                 </span><br><span class="line"><span class="comment">// '&#123;&#125;'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;[<span class="built_in">Symbol</span>.for(<span class="string">"foo"</span>)]: <span class="string">"foo"</span>&#125;, [<span class="built_in">Symbol</span>.for(<span class="string">"foo"</span>)]);</span><br><span class="line"><span class="comment">// '&#123;&#125;'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;[<span class="built_in">Symbol</span>.for(<span class="string">"foo"</span>)]: <span class="string">"foo"</span>&#125;, <span class="function"><span class="keyword">function</span> (<span class="params">k, v</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> k === <span class="string">"symbol"</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"a symbol"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// '&#123;&#125;'  </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不可枚举的属性默认会被忽略：</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify( <span class="built_in">Object</span>.create(<span class="literal">null</span>, &#123; <span class="attr">x</span>: &#123; <span class="attr">value</span>: <span class="string">'x'</span>, <span class="attr">enumerable</span>: <span class="literal">false</span> &#125;, <span class="attr">y</span>: &#123; <span class="attr">value</span>: <span class="string">'y'</span>, <span class="attr">enumerable</span>: <span class="literal">true</span> &#125; &#125;) );</span><br><span class="line"><span class="comment">// '&#123;"y":"y"&#125;'</span></span><br></pre></td></tr></table></figure>
+<h3 id="space-参数"><a href="#space-参数" class="headerlink" title="space 参数"></a>space 参数</h3><p>space 参数用来控制结果字符串里面的间距。如果是一个数字, 则在字符串化时每一级别会比上一级别缩进多这个数字值的空格（最多10个空格）；如果是一个字符串，则每一级别会比上一级别多缩进用该字符串（或该字符串的前十个字符）。</p>
+<pre><code>JSON.stringify({ a: 2 }, null, &quot; &quot;);   // &apos;{\n &quot;a&quot;: 2\n}&apos;
+</code></pre><p>使用制表符（\t）来缩进：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(&#123; <span class="attr">uno</span>: <span class="number">1</span>, <span class="attr">dos</span> : <span class="number">2</span> &#125;, <span class="literal">null</span>, <span class="string">'\t'</span>)</span><br><span class="line"><span class="comment">// '&#123;            \</span></span><br><span class="line"><span class="comment">//     "uno": 1, \</span></span><br><span class="line"><span class="comment">//     "dos": 2  \</span></span><br><span class="line"><span class="comment">// &#125;'</span></span><br></pre></td></tr></table></figure>
+<h3 id="toJSON-方法"><a href="#toJSON-方法" class="headerlink" title="toJSON 方法"></a>toJSON 方法</h3><p>如果一个被序列化的对象拥有 toJSON 方法，那么该 toJSON 方法就会覆盖该对象默认的序列化行为：不是那个对象被序列化，而是调用 toJSON 方法后的返回值会被序列化，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  foo: <span class="string">'foo'</span>,</span><br><span class="line">  toJSON: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">'bar'</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">JSON</span>.stringify(obj);      <span class="comment">// '"bar"'</span></span><br><span class="line"><span class="built_in">JSON</span>.stringify(&#123;<span class="attr">x</span>: obj&#125;); <span class="comment">// '&#123;"x":"bar"&#125;'</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用-JSON-stringify-结合-localStorage-的例子"><a href="#使用-JSON-stringify-结合-localStorage-的例子" class="headerlink" title="使用 JSON.stringify 结合 localStorage 的例子"></a>使用 JSON.stringify 结合 localStorage 的例子</h3><p>一些时候，你想存储用户创建的一个对象，并且，即使在浏览器被关闭后仍能恢复该对象。下面的例子是 JSON.stringify 适用于这种情形的一个样板：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个示例数据</span></span><br><span class="line"><span class="keyword">var</span> session = &#123;</span><br><span class="line">    <span class="string">'screens'</span> : [],</span><br><span class="line">    <span class="string">'state'</span> : <span class="literal">true</span></span><br><span class="line">&#125;;</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenA"</span>, <span class="string">"width"</span>:<span class="number">450</span>, <span class="string">"height"</span>:<span class="number">250</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenB"</span>, <span class="string">"width"</span>:<span class="number">650</span>, <span class="string">"height"</span>:<span class="number">350</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenC"</span>, <span class="string">"width"</span>:<span class="number">750</span>, <span class="string">"height"</span>:<span class="number">120</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenD"</span>, <span class="string">"width"</span>:<span class="number">250</span>, <span class="string">"height"</span>:<span class="number">60</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenE"</span>, <span class="string">"width"</span>:<span class="number">390</span>, <span class="string">"height"</span>:<span class="number">120</span>&#125;);</span><br><span class="line">session.screens.push(&#123;<span class="string">"name"</span>:<span class="string">"screenF"</span>, <span class="string">"width"</span>:<span class="number">1240</span>, <span class="string">"height"</span>:<span class="number">650</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 JSON.stringify 转换为 JSON 字符串</span></span><br><span class="line"><span class="comment">// 然后使用 localStorage 保存在 session 名称里</span></span><br><span class="line">localStorage.setItem(<span class="string">'session'</span>, <span class="built_in">JSON</span>.stringify(session));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后是如何转换通过 JSON.stringify 生成的字符串，该字符串以 JSON 格式保存在 localStorage 里</span></span><br><span class="line"><span class="keyword">var</span> restoredSession = <span class="built_in">JSON</span>.parse(localStorage.getItem(<span class="string">'session'</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 现在 restoredSession 包含了保存在 localStorage 里的对象</span></span><br><span class="line"><span class="built_in">console</span>.log(restoredSession);</span><br></pre></td></tr></table></figure>
+<h3 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h3><ul>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_native_JSON" target="_blank" rel="noopener">使用原生得JSON对象</a></li>
+</ul>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/JS/">JS</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/24/JSON-stringify/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/24/JSON-stringify/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/12/24/JS获取url参数值的两种方式/" title="JS获取url参数值的两种方式" itemprop="url">JS获取url参数值的两种方式</a>
   </h1>
   <p class="article-author">By
@@ -612,68 +694,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/11/17/Kale系统skyline的过滤算法/" title="Kale系统skyline的过滤算法" itemprop="url">Kale系统skyline的过滤算法</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-17T08:12:49.000Z" itemprop="datePublished"> 发表于 2015-11-17</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>同样作为时间序列存储的 rrdtool 和 graphite，都偏重在预测算法，也就是说根据现有数据推测下一个数据应该是多少；而 skyline 则是根据现有数据统计最新数据是否异常<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/11/17/Kale系统skyline的过滤算法/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/监控/">监控</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/11/17/Kale系统skyline的过滤算法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/17/Kale系统skyline的过滤算法/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/page/14/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" href="/page/16/">Next<span></span></a>
+    <a class="extend prev" rel="prev" href="/page/14/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/16/">Next<span></span></a>
   </nav>
 
 </div>
@@ -710,7 +733,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>13</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>14</sup></a></li>
 			
 		
 			
@@ -718,11 +741,11 @@
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
@@ -762,11 +785,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -774,7 +797,7 @@
 			
 		
 			
-				<li><a href="/tags/React-Native/" title="React-Native">React-Native<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 			
