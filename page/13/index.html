@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/05/25/Golang安装及配置/" title="Golang安装及配置" itemprop="url">Golang安装及配置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-05-25T06:04:43.000Z" itemprop="datePublished"> 发表于 2016-05-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="Linux-Mac-OS-X-and-FreeBSD-tarballs"><a href="#Linux-Mac-OS-X-and-FreeBSD-tarballs" class="headerlink" title="Linux, Mac OS X, and FreeBSD tarballs"></a>Linux, Mac OS X, and FreeBSD tarballs</h3><p>下载安装包解压到<code>/usr/local</code>, 例如：</p>
+<pre><code>tar -C /usr/local -xzf go$VERSION.$OS-$ARCH.tar.gz
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/05/25/Golang安装及配置/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/05/25/Golang安装及配置/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/05/25/Golang安装及配置/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/05/25/进一步认识Golang中的并发/" title="进一步认识Golang中的并发" itemprop="url">进一步认识Golang中的并发</a>
   </h1>
   <p class="article-author">By
@@ -623,65 +684,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/03/06/Go的-byte与string/" title="Go的[]byte与string" itemprop="url">Go的[]byte与string</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-03-06T04:56:50.000Z" itemprop="datePublished"> 发表于 2016-03-06</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s1 := <span class="string">"abcd"</span></span><br><span class="line">    b1 := []<span class="keyword">byte</span>(s1)</span><br><span class="line">    fmt.Println(b1) <span class="comment">// [97 98 99 100]</span></span><br><span class="line"></span><br><span class="line">    s2 := <span class="string">"中文"</span></span><br><span class="line">    b2 := []<span class="keyword">byte</span>(s2)</span><br><span class="line">    fmt.Println(b2) <span class="comment">// [228 184 173 230 150 135], unicode，每个中文字符会由三个byte组成 </span></span><br><span class="line"></span><br><span class="line">    r := []<span class="keyword">rune</span>(s2)</span><br><span class="line">    fmt.Println(r) <span class="comment">// [20013 25991], 每个字一个数值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/03/06/Go的-byte与string/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/03/06/Go的-byte与string/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/03/06/Go的-byte与string/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/12/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/14/">Next<span></span></a>
@@ -725,10 +727,6 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
@@ -737,15 +735,11 @@
 			
 		
 			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -753,11 +747,15 @@
 			
 		
 			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -766,6 +764,18 @@
 		
 			
 				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -781,15 +791,7 @@
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/Bash/" title="Bash">Bash<sup>2</sup></a></li>
 			
 		
 		</ul>
