@@ -20,8 +20,8 @@
 <meta property="og:description" content="基于reverse proxy实现的反向代理例子123456789101112131415161718192021222324package mainimport (    &quot;log&quot;    &quot;net/http&quot;    &quot;net/http/httputil&quot;    &quot;net/url&quot;)func main() &amp;#123;    // 地址重写实例    // http://127.0.0.1:88">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/reverse.jpg">
-<meta property="og:image" content="https://luckymrwang.github.io/imags/proxy.png">
-<meta property="og:updated_time" content="2021-04-11T05:44:37.336Z">
+<meta property="og:image" content="https://luckymrwang.github.io/images/proxy.png">
+<meta property="og:updated_time" content="2021-05-10T10:56:01.948Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Go 反向代理reverse proxy 源码分析">
 <meta name="twitter:description" content="基于reverse proxy实现的反向代理例子123456789101112131415161718192021222324package mainimport (    &quot;log&quot;    &quot;net/http&quot;    &quot;net/http/httputil&quot;    &quot;net/url&quot;)func main() &amp;#123;    // 地址重写实例    // http://127.0.0.1:88">
@@ -143,7 +143,7 @@
 <p>测试结果</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http:<span class="comment">//127.0.0.1:8888/test?id=123</span></span><br><span class="line">[INFO] http:<span class="comment">//127.0.0.1:8081/reverse/test?id=123</span></span><br></pre></td></tr></table></figure>
 <h3 id="返回客户端真实IP"><a href="#返回客户端真实IP" class="headerlink" title="返回客户端真实IP"></a>返回客户端真实IP</h3><p>处于安全性的考虑，通常我们不会将真实服务器也就是realserver 直接对外部用户暴露，而是通过反向代理的方式对外暴露服务，如下图所示：</p>
-<p><img src="/imags/proxy.png" alt="proxy"></p>
+<p><img src="/images/proxy.png" alt="proxy"></p>
 <p>带来的问题是，在用户与真实服务器之间经过一台或多台反向代理服务器后，真实服务器究竟应该如何获取到用户的真实IP，换句话说，中间的反向代理服务器应如何将用户真实IP原封不动的透传到后端真实服务器。</p>
 <p>通常我们会基于HTTP header实现，常用的有X-Real-IP 和 X-Forward-For 两个字段。<br>X-Real-IP ： 通常在离用户最近的代理点上设置，用于记录用户的真实IP，往后的反向代理节点不需要设置，否则将覆盖为上一个反向代理的IP<br>X-Forward-For：记录每个经过的节点IP，以”,”分隔，例如请求链路是client -&gt; proxy1 -&gt; proxy2 -&gt; webapp，那么得到的值为clientip,proxy1,proxy2</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> clientIP, _, err := net.SplitHostPort(req.RemoteAddr); err == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// If we aren't the first proxy retain prior</span></span><br><span class="line">        <span class="comment">// X-Forwarded-For information as a comma+space</span></span><br><span class="line">        <span class="comment">// separated list and fold multiple headers into one.</span></span><br><span class="line">        <span class="keyword">if</span> prior, ok := outreq.Header[<span class="string">"X-Forwarded-For"</span>]; ok &#123;</span><br><span class="line">            clientIP = strings.Join(prior, <span class="string">", "</span>) + <span class="string">", "</span> + clientIP</span><br><span class="line">        &#125;</span><br><span class="line">        outreq.Header.Set(<span class="string">"X-Forwarded-For"</span>, clientIP)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
