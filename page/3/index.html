@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/11/09/CentOS-7-用户账户配置/" title="CentOS 7 用户账户配置" itemprop="url">CentOS 7 用户账户配置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-11-09T00:55:52.000Z" itemprop="datePublished"> 发表于 2020-11-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h3><p>Centos 7 系统最小化安装，默认配置，是没有创建其他用户的。作为服务器操作系统，为了安全起见，一般是使用一般用户。这就牵涉到用户、用户组的创建以及删除。</p>
+<p>此外，CentOS 7 和其他版本的Linux一样，都具有相应用户的配置文件及目录，如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/etc/passwd 　　      //用户账户信息，可以看出用户名称 </span><br><span class="line">/etc/shadow          //用户账户加密后信息，包括但不限于/etc/passwd中的信息 </span><br><span class="line">/etc/group           //组账户信息，可以看出组名称 </span><br><span class="line">/etc/gshadow   　　　 //组账户安全信息，包括但不限于/etc/group中的信息 </span><br><span class="line">/etc/default/useradd //账户创建时默认值 </span><br><span class="line">/etc/skel/           //包含默认文件的目录,具体作用尚不清楚 </span><br><span class="line">/etc/login.defs      //安全性的默认配置，与上面/etc/default/useradd有区别</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/11/09/CentOS-7-用户账户配置/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/11/09/CentOS-7-用户账户配置/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/11/09/CentOS-7-用户账户配置/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/11/06/Parse-the-kubernetes-manifest-in-yaml-or-json/" title="Parse the kubernetes manifest in yaml or json" itemprop="url">Parse the kubernetes manifest in yaml or json</a>
   </h1>
   <p class="article-author">By
@@ -627,65 +688,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/" title="扩展golang的sync mutex的trylock及islocked" itemprop="url">扩展golang的sync mutex的trylock及islocked</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-02-11T08:24:31.000Z" itemprop="datePublished"> 发表于 2020-02-11</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>  Golang的 sync mutex是阻塞互斥锁，在一个 goroutine 获得 Mutex 后，其他 goroutine 只能等到这个 goroutine 释放该 Mutex，使用 Lock() 加锁后，不能再继续对其加锁，直到利用 Unlock() 解锁后才能再加锁。但有时逻辑里面需要 非阻塞模式的拿锁 及 非阻塞得知锁的状态。trylock, 可以用非阻塞的模型进行拿锁，要么拿到锁，要么锁被别人拿到。 islocked, 就是判断锁的状态。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/02/11/扩展golang的sync-mutex的trylock及islocked/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
@@ -717,7 +719,7 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>42</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>43</sup></a></li>
 			
 		
 			
@@ -733,11 +735,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -745,7 +747,7 @@
 			
 		
 			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
 			
@@ -753,11 +755,11 @@
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -765,11 +767,11 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -777,15 +779,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -793,7 +791,11 @@
 			
 		
 			
-				<li><a href="/tags/CI/" title="CI">CI<sup>2</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Neo4j/" title="Neo4j">Neo4j<sup>2</sup></a></li>
 			
 		
 		</ul>
