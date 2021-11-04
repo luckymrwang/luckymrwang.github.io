@@ -11,13 +11,13 @@
     
 
     
-    <meta name="description" content="Introduction本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables/ebtables 的實際流向。演講中主要針對三個方向進行探討，分別是 Host to ContainerContainer to ContainerContainer to WAN每個方向都包含了雙向來回，譬如Host to Container 其實也包含了">
+    <meta name="description" content="Introduction本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables/ebtables 的實際流向。演講中主要針對三個方向進行探討，分別是  Host to Container Container to Container Container to WAN  每個方向都包含了雙向來回，譬如Host to Container 其實">
 <meta name="keywords" content="Iptables">
 <meta property="og:type" content="article">
 <meta property="og:title" content="初探 IPTABLES 流動之路 - 以 Docker 為範例">
 <meta property="og:url" content="https://luckymrwang.github.io/2021/11/04/初探-IPTABLES-流動之路-以-Docker-為範例/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="Introduction本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables/ebtables 的實際流向。演講中主要針對三個方向進行探討，分別是 Host to ContainerContainer to ContainerContainer to WAN每個方向都包含了雙向來回，譬如Host to Container 其實也包含了">
+<meta property="og:description" content="Introduction本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables/ebtables 的實際流向。演講中主要針對三個方向進行探討，分別是  Host to Container Container to Container Container to WAN  每個方向都包含了雙向來回，譬如Host to Container 其實">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/iptables1.png">
 <meta property="og:image" content="https://luckymrwang.github.io/images/iptables2.png">
@@ -40,10 +40,10 @@
 <meta property="og:image" content="https://luckymrwang.github.io/images/iptables19.png">
 <meta property="og:image" content="https://luckymrwang.github.io/images/iptables20.png">
 <meta property="og:image" content="https://luckymrwang.github.io/images/iptables21.png">
-<meta property="og:updated_time" content="2021-11-04T12:53:33.323Z">
+<meta property="og:updated_time" content="2021-11-04T12:59:12.500Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初探 IPTABLES 流動之路 - 以 Docker 為範例">
-<meta name="twitter:description" content="Introduction本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables/ebtables 的實際流向。演講中主要針對三個方向進行探討，分別是 Host to ContainerContainer to ContainerContainer to WAN每個方向都包含了雙向來回，譬如Host to Container 其實也包含了">
+<meta name="twitter:description" content="Introduction本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables/ebtables 的實際流向。演講中主要針對三個方向進行探討，分別是  Host to Container Container to Container Container to WAN  每個方向都包含了雙向來回，譬如Host to Container 其實">
 <meta name="twitter:image" content="https://luckymrwang.github.io/images/iptables1.png">
 
     
@@ -125,7 +125,12 @@
 		</div>
 		
 		<h3 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h3><p>本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables/ebtables 的實際流向。<br>演講中主要針對三個方向進行探討，分別是</p>
-<p>Host to Container<br>Container to Container<br>Container to WAN<br>每個方向都包含了雙向來回，譬如<br>Host to Container 其實也包含了 Container to Host<br>Container to WAN 也包含了 WAN to Containe<br>主要差別在於誰發起了連線，這中間差異不大 (WAN to Container 可能會有 DNAT)</p>
+<ul>
+<li>Host to Container</li>
+<li>Container to Container</li>
+<li>Container to WAN</li>
+</ul>
+<p>每個方向都包含了雙向來回，譬如<br><code>Host to Container</code> 其實也包含了 <code>Container to Host</code><br><code>Container to WAN</code> 也包含了 <code>WAN to Containe</code><br>主要差別在於誰發起了連線，這中間差異不大 (<code>WAN to Container</code> 可能會有 DNAT)</p>
 <a id="more"></a>
 <p>下圖是這次演講最主要的圖片，接下來會透過實際觀察的方式，一步一步的建立起這張圖片</p>
 <p><img src="/images/iptables1.png" alt=""></p>
