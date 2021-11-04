@@ -21,7 +21,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/2021/10/25/Go-Http包解析：为什么需要response-Body-Close/images/http-close.png">
 <meta property="og:image" content="https://luckymrwang.github.io/2021/10/25/Go-Http包解析：为什么需要response-Body-Close/images/http-close2.png">
-<meta property="og:updated_time" content="2021-10-25T06:02:44.249Z">
+<meta property="og:updated_time" content="2021-10-25T06:02:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Go Http包解析：为什么需要response.Body.Close()">
 <meta name="twitter:description" content="最近线上的一个项目遇到了内存泄露的问题，查了heap之后，发现 http包的 dialConn函数竟然占了内存使用的大头，这个有点懵逼了，后面在网上查询资料的时候无意间发现一句话  10次内存泄露，有9次是goroutine泄露。  结果发现，正是我认为的不可能的goroutine泄露导致了这次的内存泄露，而goroutine泄露的原因就是 没有调用 response.Body.Close()">
@@ -196,6 +196,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2021/11/04/初探-IPTABLES-流動之路-以-Docker-為範例/" title="初探 IPTABLES 流動之路 - 以 Docker 為範例">
+  <strong>上一篇：</strong><br/>
+  <span>
+  初探 IPTABLES 流動之路 - 以 Docker 為範例</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2021/07/16/使用-dlv-GoLand-远程调试/"  title="使用 dlv + GoLand 远程调试">
@@ -274,11 +282,11 @@
 			
 		
 			
-				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
@@ -286,7 +294,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
 			
@@ -294,11 +302,11 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -310,11 +318,11 @@
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>3</sup></a></li>
 			
 		
 			
