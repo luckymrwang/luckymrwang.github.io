@@ -82,6 +82,69 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/11/15/linux-下使用-curl-访问带多参数，GET掉参数解决方案/" title="linux 下使用 curl 访问带多参数，GET掉参数解决方案" itemprop="url">linux 下使用 curl 访问带多参数，GET掉参数解决方案</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-15T10:16:15.000Z" itemprop="datePublished"> 发表于 2016-11-15</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>url 为 <code>http://mywebsite.com/index.php?a=1&amp;b=2&amp;c=3</code></p>
+<p>web 形式下访问 url 地址，使用 \$_GET 是可以获取到所有的参数</p>
+<p><code>curl  -s  http://mywebsite.com/index.php?a=1&amp;b=2&amp;c=3</code></p>
+<p>然而在linux下，上面的例子 $_GET只能获取到参数 a</p>
+<p>由于url中有 <code>&amp;</code> 其他参数获取不到，在linux系统中 <code>&amp;</code> 会使进程系统后台运行，必须对 <code>&amp;</code> 进行下转义才能 $_GET 获取到所有参数</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/11/15/linux-下使用-curl-访问带多参数，GET掉参数解决方案/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/15/linux-下使用-curl-访问带多参数，GET掉参数解决方案/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/15/linux-下使用-curl-访问带多参数，GET掉参数解决方案/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/11/15/Golang中TCP-Socket粘包问题和处理/" title="Golang中TCP Socket粘包问题和处理" itemprop="url">Golang中TCP Socket粘包问题和处理</a>
   </h1>
   <p class="article-author">By
@@ -630,68 +693,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/10/18/从kafka中查询用户日志优化/" title="从kafka中查询用户日志优化" itemprop="url">从kafka中查询用户日志优化</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-10-18T09:04:37.000Z" itemprop="datePublished"> 发表于 2016-10-18</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>优化从<code>kafka</code>中取用户日志</p>
-<p>最初是根据开始时间，结束时间从<code>kafka</code>提供的api中取出<code>json</code>数据，然后挨个解析判断是否符合条件。</p>
-<p>由于数据量很大，这种方式会特别慢。</p>
-<h3 id="初步优化"><a href="#初步优化" class="headerlink" title="初步优化"></a>初步优化</h3><p>通过<code>kakfa</code>官方提供的命令行工具，取出用户日志，然后再利用系统<code>grep</code>命令筛选出符合条件的数据，此时数据为<code>json</code>流，之后将<code>json</code>流数据循环解析过滤出最终数据</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/10/18/从kafka中查询用户日志优化/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a><a href="/tags/Kafka/">Kafka</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/10/18/从kafka中查询用户日志优化/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/10/18/从kafka中查询用户日志优化/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/9/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/11/">Next<span></span></a>
@@ -751,15 +752,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -767,11 +760,19 @@
 			
 		
 			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
@@ -787,11 +788,11 @@
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
@@ -799,7 +800,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/Brew/" title="Brew">Brew<sup>2</sup></a></li>
 			
 		
 		</ul>

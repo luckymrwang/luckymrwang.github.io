@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/12/15/Draggable时阻止单击click事件/" title="Draggable时阻止单击click事件" itemprop="url">Draggable时阻止单击click事件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-15T03:46:27.000Z" itemprop="datePublished"> 发表于 2015-12-15</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Draggable时阻止单击事件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'.selector'</span>).draggable(&#123;</span><br><span class="line">    stop: <span class="function"><span class="keyword">function</span>(<span class="params">event, ui</span>) </span>&#123;</span><br><span class="line">        <span class="comment">// event.toElement is the element that was responsible</span></span><br><span class="line">        <span class="comment">// for triggering this event. The handle, in case of a draggable.</span></span><br><span class="line">        $( event.toElement ).one(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123; e.stopImmediatePropagation(); &#125; );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>This works because “one-listeners” are fired before “normal” listeners. So if a one-listener stops propagation, it will never reach your previously set listeners.</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/jQuery/">jQuery</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/15/Draggable时阻止单击click事件/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/15/Draggable时阻止单击click事件/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/12/11/GOJS去除水印/" title="GOJS去除水印" itemprop="url">GOJS去除水印</a>
   </h1>
   <p class="article-author">By
@@ -611,66 +671,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/11/12/正向代理与反向代理的区别/" title="正向代理与反向代理的区别" itemprop="url">正向代理与反向代理的区别</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-12T05:08:20.000Z" itemprop="datePublished"> 发表于 2015-11-12</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="正向代理的概念"><a href="#正向代理的概念" class="headerlink" title="正向代理的概念"></a>正向代理的概念</h3><p>正向代理，也就是通常所说的代理，它的工作原理就像一个跳板。</p>
-<p>简单的说，我是一个用户，我访问不了某网站，但是我能访问一个代理服务器，这个代理服务器，它能访问那个我不能访问的网站。于是我先连上代理服务器，告诉它我需要那个无法访问网站的内容，代理服务器去取回来，然后返回给我。从网站的角度，只在代理服务器来取内容的时候有一次记录。有时候并不知道是用户的请求，也隐藏了用户的资料，这取决于代理告不告诉网站。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/11/12/正向代理与反向代理的区别/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Nginx/">Nginx</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/11/12/正向代理与反向代理的区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/12/正向代理与反向代理的区别/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/15/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/17/">Next<span></span></a>
@@ -730,15 +730,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
 			
 		
 			
@@ -746,11 +738,19 @@
 			
 		
 			
-				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
@@ -766,11 +766,11 @@
 			
 		
 			
-				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>3</sup></a></li>
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
 			
 		
 			
@@ -778,7 +778,7 @@
 			
 		
 			
-				<li><a href="/tags/Centos/" title="Centos">Centos<sup>2</sup></a></li>
+				<li><a href="/tags/Brew/" title="Brew">Brew<sup>2</sup></a></li>
 			
 		
 		</ul>
