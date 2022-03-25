@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>iBlog</title>
@@ -34,7 +34,7 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -75,6 +75,72 @@
     </header>
     <div id="container">
       <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/03/25/netstat-命令查看连接数/" title="netstat 命令查看连接数" itemprop="url">netstat 命令查看连接数</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-03-25T02:29:28.000Z" itemprop="datePublished"> 发表于 2022-03-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>显示所有活动的网络连接</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -na</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>查看同时连接到哪个服务器 IP 比较多，cc 攻击用。使用双网卡或多网卡可用</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -an|awk  <span class="string">'&#123;print $4&#125;'</span>|sort|uniq -c|sort -nr|head</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/03/25/netstat-命令查看连接数/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/03/25/netstat-命令查看连接数/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/03/25/netstat-命令查看连接数/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
 
    
     
@@ -620,67 +686,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2021/04/03/Kubernetes-网络策略/" title="Kubernetes 网络策略" itemprop="url">Kubernetes 网络策略</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2021-04-03T01:54:31.000Z" itemprop="datePublished"> 发表于 2021-04-03</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>目前许多组织都在采用Kubernetes来运行他们的应用程序。以至于有些人将Kubernetes称为新的数据中心操作系统。因此，组织开始将Kubernetes(通常缩写为k8s)视为关键任务平台，它需要包括网络安全在内的成熟业务流程。</p>
-<p>负责保护这个新平台的网络安全团队可能发现它出奇的不同。例如，默认的Kubernetes策略是允许任何连接。</p>
-<p>本文提供了一些关于Kubernetes网络策略工作原理的简介，它们如何与传统防火墙策略进行比较以及一些可以帮助你保护Kubernetes应用程序的陷阱和最佳实践。<br>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2021/04/03/Kubernetes-网络策略/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2021/04/03/Kubernetes-网络策略/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/04/03/Kubernetes-网络策略/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/21/">21</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -720,7 +725,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>14</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>15</sup></a></li>
 			
 		
 			
@@ -728,11 +733,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -744,6 +749,10 @@
 			
 		
 			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
@@ -752,7 +761,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -764,11 +773,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -784,11 +789,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Brew/" title="Brew">Brew<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 		</ul>

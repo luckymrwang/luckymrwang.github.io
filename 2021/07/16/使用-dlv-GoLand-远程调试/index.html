@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>使用 dlv + GoLand 远程调试 | iBlog</title>
@@ -38,7 +38,7 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -116,7 +116,7 @@
 <p>在服务器上安装Delve</p>
 <p>官网: <a href="https://github.com/derekparker/delve" target="_blank" rel="noopener">https://github.com/derekparker/delve</a>, 安装方法请参照官方wiki</p>
 <p>2、查看IDE说明<br>程序的编译和启动尽量按照IDE的提示说明进行，在GoLand中点击菜单栏Run-&gt;EditConfigurations-&gt;+-&gt;GoRemote，我们将看到如下界面，中间为编译及启动说明</p>
-<p><img src="/images/goremote.png" alt=""></p>
+<p><img src="/images/goremote.png" alt></p>
 <h3 id="编译程序"><a href="#编译程序" class="headerlink" title="编译程序"></a>编译程序</h3><p>根据IDE说明，在服务器上编译程序，必须添加<code>-gcflags</code>参数，给编译器传递-N -l参数，禁止编译器优化和内联</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> build -gcflags <span class="string">"all=-N -l"</span> github.com/app/demo</span><br></pre></td></tr></table></figure>
 <h3 id="使用dlv启动程序"><a href="#使用dlv启动程序" class="headerlink" title="使用dlv启动程序"></a>使用dlv启动程序</h3><h4 id="方式1"><a href="#方式1" class="headerlink" title="方式1"></a>方式1</h4><p>根据IDE说明, 在服务器上使用dlv启动编译好的程序</p>
@@ -225,7 +225,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>14</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>15</sup></a></li>
 			
 		
 			
@@ -233,11 +233,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -249,6 +249,10 @@
 			
 		
 			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
@@ -257,7 +261,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -269,11 +273,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -289,11 +289,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Brew/" title="Brew">Brew<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 		</ul>

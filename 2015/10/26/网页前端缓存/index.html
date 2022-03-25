@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>网页前端缓存 | iBlog</title>
@@ -39,7 +39,7 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -110,7 +110,7 @@
 <h3 id="浏览器端的缓存规则"><a href="#浏览器端的缓存规则" class="headerlink" title="浏览器端的缓存规则"></a>浏览器端的缓存规则</h3><p>对于浏览器端的缓存来讲，这些规则是在HTTP协议头和HTML页面的Meta标签中定义的。他们分别从新鲜度和校验值两个维度来规定浏览器是否可以直接使用缓存中的副本，还是需要去源服务器获取更新的版本。</p>
 <p><strong>新鲜度（过期机制）</strong>：也就是缓存副本有效期。一个缓存副本必须满足以下条件，浏览器会认为它是有效的，足够新的：<br>含有完整的过期时间控制头信息（HTTP协议报头），并且仍在有效期内；<br>浏览器已经使用过这个缓存副本，并且在一个会话中已经检查过新鲜度；<br>满足以上两个情况的一种，浏览器会直接从缓存中获取副本并渲染。</p>
 <p><strong>校验值（验证机制）</strong>：服务器返回资源的时候有时在控制头信息带上这个资源的实体标签Etag（Entity Tag），它可以用来作为浏览器再次请求过程的校验标识。如过发现校验标识不匹配，说明资源已经被修改或过期，浏览器需求重新获取资源内容。</p>
-<h3 id="浏览器缓存的控制"><a href="#浏览器缓存的控制" class="headerlink" title="浏览器缓存的控制"></a>浏览器缓存的控制</h3><h4 id="使用HTML-Meta-标签"><a href="#使用HTML-Meta-标签" class="headerlink" title="使用HTML Meta 标签"></a>使用HTML Meta 标签</h4><p>Web开发者可以在HTML页面的<head>节点中加入<meta>标签，代码如下：</head></p>
+<h3 id="浏览器缓存的控制"><a href="#浏览器缓存的控制" class="headerlink" title="浏览器缓存的控制"></a>浏览器缓存的控制</h3><h4 id="使用HTML-Meta-标签"><a href="#使用HTML-Meta-标签" class="headerlink" title="使用HTML Meta 标签"></a>使用HTML Meta 标签</h4><p>Web开发者可以在HTML页面的<head><meta name="generator" content="Hexo 3.9.0">节点中加入<meta>标签，代码如下：</head></p>
 <pre><code>&lt;META HTTP-EQUIV=&quot;Pragma&quot; CONTENT=&quot;no-cache&quot;&gt;
 </code></pre><p>上述代码的作用是告诉浏览器当前页面不被缓存，每次访问都需要去服务器拉取。使用上很简单，但只有部分浏览器可以支持，而且所有缓存代理服务器都不支持，因为代理不解析HTML内容本身。</p>
 <p>可以通过这个页面测试你的浏览器是否支持：<a href="http://www.procata.com/cachetest/tests/pragma/index.php" target="_blank" rel="noopener">Pragma No-Cache Test</a></p>
@@ -243,7 +243,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>14</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>15</sup></a></li>
 			
 		
 			
@@ -251,11 +251,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -267,6 +267,10 @@
 			
 		
 			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
@@ -275,7 +279,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -287,11 +291,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -307,11 +307,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Brew/" title="Brew">Brew<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 		</ul>

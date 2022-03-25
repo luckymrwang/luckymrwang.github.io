@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>容器 Security Context (安全上下文) | iBlog</title>
@@ -45,7 +45,7 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -130,7 +130,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># hostname</span><br><span class="line">security-context-demo</span><br><span class="line"># sysctl kernel.hostname=test</span><br><span class="line">sysctl: error setting key &apos;kernel.hostname&apos;: Read-only file system</span><br></pre></td></tr></table></figure>
 <p>添加 privileged </p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">security-context-demo-privileged</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">busybox</span></span><br><span class="line"><span class="attr">    imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line"><span class="attr">    command:</span> <span class="string">[</span> <span class="string">"sh"</span><span class="string">,</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"sleep 1h"</span> <span class="string">]</span></span><br><span class="line"><span class="attr">    securityContext:</span></span><br><span class="line"><span class="attr">        privileged:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
-<p>创建该 Pod，并开始 Shell 进入容器，查看所有设备<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt="">/999D5D68-2277-4422-9DE2-67C8A271CDC1%202.png)</p>
+<p>创建该 Pod，并开始 Shell 进入容器，查看所有设备<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt>/999D5D68-2277-4422-9DE2-67C8A271CDC1%202.png)</p>
 <p>修改 hostname</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># hostname</span><br><span class="line">security-context-demo-privileged</span><br><span class="line"># sysctl kernel.hostname=test</span><br><span class="line">kernel.hostname = test</span><br><span class="line"># hostname</span><br><span class="line">test</span><br></pre></td></tr></table></figure>
 <table>
@@ -188,7 +188,7 @@
 <p>在配置文件中，runAsUser 字段指定容器内的进程都使用用户 ID 1000 来运行。runAsGroup 字段指定所有容器中的进程都以主组 ID 2000 来运行。 如果忽略此字段，则容器的主组 ID 将是 root（0）。 当 runAsGroup 被设置时，所有创建的文件也会划归用户 1000 和组 2000。</p>
 <p>执行命令进入容器的命令行界面，并在命令行界面中查看所有的进程</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/ $ ps</span><br><span class="line">PID   USER     TIME  COMMAND</span><br><span class="line">    1 1000      0:00 sleep 1h</span><br><span class="line">    7 1000      0:00 sh</span><br><span class="line">   12 1000      0:00 ps</span><br><span class="line">/ $ id</span><br><span class="line">uid=1000 gid=2000</span><br></pre></td></tr></table></figure>
-<p>宿主机查看进程，容器内的一个进程对应于宿主机器上的一个进程<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt="">/EA9499DA-BEF4-40BD-B1C4-EDB5F6F26F4E%202.png)</p>
+<p>宿主机查看进程，容器内的一个进程对应于宿主机器上的一个进程<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt>/EA9499DA-BEF4-40BD-B1C4-EDB5F6F26F4E%202.png)</p>
 <p>在宿主机上的进程<code>31523</code>的<code>uid</code>是 1000，<code>gid</code>是 2000</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># ps --pid 31523 -O uid,uname,gid,group,ppid</span><br><span class="line">  PID   UID USER       GID GROUP     PPID S TTY          TIME COMMAND</span><br><span class="line">31523  1000 test      2000 2000     31475 S ?        00:00:00 sleep 1h</span><br></pre></td></tr></table></figure>
 <p>查看该进程的父进程</p>
@@ -198,7 +198,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># kubectl get pod</span><br><span class="line">NAME                                 READY   STATUS                       RESTARTS   AGE</span><br><span class="line">security-context-demo-nonroot-root   0/1     CreateContainerConfigError   0          3s</span><br></pre></td></tr></table></figure>
 <p>查看详情</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># kubectl describe pod security-context-demo-nonroot-root</span><br></pre></td></tr></table></figure>
-<p><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt="">/02D34D7D-9910-4014-A7C2-4A8760E68240%202.png)</p>
+<p><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt>/02D34D7D-9910-4014-A7C2-4A8760E68240%202.png)</p>
 <p>指定非root用户</p>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">  name:</span> <span class="string">security-context-demo-nonroot-user</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">  containers:</span></span><br><span class="line"><span class="attr">  - name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line"><span class="attr">    image:</span> <span class="string">busybox</span></span><br><span class="line"><span class="attr">    imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line"><span class="attr">    command:</span> <span class="string">[</span> <span class="string">"sh"</span><span class="string">,</span> <span class="string">"-c"</span><span class="string">,</span> <span class="string">"sleep 1h"</span> <span class="string">]</span></span><br><span class="line"><span class="attr">    securityContext:</span></span><br><span class="line"><span class="attr">      runAsUser:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">      runAsNonRoot:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
 <p>执行命令以创建 Pod，并验证是否运行</p>
@@ -580,19 +580,19 @@
 </ul>
 <h4 id="K8s中配置-SELinux"><a href="#K8s中配置-SELinux" class="headerlink" title="K8s中配置 SELinux"></a>K8s中配置 SELinux</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">seLinuxOptions:</span></span><br><span class="line"><span class="attr">  user:</span> <span class="string">system_u</span></span><br><span class="line"><span class="attr">  role:</span> <span class="string">system_r</span></span><br><span class="line"><span class="attr">  type:</span> <span class="string">container_t</span></span><br><span class="line"><span class="attr">  level:</span> <span class="attr">s0:c829,c861</span></span><br></pre></td></tr></table></figure>
 <h2 id="Pod-level-Security-Context"><a href="#Pod-level-Security-Context" class="headerlink" title="Pod-level Security Context"></a>Pod-level Security Context</h2><p>在 Pod 的定义中增加 securityContext 字段。通过该字段指定的内容将对该 Pod 中所有的容器生效，并且还会影响Volume（包括 fsGroup 和 selinuxOptions ）</p>
-<p>1、示例<br>￼<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt="">/28F716FC-4DF2-49F0-AE08-F25375E2D964.png)</p>
+<p>1、示例<br>￼<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt>/28F716FC-4DF2-49F0-AE08-F25375E2D964.png)</p>
 <p>在上面的例子中：</p>
 <pre><code>- spec.securityContext.runAsUser 字段指定了该 Pod 中所有容器的进程都以 UserID 1000 的身份运行，spec.securityContext.runAsGroup 字段指定了该 Pod 中所有容器的进程都以 GroupID 3000 的身份运行
     - 如果该字段被省略，容器进程的GroupID为 root(0)
     - 容器中创建的文件，其所有者为 userID 1000，groupID 3000
 - spec.securityContext.fsGroup 字段指定了该 Pod 的 fsGroup 为 2000
     - 数据卷 （本例中，对应挂载点 /data/demo 的数据卷为 sec-ctx-demo） 的所有者以及在该数据卷下创建的任何文件，其 GroupID 为 2000
-</code></pre><p>2、创建 Pod 并进入容器执行 ps aux 查看所有进程，所有的进程都以 user 1000 的身份运行（由 runAsUser 指定），输出结果如下所示：<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt="">/CB34CAFD-2CB6-432E-8512-E796071E644E.png)</p>
+</code></pre><p>2、创建 Pod 并进入容器执行 ps aux 查看所有进程，所有的进程都以 user 1000 的身份运行（由 runAsUser 指定），输出结果如下所示：<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt>/CB34CAFD-2CB6-432E-8512-E796071E644E.png)</p>
 <p>3、执行 cd /data 切换到目录 /data，并查看目录中的文件列表 ls -l</p>
-<p>/data/demo 目录的 groupID 为 2000（由 fsGroup 指定），输出结果如下所示：<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt="">/A93CD144-C683-48AB-99DC-4DC4F4012015.png)</p>
+<p>/data/demo 目录的 groupID 为 2000（由 fsGroup 指定），输出结果如下所示：<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt>/A93CD144-C683-48AB-99DC-4DC4F4012015.png)</p>
 <p>4、在命令行界面中，切换到目录 /data/demo，并创建一个文件 echo hello &gt; testfile</p>
-<p>testfile 的 groupID 为 2000 （由 FSGroup 指定），输出结果如下所示：<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt="">/E5F1DA0F-F850-42E7-9C59-6390895923DC.png)</p>
-<p>5、在命令行界面中执行 id 命令，输出结果如下所示：<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt="">/B48414E4-B416-4F33-A562-E7F29E88A76A.png)</p>
+<p>testfile 的 groupID 为 2000 （由 FSGroup 指定），输出结果如下所示：<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt>/E5F1DA0F-F850-42E7-9C59-6390895923DC.png)</p>
+<p>5、在命令行界面中执行 id 命令，输出结果如下所示：<br><img src="Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87" alt>/B48414E4-B416-4F33-A562-E7F29E88A76A.png)</p>
 <p>gid 为 3000，与 runAsGroup 字段所指定的一致<br>如果 runAsGroup 字段被省略，则 gid 取值为 0（即 root），此时容器中的进程将可以操作 root Group 的文件<br>可以设置的安全策略类型如下：</p>
 <table>
 <thead>
@@ -805,7 +805,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>14</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>15</sup></a></li>
 			
 		
 			
@@ -813,11 +813,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -829,6 +829,10 @@
 			
 		
 			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
@@ -837,7 +841,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -849,11 +853,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -869,11 +869,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Brew/" title="Brew">Brew<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 		</ul>

@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>使用 Elastic Stack 来监控和调优 Golang 应用程序 | iBlog</title>
@@ -40,7 +40,7 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -132,13 +132,13 @@
 <p>中间的三列分别是堆内存、进程内存和对象的统计情况；Heap Allocated 表示正在用和没有用但还未被回收的对象的大小；Heap Inuse 显然就是活跃的对象大小了；Heap Idle 表示已分配但空闲的内存；</p>
 <p>底下两列是 GC 时间和 GC 次数的监控统计，CPUFraction 这个代表该进程 CPU 占用时间花在 GC 上面的百分比，值越大说明 GC 越频繁，浪费更多的时间在 GC 上面，上图虽然趋势陡峭，但是看范围在0.41%~0.52%之间，看起来还算可以，如果GC 比率占到个位数甚至更多比例，那肯定需要进一步优化程序了。</p>
 <p>有了这些信息我们就能够知道该 Golang 的内存使用和分配情况和 GC 的执行情况，假如要分析是否有内存泄露，看内存使用和堆内存分配的趋势是否平稳就可以了，另外 GC_Limit 和 Byte Allocation 一直上升，那肯定就是有内存泄露了，结合历史信息还能对不同版本/提交对 Golang 的内存使用和 GC 影响进行分析。</p>
-<p>接下来就要给大家介绍如何具体使用了，首先需要启用 Golang 的 expvar 服务，expvar（<a href="">https://golang.org/pkg/expvar/</a>） 是 Golang 提供的一个暴露内部变量或统计信息的标准包。 使用的方法很简单，只需要在 Golang 的程序引入该包即可，它会自动注册现有的 http 服务上，如下：</p>
+<p>接下来就要给大家介绍如何具体使用了，首先需要启用 Golang 的 expvar 服务，expvar（<a href>https://golang.org/pkg/expvar/</a>） 是 Golang 提供的一个暴露内部变量或统计信息的标准包。 使用的方法很简单，只需要在 Golang 的程序引入该包即可，它会自动注册现有的 http 服务上，如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> _ <span class="string">"expvar"</span></span><br></pre></td></tr></table></figure>
 <p>如果 Golang 没有启动 http 服务，使用下面的方式启动一个即可，这里端口是 6060，如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">metricsHandler</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">    w.Header().Set(<span class="string">"Content-Type"</span>, <span class="string">"application/json; charset=utf-8"</span>)</span><br><span class="line"></span><br><span class="line">    first := <span class="literal">true</span></span><br><span class="line">    report := <span class="function"><span class="keyword">func</span><span class="params">(key <span class="keyword">string</span>, value <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> !first &#123;</span><br><span class="line">            fmt.Fprintf(w, <span class="string">",\n"</span>)</span><br><span class="line">        &#125;</span><br><span class="line">        first = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">if</span> str, ok := value.(<span class="keyword">string</span>); ok &#123;</span><br><span class="line">            fmt.Fprintf(w, <span class="string">"%q: %q"</span>, key, str)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            fmt.Fprintf(w, <span class="string">"%q: %v"</span>, key, value)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fmt.Fprintf(w, <span class="string">"&#123;\n"</span>)</span><br><span class="line">    monitoring.Do(monitoring.Full, report)</span><br><span class="line">    expvar.Do(<span class="function"><span class="keyword">func</span><span class="params">(kv expvar.KeyValue)</span></span> &#123;</span><br><span class="line">        report(kv.Key, kv.Value)</span><br><span class="line">    &#125;)</span><br><span class="line">    fmt.Fprintf(w, <span class="string">"\n&#125;\n"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">   mux := http.NewServeMux()</span><br><span class="line">   mux.HandleFunc(<span class="string">"/debug/vars"</span>, metricsHandler)</span><br><span class="line">   endpoint := http.ListenAndServe(<span class="string">"localhost:6060"</span>, mux)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>默认注册的访问路径是/debug/vars， 编译启动之后，就可以通过 <a href="">http://localhost:6060/debug/vars</a> 来访问 expvar 以 JSON 格式暴露出来的这些内部变量，默认提供了 Golang 的 runtime.Memstats 信息，也就是上面分析的数据源，当然你还可以注册自己的变量，这里暂时不提。</p>
+<p>默认注册的访问路径是/debug/vars， 编译启动之后，就可以通过 <a href>http://localhost:6060/debug/vars</a> 来访问 expvar 以 JSON 格式暴露出来的这些内部变量，默认提供了 Golang 的 runtime.Memstats 信息，也就是上面分析的数据源，当然你还可以注册自己的变量，这里暂时不提。</p>
 <p>OK，现在我们的 Golang 程序已经启动了，并且通过 expvar 暴露出了运行时的内存使用情况，现在我们需要使用 Metricbeat 来获取这些信息并存进 Elasticsearch。</p>
-<p>关于 Metricbeat 的安装其实很简单，下载对应平台的包解压（下载地址：<a href="">https://www.elastic.co/downloads/beats/metricbeat</a> ），启动 Metricbeat 前，修改配置文件：</p>
+<p>关于 Metricbeat 的安装其实很简单，下载对应平台的包解压（下载地址：<a href>https://www.elastic.co/downloads/beats/metricbeat</a> ），启动 Metricbeat 前，修改配置文件：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">metricbeat.yml</span><br><span class="line"></span><br><span class="line">metricbeat.modules:</span><br><span class="line">  - module: golang</span><br><span class="line">     metricsets: [<span class="string">"heap"</span>]</span><br><span class="line">     enabled: <span class="literal">true</span></span><br><span class="line">     period: <span class="number">10s</span></span><br><span class="line">     hosts: [<span class="string">"localhost:6060"</span>]</span><br><span class="line">     heap.path: <span class="string">"/debug/vars"</span></span><br></pre></td></tr></table></figure>
 <p>上面的参数启用了 Golang 监控模块，并且会10秒获取一次配置路径的返回内存数据，我们同样配置该配置文件，设置数据输出到本机的 Elasticsearch：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">output.elasticsearch:</span><br><span class="line">  hosts: [<span class="string">"localhost:9200"</span>]</span><br></pre></td></tr></table></figure>
@@ -149,7 +149,7 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> inerInt <span class="keyword">int64</span> = <span class="number">1024</span></span><br><span class="line">pubInt := expvar.NewInt(<span class="string">"your_metric_key"</span>)</span><br><span class="line">pubInt.Set(inerInt)</span><br><span class="line">pubInt.Add(<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
 <p>在 Metricbeat 内部也同样暴露了很多内部运行的信息，所以 Metricbeat 可以自己监控自己了。。。 首先，启动的时候带上参数设置pprof监控的地址，如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./metricbeat -httpprof=<span class="string">"127.0.0.1:6060"</span> -e -v</span><br></pre></td></tr></table></figure>
-<p>这样我们就能够通过 <a href="">http://127.0.0.1:6060/debug/vars</a> 访问到内部运行情况了，如下：</p>
+<p>这样我们就能够通过 <a href>http://127.0.0.1:6060/debug/vars</a> 访问到内部运行情况了，如下：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="string">"output.events.acked"</span>: <span class="number">1088</span>,</span><br><span class="line"><span class="string">"output.write.bytes"</span>: <span class="number">1027455</span>,</span><br><span class="line"><span class="string">"output.write.errors"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.messages.dropped"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.elasticsearch.publishEvents.call.count"</span>: <span class="number">24</span>,</span><br><span class="line"><span class="string">"output.elasticsearch.read.bytes"</span>: <span class="number">12215</span>,</span><br><span class="line"><span class="string">"output.elasticsearch.read.errors"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.elasticsearch.write.bytes"</span>: <span class="number">1027455</span>,</span><br><span class="line"><span class="string">"output.elasticsearch.write.errors"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.elasticsearch.events.acked"</span>: <span class="number">1088</span>,</span><br><span class="line"><span class="string">"output.elasticsearch.events.not_acked"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.kafka.events.acked"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.kafka.events.not_acked"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.kafka.publishEvents.call.count"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.logstash.write.errors"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.logstash.write.bytes"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.logstash.events.acked"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.logstash.events.not_acked"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.logstash.publishEvents.call.count"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.logstash.read.bytes"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.logstash.read.errors"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.redis.events.acked"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.redis.events.not_acked"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.redis.read.bytes"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.redis.read.errors"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.redis.write.bytes"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"output.redis.write.errors"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"beat.memstats.memory_total"</span>: <span class="number">155721720</span>,</span><br><span class="line"><span class="string">"beat.memstats.memory_alloc"</span>: <span class="number">3632728</span>,</span><br><span class="line"><span class="string">"beat.memstats.gc_next"</span>: <span class="number">6052800</span>,</span><br><span class="line"><span class="string">"cmdline"</span>: [<span class="string">"./metricbeat"</span>,<span class="string">"-httpprof=127.0.0.1:6060"</span>,<span class="string">"-e"</span>,<span class="string">"-v"</span>],</span><br><span class="line"><span class="string">"fetches"</span>: &#123;<span class="string">"system-cpu"</span>: &#123;<span class="string">"events"</span>: <span class="number">4</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-filesystem"</span>: &#123;<span class="string">"events"</span>: <span class="number">20</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-fsstat"</span>: &#123;<span class="string">"events"</span>: <span class="number">4</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-load"</span>: &#123;<span class="string">"events"</span>: <span class="number">4</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-memory"</span>: &#123;<span class="string">"events"</span>: <span class="number">4</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-network"</span>: &#123;<span class="string">"events"</span>: <span class="number">44</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;, <span class="string">"system-process"</span>: &#123;<span class="string">"events"</span>: <span class="number">1008</span>, <span class="string">"failures"</span>: <span class="number">0</span>, <span class="string">"success"</span>: <span class="number">4</span>&#125;&#125;,</span><br><span class="line"><span class="string">"libbeat.config.module.running"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"libbeat.config.module.starts"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"libbeat.config.module.stops"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"libbeat.config.reloads"</span>: <span class="number">0</span>,</span><br><span class="line"><span class="string">"memstats"</span>: &#123;<span class="string">"Alloc"</span>:<span class="number">3637704</span>,<span class="string">"TotalAlloc"</span>:<span class="number">155</span></span><br><span class="line">... ...</span><br></pre></td></tr></table></figure>
 <p>比如，上面就能看到output模块Elasticsearch的处理情况，如 output.elasticsearch.events.acked 参数表示发送到 Elasticsearch Ack返回之后的消息。</p>
 <p>现在我们要修改 Metricbeat 的配置文件，Golang 模块有两个 metricset，可以理解为两个监控的指标类型，我们现在需要加入一个新的 expvar 类型，这个即自定义的其他指标，相应配置文件修改如下：</p>
@@ -261,7 +261,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>14</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>15</sup></a></li>
 			
 		
 			
@@ -269,11 +269,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -285,6 +285,10 @@
 			
 		
 			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
@@ -293,7 +297,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -305,11 +309,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -325,11 +325,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Brew/" title="Brew">Brew<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 		</ul>

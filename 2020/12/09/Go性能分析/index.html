@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>Go性能分析 | iBlog</title>
@@ -43,7 +43,7 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -138,10 +138,10 @@
 <li><code>cum%</code>：同上的 CPU 运行耗时总比例</li>
 </ul>
 <h4 id="在-web-中查看"><a href="#在-web-中查看" class="headerlink" title="在 web 中查看"></a>在 web 中查看</h4><p>也可以在 web 页面中查看，比如上面的示例，<code>Saved profile in /Users/xxx/pprof/pprof.samples.cpu.002.pb.gz</code><br>生成了一个 profile 文件，执行 <code>go tool pprof -http=&quot;:8081&quot; &lt;your path&gt;/pprof.samples.cpu.002.pb.gz</code>，就可以访问 <code>http://localhost:8081</code><br>来查看。</p>
-<p><img src="/images/profile-graph.png" alt=""></p>
+<p><img src="/images/profile-graph.png" alt></p>
 <p>框越大，线越粗代表它占用的时间越大。</p>
 <p>火焰图（Flame graph）：</p>
-<p><img src="/images/profile-flame-graph.png" alt=""></p>
+<p><img src="/images/profile-flame-graph.png" alt></p>
 <p>调用顺序由上到下，每一块代表一个函数，越大代表占用 CPU 的时间越长。</p>
 <p>还可以查看 Top，Peek，Source 等。能够更方便、更直观的看到 Go 应用程序的调用链、使用情况等。</p>
 <p><em>如果碰到 Could not execute dot; may need to install graphviz.，需要先安装 graphviz。</em></p>
@@ -162,9 +162,9 @@
 </ul>
 <p><em>如果 View trace 打不开，报错 tr is not defined，看这里。<br>如果提示 Trace Viewer is running with WebComponentsV0 polyfill, and some features may be broken. As a workaround, you may try running chrome with “–enable-blink-features=ShadowDOMV0,CustomElementsV0,HTMLImports” flag. See crbug.com/1036492。可以到 chrome 安装目录执行<br>.\chrome.exe –new-window –enable-blink-features=ShadowDOMV0,CustomElementsV0,HTMLImports，在打开 trace 页面。</em></p>
 <h4 id="Goroutine-analysis"><a href="#Goroutine-analysis" class="headerlink" title="Goroutine analysis"></a>Goroutine analysis</h4><p>进入 Goroutine analysis，可以看到程序运行过程中，每个函数块有多少个有 Goroutine 在跑，并且每个 Goroutine 的运行开销。</p>
-<p><img src="/images/goroutine-analysis.png" alt=""></p>
+<p><img src="/images/goroutine-analysis.png" alt></p>
 <p>3 个 goroutine，分别是 <code>runtime.main</code>、<code>runtime/trace.Start.func1</code>、<code>main.main.func1</code>。点击进去查看 goroutine 具体做了些什么。</p>
-<p><img src="/imges/goroutine-main.png" alt=""></p>
+<p><img src="/imges/goroutine-main.png" alt></p>
 <ul>
 <li>Execution Time，执行时间</li>
 <li>Network Wait Time，网络等待时间</li>
@@ -175,8 +175,8 @@
 <li>GC Pause GC，GC 暂停时间</li>
 </ul>
 <p>还可以把 Graph 下载下来分析。</p>
-<h4 id="View-trace"><a href="#View-trace" class="headerlink" title="View trace"></a>View trace</h4><p><img src="/images/view-trace.png" alt=""></p>
-<p><img src="/images/view-trace-2.png" alt=""></p>
+<h4 id="View-trace"><a href="#View-trace" class="headerlink" title="View trace"></a>View trace</h4><p><img src="/images/view-trace.png" alt></p>
+<p><img src="/images/view-trace-2.png" alt></p>
 <ul>
 <li>最上面的刻度表示时间线，如 0μs，200μs</li>
 <li>PROCS，P 的数量，由 GOMAXPROCS 控制。Proc 0,1,2,3 分别代表 4 个 P。后面对应的是每个 P 上执行的 goroutine。</li>
@@ -317,7 +317,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>14</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>15</sup></a></li>
 			
 		
 			
@@ -325,11 +325,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -341,6 +341,10 @@
 			
 		
 			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
@@ -349,7 +353,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -361,11 +365,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -381,11 +381,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Brew/" title="Brew">Brew<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 		</ul>

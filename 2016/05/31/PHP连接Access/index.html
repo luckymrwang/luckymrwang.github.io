@@ -1,7 +1,7 @@
 
  <!DOCTYPE HTML>
 <html lang="zh-CN">
-<head>
+<head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
   
     <title>PHP连接Access | iBlog</title>
@@ -38,7 +38,7 @@
     
     <link rel="stylesheet" href="/css/style.css">
 </head>
-
+</html>
   <body>
     <header>
       
@@ -111,7 +111,7 @@
 </ul>
 <h3 id="PHP需要的扩展"><a href="#PHP需要的扩展" class="headerlink" title="PHP需要的扩展"></a>PHP需要的扩展</h3><a id="more"></a>
 <p>通过运行<code>phpinfo()</code>查看，应该包含以下扩展，否则修改<code>php.ini</code>文件</p>
-<p><img src="/images/access_03.png" alt=""></p>
+<p><img src="/images/access_03.png" alt></p>
 <h3 id="SQL命令"><a href="#SQL命令" class="headerlink" title="SQL命令"></a>SQL命令</h3><h4 id="连接Access"><a href="#连接Access" class="headerlink" title="连接Access"></a>连接Access</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$dbName = $_SERVER[<span class="string">"DOCUMENT_ROOT"</span>] . <span class="string">"products\products.mdb"</span>;</span><br><span class="line"><span class="keyword">if</span> (!file_exists($dbName)) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"Could not find database file."</span>);</span><br><span class="line">&#125;</span><br><span class="line">$db = <span class="keyword">new</span> PDO(<span class="string">"odbc:DRIVER=&#123;Microsoft Access Driver (*.mdb)&#125;; DBQ=$dbName; Uid=; Pwd=;"</span>);</span><br></pre></td></tr></table></figure>
 <h4 id="SELECT"><a href="#SELECT" class="headerlink" title="SELECT"></a>SELECT</h4><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$sql  = <span class="string">"SELECT price FROM product"</span>;</span><br><span class="line">$sql .= <span class="string">" WHERE id = "</span> . $productId;</span><br><span class="line"></span><br><span class="line">$result = $db-&gt;query($sql);</span><br><span class="line">$row = $result-&gt;fetch();</span><br><span class="line"></span><br><span class="line">$productPrice = $row[<span class="string">"price"</span>];</span><br></pre></td></tr></table></figure>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$sql  = <span class="string">"SELECT p.name, p.description, p.price"</span>;</span><br><span class="line">$sql .= <span class="string">"  FROM product p, product_category pc"</span>;</span><br><span class="line">$sql .= <span class="string">" WHERE p.id  = pc.productId"</span>;</span><br><span class="line">$sql .= <span class="string">"  AND pc.category_id = "</span> . $categoryId;</span><br><span class="line">$sql .= <span class="string">" ORDER BY name"</span>;</span><br><span class="line"></span><br><span class="line">$result = $db-&gt;query($sql);</span><br><span class="line"><span class="keyword">while</span> ($row = $result-&gt;fetch()) &#123;</span><br><span class="line">    $productName        = $row[<span class="string">"name"</span>];</span><br><span class="line">    $productDescription = $row[<span class="string">"description"</span>];</span><br><span class="line">    $productPrice       = $row[<span class="string">"price"</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -214,7 +214,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>14</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>15</sup></a></li>
 			
 		
 			
@@ -222,11 +222,11 @@
 			
 		
 			
-				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
 			
 		
 			
@@ -238,6 +238,10 @@
 			
 		
 			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
@@ -246,7 +250,7 @@
 			
 		
 			
-				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
 			
 		
 			
@@ -258,11 +262,7 @@
 			
 		
 			
-				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
 			
 		
 			
@@ -278,11 +278,11 @@
 			
 		
 			
-				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Brew/" title="Brew">Brew<sup>2</sup></a></li>
+				<li><a href="/tags/AngularJS/" title="AngularJS">AngularJS<sup>2</sup></a></li>
 			
 		
 		</ul>
