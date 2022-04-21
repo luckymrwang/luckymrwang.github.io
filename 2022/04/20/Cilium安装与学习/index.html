@@ -21,7 +21,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/cilium01.png">
 <meta property="og:image" content="https://luckymrwang.github.io/images/cilium02.png">
-<meta property="og:updated_time" content="2022-04-21T04:14:53.657Z">
+<meta property="og:updated_time" content="2022-04-21T04:22:47.400Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cilium安装与学习">
 <meta name="twitter:description" content="基础概念BPF(CBPF) 说明文档BPF 的全称是 Berkeley Packet Filter, 即伯克利报文过滤器，它的设计思想来源于 1992 年的一篇论文“The BSD packet filter: A New architecture for user-level packet capture” （《BSD数据包过滤器：一种用于用户级数据包捕获的新体系结构》）。最初，BPF是在 BS">
@@ -251,6 +251,7 @@
 <li>eBPF-based masquerading or no masquerading</li>
 </ul>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">helm install cilium cilium/cilium \</span><br><span class="line">  --namespace kube-system \</span><br><span class="line">  --set installNoConntrackIptablesRules=<span class="literal">true</span> \</span><br><span class="line">  --set kubeProxyReplacement=strict</span><br></pre></td></tr></table></figure>
+<p>具体最新1.11.3参数列表<a href="https://github.com/cilium/cilium/tree/v1.11.3/install/kubernetes/cilium" target="_blank" rel="noopener">参照</a></p>
 <p>官方文档</p>
 <ul>
 <li><a href="https://docs.cilium.io/en/latest/gettingstarted/kube-router/#kube-router" target="_blank" rel="noopener">kube-router to run BGP</a></li>
