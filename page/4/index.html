@@ -82,6 +82,70 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/12/09/Go性能分析/" title="Go性能分析" itemprop="url">Go性能分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-09T00:47:22.000Z" itemprop="datePublished"> 发表于 2020-12-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Go 提供了 pprof 工具，可以用来做性能分析。pprof 可以读取分析样本的集合，并生成报告以可视化并帮助分析数据。</p>
+<h3 id="如何生成分析样本"><a href="#如何生成分析样本" class="headerlink" title="如何生成分析样本"></a>如何生成分析样本</h3><ul>
+<li><code>runtime/pprof</code>：采集程序的运行数据进行分析，通过调用如 <code>runtime.StartCPUProfile</code> 或 <code>runtime.StopCPUProfile</code> 等 API 生成分析样本。主要用于本地测试。</li>
+<li><code>net/http/pprof</code>：采集 HTTP Server 的运行时数据进行分析，通过 HTTP 服务获取 Profile 分析样本，底层还是调用的 <code>runtime/pprof</code>。主要用于服务器端测试。</li>
+<li><code>go test</code>: 通过 <code>go test -bench=. -cpuprofile cpuprofile.out</code> … 生成分析样本，主要用于本地基准测试。</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/09/Go性能分析/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/09/Go性能分析/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/09/Go性能分析/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/12/04/Golang-连接池的几种实现案例/" title="Golang 连接池的几种实现案例" itemprop="url">Golang 连接池的几种实现案例</a>
   </h1>
   <p class="article-author">By
@@ -624,71 +688,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/09/16/Go标准库flag包/" title="Go标准库flag包" itemprop="url">Go标准库flag包</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-09-16T15:14:51.000Z" itemprop="datePublished"> 发表于 2020-09-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h4 id="flag包概述"><a href="#flag包概述" class="headerlink" title="flag包概述"></a>flag包概述</h4><p>flag包实现了命令行参数的解析</p>
-<h4 id="flag包的工作流程"><a href="#flag包的工作流程" class="headerlink" title="flag包的工作流程"></a>flag包的工作流程</h4><p>基本分为三步：</p>
-<ul>
-<li>注册flag,主要用flag.String(), Bool(), Int()等函数注册flag，或者用flag.BoolVar()，StringVar(),IntVar()等函数把flag绑定到变量</li>
-<li>解析flag,使用flag.Parse()函数解析在命令行使用了的flag</li>
-<li>最后根据命令行输入的flag处理逻辑</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/09/16/Go标准库flag包/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/09/16/Go标准库flag包/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/09/16/Go标准库flag包/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/3/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/5/">Next<span></span></a>
@@ -748,15 +747,15 @@
 			
 		
 			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>6</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
 			

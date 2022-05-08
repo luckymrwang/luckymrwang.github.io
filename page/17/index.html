@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/12/24/JS获取url参数值的两种方式/" title="JS获取url参数值的两种方式" itemprop="url">JS获取url参数值的两种方式</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-24T12:31:40.000Z" itemprop="datePublished"> 发表于 2015-12-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>JS获取url：<br>    window.location.href;</p>
+<p>有个url格式如下：<br><a href="http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;appid=1009" target="_blank" rel="noopener">http://localhost/lab/GM-center/src/user_manage/user_info?game=tank&amp;appid=1009</a></p>
+<h3 id="通过正则"><a href="#通过正则" class="headerlink" title="通过正则"></a>通过正则</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getQueryString</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">var</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"(^|&amp;)"</span> + name + <span class="string">"=([^&amp;]*)(&amp;|$)"</span>, <span class="string">"i"</span>);</span><br><span class="line">	<span class="keyword">var</span> r = <span class="built_in">window</span>.location.search.substr(<span class="number">1</span>).match(reg);</span><br><span class="line">	<span class="keyword">if</span> (r != <span class="literal">null</span>) <span class="keyword">return</span> <span class="built_in">unescape</span>(r[<span class="number">2</span>]); <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> <span class="keyword">from</span> = getQueryString(<span class="string">"game"</span>);</span><br><span class="line"></span><br><span class="line">alert(<span class="keyword">from</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="通过切串放进数组"><a href="#通过切串放进数组" class="headerlink" title="通过切串放进数组"></a>通过切串放进数组</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">GetRequest</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">	<span class="keyword">var</span> url = location.search; <span class="comment">//获取url中"?"符后的字串 </span></span><br><span class="line">	<span class="keyword">var</span> theRequest = <span class="keyword">new</span> <span class="built_in">Object</span>(); </span><br><span class="line">	<span class="keyword">if</span> (url.indexOf(<span class="string">"?"</span>) != <span class="number">-1</span>) &#123;</span><br><span class="line">		<span class="keyword">var</span> str = url.substr(<span class="number">1</span>); </span><br><span class="line">		strs = str.split(<span class="string">"&amp;"</span>); </span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; strs.length; i ++) &#123;</span><br><span class="line">			theRequest[strs[i].split(<span class="string">"="</span>)[<span class="number">0</span>]]=<span class="built_in">unescape</span>(strs[i].split(<span class="string">"="</span>)[<span class="number">1</span>]); </span><br><span class="line">		&#125; </span><br><span class="line">	&#125; </span><br><span class="line">	<span class="keyword">return</span> theRequest; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> req = GetRequest(); </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> <span class="keyword">from</span> = req[<span class="string">'game'</span>];</span><br><span class="line"></span><br><span class="line">alert(<span class="keyword">from</span>);</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/JS/">JS</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/24/JS获取url参数值的两种方式/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/24/JS获取url参数值的两种方式/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/12/15/Draggable时阻止单击click事件/" title="Draggable时阻止单击click事件" itemprop="url">Draggable时阻止单击click事件</a>
   </h1>
   <p class="article-author">By
@@ -611,66 +671,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/11/17/Centos下布置kale系统skyline/" title="Centos下布置kale系统skyline" itemprop="url">Centos下布置kale系统skyline</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-11-17T04:52:16.000Z" itemprop="datePublished"> 发表于 2015-11-17</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><a href="https://github.com/etsy/skyline" target="_blank" rel="noopener">Skyline</a> 的页面上已经介绍了安装步骤，下面我记录一下在Centos上安装出现的问题已经相应的解决办法</p>
-<p>Centos上默认安装了python2.6以及对应的pip，如果想升级<a href="http://ruiaylin.github.io/2014/12/12/python%20update/" target="_blank" rel="noopener">点击这里</a></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/11/17/Centos下布置kale系统skyline/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/监控/">监控</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/11/17/Centos下布置kale系统skyline/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/17/Centos下布置kale系统skyline/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/16/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/18/">Next<span></span></a>
@@ -730,15 +730,15 @@
 			
 		
 			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>6</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Golang/" title="Golang">Golang<sup>5</sup></a></li>
 			
 		
 			
