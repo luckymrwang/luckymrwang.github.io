@@ -11,22 +11,22 @@
     
 
     
-    <meta name="description" content="Golang内存分配整体架构 简化后：  makeslice以创建切片为例，在64位操作系统上，会调用makeslice64()，最终都会去调用makeslice()去进行最终的创建动作，先计算是否内存溢出或越界，再通过调用mallocgc分配内存给slice，源码在 runtime/slice.go 123456789101112131415161718192021222324252627282">
+    <meta name="description" content="Golang内存分配整体架构">
 <meta name="keywords" content="Golang">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Golang内存分配源码解析">
 <meta property="og:url" content="https://luckymrwang.github.io/2022/05/08/Golang内存分配源码解析/index.html">
 <meta property="og:site_name" content="iBlog">
-<meta property="og:description" content="Golang内存分配整体架构 简化后：  makeslice以创建切片为例，在64位操作系统上，会调用makeslice64()，最终都会去调用makeslice()去进行最终的创建动作，先计算是否内存溢出或越界，再通过调用mallocgc分配内存给slice，源码在 runtime/slice.go 123456789101112131415161718192021222324252627282">
+<meta property="og:description" content="Golang内存分配整体架构">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/golang-memory1.jpg">
 <meta property="og:image" content="https://luckymrwang.github.io/images/golang-memory2.jpg">
 <meta property="og:image" content="https://luckymrwang.github.io/images/golang-memory3.jpg">
 <meta property="og:image" content="https://luckymrwang.github.io/images/golang-memory4.jpg">
-<meta property="og:updated_time" content="2022-05-08T02:23:46.354Z">
+<meta property="og:updated_time" content="2022-05-09T04:30:04.591Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Golang内存分配源码解析">
-<meta name="twitter:description" content="Golang内存分配整体架构 简化后：  makeslice以创建切片为例，在64位操作系统上，会调用makeslice64()，最终都会去调用makeslice()去进行最终的创建动作，先计算是否内存溢出或越界，再通过调用mallocgc分配内存给slice，源码在 runtime/slice.go 123456789101112131415161718192021222324252627282">
+<meta name="twitter:description" content="Golang内存分配整体架构">
 <meta name="twitter:image" content="https://luckymrwang.github.io/images/golang-memory1.jpg">
 
     
@@ -108,6 +108,7 @@
 		</div>
 		
 		<h3 id="Golang内存分配整体架构"><a href="#Golang内存分配整体架构" class="headerlink" title="Golang内存分配整体架构"></a>Golang内存分配整体架构</h3><p><img src="/images/golang-memory1.jpg" alt="image"></p>
+<a id="more"></a>
 <p>简化后：</p>
 <p><img src="/images/golang-memory2.jpg" alt="image"></p>
 <h3 id="makeslice"><a href="#makeslice" class="headerlink" title="makeslice"></a>makeslice</h3><p>以创建切片为例，在64位操作系统上，会调用<code>makeslice64()</code>，最终都会去调用<code>makeslice()</code>去进行最终的创建动作，先计算是否内存溢出或越界，再通过调用<code>mallocgc</code>分配内存给<code>slice</code>，源码在 runtime/slice.go</p>
