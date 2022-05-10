@@ -82,6 +82,77 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/05/10/Calico引入eBPF/" title="Calico引入eBPF" itemprop="url">Calico引入eBPF</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-10T08:17:55.000Z" itemprop="datePublished"> 发表于 2022-05-10</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Calico团队在3.13版本引入了eBPF，这个新的dataplane与传统的linux dataplane有哪些区别呢？</p>
+<ul>
+<li>它可以扩展到更高的吞吐量。</li>
+<li>每个GBit使用更少的CPU。</li>
+<li>它具有对Kubernetes服务的本机支持（无需kube-proxy），该支持：<ul>
+<li>减少服务数据包的第一个数据包延迟。</li>
+<li>一直保留到外部主机的外部客户端源IP地址。</li>
+<li>支持DSR（直接服务器返回），以实现更高效的服务路由。</li>
+<li>与kube-proxy相比，使用更少的CPU来保持数据平面同步。</li>
+</ul>
+</li>
+</ul>
+<p>此外，社区对新dataplane进行了性能测试，在短连接延时、服务访问时间、cpu使用率等方面，性能都有明显提升，详见：<a href="https://www.tigera.io/blog/introducing-the-calico-ebpf-dataplane/" target="_blank" rel="noopener">https://www.tigera.io/blog/introducing-the-calico-ebpf-dataplane/</a></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/10/Calico引入eBPF/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Calico/">Calico</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/10/Calico引入eBPF/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/10/Calico引入eBPF/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/05/08/Golang内存分配源码解析/" title="Golang内存分配源码解析" itemprop="url">Golang内存分配源码解析</a>
   </h1>
   <p class="article-author">By
@@ -615,76 +686,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/04/06/使用Kubernetes-API/" title="使用Kubernetes API" itemprop="url">使用Kubernetes API</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-04-06T11:15:01.000Z" itemprop="datePublished"> 发表于 2022-04-06</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>本文将基于cURL命令简单演示如何以REST的方式使用Kubernetes API，方便您使用开发语言原生的HTTPS方式操作Kubernetes集群。演示包括创建和删除Pod，创建和修改Deployment。</p>
-<h2 id="获取集群访问凭证KubeConfig"><a href="#获取集群访问凭证KubeConfig" class="headerlink" title="获取集群访问凭证KubeConfig"></a>获取集群访问凭证KubeConfig</h2><ol>
-<li>登录容器服务管理控制台。</li>
-<li>在控制台左侧导航栏中，单击集群。</li>
-<li>在集群列表页面中，单击目标集群名称或者目标集群右侧操作列下的详情。</li>
-<li>单击连接信息页签，查看集群访问凭证（KubeConfig），将KubeConfig文件保存到本地。</li>
-<li>从KubeConfig文件中提取ca、key和apiserver信息，命令如下。</li>
-</ol>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat  ./kubeconfig |grep client-certificate-data | awk -F <span class="string">' '</span> <span class="string">'&#123;print $2&#125;'</span> |base64 -d &gt; ./client-cert.pem</span><br><span class="line">cat  ./kubeconfig |grep client-key-data | awk -F <span class="string">' '</span> <span class="string">'&#123;print $2&#125;'</span> |base64 -d &gt; ./client-key.pem</span><br><span class="line">APISERVER=`cat  ./kubeconfig |grep server | awk -F <span class="string">' '</span> <span class="string">'&#123;print $2&#125;'</span>`</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/04/06/使用Kubernetes-API/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/04/06/使用Kubernetes-API/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/06/使用Kubernetes-API/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/22/">22</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
