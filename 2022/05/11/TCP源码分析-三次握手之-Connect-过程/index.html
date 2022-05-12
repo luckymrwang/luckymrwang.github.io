@@ -19,15 +19,15 @@
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="本文主要分析 TCP 协议的实现，但由于 TCP 协议比较复杂，所以分几篇文章进行分析，这篇主要介绍 TCP 协议建立连接时的三次握手过程。 TCP 协议应该是 TCP/IP 协议栈中最为复杂的一个协议(没有之一)，TCP 协议的复杂性来源于其面向连接和保证可靠传输。 如下图所示，TCP 协议位于 TCP/IP 协议栈的第四层，也就是传输层，其建立在网络层的 IP 协议。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://luckymrwang.github.io/images/tcp1.jgp">
-<meta property="og:image" content="https://luckymrwang.github.io/images/tcp2.jgp">
+<meta property="og:image" content="https://luckymrwang.github.io/images/tcp1.jpg">
+<meta property="og:image" content="https://luckymrwang.github.io/images/tcp2.jpg">
 <meta property="og:image" content="https://luckymrwang.github.io/images/tcp3.jpg">
 <meta property="og:image" content="https://luckymrwang.github.io/images/tcp4.jpg">
-<meta property="og:updated_time" content="2022-05-11T11:55:40.846Z">
+<meta property="og:updated_time" content="2022-05-12T00:46:15.465Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TCP源码分析 - 三次握手之 Connect 过程">
 <meta name="twitter:description" content="本文主要分析 TCP 协议的实现，但由于 TCP 协议比较复杂，所以分几篇文章进行分析，这篇主要介绍 TCP 协议建立连接时的三次握手过程。 TCP 协议应该是 TCP/IP 协议栈中最为复杂的一个协议(没有之一)，TCP 协议的复杂性来源于其面向连接和保证可靠传输。 如下图所示，TCP 协议位于 TCP/IP 协议栈的第四层，也就是传输层，其建立在网络层的 IP 协议。">
-<meta name="twitter:image" content="https://luckymrwang.github.io/images/tcp1.jgp">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/tcp1.jpg">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -110,11 +110,11 @@
 		<p>本文主要分析 TCP 协议的实现，但由于 TCP 协议比较复杂，所以分几篇文章进行分析，这篇主要介绍 TCP 协议建立连接时的三次握手过程。</p>
 <p>TCP 协议应该是 TCP/IP 协议栈中最为复杂的一个协议(没有之一)，TCP 协议的复杂性来源于其面向连接和保证可靠传输。</p>
 <p>如下图所示，TCP 协议位于 TCP/IP 协议栈的第四层，也就是传输层，其建立在网络层的 IP 协议。<br><a id="more"></a></p>
-<p><img src="/images/tcp1.jgp" alt="image"></p>
+<p><img src="/images/tcp1.jpg" alt="image"></p>
 <p>但由于 IP 协议是一个无连接不可靠的协议，所以 TCP 协议要实现面向连接的可靠传输，就必须为每个 CS(Client - Server) 连接维护一个连接状态。由此可知，TCP 协议的连接只是维护了一个连接状态，而非真正的连接。</p>
 <p>由于本文主要介绍 Linux 内核是怎么实现 TCP 协议的，如果对 TCP 协议的原理不是很清楚的话，可以参考著名的《TCP/IP协议详解》。</p>
 <h3 id="三次握手过程"><a href="#三次握手过程" class="headerlink" title="三次握手过程"></a>三次握手过程</h3><p>我们知道，TCP 协议是建立在无连接的 IP 协议之上，而为了实现面向连接，TCP 协议使用了一种协商的方式来建立连接状态，称为：三次握手。三次握手 的过程如下图：</p>
-<p><img src="/images/tcp2.jgp" alt="image"></p>
+<p><img src="/images/tcp2.jpg" alt="image"></p>
 <p>建立连接过程如下：</p>
 <ul>
 <li>客户端需要发送一个 SYN包 到服务端(包含了客户端初始化序列号)，并且将连接状态设置为 SYN_SENT。</li>
