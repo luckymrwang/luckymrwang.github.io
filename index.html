@@ -183,18 +183,18 @@
 </tr>
 <tr>
 <td style="text-align:left">后续数据包延迟</td>
-<td style="text-align:left">低的</td>
+<td style="text-align:left">低</td>
 <td style="text-align:left">降低</td>
 </tr>
 <tr>
 <td style="text-align:left">在集群中保留源IP</td>
-<td style="text-align:left">是的</td>
-<td style="text-align:left">是的</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">是</td>
 </tr>
 <tr>
 <td style="text-align:left">保留外部源IP</td>
 <td style="text-align:left">只有externalTrafficPolicy: Local</td>
-<td style="text-align:left">是的</td>
+<td style="text-align:left">是</td>
 </tr>
 <tr>
 <td style="text-align:left">直接服务器返回</td>
@@ -275,7 +275,7 @@
 <ul>
 <li>通过 tc 级 eBPF 代理</li>
 </ul>
-<p>去掉那些不用的框之后，Calico eBPF datapath 长这样：</p>
+<p>去掉那些不用的框之后，Calico eBPF datapath 如下：</p>
 <p><img src="/images/ebpf-calico-1.png" alt="images"></p>
 <p>Calico 的 eBPF 数据平面将 eBPF 程序附加到tc每个 Calico 接口以及隧道接口上的hook上。这允许 Calico 及早发现工作负载数据包，并通过绕过内核通常会执行的 iptables 和其他数据包处理的快速路径来处理它们。</p>
 <ul>

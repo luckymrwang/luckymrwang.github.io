@@ -26,7 +26,7 @@
 <meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-3.svg">
 <meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-4.png">
 <meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-3.svg">
-<meta property="og:updated_time" content="2022-05-18T02:59:04.973Z">
+<meta property="og:updated_time" content="2022-05-18T03:01:58.640Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Calico eBPF数据平面">
 <meta name="twitter:description" content="什么是 eBPFeBPF 是嵌入在 Linux 内核中的虚拟机。它允许将小程序加载到内核中，并附加到钩子上，当某些事件发生时会触发这些钩子。这允许（有时大量）定制内核的行为。虽然 eBPF 虚拟机对于每种类型的钩子都是相同的，但钩子的功能却大不相同。由于将程序加载到内核中可能很危险；内核通过非常严格的静态验证器运行所有程序；验证程序对程序进行沙箱处理，确保它只能访问允许的内存部分，并确保它必须快速">
@@ -198,18 +198,18 @@
 </tr>
 <tr>
 <td style="text-align:left">后续数据包延迟</td>
-<td style="text-align:left">低的</td>
+<td style="text-align:left">低</td>
 <td style="text-align:left">降低</td>
 </tr>
 <tr>
 <td style="text-align:left">在集群中保留源IP</td>
-<td style="text-align:left">是的</td>
-<td style="text-align:left">是的</td>
+<td style="text-align:left">是</td>
+<td style="text-align:left">是</td>
 </tr>
 <tr>
 <td style="text-align:left">保留外部源IP</td>
 <td style="text-align:left">只有externalTrafficPolicy: Local</td>
-<td style="text-align:left">是的</td>
+<td style="text-align:left">是</td>
 </tr>
 <tr>
 <td style="text-align:left">直接服务器返回</td>
@@ -290,7 +290,7 @@
 <ul>
 <li>通过 tc 级 eBPF 代理</li>
 </ul>
-<p>去掉那些不用的框之后，Calico eBPF datapath 长这样：</p>
+<p>去掉那些不用的框之后，Calico eBPF datapath 如下：</p>
 <p><img src="/images/ebpf-calico-1.png" alt="images"></p>
 <p>Calico 的 eBPF 数据平面将 eBPF 程序附加到tc每个 Calico 接口以及隧道接口上的hook上。这允许 Calico 及早发现工作负载数据包，并通过绕过内核通常会执行的 iptables 和其他数据包处理的快速路径来处理它们。</p>
 <ul>
