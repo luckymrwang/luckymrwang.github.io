@@ -20,10 +20,10 @@
 <meta property="og:description" content="IPsec协议帮助IP层建立安全可信的数据包传输通道。当前已经有了如StrongSwan、OpenSwan等比较成熟的解决方案，而它们都使用了Linux内核中的XFRM框架进行报文接收发送。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/xfrm1.webp">
-<meta property="og:image" content="https://luckymrwang.github.io/images/xfrm1.webp">
+<meta property="og:image" content="https://luckymrwang.github.io/images/xfrm2.gif">
 <meta property="og:image" content="https://luckymrwang.github.io/images/xfrm3.webp">
 <meta property="og:image" content="https://luckymrwang.github.io/images/xfrm4.png">
-<meta property="og:updated_time" content="2022-05-23T06:28:36.798Z">
+<meta property="og:updated_time" content="2022-05-23T06:31:45.327Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="XFRM -- IPsec协议的内核实现框架">
 <meta name="twitter:description" content="IPsec协议帮助IP层建立安全可信的数据包传输通道。当前已经有了如StrongSwan、OpenSwan等比较成熟的解决方案，而它们都使用了Linux内核中的XFRM框架进行报文接收发送。">
@@ -109,7 +109,7 @@
 		
 		<p><code>IPsec</code>协议帮助IP层建立安全可信的数据包传输通道。当前已经有了如<a href="https://link.segmentfault.com/?enc=yiJRfjDaOBtxIPM5EjpbsA%3D%3D.Ex4qizN1gKKgbufiqSFjTmO3Q2gj2DujT2N7t2kQhKM%3D" target="_blank" rel="noopener">StrongSwan</a>、<a href="https://link.segmentfault.com/?enc=T3gYD1nBaO8i7odY0GxMxQ%3D%3D.%2Bn11tAQvYuD0p2voWWWbrQiAh8iqTkWiqQfS536cp0M%3D" target="_blank" rel="noopener">OpenSwan</a>等比较成熟的解决方案，而它们都使用了Linux内核中的<code>XFRM</code>框架进行报文接收发送。</p>
 <p><img src="/images/xfrm1.webp" alt="image"></p>
-<p><img src="/images/xfrm1.webp" alt="image"></p>
+<p><img src="/images/xfrm2.gif" alt="image"></p>
 <a id="more"></a>
 <p><code>XFRM</code>的正确读音是<code>transform</code>(转换), 这表示内核协议栈收到的<code>IPsec</code>报文需要经过转换才能还原为原始报文；同样地，要发送的原始报文也需要转换为IPsec报文才能发送出去。</p>
 <h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><h3 id="XFRM-实例"><a href="#XFRM-实例" class="headerlink" title="XFRM 实例"></a>XFRM 实例</h3><p>IPsec中有两个重要概念：安全关联(Security Association)和安全策略(Security Policy)，这两类信息都需要存放在内核XFRM。核XFRM使用<code>netns_xfrm</code>这个结构来组织这些信息，它也被称为xfrm instance(实例)。从它的名字也可以看出来，这个实例是与network namespace相关的，每个命名空间都有这样的一个实例，实例间彼此独立。所以同一台主机上的不同容器可以互不干扰地使用XFRM</p>
