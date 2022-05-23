@@ -82,6 +82,64 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/11/11/Writing-Files/" title="Writing Files" itemprop="url">Writing Files</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-11T09:35:15.000Z" itemprop="datePublished"> 发表于 2016-11-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bufio"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(e error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(e)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	d1 := []<span class="keyword">byte</span>(<span class="string">"hello\ngo\n"</span>)</span><br><span class="line">	err := ioutil.WriteFile(<span class="string">"/tmp/dat1"</span>, d1, <span class="number">0644</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	f, err := os.Create(<span class="string">"/tmp/dat2"</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	<span class="keyword">defer</span> f.Close()</span><br><span class="line"></span><br><span class="line">	d2 := []<span class="keyword">byte</span>&#123;<span class="number">115</span>, <span class="number">111</span>, <span class="number">109</span>, <span class="number">101</span>, <span class="number">10</span>&#125;</span><br><span class="line">	n2, err := f.Write(d2)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n2)</span><br><span class="line"></span><br><span class="line">	n3, err := f.WriteString(<span class="string">"writes\n"</span>)</span><br><span class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n3)</span><br><span class="line">	f.Sync()</span><br><span class="line">	w := bufio.NewWriter(f)</span><br><span class="line"></span><br><span class="line">	n4, err := w.WriteString(<span class="string">"buffered\n"</span>)</span><br><span class="line">	fmt.Printf(<span class="string">"wrote %d bytes\n"</span>, n4)</span><br><span class="line">	w.Flush()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line">$ go run writing-files.go </span><br><span class="line">wrote 5 bytes</span><br><span class="line">wrote 7 bytes</span><br><span class="line">wrote 9 bytes</span><br><span class="line"></span><br><span class="line">$ cat /tmp/dat1</span><br><span class="line">hello</span><br><span class="line">go</span><br><span class="line">$ cat /tmp/dat2</span><br><span class="line">some</span><br><span class="line">writes</span><br><span class="line">buffered</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GoExample/">GoExample</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/11/Writing-Files/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/11/Writing-Files/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/11/11/String-Functions/" title="String Functions" itemprop="url">String Functions</a>
   </h1>
   <p class="article-author">By
@@ -618,75 +676,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/09/27/Go命令行flag包/" title="Go命令行flag包" itemprop="url">Go命令行flag包</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-09-27T10:07:02.000Z" itemprop="datePublished"> 发表于 2016-09-27</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>go语言提供的flag包可以解析命令行的参数，代码：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"flag"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//第一个参数，为参数名称，第二个参数为默认值，第三个参数是说明</span></span><br><span class="line"></span><br><span class="line">	username := flag.String(<span class="string">"name"</span>, <span class="string">""</span>, <span class="string">"Input your username"</span>)</span><br><span class="line"></span><br><span class="line">	flag.Parse()</span><br><span class="line"></span><br><span class="line">	fmt.Println(<span class="string">"Hello, "</span>, *username)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译：</p>
-<pre><code>go build flag.go
-</code></pre><p>运行：</p>
-<pre><code>./flag -name=world
-</code></pre><p>输出：</p>
-<pre><code>Hello, world
-</code></pre><p>如果不输入name参数：</p>
-<pre><code>./flag
-</code></pre><p>则输出：</p>
-<pre><code>Hello,
-</code></pre>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/09/27/Go命令行flag包/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/27/Go命令行flag包/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/11/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/13/">Next<span></span></a>
@@ -722,11 +711,11 @@
 			
 		
 			
-				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>19</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>18</sup></a></li>
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
 			
 		
 			
