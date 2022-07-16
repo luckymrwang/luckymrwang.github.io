@@ -82,6 +82,68 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/10/18/从kafka中查询用户日志优化/" title="从kafka中查询用户日志优化" itemprop="url">从kafka中查询用户日志优化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-10-18T09:04:37.000Z" itemprop="datePublished"> 发表于 2016-10-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>优化从<code>kafka</code>中取用户日志</p>
+<p>最初是根据开始时间，结束时间从<code>kafka</code>提供的api中取出<code>json</code>数据，然后挨个解析判断是否符合条件。</p>
+<p>由于数据量很大，这种方式会特别慢。</p>
+<h3 id="初步优化"><a href="#初步优化" class="headerlink" title="初步优化"></a>初步优化</h3><p>通过<code>kakfa</code>官方提供的命令行工具，取出用户日志，然后再利用系统<code>grep</code>命令筛选出符合条件的数据，此时数据为<code>json</code>流，之后将<code>json</code>流数据循环解析过滤出最终数据</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/10/18/从kafka中查询用户日志优化/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a><a href="/tags/Kafka/">Kafka</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/10/18/从kafka中查询用户日志优化/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/10/18/从kafka中查询用户日志优化/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/09/29/Go读写锁RWMutex/" title="Go读写锁RWMutex" itemprop="url">Go读写锁RWMutex</a>
   </h1>
   <p class="article-author">By
@@ -632,69 +694,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/08/23/Access-denied-for-user-root-localhost-using-password-NO/" title="Access denied for user &#39;root@localhost&#39; (using password:NO)" itemprop="url">Access denied for user &#39;root@localhost&#39; (using password:NO)</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-08-23T08:01:47.000Z" itemprop="datePublished"> 发表于 2016-08-23</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>在Centos上用如下命令连接MySQL</p>
-<pre><code>mysql -u root
-</code></pre><p>提示错误</p>
-<pre><code>Access denied for user &apos;root@localhost&apos; (using password:NO)
-</code></pre>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/08/23/Access-denied-for-user-root-localhost-using-password-NO/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/MySQL/">MySQL</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/08/23/Access-denied-for-user-root-localhost-using-password-NO/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/23/Access-denied-for-user-root-localhost-using-password-NO/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/12/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/14/">Next<span></span></a>
@@ -730,7 +729,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>20</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>21</sup></a></li>
 			
 		
 			
