@@ -82,6 +82,64 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/07/26/利用Go调用系统命令得到kafka部分日志/" title="利用Go调用系统命令得到kafka部分日志" itemprop="url">利用Go调用系统命令得到kafka部分日志</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-07-26T11:20:17.000Z" itemprop="datePublished"> 发表于 2016-07-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><em>自己加的一个利用Go调用系统命令得到kafka部分日志的函数</em></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @router /get_user_items_log</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *QueryController)</span> <span class="title">GetUserItemsLog</span><span class="params">()</span></span> &#123;</span><br><span class="line">        t := time.Now().AddDate(<span class="number">0</span>, <span class="number">0</span>, <span class="number">-1</span>)</span><br><span class="line">        dateStr := t.Format(<span class="string">"2006-01-02 00:00:00"</span>)</span><br><span class="line">        fmt.Println(dateStr)</span><br><span class="line">        date, _:= time.Parse(<span class="string">"2006-01-02 00:00:00"</span>, dateStr)</span><br><span class="line">        timestamp := date.Unix()</span><br><span class="line">        timestr := strconv.FormatInt(timestamp, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">        consumer := &amp;models.Consumer&#123;&#125;</span><br><span class="line">        offset := consumer.GetOffset(timestr)</span><br><span class="line">        cmdstr := fmt.Sprintf(<span class="string">`/data/plattech/kafka_2.9.2-0.8.1.1/bin/kafka-simple-consumer-shell.sh --broker-list 10.251.192.137:9092 --topic game_server --partit</span></span><br><span class="line"><span class="string">ion 0 --offset %d --no-wait-at-logend | grep '"type":"item"' &gt; kafka_raw.txt`</span>, offset)</span><br><span class="line">        cmd := exec.Command(<span class="string">"/bin/sh"</span>, <span class="string">"-c"</span>, cmdstr)</span><br><span class="line">        err := cmd.Run()</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">                <span class="built_in">panic</span>(err)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                c.Ctx.WriteString(<span class="string">"Success."</span>)</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/07/26/利用Go调用系统命令得到kafka部分日志/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/07/26/利用Go调用系统命令得到kafka部分日志/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/06/24/VBA读取TXT文件/" title="VBA读取TXT文件" itemprop="url">VBA读取TXT文件</a>
   </h1>
   <p class="article-author">By
@@ -606,70 +664,6 @@
 	
 	  	<span></span>
 		<a href="/2016/05/12/学习Javascript闭包（Closure）/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/05/12/学习Javascript闭包（Closure）/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/05/04/React-Native-学习笔记/" title="React-Native 学习笔记" itemprop="url">React-Native 学习笔记</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-05-04T11:27:12.000Z" itemprop="datePublished"> 发表于 2016-05-04</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="如何运行"><a href="#如何运行" class="headerlink" title="如何运行"></a>如何运行</h3><ul>
-<li>先确保你已安装好了React Native 所需的依赖环境</li>
-<li>在根目录下执行 npm install</li>
-<li>再执行 npm start</li>
-<li>最后在Xcode中点击run 运行 或者按 command + R</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/05/04/React-Native-学习笔记/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/React-Native/">React-Native</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/05/04/React-Native-学习笔记/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/05/04/React-Native-学习笔记/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

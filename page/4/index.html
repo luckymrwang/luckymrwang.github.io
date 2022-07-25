@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2021/04/03/Kubernetes-网络策略/" title="Kubernetes 网络策略" itemprop="url">Kubernetes 网络策略</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-04-03T01:54:31.000Z" itemprop="datePublished"> 发表于 2021-04-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>目前许多组织都在采用Kubernetes来运行他们的应用程序。以至于有些人将Kubernetes称为新的数据中心操作系统。因此，组织开始将Kubernetes(通常缩写为k8s)视为关键任务平台，它需要包括网络安全在内的成熟业务流程。</p>
+<p>负责保护这个新平台的网络安全团队可能发现它出奇的不同。例如，默认的Kubernetes策略是允许任何连接。</p>
+<p>本文提供了一些关于Kubernetes网络策略工作原理的简介，它们如何与传统防火墙策略进行比较以及一些可以帮助你保护Kubernetes应用程序的陷阱和最佳实践。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2021/04/03/Kubernetes-网络策略/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2021/04/03/Kubernetes-网络策略/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/04/03/Kubernetes-网络策略/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2021/03/27/理解有状态应用控制器StatefulSet/" title="理解有状态应用控制器StatefulSet" itemprop="url">理解有状态应用控制器StatefulSet</a>
   </h1>
   <p class="article-author">By
@@ -624,70 +685,6 @@
 	
 	  	<span></span>
 		<a href="/2020/12/15/K8s-AdmissionWebhook/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/15/K8s-AdmissionWebhook/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/12/09/Go性能分析/" title="Go性能分析" itemprop="url">Go性能分析</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-12-09T00:47:22.000Z" itemprop="datePublished"> 发表于 2020-12-09</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>Go 提供了 pprof 工具，可以用来做性能分析。pprof 可以读取分析样本的集合，并生成报告以可视化并帮助分析数据。</p>
-<h3 id="如何生成分析样本"><a href="#如何生成分析样本" class="headerlink" title="如何生成分析样本"></a>如何生成分析样本</h3><ul>
-<li><code>runtime/pprof</code>：采集程序的运行数据进行分析，通过调用如 <code>runtime.StartCPUProfile</code> 或 <code>runtime.StopCPUProfile</code> 等 API 生成分析样本。主要用于本地测试。</li>
-<li><code>net/http/pprof</code>：采集 HTTP Server 的运行时数据进行分析，通过 HTTP 服务获取 Profile 分析样本，底层还是调用的 <code>runtime/pprof</code>。主要用于服务器端测试。</li>
-<li><code>go test</code>: 通过 <code>go test -bench=. -cpuprofile cpuprofile.out</code> … 生成分析样本，主要用于本地基准测试。</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/12/09/Go性能分析/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/12/09/Go性能分析/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/09/Go性能分析/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

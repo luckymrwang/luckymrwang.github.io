@@ -82,6 +82,69 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/08/18/那些最好的轮子-PHP篇/" title="那些最好的轮子-PHP篇" itemprop="url">那些最好的轮子-PHP篇</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-18T01:54:58.000Z" itemprop="datePublished"> 发表于 2015-08-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="Databse-数据库ORM"><a href="#Databse-数据库ORM" class="headerlink" title="Databse 数据库ORM"></a>Databse 数据库ORM</h2><h3 id="Doctrine-2"><a href="#Doctrine-2" class="headerlink" title="Doctrine 2"></a><a href="http://www.doctrine-project.org/" target="_blank" rel="noopener">Doctrine 2</a></h3><ul>
+<li>License : MIT</li>
+<li><a href="https://github.com/doctrine/doctrine2" target="_blank" rel="noopener">Source Code</a></li>
+<li>点评：Doctrine是功能最全最完善的PHP ORM，社区一直很活跃，对NoSQL也非常迅速的作出了跟进与支持。但之所以没有说Doctrine是最好的，是因为我对PHP究竟有没有必要使用如此庞大的ORM还心存疑虑，平心而论Doctrine的入门门槛实在有些高，尤其是DBAL的提出，更是要把开发者牢牢绑定在Doctrine这艘大船上，用与不用，还是要仔细权衡。</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/08/18/那些最好的轮子-PHP篇/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/08/18/那些最好的轮子-PHP篇/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/08/18/那些最好的轮子-PHP篇/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/08/16/用JQuery实现最简单的随屏幕滚动的层/" title="用JQuery实现最简单的随屏幕滚动的层" itemprop="url">用JQuery实现最简单的随屏幕滚动的层</a>
   </h1>
   <p class="article-author">By
@@ -614,65 +677,6 @@
 	
 	  	<span></span>
 		<a href="/2015/06/04/-bin-sbin-usr-bin-usr-sbin目录/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/04/-bin-sbin-usr-bin-usr-sbin目录/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/06/04/审计的几个脚本/" title="审计的几个脚本" itemprop="url">审计的几个脚本</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-06-04T07:02:10.000Z" itemprop="datePublished"> 发表于 2015-06-04</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="Clear-sh"><a href="#Clear-sh" class="headerlink" title="Clear.sh"></a>Clear.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">	folders=(everyone snapshot top total_100 total_250)</span><br><span class="line"></span><br><span class="line">	<span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</span><br><span class="line">&lt;!-- more --&gt;</span><br><span class="line">	<span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></span><br><span class="line">	ls <span class="variable">$&#123;var&#125;</span>/*.txt | grep -v <span class="string">"unit"</span></span><br><span class="line">	mv -f <span class="variable">$&#123;var&#125;</span>/*.txt <span class="variable">$&#123;var&#125;</span>/old</span><br><span class="line">	<span class="keyword">done</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">echo</span> <span class="string">"Success."</span></span><br></pre></td></tr></table></figure>
-<h2 id="Merge-sh"><a href="#Merge-sh" class="headerlink" title="Merge.sh"></a>Merge.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">games=(tank world_war toy_war red_fire war_commander)</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga/total</span><br><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;games[@]&#125;</span>;<span class="keyword">do</span></span><br><span class="line">:&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</span><br><span class="line"><span class="keyword">for</span> (( i=1; i&lt;250; i=i+50 ));<span class="keyword">do</span></span><br><span class="line"><span class="keyword">if</span> [ -f <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span> ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"<span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt"</span></span><br><span class="line">cat <span class="variable">$&#123;var&#125;</span>_order_<span class="variable">$&#123;i&#125;</span>.txt &gt;&gt; <span class="variable">$&#123;var&#125;</span>_order_250.txt</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$i</span> == 51 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">cp <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_100/<span class="variable">$&#123;var&#125;</span>_order_100.txt</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line">mv -f <span class="variable">$&#123;var&#125;</span>_order_250.txt ../total_250</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Success."</span></span><br></pre></td></tr></table></figure>
-<h2 id="tar-sh"><a href="#tar-sh" class="headerlink" title="tar.sh"></a>tar.sh</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">folders=(everyone snapshot top total_100 total_250)</span><br><span class="line"></span><br><span class="line"><span class="built_in">cd</span> /data/plattech/tmp/bi_develop_tmp_for_wcl/ga</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> <span class="variable">$&#123;folders[@]&#125;</span>;<span class="keyword">do</span></span><br><span class="line">tar -cvzf <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz <span class="variable">$&#123;var&#125;</span>/*.txt</span><br><span class="line">mv -f <span class="variable">$&#123;var&#125;</span>/<span class="variable">$&#123;var&#125;</span>.tar.gz download</span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Success.\n"</span></span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Bash/">Bash</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/06/04/审计的几个脚本/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/04/审计的几个脚本/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

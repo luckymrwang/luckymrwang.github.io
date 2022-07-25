@@ -82,6 +82,71 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/09/16/Go标准库flag包/" title="Go标准库flag包" itemprop="url">Go标准库flag包</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-09-16T15:14:51.000Z" itemprop="datePublished"> 发表于 2020-09-16</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h4 id="flag包概述"><a href="#flag包概述" class="headerlink" title="flag包概述"></a>flag包概述</h4><p>flag包实现了命令行参数的解析</p>
+<h4 id="flag包的工作流程"><a href="#flag包的工作流程" class="headerlink" title="flag包的工作流程"></a>flag包的工作流程</h4><p>基本分为三步：</p>
+<ul>
+<li>注册flag,主要用flag.String(), Bool(), Int()等函数注册flag，或者用flag.BoolVar()，StringVar(),IntVar()等函数把flag绑定到变量</li>
+<li>解析flag,使用flag.Parse()函数解析在命令行使用了的flag</li>
+<li>最后根据命令行输入的flag处理逻辑</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/09/16/Go标准库flag包/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/09/16/Go标准库flag包/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/09/16/Go标准库flag包/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/09/16/Go中strings的常用方法/" title="Go中strings的常用方法" itemprop="url">Go中strings的常用方法</a>
   </h1>
   <p class="article-author">By
@@ -608,71 +673,6 @@
 	
 	  	<span></span>
 		<a href="/2019/11/16/Golang-http-Post-用最小的内存发送大文件/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/11/16/Golang-http-Post-用最小的内存发送大文件/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2019/09/18/Viper——Golang配置库/" title="Viper——Golang配置库" itemprop="url">Viper——Golang配置库</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2019-09-18T05:31:26.000Z" itemprop="datePublished"> 发表于 2019-09-18</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><a href="https://github.com/spf13/viper" target="_blank" rel="noopener">viper</a></p>
-<h2 id="viper-的功能"><a href="#viper-的功能" class="headerlink" title="viper 的功能"></a>viper 的功能</h2><ol>
-<li>支持Yaml、Json、 TOML、HCL 等格式的配置</li>
-<li>可以从文件、io、环境变量、command line中提取配置</li>
-<li>支持自动转换的类型解析</li>
-<li>可以远程从etcd中读取配置</li>
-</ol>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2019/09/18/Viper——Golang配置库/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2019/09/18/Viper——Golang配置库/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/09/18/Viper——Golang配置库/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
