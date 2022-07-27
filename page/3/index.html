@@ -82,6 +82,73 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/04/06/使用Kubernetes-API/" title="使用Kubernetes API" itemprop="url">使用Kubernetes API</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-06T11:15:01.000Z" itemprop="datePublished"> 发表于 2022-04-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>本文将基于cURL命令简单演示如何以REST的方式使用Kubernetes API，方便您使用开发语言原生的HTTPS方式操作Kubernetes集群。演示包括创建和删除Pod，创建和修改Deployment。</p>
+<h2 id="获取集群访问凭证KubeConfig"><a href="#获取集群访问凭证KubeConfig" class="headerlink" title="获取集群访问凭证KubeConfig"></a>获取集群访问凭证KubeConfig</h2><ol>
+<li>登录容器服务管理控制台。</li>
+<li>在控制台左侧导航栏中，单击集群。</li>
+<li>在集群列表页面中，单击目标集群名称或者目标集群右侧操作列下的详情。</li>
+<li>单击连接信息页签，查看集群访问凭证（KubeConfig），将KubeConfig文件保存到本地。</li>
+<li>从KubeConfig文件中提取ca、key和apiserver信息，命令如下。</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat  ./kubeconfig |grep client-certificate-data | awk -F <span class="string">' '</span> <span class="string">'&#123;print $2&#125;'</span> |base64 -d &gt; ./client-cert.pem</span><br><span class="line">cat  ./kubeconfig |grep client-key-data | awk -F <span class="string">' '</span> <span class="string">'&#123;print $2&#125;'</span> |base64 -d &gt; ./client-key.pem</span><br><span class="line">APISERVER=`cat  ./kubeconfig |grep server | awk -F <span class="string">' '</span> <span class="string">'&#123;print $2&#125;'</span>`</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/04/06/使用Kubernetes-API/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/04/06/使用Kubernetes-API/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/06/使用Kubernetes-API/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/03/25/netstat-命令查看连接数/" title="netstat 命令查看连接数" itemprop="url">netstat 命令查看连接数</a>
   </h1>
   <p class="article-author">By
@@ -624,71 +691,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2021/04/06/cert-pem和key-pem文件生成/" title="cert.pem和key.pem文件生成" itemprop="url">cert.pem和key.pem文件生成</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2021-04-06T11:08:11.000Z" itemprop="datePublished"> 发表于 2021-04-06</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="生成RSA密钥的方法"><a href="#生成RSA密钥的方法" class="headerlink" title="生成RSA密钥的方法"></a>生成RSA密钥的方法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -des3 -out key.pem 2048</span><br></pre></td></tr></table></figure>
-<p>这个命令会生成一个2048位的密钥，同时有一个des3方法加密的密码，如果你不想要每次都输入密码，可以改成： </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out key.pem 2048</span><br></pre></td></tr></table></figure>
-<p>建议用2048位密钥，少于此可能会不安全或很快将不安全。 </p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2021/04/06/cert-pem和key-pem文件生成/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2021/04/06/cert-pem和key-pem文件生成/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/04/06/cert-pem和key-pem文件生成/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/4/">Next<span></span></a>
   </nav>
 
 </div>
@@ -721,7 +726,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>21</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>22</sup></a></li>
 			
 		
 			

@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/" title="Dockerfile: ENTRYPOINT和CMD的区别" itemprop="url">Dockerfile: ENTRYPOINT和CMD的区别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-09-22T10:27:24.000Z" itemprop="datePublished"> 发表于 2020-09-22</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>翻译<a href="https://link.zhihu.com/?target=https%3A//www.ctl.io/developers/blog/post/dockerfile-entrypoint-vs-cmd/" target="_blank" rel="noopener">Dockerfile: ENTRYPOINT vs CMD</a></p>
+<p>在我们查阅Dockerfile的官方文档时, 有可能发现一些命令的功能重复(至少看起来干的事情差不多), 我已经在上文分析过ADD和COPY命令的区别(他们功能类似), 现在我们分析另外2个命令, 他们的功能也非常类似, 是CMD和ENTRYPOINT。尽管ENTRYPOINT和CMD都是在docker image里执行一条命令, 但是他们有一些微妙的区别。在绝大多数情况下, 你只要在这2者之间选择一个调用就可以. 但他们有更高级的应用, CMD和ENTRYPOINT组合起来使用, 完成更加丰富的功能<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Docker/">Docker</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/09/16/Go标准库flag包/" title="Go标准库flag包" itemprop="url">Go标准库flag包</a>
   </h1>
   <p class="article-author">By
@@ -625,70 +685,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2019/11/16/Golang-http-Post-用最小的内存发送大文件/" title="Golang http.Post 用最小的内存发送大文件" itemprop="url">Golang http.Post 用最小的内存发送大文件</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2019-11-16T13:01:36.000Z" itemprop="datePublished"> 发表于 2019-11-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>在网络编程中，经常用http.Post 发送文件到远程服务器，可以通过自己构造multipart/form-data; boundary来实现。</p>
-<p>一般是这么做：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">buf := <span class="built_in">new</span>(bytes.Buffer)</span><br><span class="line">writer := multipart.NewWriter(buf)</span><br><span class="line"><span class="keyword">defer</span> writer.Close()</span><br><span class="line">part, err := writer.CreateFormFile(<span class="string">"myFile"</span>, <span class="string">"foo.txt"</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">file, err := os.Open(name)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> file.Close()</span><br><span class="line"><span class="keyword">if</span> _, err = io.Copy(part, file); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">http.Post(url, writer.FormDataContentType(), buf)</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2019/11/16/Golang-http-Post-用最小的内存发送大文件/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2019/11/16/Golang-http-Post-用最小的内存发送大文件/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/11/16/Golang-http-Post-用最小的内存发送大文件/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/page/5/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/7/">Next<span></span></a>
+    <a class="extend prev" rel="prev" href="/page/5/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/7/">Next<span></span></a>
   </nav>
 
 </div>
@@ -721,7 +720,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>21</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>22</sup></a></li>
 			
 		
 			

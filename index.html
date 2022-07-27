@@ -82,6 +82,69 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/" title="SmartNIC — TSO、GSO、LRO、GRO 技术" itemprop="url">SmartNIC — TSO、GSO、LRO、GRO 技术</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-07-27T11:54:08.000Z" itemprop="datePublished"> 发表于 2022-07-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="TSO-TCP-Segmentation-Offload"><a href="#TSO-TCP-Segmentation-Offload" class="headerlink" title="TSO(TCP Segmentation Offload)"></a>TSO(TCP Segmentation Offload)</h3><p>TSO(TCP Segmentation Offload): 是一种利用网卡对大数据包进行分片，从而减小CPU负荷的一种技术。</p>
+<ul>
+<li>TSO off 和 GSO off：</li>
+</ul>
+<p><img src="/images/tso1.png" alt="images"></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/07/25/理解wireshark中的length字段含义/" title="理解wireshark中的length字段含义" itemprop="url">理解wireshark中的length字段含义</a>
   </h1>
   <p class="article-author">By
@@ -634,80 +697,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/05/10/Calico引入eBPF/" title="Calico引入eBPF" itemprop="url">Calico引入eBPF</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-05-10T08:17:55.000Z" itemprop="datePublished"> 发表于 2022-05-10</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Calico团队在3.13版本引入了eBPF，这个新的dataplane与传统的linux dataplane有哪些区别呢？</p>
-<ul>
-<li>它可以扩展到更高的吞吐量。</li>
-<li>每个GBit使用更少的CPU。</li>
-<li>它具有对Kubernetes服务的本机支持（无需kube-proxy），该支持：<ul>
-<li>减少服务数据包的第一个数据包延迟。</li>
-<li>一直保留到外部主机的外部客户端源IP地址。</li>
-<li>支持DSR（直接服务器返回），以实现更高效的服务路由。</li>
-<li>与kube-proxy相比，使用更少的CPU来保持数据平面同步。</li>
-</ul>
-</li>
-</ul>
-<p>此外，社区对新dataplane进行了性能测试，在短连接延时、服务访问时间、cpu使用率等方面，性能都有明显提升，详见：<a href="https://www.tigera.io/blog/introducing-the-calico-ebpf-dataplane/" target="_blank" rel="noopener">https://www.tigera.io/blog/introducing-the-calico-ebpf-dataplane/</a></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/05/10/Calico引入eBPF/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Calico/">Calico</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/05/10/Calico引入eBPF/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/10/Calico引入eBPF/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/23/">23</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
@@ -740,7 +732,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>21</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>22</sup></a></li>
 			
 		
 			
