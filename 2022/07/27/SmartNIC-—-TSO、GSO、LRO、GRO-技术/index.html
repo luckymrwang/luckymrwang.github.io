@@ -25,7 +25,7 @@
 <meta property="og:image" content="https://luckymrwang.github.io/images/tso4.png">
 <meta property="og:image" content="https://luckymrwang.github.io/images/tso5.png">
 <meta property="og:image" content="https://luckymrwang.github.io/images/tso6.png">
-<meta property="og:updated_time" content="2022-07-27T13:32:41.710Z">
+<meta property="og:updated_time" content="2022-07-29T14:15:47.387Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SmartNIC — TSO、GSO、LRO、GRO 技术">
 <meta name="twitter:description" content="TSO(TCP Segmentation Offload)TSO(TCP Segmentation Offload): 是一种利用网卡对大数据包进行分片，从而减小CPU负荷的一种技术。  TSO off 和 GSO off：">
@@ -120,7 +120,7 @@
 </ul>
 <p><img src="/images/tso2.png" alt="images"></p>
 <h3 id="GSO-Generic-Segmentation-Offload"><a href="#GSO-Generic-Segmentation-Offload" class="headerlink" title="GSO(Generic Segmentation Offload)"></a>GSO(Generic Segmentation Offload)</h3><p>GSO(Generic Segmentation Offload): 是一种延缓分片技术。它比 TSO 更通用，原因在于它不需要硬件的支持就可以进行分片。</p>
-<p>其过程是：首先查询网卡是否支持 TSO 功能，如果硬件支持 TSO 则使用的网卡的硬件分片能力执行分片；如果网卡不支持 TSO 功能，则将分片的执行延缓到了将数据推送到网卡的前一刻执行。</p>
+<p>其过程是：首先查询网卡是否支持 TSO 功能，如果硬件支持 TSO 则使用网卡的硬件分片能力执行分片；如果网卡不支持 TSO 功能，则将分片的执行延缓到了将数据推送到网卡的前一刻执行。</p>
 <ul>
 <li>TSO off 和 GSO on：一个大的网络包直到进入网卡前的最后一步才进行分片。</li>
 </ul>
