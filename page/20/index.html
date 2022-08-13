@@ -82,6 +82,75 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/10/09/Nginx-SSL-性能优化/" title="Nginx SSL 性能优化" itemprop="url">Nginx SSL 性能优化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-09T07:18:03.000Z" itemprop="datePublished"> 发表于 2015-10-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="影响HTTPS速度的主要原因："><a href="#影响HTTPS速度的主要原因：" class="headerlink" title="影响HTTPS速度的主要原因："></a>影响HTTPS速度的主要原因：</h3><h4 id="密钥交换算法"><a href="#密钥交换算法" class="headerlink" title="密钥交换算法"></a>密钥交换算法</h4><p>常见的密钥交换算法有 <code>RSA</code>，<code>ECDHE</code>，<code>DH</code>，<code>DHE</code> 等算法。它们的特性如下：</p>
+<pre><code>RSA：算法实现简单，诞生于 1977 年，历史悠久，经过了长时间的破解测试，安全性高。缺点就是需要比较大的素数（目前常用的是 2048 位）来保证安全强度，很消耗 CPU 运算资源。RSA 是目前唯一一个既能用于密钥交换又能用于证书签名的算法。
+
+DH：diffie-hellman 密钥交换算法，诞生时间比较早（1977 年），但是 1999 年才公开。缺点是比较消耗 CPU 性能。
+
+ECDHE：使用椭圆曲线（ECC）的 DH 算法，优点是能用较小的素数（256 位）实现 RSA 相同的安全等级。缺点是算法实现复杂，用于密钥交换的历史不长，没有经过长时间的安全攻击测试。
+
+ECDH：不支持 PFS，安全性低，同时无法实现 false start。
+
+DHE：不支持 ECC。非常消耗 CPU 资源 。
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/10/09/Nginx-SSL-性能优化/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Nginx/">Nginx</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/10/09/Nginx-SSL-性能优化/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/10/09/Nginx-SSL-性能优化/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/10/07/使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法/" title="使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法" itemprop="url">使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法</a>
   </h1>
   <p class="article-author">By
@@ -600,65 +669,6 @@
 	
 	  	<span></span>
 		<a href="/2015/08/21/PHP算法之选择排序/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/08/21/PHP算法之选择排序/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/08/21/PHP算法之快速排序/" title="PHP算法之快速排序" itemprop="url">PHP算法之快速排序</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-08-21T07:43:30.000Z" itemprop="datePublished"> 发表于 2015-08-21</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="思路分析"><a href="#思路分析" class="headerlink" title="思路分析"></a>思路分析</h3><p>选择一个基准元素，通常选择第一个元素或者最后一个元素。通过一趟扫描，将待排序列分成两部分，一部分比基准元素小，一部分大于等于基准元素。此时基准元素在其排好序后的正确位置，然后再用同样的方法递归地排序划分的两部分。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/08/21/PHP算法之快速排序/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/PHP/">PHP</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/08/21/PHP算法之快速排序/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/08/21/PHP算法之快速排序/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
