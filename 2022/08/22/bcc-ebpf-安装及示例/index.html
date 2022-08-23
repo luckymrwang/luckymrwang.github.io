@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="eBPF 程序使用 C 语言的一个子集（restricted C）编写，然后通过 LLVM 编译成字节码注入到 内核执行。bcc是 eBPF 的一个外围工具集，使得 “编 写 BPF 代码-编译成字节码-注入内核-获取结果-展示” 整个过程更加便捷。 下面我们将搭建一个基础环境，通过几个例子展示如何编写 bcc/eBPF 程序，感受它们的强大功能。 准备工作环境需要以下几方面满足要求：内核、doc">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-08-23T06:41:24.670Z">
+<meta property="og:updated_time" content="2022-08-23T07:47:29.627Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="bcc&#x2F;ebpf 安装及示例">
 <meta name="twitter:description" content="eBPF 程序使用 C 语言的一个子集（restricted C）编写，然后通过 LLVM 编译成字节码注入到 内核执行。bcc是 eBPF 的一个外围工具集，使得 “编 写 BPF 代码-编译成字节码-注入内核-获取结果-展示” 整个过程更加便捷。 下面我们将搭建一个基础环境，通过几个例子展示如何编写 bcc/eBPF 程序，感受它们的强大功能。 准备工作环境需要以下几方面满足要求：内核、doc">
@@ -269,7 +269,7 @@
 <p>生成镜像：</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo docker build -t bcc:0.0.1</span><br></pre></td></tr></table></figure>
 <p>附录 2：基于构建好的<a href="https://luckymrwang.github.io/2022/05/23/%E4%BD%BF%E7%94%A8-Docker-Desktop%E8%BF%9B%E8%A1%8C-BPF-%E5%BC%80%E5%8F%91/">镜像</a></p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name bcc \</span><br><span class="line">    --privileged \</span><br><span class="line">    -v /lib/modules:/lib/modules:ro \</span><br><span class="line">    -v /usr/src:/usr/src:ro \</span><br><span class="line">    -v /boot:/boot:ro \</span><br><span class="line">    -v /etc/localtime:/etc/localtime:ro \</span><br><span class="line">    --pid=host \</span><br><span class="line">    registry.cn-hangzhou.aliyuncs.com/denverdino/ebpf-for-mac sleep infinity</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name bcc \</span><br><span class="line">    --privileged \</span><br><span class="line">    -v /lib/modules:/lib/modules:ro \</span><br><span class="line">    -v /usr/src:/usr/src:ro \</span><br><span class="line">    -v /boot:/boot:ro \</span><br><span class="line">    -v /etc/localtime:/etc/localtime:ro \</span><br><span class="line">    --pid=host \</span><br><span class="line">    --workdir /root/bcc/tools \</span><br><span class="line">    registry.cn-hangzhou.aliyuncs.com/denverdino/ebpf-for-mac sleep infinity</span><br></pre></td></tr></table></figure>
   
 	</div>
 		<footer class="article-footer clearfix">
