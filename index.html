@@ -82,6 +82,69 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/08/22/bcc-ebpf-安装及示例/" title="bcc/ebpf 安装及示例" itemprop="url">bcc/ebpf 安装及示例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-08-22T08:44:55.000Z" itemprop="datePublished"> 发表于 2022-08-22</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>eBPF 程序使用 C 语言的一个子集（restricted C）编写，然后通过 LLVM 编译成字节码注入到 内核执行。bcc是 eBPF 的一个外围工具集，使得 “编 写 BPF 代码-编译成字节码-注入内核-获取结果-展示” 整个过程更加便捷。</p>
+<p>下面我们将搭建一个基础环境，通过几个例子展示如何编写 bcc/eBPF 程序，感受它们的强大功能。</p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>环境需要以下几方面满足要求：内核、docker、bcc。</p>
+<h4 id="内核版本"><a href="#内核版本" class="headerlink" title="内核版本"></a>内核版本</h4><p>eBPF 需要较新的 Linux kernel 支持。 因此首先要确保你的内核版本足够新，至少要在 4.1 以上，最好在 4.10 以上：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ uname -r</span><br><span class="line">4.10.13-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/08/22/bcc-ebpf-安装及示例/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eBPF/">eBPF</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/08/22/bcc-ebpf-安装及示例/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/08/22/bcc-ebpf-安装及示例/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/08/19/搭建-eBPF-开发环境/" title="搭建 eBPF 开发环境" itemprop="url">搭建 eBPF 开发环境</a>
   </h1>
   <p class="article-author">By
@@ -641,67 +704,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/" title="XFRM -- IPsec协议的内核实现框架" itemprop="url">XFRM -- IPsec协议的内核实现框架</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-05-23T06:16:10.000Z" itemprop="datePublished"> 发表于 2022-05-23</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><code>IPsec</code>协议帮助IP层建立安全可信的数据包传输通道。当前已经有了如<a href="https://link.segmentfault.com/?enc=yiJRfjDaOBtxIPM5EjpbsA%3D%3D.Ex4qizN1gKKgbufiqSFjTmO3Q2gj2DujT2N7t2kQhKM%3D" target="_blank" rel="noopener">StrongSwan</a>、<a href="https://link.segmentfault.com/?enc=T3gYD1nBaO8i7odY0GxMxQ%3D%3D.%2Bn11tAQvYuD0p2voWWWbrQiAh8iqTkWiqQfS536cp0M%3D" target="_blank" rel="noopener">OpenSwan</a>等比较成熟的解决方案，而它们都使用了Linux内核中的<code>XFRM</code>框架进行报文接收发送。</p>
-<p><img src="/images/xfrm1.webp" alt="image"></p>
-<p><img src="/images/xfrm2.gif" alt="image"></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/23/XFRM-IPsec协议的内核实现框架/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -785,6 +787,10 @@
 			
 		
 			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
@@ -794,10 +800,6 @@
 		
 			
 				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>3</sup></a></li>
 			
 		
 			

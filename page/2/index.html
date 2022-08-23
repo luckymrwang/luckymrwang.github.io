@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/" title="XFRM -- IPsec协议的内核实现框架" itemprop="url">XFRM -- IPsec协议的内核实现框架</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-23T06:16:10.000Z" itemprop="datePublished"> 发表于 2022-05-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><code>IPsec</code>协议帮助IP层建立安全可信的数据包传输通道。当前已经有了如<a href="https://link.segmentfault.com/?enc=yiJRfjDaOBtxIPM5EjpbsA%3D%3D.Ex4qizN1gKKgbufiqSFjTmO3Q2gj2DujT2N7t2kQhKM%3D" target="_blank" rel="noopener">StrongSwan</a>、<a href="https://link.segmentfault.com/?enc=T3gYD1nBaO8i7odY0GxMxQ%3D%3D.%2Bn11tAQvYuD0p2voWWWbrQiAh8iqTkWiqQfS536cp0M%3D" target="_blank" rel="noopener">OpenSwan</a>等比较成熟的解决方案，而它们都使用了Linux内核中的<code>XFRM</code>框架进行报文接收发送。</p>
+<p><img src="/images/xfrm1.webp" alt="image"></p>
+<p><img src="/images/xfrm2.gif" alt="image"></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/23/XFRM-IPsec协议的内核实现框架/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/05/12/Calico-eBPF数据平面/" title="Calico eBPF数据平面" itemprop="url">Calico eBPF数据平面</a>
   </h1>
   <p class="article-author">By
@@ -626,68 +687,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/04/22/Tracing-iptables-on-CentOS/" title="Tracing iptables on CentOS" itemprop="url">Tracing iptables on CentOS</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-04-22T15:37:35.000Z" itemprop="datePublished"> 发表于 2022-04-22</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><ul>
-<li><code>iptables</code>已开启并激活</li>
-</ul>
-<h3 id="步骤-1-标记要跟踪的数据包"><a href="#步骤-1-标记要跟踪的数据包" class="headerlink" title="步骤 1: 标记要跟踪的数据包"></a>步骤 1: 标记要跟踪的数据包</h3><h4 id="DNS端口示例"><a href="#DNS端口示例" class="headerlink" title="DNS端口示例"></a>DNS端口示例</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">PORT=<span class="number">53</span></span><br><span class="line">which sudo || alias sudo=<span class="string">'$@'</span></span><br><span class="line"></span><br><span class="line">sudo iptables -t raw -A OUTPUT     -p udp --dport $PORT -j TRACE</span><br><span class="line">sudo iptables -t raw -A OUTPUT     -p tcp --dport $PORT -j TRACE</span><br><span class="line">sudo iptables -t raw -A PREROUTING -p udp --dport $PORT -j TRACE</span><br><span class="line">sudo iptables -t raw -A PREROUTING -p tcp --dport $PORT -j TRACE</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/04/22/Tracing-iptables-on-CentOS/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/IPTABLES/">IPTABLES</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/04/22/Tracing-iptables-on-CentOS/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/22/Tracing-iptables-on-CentOS/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
@@ -771,6 +770,10 @@
 			
 		
 			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
@@ -780,10 +783,6 @@
 		
 			
 				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>3</sup></a></li>
 			
 		
 			

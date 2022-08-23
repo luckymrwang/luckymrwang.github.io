@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="前言虽然 Linux 内核很早就已经支持了 eBPF，但很多新特性都是在 4.x 版本中逐步增加的。所以，想要稳定运行 eBPF 程序，内核至少需要 4.9 或者更新的版本。而在开发和学习 eBPF 时，为了体验和掌握最新的 eBPF 特性，我推荐使用更新的 5.x 内核。 作为 eBPF 最重大的改进之一，一次编译到处执行（简称 CO-RE）解决了内核数据结构在不同版本差异导致的兼容性问题。不过">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-08-20T02:26:58.401Z">
+<meta property="og:updated_time" content="2022-08-22T09:12:39.592Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="搭建 eBPF 开发环境">
 <meta name="twitter:description" content="前言虽然 Linux 内核很早就已经支持了 eBPF，但很多新特性都是在 4.x 版本中逐步增加的。所以，想要稳定运行 eBPF 程序，内核至少需要 4.9 或者更新的版本。而在开发和学习 eBPF 时，为了体验和掌握最新的 eBPF 特性，我推荐使用更新的 5.x 内核。 作为 eBPF 最重大的改进之一，一次编译到处执行（简称 CO-RE）解决了内核数据结构在不同版本差异导致的兼容性问题。不过">
@@ -98,7 +98,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-eBPF-开发环境"><span class="toc-number">2.</span> <span class="toc-text">配置 eBPF 开发环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CentOS-Stream"><span class="toc-number">2.1.</span> <span class="toc-text">CentOS Stream</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-BCC"><span class="toc-number">2.2.</span> <span class="toc-text">安装 BCC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-bpftrace"><span class="toc-number">2.3.</span> <span class="toc-text">安装 bpftrace</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ubuntu-20-04"><span class="toc-number">3.</span> <span class="toc-text">Ubuntu 20.04</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-BCC-1"><span class="toc-number">3.1.</span> <span class="toc-text">安装 BCC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-bpftrace-1"><span class="toc-number">3.2.</span> <span class="toc-text">安装 bpftrace</span></a></li></ol></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-eBPF-开发环境"><span class="toc-number">2.</span> <span class="toc-text">配置 eBPF 开发环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CentOS-Stream"><span class="toc-number">3.</span> <span class="toc-text">CentOS Stream</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-BCC"><span class="toc-number">3.1.</span> <span class="toc-text">安装 BCC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-bpftrace"><span class="toc-number">3.2.</span> <span class="toc-text">安装 bpftrace</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ubuntu-20-04"><span class="toc-number">4.</span> <span class="toc-text">Ubuntu 20.04</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-BCC-1"><span class="toc-number">4.1.</span> <span class="toc-text">安装 BCC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-bpftrace-1"><span class="toc-number">4.2.</span> <span class="toc-text">安装 bpftrace</span></a></li></ol></li></ol>
 		
 		</div>
 		
@@ -121,10 +121,10 @@
 <li>与内核代码仓库实时同步的 libbpf；</li>
 <li>同样是内核代码提供的 eBPF 程序管理工具 bpftool。</li>
 </ol>
-<h4 id="CentOS-Stream"><a href="#CentOS-Stream" class="headerlink" title="CentOS Stream"></a>CentOS Stream</h4><p>根据官方文档，CentOS 8 已在 2021 年底被放弃，所以不再推荐将其作为生产环境继续使用。对于已有的用户来说，可以升级到 CentOS Stream 或 Rocky Linux 继续获得开源社区的支持。比如，你可以执行下面的命令，把 CentOS 8 升级为 CentOS Stream 8：</p>
+<h3 id="CentOS-Stream"><a href="#CentOS-Stream" class="headerlink" title="CentOS Stream"></a>CentOS Stream</h3><p>根据官方文档，CentOS 8 已在 2021 年底被放弃，所以不再推荐将其作为生产环境继续使用。对于已有的用户来说，可以升级到 CentOS Stream 或 Rocky Linux 继续获得开源社区的支持。比如，你可以执行下面的命令，把 CentOS 8 升级为 CentOS Stream 8：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo dnf --disablerepo <span class="string">'*'</span> --enablerepo extras swap centos-linux-repos centos-stream-repos -y</span><br><span class="line">sudo dnf distro-sync -y</span><br></pre></td></tr></table></figure>
 <p>可以执行下面的命令，来安装 <code>eBPF</code> 这些必要的开发工具：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install libbpf-devel make clang llvm elfutils-libelf-devel bpftool bcc-tools bcc-devel</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install libbpf-devel make clang llvm elfutils-libelf-devel bpftool bcc-devel</span><br></pre></td></tr></table></figure>
 <p>如果已经熟悉了 Linux 内核的自定义编译和安装方法，并选择在旧的发行版中通过自行编译和升级内核搭建开发环境，上述的开发工具流程也需要做适当的调整。这里特别提醒下，libbpf-dev 这个库很可能需要从源码安装，具体的步骤可以参考 libbpf 的 <a href="https://github.com/libbpf/libbpf" target="_blank" rel="noopener">GitHub 仓库</a>。</p>
 <h4 id="安装-BCC"><a href="#安装-BCC" class="headerlink" title="安装 BCC"></a>安装 BCC</h4><p>打开一个终端，SSH 连接到 CentOS Stream 8 系统后，执行 dnf info bcc-tools 查询 BCC 的版本，会看到如下的输出：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Available Packages</span><br><span class="line">Name         : bcc-tools</span><br><span class="line">Version      : 0.19.0</span><br><span class="line">Release      : 5.el8</span><br><span class="line">Architecture : x86_64</span><br><span class="line">Size         : 448 k</span><br><span class="line">Source       : bcc-0.19.0-5.el8.src.rpm</span><br><span class="line">Repository   : appstream</span><br><span class="line">Summary      : Command line tools <span class="keyword">for</span> BPF Compiler Collection (BCC)</span><br><span class="line">URL          : https://github.com/iovisor/bcc</span><br><span class="line">License      : ASL 2.0</span><br><span class="line">Description  : Command line tools <span class="keyword">for</span> BPF Compiler Collection (BCC)</span><br></pre></td></tr></table></figure>
@@ -143,7 +143,7 @@
 <p>到这里，我们就完成了 <code>CentOS Stream</code> 开发环境的配置。接下来要讲的 <code>Ubuntu 20.04</code> 的安装配置方法也是类似的，只是相应的软件包管理工具要换成 <code>apt</code> 系列工具。</p>
 <h3 id="Ubuntu-20-04"><a href="#Ubuntu-20-04" class="headerlink" title="Ubuntu 20.04"></a>Ubuntu 20.04</h3><p>首先，对于 BCC 的安装来说，由于 Ubuntu 系统中软件包的名字跟 CentOS 略有不同，所以在第一步安装开发工具和开发库时，我们需要做适当的调整。下面我们来看详细的安装步骤。</p>
 <p>第一步，安装必要的开发工具和开发库：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install -y  make clang llvm libelf-dev libbpf-dev bpfcc-tools libbpfcc-dev linux-tools-$(uname -r) linux-headers-$(uname -r)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install -y  make clang llvm libelf-dev libbpf-dev libbpfcc-dev linux-tools-$(uname -r) linux-headers-$(uname -r)</span><br></pre></td></tr></table></figure>
 <p>如果已经熟悉了 Linux 内核的自定义编译和安装方法，并选择在旧的发行版中通过自行编译和升级内核搭建开发环境，上述的开发工具流程也需要做适当的调整。这里特别提醒下，libbpf-dev 这个库很可能需要从源码安装，具体的步骤可以参考 libbpf 的 <a href="https://github.com/libbpf/libbpf" target="_blank" rel="noopener">GitHub 仓库</a>。</p>
 <h4 id="安装-BCC-1"><a href="#安装-BCC-1" class="headerlink" title="安装 BCC"></a>安装 BCC</h4><p>接下来的第二步是从源码编译安装 BCC，步骤跟上面的 CentOS Stream 是一样的，代码如下所示：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第二步，从源码编译安装BCC</span></span><br><span class="line">git <span class="built_in">clone</span> https://github.com/iovisor/bcc.git</span><br><span class="line">mkdir bcc/build; <span class="built_in">cd</span> bcc/build</span><br><span class="line">cmake ..</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br><span class="line">cmake -DPYTHON_CMD=python3 .. <span class="comment"># build python3 binding</span></span><br><span class="line"><span class="built_in">pushd</span> src/python/</span><br><span class="line">make</span><br><span class="line">sudo make install</span><br><span class="line"><span class="built_in">popd</span></span><br></pre></td></tr></table></figure>
@@ -183,6 +183,14 @@
 	
 <nav class="article-nav clearfix">
  
+ <div class="prev" >
+ <a href="/2022/08/22/bcc-ebpf-安装及示例/" title="bcc/ebpf 安装及示例">
+  <strong>上一篇：</strong><br/>
+  <span>
+  bcc/ebpf 安装及示例</span>
+</a>
+</div>
+
 
 <div class="next">
 <a href="/2022/08/13/Cilium-eBPF-搭建与使用/"  title="Cilium eBPF 搭建与使用">
@@ -206,7 +214,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-eBPF-开发环境"><span class="toc-number">2.</span> <span class="toc-text">配置 eBPF 开发环境</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#CentOS-Stream"><span class="toc-number">2.1.</span> <span class="toc-text">CentOS Stream</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-BCC"><span class="toc-number">2.2.</span> <span class="toc-text">安装 BCC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-bpftrace"><span class="toc-number">2.3.</span> <span class="toc-text">安装 bpftrace</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ubuntu-20-04"><span class="toc-number">3.</span> <span class="toc-text">Ubuntu 20.04</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-BCC-1"><span class="toc-number">3.1.</span> <span class="toc-text">安装 BCC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-bpftrace-1"><span class="toc-number">3.2.</span> <span class="toc-text">安装 bpftrace</span></a></li></ol></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置-eBPF-开发环境"><span class="toc-number">2.</span> <span class="toc-text">配置 eBPF 开发环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CentOS-Stream"><span class="toc-number">3.</span> <span class="toc-text">CentOS Stream</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-BCC"><span class="toc-number">3.1.</span> <span class="toc-text">安装 BCC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-bpftrace"><span class="toc-number">3.2.</span> <span class="toc-text">安装 bpftrace</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ubuntu-20-04"><span class="toc-number">4.</span> <span class="toc-text">Ubuntu 20.04</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-BCC-1"><span class="toc-number">4.1.</span> <span class="toc-text">安装 BCC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-bpftrace-1"><span class="toc-number">4.2.</span> <span class="toc-text">安装 bpftrace</span></a></li></ol></li></ol>
  
   </div>
 
@@ -285,6 +293,10 @@
 			
 		
 			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
@@ -294,10 +306,6 @@
 		
 			
 				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>3</sup></a></li>
 			
 		
 			
