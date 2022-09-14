@@ -21,8 +21,8 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/linux_sock.png">
 <meta property="og:image" content="https://luckymrwang.github.io/images/linux_gnu.png">
-<meta property="og:image" content="https://luckymrwang.github.io/2022/09/09/VSCode阅读Linux源码/images/linux_ssh.png">
-<meta property="og:updated_time" content="2022-09-14T06:02:22.403Z">
+<meta property="og:image" content="https://luckymrwang.github.io/images/linux_ssh.png">
+<meta property="og:updated_time" content="2022-09-14T08:12:43.588Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VSCode阅读Linux源码">
 <meta name="twitter:description" content="前言平常都是通过网页在线查询和阅读 Linux源码 ，这个网站bootlin是一家提供在线查找阅读linux大部分内核源码的社区，支持查看不同的内核版本，特别方便。但是毕竟是网页版，每次跳转或者查看函数引用都要刷新页面，流畅度取决于使用者的网速，总归体验是不如在本地通过IDE查看的。所以才有了这篇操作手册式的文章，一是通过VSCode来流畅地查看linux源码，二是熟悉下搭建的流程。像Linux这">
@@ -121,7 +121,7 @@
 <h3 id="安装-global-插件"><a href="#安装-global-插件" class="headerlink" title="安装 global 插件"></a>安装 global 插件</h3><p>VSCode 上有现成的插件可以直接使用，我们在 VSCode 这个 SSH 会话里安装 C/C++ GNU Global 插件，</p>
 <p><img src="/images/linux_gnu.png" alt></p>
 <p>然后在内核代码项目中新建 <code>.vscode/settings.json</code>（如果自定义了 global 工具的路径的话需要在这里显式地配置 <code>gnuGlobal.globalExecutable</code> 和 <code>gnuGlobal.gtagsExecutable</code> 字段）。</p>
-<p><img src="images/linux_ssh.png" alt></p>
+<p><img src="/images/linux_ssh.png" alt></p>
 <p>如果不清楚 global 的路径可以使用如下命令查看：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> is global</span><br><span class="line"><span class="built_in">which</span> is gtags</span><br></pre></td></tr></table></figure>
 <p>在 vscode 的 settings.json 配置里，指定 global 的相关路径。</p>
