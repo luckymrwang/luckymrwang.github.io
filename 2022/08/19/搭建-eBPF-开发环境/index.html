@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="前言虽然 Linux 内核很早就已经支持了 eBPF，但很多新特性都是在 4.x 版本中逐步增加的。所以，想要稳定运行 eBPF 程序，内核至少需要 4.9 或者更新的版本。而在开发和学习 eBPF 时，为了体验和掌握最新的 eBPF 特性，我推荐使用更新的 5.x 内核。 作为 eBPF 最重大的改进之一，一次编译到处执行（简称 CO-RE）解决了内核数据结构在不同版本差异导致的兼容性问题。不过">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-08-22T09:12:39.592Z">
+<meta property="og:updated_time" content="2022-09-16T08:51:26.621Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="搭建 eBPF 开发环境">
 <meta name="twitter:description" content="前言虽然 Linux 内核很早就已经支持了 eBPF，但很多新特性都是在 4.x 版本中逐步增加的。所以，想要稳定运行 eBPF 程序，内核至少需要 4.9 或者更新的版本。而在开发和学习 eBPF 时，为了体验和掌握最新的 eBPF 特性，我推荐使用更新的 5.x 内核。 作为 eBPF 最重大的改进之一，一次编译到处执行（简称 CO-RE）解决了内核数据结构在不同版本差异导致的兼容性问题。不过">
@@ -150,7 +150,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># For Lua support</span></span><br><span class="line">sudo apt-get -y install luajit luajit-5.1-dev</span><br></pre></td></tr></table></figure>
 <p>同 CentOS Stream 系统一样，上述命令执行成功后，所有的 BCC 工具也会安装到 <code>/usr/share/bcc/tools</code> 目录下，你可以执行 <code>sudo python3 /usr/share/bcc/tools/execsnoop</code> 命令来验证 BCC 的安装。</p>
 <h4 id="安装-bpftrace-1"><a href="#安装-bpftrace-1" class="headerlink" title="安装 bpftrace"></a>安装 bpftrace</h4><p>BCC 安装成功后，我们再来安装 <code>bpftrace</code>。由于 Ubuntu 已经自带了 Docker 软件包，因此你可以使用 <code>Docker</code>，通过 <code>bpftrace</code> 容器镜像来完成类似 <code>podman</code> 的安装步骤。具体的安装命令如下所示：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第一步，安装docker</span></span><br><span class="line">sudo apt install -y docker.io</span><br><span class="line"><span class="comment"># 第二步，下载镜像后从中复制bpftrace二进制文件</span></span><br><span class="line">sudo docker pull quay.io/iovisor/bpftrace</span><br><span class="line">sudo docker run -v $(<span class="built_in">pwd</span>):/output quay.io/iovisor/bpftrace /bin/bash -c <span class="string">"cp /usr/bin/bpftrace /output"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 第一步，安装docker</span></span><br><span class="line">sudo apt install -y docker.io</span><br><span class="line"><span class="comment"># 第二步，下载镜像后从中复制bpftrace二进制文件</span></span><br><span class="line">sudo docker pull quay.io/iovisor/bpftrace</span><br><span class="line">sudo docker run --rm -v $(<span class="built_in">pwd</span>):/output quay.io/iovisor/bpftrace /bin/bash -c <span class="string">"cp /usr/bin/bpftrace /output"</span></span><br></pre></td></tr></table></figure>
 <p>安装成功后，你可以执行同样的 <code>sudo ./bpftrace -e &#39;tracepoint:syscalls:sys_enter_openat { printf(&quot;%s %s\n&quot;, comm, str(args-&gt;filename)); }&#39;</code> 命令验证 <code>bpftrace</code> 的功能。</p>
 <p>到这里，基本的开发环境就配置好了。不过环境的配置并没有完全结束，在使用 bpftool 时（比如执行命令 sudo bpftool prog dump jited id 2），你很可能会碰到 Error: No libbfd support 的错误。这说明发行版自带的 bpftool 默认不支持 libbfd，这时就需要我们下载内核源码重新编译安装。</p>
   
