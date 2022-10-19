@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/10/19/Go-Zero-Copy-Transfer/" title="Go Zero Copy Transfer" itemprop="url">Go Zero Copy Transfer</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-10-19T02:37:02.000Z" itemprop="datePublished"> 发表于 2022-10-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>平时写 <code>http server</code> 会接触到传输文件的问题。最简单的版本大概是这样子的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	n, _ := file.Read(buf)</span><br><span class="line">	<span class="keyword">if</span> n &gt; <span class="number">0</span> &#123;</span><br><span class="line">		w.Write(buf[:n])</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/10/19/Go-Zero-Copy-Transfer/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/10/19/Go-Zero-Copy-Transfer/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/10/19/Go-Zero-Copy-Transfer/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/10/09/BBR拥塞控制算法/" title="BBR拥塞控制算法" itemprop="url">BBR拥塞控制算法</a>
   </h1>
   <p class="article-author">By
@@ -637,72 +697,9 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/" title="SmartNIC — TSO、GSO、LRO、GRO 技术" itemprop="url">SmartNIC — TSO、GSO、LRO、GRO 技术</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-07-27T11:54:08.000Z" itemprop="datePublished"> 发表于 2022-07-27</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="TSO-TCP-Segmentation-Offload"><a href="#TSO-TCP-Segmentation-Offload" class="headerlink" title="TSO(TCP Segmentation Offload)"></a>TSO(TCP Segmentation Offload)</h3><p>TSO(TCP Segmentation Offload): 是一种利用网卡对大数据包进行分片，从而减小CPU负荷的一种技术。</p>
-<ul>
-<li>TSO off 和 GSO off：</li>
-</ul>
-<p><img src="/images/tso1.png" alt="images"></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
   </nav>
 
 </div>
@@ -731,11 +728,11 @@
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>45</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>28</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>29</sup></a></li>
 			
 		
 			
@@ -779,11 +776,11 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			

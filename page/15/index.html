@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/09/01/error-command-gcc-failed-with-exit-status-1/" title="error: command &#39;gcc&#39; failed with exit status 1" itemprop="url">error: command &#39;gcc&#39; failed with exit status 1</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-01T06:34:12.000Z" itemprop="datePublished"> 发表于 2016-09-01</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在部署<code>Open-Falcon</code>，<a href="http://book.open-falcon.org/zh/quick_install/graph_components.html" target="_blank" rel="noopener">安装绘图组件</a> <code>Dashboard</code> 执行 <code>./env/bin/pip install -r pip_requirements.txt</code> 时出现如下错误：</p>
+<pre><code>error: command &apos;gcc&apos; failed with exit status 1
+</code></pre><p>解决方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo yum -y install gcc gcc-c++ kernel-devel</span><br><span class="line">sudo yum -y install python-devel libxslt-devel libffi-devel openssl-devel</span><br><span class="line">pip install cryptography</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/gcc/">gcc</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/01/error-command-gcc-failed-with-exit-status-1/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/01/error-command-gcc-failed-with-exit-status-1/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/08/25/file-exists/" title="file_exists()" itemprop="url">file_exists()</a>
   </h1>
   <p class="article-author">By
@@ -639,75 +699,9 @@ systemctl enable iptables.service #设置防火墙开机启动
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/07/31/beego中带参数的UrlFor和urlfor的用法讲解/" title="Beego中带参数的UrlFor和urlfor的用法讲解" itemprop="url">Beego中带参数的UrlFor和urlfor的用法讲解</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-07-31T06:12:52.000Z" itemprop="datePublished"> 发表于 2016-07-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>我们知道，代码里面可以使用<code>UrlFor</code>或者模板里面使用<code>urlfor</code>来根据自定义<code>Controller</code>和方法来生成<code>url</code>。这里模板中使用的<code>urlfor</code>其实是<code>UrlFor</code>注册的模板方法，二者功能完全相同，一个用于代码中，另外一个用于模板中。</p>
-<p>步骤如下：</p>
-<ul>
-<li>自定义<code>Controller</code>，并且实现对应的方法<code>Method</code></li>
-<li>使用<code>beego.Router</code>注册路由，将自定义<code>Controller</code>实例和方法<code>Method</code>联系在一起</li>
-<li>使用<code>UrlFor</code>函数在代码中或者<code>urlfor</code>在模板中生成<code>url</code></li>
-</ul>
-<p>上面的是我们经常会使用的方法，这里再分享一个带参数的<code>UrlFor</code>或者<code>urlfor</code>的用法。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/07/31/beego中带参数的UrlFor和urlfor的用法讲解/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a><a href="/tags/Beego/">Beego</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/07/31/beego中带参数的UrlFor和urlfor的用法讲解/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/07/31/beego中带参数的UrlFor和urlfor的用法讲解/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
-    <a class="extend prev" rel="prev" href="/page/14/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/24/">24</a><a class="extend next" rel="next" href="/page/16/">Next<span></span></a>
+    <a class="extend prev" rel="prev" href="/page/14/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/16/">Next<span></span></a>
   </nav>
 
 </div>
@@ -736,11 +730,11 @@ systemctl enable iptables.service #设置防火墙开机启动
 		<ul class="clearfix">
 		
 			
-				<li><a href="/tags/Go/" title="Go">Go<sup>45</sup></a></li>
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>28</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>29</sup></a></li>
 			
 		
 			
@@ -784,11 +778,11 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
