@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="本文整理在 K8S 环境中的网络性能调优实践。一些涉及到内核参数的调整，关于如何调整 Pod 内核参数的方法请参考 为 Pod 设置内核参数。 高并发场景TIME_WAIT 连接复用如果短连接并发量较高，它所在 netns 中 TIME_WAIT 状态的连接就比较多，而 TIME_WAIT 连接默认要等 2MSL 时长才释放，长时间占用源端口，当这种状态连接数量累积到超过一定量之后可能会导致无法新">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-10-21T04:45:28.708Z">
+<meta property="og:updated_time" content="2022-10-21T06:06:36.938Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="网络性能调优">
 <meta name="twitter:description" content="本文整理在 K8S 环境中的网络性能调优实践。一些涉及到内核参数的调整，关于如何调整 Pod 内核参数的方法请参考 为 Pod 设置内核参数。 高并发场景TIME_WAIT 连接复用如果短连接并发量较高，它所在 netns 中 TIME_WAIT 状态的连接就比较多，而 TIME_WAIT 连接默认要等 2MSL 时长才释放，长时间占用源端口，当这种状态连接数量累积到超过一定量之后可能会导致无法新">
@@ -165,7 +165,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ ss -ntmp</span><br><span class="line">ESTAB        0             0                    [::ffff:109.244.190.163]:9988                       [::ffff:10.10.4.26]:54440         users:((<span class="string">"xray"</span>,pid=3603,fd=20))</span><br><span class="line">     skmem:(r0,rb12582912,t0,tb12582912,f0,w0,o0,bl0,d0)</span><br></pre></td></tr></table></figure>
 <blockquote>
 <ol>
-<li><code>rb12582912</code> 表示 TCP 接收缓冲区大小是 <code>12582912</code> 字节，<code>tb12582912</code> 表示 UDP 发送缓存区大小是 <code>12582912</code> 字节。</li>
+<li><code>rb12582912</code> 表示 TCP 接收缓冲区大小是 <code>12582912</code> 字节，<code>tb12582912</code> 表示 TCP 发送缓存区大小是 <code>12582912</code> 字节。</li>
 <li><code>Recv-Q</code> 和 <code>Send-Q</code> 分别表示当前接收和发送缓冲区中的数据包字节数。</li>
 </ol>
 </blockquote>
