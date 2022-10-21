@@ -82,6 +82,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/11/23/URL-Parsing/" title="URL Parsing" itemprop="url">URL Parsing</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-23T02:11:22.000Z" itemprop="datePublished"> 发表于 2016-11-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">	<span class="string">"net/url"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	s := <span class="string">"postgres://user:pass@host.com:5432/path?k=v#f"</span></span><br><span class="line">	u, err := url.Parse(s)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.Scheme)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.User)</span><br><span class="line">	fmt.Println(u.User.Username())</span><br><span class="line">	p, _ := u.User.Password()</span><br><span class="line">	fmt.Println(p)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.Host)</span><br><span class="line">	host, port, _ := net.SplitHostPort(u.Host)</span><br><span class="line">	fmt.Println(host)</span><br><span class="line">	fmt.Println(port)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.Path)</span><br><span class="line">	fmt.Println(u.Fragment)</span><br><span class="line"></span><br><span class="line">	fmt.Println(u.RawQuery)</span><br><span class="line">	m, _ := url.ParseQuery(u.RawQuery)</span><br><span class="line">	fmt.Println(m)</span><br><span class="line">	fmt.Println(m[<span class="string">"k"</span>][<span class="number">0</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/11/23/URL-Parsing/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GoExample/">GoExample</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/23/URL-Parsing/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/23/URL-Parsing/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/11/22/Grep-显示匹配行和之后的几行/" title="Grep 显示匹配行和之后的几行" itemprop="url">Grep 显示匹配行和之后的几行</a>
   </h1>
   <p class="article-author">By
@@ -639,67 +698,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/11/03/轮询调度算法-Round-Robin-Scheduling/" title="轮询调度算法(Round-Robin Scheduling)" itemprop="url">轮询调度算法(Round-Robin Scheduling)</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-11-03T02:45:05.000Z" itemprop="datePublished"> 发表于 2016-11-03</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>　　毫无疑问，随着互联网、移动网络接入成本的降低，互联网正在日益深入地走入我们的生活，越来越成为人们获取信息的高效平台，ICP行业也顺势呈现出强劲的成长趋势，成为互联网迅猛发展形势下最大的受益者，也直接促成了从web1.0到web2.0以及社区、博客、视频等一系列互联网时代的更迭和运营模式的变动。</p>
-<p>　　但是随着各站点访问量和信息交流量的迅猛增长，如何使用最小的资源成本，提高网络的效率，最优化用户体验，已经成为网络管理人员不得不面对的挑战。</p>
-<p>　　从技术上讲，就是ICP行业面临的网络资源有效利用问题，也就是如何进行对网络的访问分流，以便能够快速响应用户反应，即：负载均衡。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/11/03/轮询调度算法-Round-Robin-Scheduling/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/11/03/轮询调度算法-Round-Robin-Scheduling/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/03/轮询调度算法-Round-Robin-Scheduling/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/12/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/page/14/">14</a><a class="page-number" href="/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/14/">Next<span></span></a>
@@ -735,7 +733,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>29</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>30</sup></a></li>
 			
 		
 			
@@ -743,7 +741,7 @@
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>11</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>12</sup></a></li>
 			
 		
 			
@@ -779,11 +777,11 @@
 			
 		
 			
-				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			
