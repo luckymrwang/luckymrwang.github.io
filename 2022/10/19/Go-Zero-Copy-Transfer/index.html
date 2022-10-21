@@ -19,14 +19,14 @@
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="平时写 http server 会接触到传输文件的问题。最简单的版本大概是这样子的： 12345678for &amp;#123;	n, _ := file.Read(buf)	if n &amp;gt; 0 &amp;#123;		w.Write(buf[:n])	&amp;#125; else &amp;#123;		break	&amp;#125;&amp;#125;">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://luckymrwang.github.io/image/zerocopy1.png">
-<meta property="og:image" content="https://luckymrwang.github.io/image/zorecopy2.png">
-<meta property="og:image" content="https://luckymrwang.github.io/image/zorecopy3.png">
-<meta property="og:updated_time" content="2022-10-19T03:02:23.786Z">
+<meta property="og:image" content="https://luckymrwang.github.io/images/zerocopy1.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/zorecopy2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/zorecopy3.png">
+<meta property="og:updated_time" content="2022-10-21T06:50:34.148Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Go Zero Copy Transfer">
 <meta name="twitter:description" content="平时写 http server 会接触到传输文件的问题。最简单的版本大概是这样子的： 12345678for &amp;#123;	n, _ := file.Read(buf)	if n &amp;gt; 0 &amp;#123;		w.Write(buf[:n])	&amp;#125; else &amp;#123;		break	&amp;#125;&amp;#125;">
-<meta name="twitter:image" content="https://luckymrwang.github.io/image/zerocopy1.png">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/zerocopy1.png">
 
     
     <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
@@ -111,11 +111,11 @@
 <a id="more"></a>
 <p>对于一般的程序来说是没有问题的，但是如果需要频繁地传输大文件，那么这种办法效率不够高。因为这里不断地调用两个系统调用，<code>read()</code> 和 <code>write()</code>。对操作系统稍微熟悉的都会知道系统调用是在<strong>内核态</strong>执行而用户程序是跑在<strong>用户态</strong>。</p>
 <p>读取文件就会先从磁盘文件读到内核缓冲区然后再拷贝到用户空间缓冲区，写操作也要先写到内核缓冲区然后再发送。</p>
-<p><img src="/image/zerocopy1.png" alt="image"></p>
+<p><img src="/images/zerocopy1.png" alt="image"></p>
 <p>可以清楚看到这里一共触发了 4 次用户态和内核态的上下文切换，分别是 <code>read()/write()</code> 调用和返回时的切换，2 次 DMA 拷贝，2 次 CPU 拷贝，加起来一共 4 次拷贝操作。</p>
 <p>通过引入 DMA，我们已经把 Linux 的 I/O 过程中的 CPU 拷贝次数从 4 次减少到了 2 次，但是 CPU 拷贝依然是代价很大的操作，对系统性能的影响还是很大，特别是那些频繁 I/O 的场景，更是会因为 CPU 拷贝而损失掉很多性能，我们需要进一步优化，降低、甚至是完全避免 CPU 拷贝。</p>
 <p>系统调用 <code>sendfile()</code> 就是用来解决这个底性能问题的。文件可以直接送到 <code>socket</code> 上，不需要经过用户空间。</p>
-<p><img src="/image/zorecopy2.png" alt="image"></p>
+<p><img src="/images/zorecopy2.png" alt="image"></p>
 <p>使用 <code>sendfile()</code> 完成一次数据读写的流程如下：</p>
 <p>1、用户进程调用 sendfile() 从用户态陷入内核态；</p>
 <p>2、DMA 控制器将数据从硬盘拷贝到内核缓冲区；</p>
@@ -126,7 +126,7 @@
 <p><code>in_fd</code> 是代表输入文件的文件描述符，<code>out_fd</code> 是代表输出文件的文件描述符。<code>out_id</code> 必须为 socket (linux 2.6.33 开始可以是任何文件)。 <code>in_fd</code> 指向的文件必须为可以进行 mmap() 操作的，通常为普通文件，不能是 Socket 类型。</p>
 <h3 id="splice"><a href="#splice" class="headerlink" title="splice()"></a>splice()</h3><p>Linux 在 2.6.17 版本引入了一个新的系统调用 <code>splice()</code>，它在功能上和 <code>sendfile()</code> 非常相似，但是能够实现在任意类型的两个文件描述符时之间传输数据；而在底层实现上，<code>splice()</code> 又比 <code>sendfile()</code> 少了一次 CPU 拷贝，也就是等同于 <code>sendfile() + DMA Scatter/Gather</code>，完全去除了数据传输过程中的 CPU 拷贝。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _GNU_SOURCE         <span class="comment">/* See feature_test_macros(7) */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="keyword">ssize_t</span> splice(<span class="keyword">int</span> fd_in, <span class="keyword">loff_t</span> *off_in, <span class="keyword">int</span> fd_out,</span><br><span class="line">               <span class="keyword">loff_t</span> *off_out, <span class="keyword">size_t</span> len, <span class="keyword">unsigned</span> <span class="keyword">int</span> flags);</span><br></pre></td></tr></table></figure>
-<p><img src="/image/zorecopy3.png" alt="image"></p>
+<p><img src="/images/zorecopy3.png" alt="image"></p>
 <p>使用 <code>splice()</code> 完成一次磁盘文件到网卡的读写过程如下：</p>
 <p>1、用户进程调用 pipe()，从用户态陷入内核态，创建匿名单向管道，pipe() 返回，上下文从内核态切换回用户态；</p>
 <p>2、用户进程调用 splice()，从用户态陷入内核态；</p>
