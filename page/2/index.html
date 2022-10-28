@@ -82,6 +82,72 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/08/19/搭建-eBPF-开发环境/" title="搭建 eBPF 开发环境" itemprop="url">搭建 eBPF 开发环境</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-08-19T13:45:28.000Z" itemprop="datePublished"> 发表于 2022-08-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>虽然 Linux 内核很早就已经支持了 eBPF，但很多新特性都是在 4.x 版本中逐步增加的。所以，想要稳定运行 eBPF 程序，内核至少需要 4.9 或者更新的版本。而在开发和学习 eBPF 时，为了体验和掌握最新的 eBPF 特性，我推荐使用更新的 5.x 内核。</p>
+<p>作为 eBPF 最重大的改进之一，一次编译到处执行（简称 CO-RE）解决了内核数据结构在不同版本差异导致的兼容性问题。不过，在使用 CO-RE 之前，内核需要开启 <code>CONFIG_DEBUG_INFO_BTF=y</code> 和 <code>CONFIG_DEBUG_INFO=y</code> 这两个编译选项。为了避免你在首次学习 eBPF 时就去重新编译内核，我推荐使用已经默认开启这些编译选项的发行版，作为你的开发环境，比如：</p>
+<ul>
+<li>Ubuntu 20.10+</li>
+<li>Fedora 31+</li>
+<li>RHEL 8.2+</li>
+<li>Debian 11+</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/08/19/搭建-eBPF-开发环境/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eBPF/">eBPF</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/08/19/搭建-eBPF-开发环境/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/08/19/搭建-eBPF-开发环境/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/08/13/Cilium-eBPF-搭建与使用/" title="Cilium eBPF 搭建与使用" itemprop="url">Cilium eBPF 搭建与使用</a>
   </h1>
   <p class="article-author">By
@@ -636,65 +702,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/05/12/Calico-eBPF数据平面/" title="Calico eBPF数据平面" itemprop="url">Calico eBPF数据平面</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-05-12T03:15:35.000Z" itemprop="datePublished"> 发表于 2022-05-12</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="什么是-eBPF"><a href="#什么是-eBPF" class="headerlink" title="什么是 eBPF"></a>什么是 eBPF</h3><p>eBPF 是嵌入在 Linux 内核中的虚拟机。它允许将小程序加载到内核中，并附加到钩子上，当某些事件发生时会触发这些钩子。这允许（有时大量）定制内核的行为。虽然 eBPF 虚拟机对于每种类型的钩子都是相同的，但钩子的功能却大不相同。由于将程序加载到内核中可能很危险；内核通过非常严格的静态验证器运行所有程序；验证程序对程序进行沙箱处理，确保它只能访问允许的内存部分，并确保它必须快速终止。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/05/12/Calico-eBPF数据平面/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Calico/">Calico</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/05/12/Calico-eBPF数据平面/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/12/Calico-eBPF数据平面/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
@@ -730,7 +737,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>30</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>31</sup></a></li>
 			
 		
 			

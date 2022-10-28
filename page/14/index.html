@@ -82,6 +82,64 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/11/11/String-Functions/" title="String Functions" itemprop="url">String Functions</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-11T09:29:58.000Z" itemprop="datePublished"> 发表于 2016-11-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> s <span class="string">"strings"</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> p = fmt.Println</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	p(<span class="string">"Contains:  "</span>, s.Contains(<span class="string">"test"</span>, <span class="string">"es"</span>))</span><br><span class="line">	p(<span class="string">"Count:     "</span>, s.Count(<span class="string">"test"</span>, <span class="string">"t"</span>))</span><br><span class="line">	p(<span class="string">"HasPrefix: "</span>, s.HasPrefix(<span class="string">"test"</span>, <span class="string">"te"</span>))</span><br><span class="line">	p(<span class="string">"HasSuffix: "</span>, s.HasSuffix(<span class="string">"test"</span>, <span class="string">"st"</span>))</span><br><span class="line">	p(<span class="string">"Index:     "</span>, s.Index(<span class="string">"test"</span>, <span class="string">"e"</span>))</span><br><span class="line">	p(<span class="string">"Join:      "</span>, s.Join([]<span class="keyword">string</span>&#123;<span class="string">"a"</span>, <span class="string">"b"</span>&#125;, <span class="string">"-"</span>))</span><br><span class="line">	p(<span class="string">"Repeat:    "</span>, s.Repeat(<span class="string">"a"</span>, <span class="number">5</span>))</span><br><span class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">-1</span>))</span><br><span class="line">	p(<span class="string">"Replace:   "</span>, s.Replace(<span class="string">"foo"</span>, <span class="string">"o"</span>, <span class="string">"0"</span>, <span class="number">1</span>))</span><br><span class="line">	p(<span class="string">"Split:     "</span>, s.Split(<span class="string">"a-b-c-d-e"</span>, <span class="string">"-"</span>))</span><br><span class="line">	p(<span class="string">"ToLower:   "</span>, s.ToLower(<span class="string">"TEST"</span>))</span><br><span class="line">	p(<span class="string">"ToUpper:   "</span>, s.ToUpper(<span class="string">"test"</span>))</span><br><span class="line">	p()</span><br><span class="line">	p(<span class="string">"Len: "</span>, <span class="built_in">len</span>(<span class="string">"hello"</span>))</span><br><span class="line">	p(<span class="string">"Char:"</span>, <span class="string">"hello"</span>[<span class="number">1</span>])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ go run string-functions.go</span><br><span class="line">Contains:   true</span><br><span class="line">Count:      2</span><br><span class="line">HasPrefix:  true</span><br><span class="line">HasSuffix:  true</span><br><span class="line">Index:      1</span><br><span class="line">Join:       a-b</span><br><span class="line">Repeat:     aaaaa</span><br><span class="line">Replace:    f00</span><br><span class="line">Replace:    f0o</span><br><span class="line">Split:      [a b c d e]</span><br><span class="line">toLower:    test</span><br><span class="line">ToUpper:    TEST</span><br><span class="line">Len:  5</span><br><span class="line">Char: 101</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GoExample/">GoExample</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/11/String-Functions/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/11/String-Functions/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/11/03/轮询调度算法-Round-Robin-Scheduling/" title="轮询调度算法(Round-Robin Scheduling)" itemprop="url">轮询调度算法(Round-Robin Scheduling)</a>
   </h1>
   <p class="article-author">By
@@ -629,65 +687,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/09/27/程序在的内存中的分配（常量，局部变量，全局变量，程序代码）/" title="程序在的内存中的分配（常量，局部变量，全局变量，程序代码）" itemprop="url">程序在的内存中的分配（常量，局部变量，全局变量，程序代码）</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-09-27T03:49:46.000Z" itemprop="datePublished"> 发表于 2016-09-27</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="在c中分为这几个存储区"><a href="#在c中分为这几个存储区" class="headerlink" title="在c中分为这几个存储区"></a>在c中分为这几个存储区</h3><ol>
-<li>栈 - 由编译器自动分配释放</li>
-<li>堆 - 一般由程序员分配释放，若程序员不释放，程序结束时可能由OS回收</li>
-<li>全局区（静态区），全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在一块区域，未初始化的全局变量和未初始化的静态变量在相邻的另一块区域。- 程序结束释放</li>
-<li>另外还有一个专门放常量的地方。- 程序结束释放</li>
-</ol>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/09/27/程序在的内存中的分配（常量，局部变量，全局变量，程序代码）/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/09/27/程序在的内存中的分配（常量，局部变量，全局变量，程序代码）/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/27/程序在的内存中的分配（常量，局部变量，全局变量，程序代码）/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/13/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/15/">Next<span></span></a>
@@ -723,7 +722,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>30</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>31</sup></a></li>
 			
 		
 			
