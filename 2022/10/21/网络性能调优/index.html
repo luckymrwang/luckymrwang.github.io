@@ -19,7 +19,7 @@
 <meta property="og:site_name" content="iBlog">
 <meta property="og:description" content="本文整理在 K8S 环境中的网络性能调优实践。一些涉及到内核参数的调整，关于如何调整 Pod 内核参数的方法请参考 为 Pod 设置内核参数。 高并发场景TIME_WAIT 连接复用如果短连接并发量较高，它所在 netns 中 TIME_WAIT 状态的连接就比较多，而 TIME_WAIT 连接默认要等 2MSL 时长才释放，长时间占用源端口，当这种状态连接数量累积到超过一定量之后可能会导致无法新">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2022-10-21T06:06:36.938Z">
+<meta property="og:updated_time" content="2022-11-08T11:06:44.449Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="网络性能调优">
 <meta name="twitter:description" content="本文整理在 K8S 环境中的网络性能调优实践。一些涉及到内核参数的调整，关于如何调整 Pod 内核参数的方法请参考 为 Pod 设置内核参数。 高并发场景TIME_WAIT 连接复用如果短连接并发量较高，它所在 netns 中 TIME_WAIT 状态的连接就比较多，而 TIME_WAIT 连接默认要等 2MSL 时长才释放，长时间占用源端口，当这种状态连接数量累积到超过一定量之后可能会导致无法新">
@@ -187,6 +187,7 @@
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eks.tke.cloud.tencent.com/host-sysctls: <span class="string">'[&#123;"name": "net.core.rmem_max","value": "26214400"&#125;,&#123;"name": "net.core.wmem_max","value": "26214400"&#125;,&#123;"name": "net.core.rmem_default","value": "26214400"&#125;,&#123;"name": "net.core.wmem_default","value": "26214400"&#125;]'</span></span><br></pre></td></tr></table></figure>
 <h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
 <li><a href="https://cloud.tencent.com/document/product/213/57336" target="_blank" rel="noopener">云服务器网络访问丢包</a></li>
+<li><a href="https://blog.cloudflare.com/when-the-window-is-not-fully-open-your-tcp-stack-is-doing-more-than-you-think/" target="_blank" rel="noopener">When the window is not fully open, your TCP stack is doing more than you think</a></li>
 </ul>
   
 	</div>
