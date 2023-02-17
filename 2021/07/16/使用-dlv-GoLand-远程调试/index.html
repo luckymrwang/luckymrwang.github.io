@@ -20,7 +20,7 @@
 <meta property="og:description" content="前言在开发/排查过程中, 偶尔会遇到一些仅在正式环境才能复现的BUG，但由于本地不能访问正式环境,，只能用有限的方式对问题进行Debug，例如添加日志等原始方法，效率过低，因此推荐借助IDE和Delve进行远程调试, 完成对BUG的快速排查与修复。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/goremote.png">
-<meta property="og:updated_time" content="2021-07-16T02:32:34.000Z">
+<meta property="og:updated_time" content="2023-02-17T16:06:13.493Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 dlv + GoLand 远程调试">
 <meta name="twitter:description" content="前言在开发/排查过程中, 偶尔会遇到一些仅在正式环境才能复现的BUG，但由于本地不能访问正式环境,，只能用有限的方式对问题进行Debug，例如添加日志等原始方法，效率过低，因此推荐借助IDE和Delve进行远程调试, 完成对BUG的快速排查与修复。">
@@ -114,7 +114,7 @@
 </ul>
 <h3 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h3><p>1、安装Delve</p>
 <p>在服务器上安装Delve</p>
-<p>官网: <a href="https://github.com/derekparker/delve" target="_blank" rel="noopener">https://github.com/derekparker/delve</a>, 安装方法请参照官方wiki</p>
+<p>官网: <a href="https://github.com/go-delve/delve" target="_blank" rel="noopener">https://github.com/go-delve/delve</a>, 安装方法请参照官方wiki</p>
 <p>2、查看IDE说明<br>程序的编译和启动尽量按照IDE的提示说明进行，在GoLand中点击菜单栏Run-&gt;EditConfigurations-&gt;+-&gt;GoRemote，我们将看到如下界面，中间为编译及启动说明</p>
 <p><img src="/images/goremote.png" alt></p>
 <h3 id="编译程序"><a href="#编译程序" class="headerlink" title="编译程序"></a>编译程序</h3><p>根据IDE说明，在服务器上编译程序，必须添加<code>-gcflags</code>参数，给编译器传递-N -l参数，禁止编译器优化和内联</p>
