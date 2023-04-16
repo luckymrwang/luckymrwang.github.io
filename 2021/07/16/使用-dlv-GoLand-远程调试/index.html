@@ -20,7 +20,7 @@
 <meta property="og:description" content="前言在开发/排查过程中, 偶尔会遇到一些仅在正式环境才能复现的BUG，但由于本地不能访问正式环境,，只能用有限的方式对问题进行Debug，例如添加日志等原始方法，效率过低，因此推荐借助IDE和Delve进行远程调试, 完成对BUG的快速排查与修复。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/goremote.png">
-<meta property="og:updated_time" content="2023-02-20T03:07:23.844Z">
+<meta property="og:updated_time" content="2023-04-16T03:36:48.070Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="使用 dlv + GoLand 远程调试">
 <meta name="twitter:description" content="前言在开发/排查过程中, 偶尔会遇到一些仅在正式环境才能复现的BUG，但由于本地不能访问正式环境,，只能用有限的方式对问题进行Debug，例如添加日志等原始方法，效率过低，因此推荐借助IDE和Delve进行远程调试, 完成对BUG的快速排查与修复。">
@@ -123,6 +123,8 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dlv --listen=:<span class="number">2345</span> --headless=<span class="literal">true</span> --api-version=<span class="number">2</span> --accept-multiclient exec ./demo</span><br></pre></td></tr></table></figure>
 <p>如果程序需要启动参数, 则在后面添加–</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dlv --listen=:<span class="number">2345</span> --headless=<span class="literal">true</span> --api-version=<span class="number">2</span> --accept-multiclient exec ./demo -- --c=/config</span><br><span class="line"># 等同于</span><br><span class="line">./demo --c=/config</span><br></pre></td></tr></table></figure>
+<p>k8s Pod中启动如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/bin/dlv --listen=:<span class="number">2345</span> --headless=<span class="literal">true</span> --api-version=<span class="number">2</span> --accept-multiclient exec /usr/local/bin/apiserver -- --secure-port=<span class="number">443</span> --feature-gates=ShadowAPI=<span class="literal">false</span>,FeedInventory=<span class="literal">true</span> --anonymous-auth-supported=<span class="literal">true</span> --peer-port=<span class="number">8123</span> -v=<span class="number">3</span></span><br></pre></td></tr></table></figure>
 <h4 id="方式2"><a href="#方式2" class="headerlink" title="方式2"></a>方式2</h4><p>获取服务器端运行的应用的pid</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps aux | grep xxx</span><br></pre></td></tr></table></figure>
 <p>启动服务端应用的监听，命令如下：</p>
