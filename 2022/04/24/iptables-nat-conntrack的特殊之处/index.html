@@ -20,7 +20,7 @@
 <meta property="og:description" content="问题与解释我在PREROUTING上做了一个REDIRECT端口改写，相应的服务处理请求后会返回应答。 按照我以往的认识，认为回包的流量应该先后经过OUTPUT和POSTROUTING，所以我利用iptables -t nat -nvL去查看NAT表在OUTPUT链和POSTROUTING链上的packge计数器，结果发现没有上涨，这让我陷入了沉思。 经过谷歌后找到了完美的解释：linux-net">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/2022/04/24/iptables-nat-conntrack的特殊之处/images/netfilter-conntrack.png">
-<meta property="og:updated_time" content="2022-04-26T15:41:21.249Z">
+<meta property="og:updated_time" content="2022-04-26T15:41:21.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="iptables nat&amp;conntrack的特殊之处">
 <meta name="twitter:description" content="问题与解释我在PREROUTING上做了一个REDIRECT端口改写，相应的服务处理请求后会返回应答。 按照我以往的认识，认为回包的流量应该先后经过OUTPUT和POSTROUTING，所以我利用iptables -t nat -nvL去查看NAT表在OUTPUT链和POSTROUTING链上的packge计数器，结果发现没有上涨，这让我陷入了沉思。 经过谷歌后找到了完美的解释：linux-net">
@@ -231,7 +231,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>32</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>33</sup></a></li>
 			
 		
 			
@@ -275,15 +275,15 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
