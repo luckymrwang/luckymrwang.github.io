@@ -82,6 +82,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2023/07/25/mount-bind-使用方法/" title="mount --bind 使用方法" itemprop="url">mount --bind 使用方法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2023-07-25T03:11:14.000Z" itemprop="datePublished"> 发表于 2023-07-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>可以通过 <code>mount --bind</code> 命令来将两个目录连接起来，<code>mount --bind</code> 命令是将前一个目录挂载到后一个目录上，所有对后一个目录的访问其实都是对前一个目录的访问，如下所示：</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2023/07/25/mount-bind-使用方法/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2023/07/25/mount-bind-使用方法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2023/07/25/mount-bind-使用方法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2023/05/09/Linux-性能调优工具的9张图/" title="Linux 性能调优工具的9张图" itemprop="url">Linux 性能调优工具的9张图</a>
   </h1>
   <p class="article-author">By
@@ -639,67 +698,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/09/29/socket源IP为INADDR-ANY，linux内核何时选择IP/" title="socket源IP为INADDR_ANY，linux内核何时选择IP" itemprop="url">socket源IP为INADDR_ANY，linux内核何时选择IP</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-09-29T04:24:27.000Z" itemprop="datePublished"> 发表于 2022-09-29</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>内核版本3.10.14为例</p>
-<h2 id="绑定源IP时，bind操作"><a href="#绑定源IP时，bind操作" class="headerlink" title="绑定源IP时，bind操作"></a>绑定源IP时，bind操作</h2><p><code>af_inet.c</code> 中 <code>inet_bind</code> 函数</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">inet_bind</span><span class="params">(struct socket *sock, struct sockaddr *uaddr, <span class="keyword">int</span> addr_len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sockaddr_in</span> *<span class="title">addr</span> = (<span class="title">struct</span> <span class="title">sockaddr_in</span> *)<span class="title">uaddr</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sock</span> *<span class="title">sk</span> = <span class="title">sock</span>-&gt;<span class="title">sk</span>;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">inet_sock</span> *<span class="title">inet</span> = <span class="title">inet_sk</span>(<span class="title">sk</span>);</span></span><br><span class="line">......</span><br><span class="line">inet-&gt;inet_rcv_saddr = inet-&gt;inet_saddr = addr-&gt;sin_addr.s_addr;</span><br><span class="line">......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/09/29/socket源IP为INADDR-ANY，linux内核何时选择IP/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/09/29/socket源IP为INADDR-ANY，linux内核何时选择IP/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/09/29/socket源IP为INADDR-ANY，linux内核何时选择IP/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -735,7 +733,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>33</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>34</sup></a></li>
 			
 		
 			
@@ -783,11 +781,11 @@
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			

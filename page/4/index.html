@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/05/08/Kubernetes-内存资源限制实战/" title="Kubernetes 内存资源限制实战" itemprop="url">Kubernetes 内存资源限制实战</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-08T01:47:24.000Z" itemprop="datePublished"> 发表于 2022-05-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Kubernetes 对内存资源的限制实际上是通过 cgroup 来控制的，cgroup 是容器的一组用来控制内核如何运行进程的相关属性集合。针对内存、CPU 和各种设备都有对应的 cgroup。cgroup 是具有层级的，这意味着每个 cgroup 拥有一个它可以继承属性的父亲，往上一直直到系统启动时创建的 root cgroup。关于其背后的原理可以参考： <a href="https://medium.com/@betz.mark/understanding-resource-limits-in-kubernetes-memory-6b41e9a955f9" target="_blank" rel="noopener">深入理解Kubernetes资源限制：内存</a>。</p>
+<p>今天我们将通过实验来探索容器在什么情况下会被 oom-killed。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/08/Kubernetes-内存资源限制实战/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/08/Kubernetes-内存资源限制实战/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/08/Kubernetes-内存资源限制实战/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/05/08/Go性能分析-内存/" title="Go性能分析-内存" itemprop="url">Go性能分析-内存</a>
   </h1>
   <p class="article-author">By
@@ -629,61 +689,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/01/08/IDEA全版本通杀完美破解方案/" title="IDEA全版本通杀完美破解方案" itemprop="url">IDEA全版本通杀完美破解方案</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-01-08T09:08:04.000Z" itemprop="datePublished"> 发表于 2022-01-08</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>感谢zhile大神及其开发的ja-netfilter项目，本文主要基于ja-netfilter介绍两种我认为目前最好的破解方式</p>
-<h3 id="方法1：基于power插件（推荐）"><a href="#方法1：基于power插件（推荐）" class="headerlink" title="方法1：基于power插件（推荐）"></a>方法1：基于power插件（推荐）</h3><p>这个方法十分的简单粗暴并且快捷，激活之后就不需要找再辛苦去找注册码了，所以后续升级也都是没问题的，被zhile大神成为非对称加密的屠龙刀</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/01/08/IDEA全版本通杀完美破解方案/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/01/08/IDEA全版本通杀完美破解方案/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/01/08/IDEA全版本通杀完美破解方案/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/3/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/5/">Next<span></span></a>
@@ -719,7 +724,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>33</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>34</sup></a></li>
 			
 		
 			
@@ -767,11 +772,11 @@
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			

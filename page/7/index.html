@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/12/04/Golang-连接池的几种实现案例/" title="Golang 连接池的几种实现案例" itemprop="url">Golang 连接池的几种实现案例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-04T15:08:51.000Z" itemprop="datePublished"> 发表于 2020-12-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>因为 TCP 的三只握手等等原因，建立一个连接是一件成本比较高的行为。所以在一个需要多次与特定实体交互的程序中，就需要维持一个连接池，里面有可以复用的连接可供重复使用。</p>
+<p>而维持一个连接池，最基本的要求就是要做到：thread safe（线程安全），尤其是在 Golang 这种特性是 goroutine 的语言中。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/04/Golang-连接池的几种实现案例/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/04/Golang-连接池的几种实现案例/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/04/Golang-连接池的几种实现案例/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/12/04/Security Context (安全上下文)/" title="容器 Security Context (安全上下文)" itemprop="url">容器 Security Context (安全上下文)</a>
   </h1>
   <p class="article-author">By
@@ -629,73 +689,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/09/16/Go中strings的常用方法/" title="Go中strings的常用方法" itemprop="url">Go中strings的常用方法</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-09-16T12:39:05.000Z" itemprop="datePublished"> 发表于 2020-09-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h4 id="Compare"><a href="#Compare" class="headerlink" title="Compare"></a>Compare</h4><ul>
-<li>func Compare(a, b string) int</li>
-</ul>
-<p>按照字典序比较两个字符串，通常情况下直接使用=，&gt;，&lt;会更快一些。</p>
-<h4 id="Contains，ContainsAny-和-ContainsRune"><a href="#Contains，ContainsAny-和-ContainsRune" class="headerlink" title="Contains，ContainsAny 和 ContainsRune"></a>Contains，ContainsAny 和 ContainsRune</h4><ul>
-<li>func Contains(s, substr string) bool</li>
-<li>func ContainsAny(s, chars string) bool</li>
-<li>func ContainsRune(s string, r rune) bool</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/09/16/Go中strings的常用方法/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/09/16/Go中strings的常用方法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/09/16/Go中strings的常用方法/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/6/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/8/">Next<span></span></a>
@@ -731,7 +724,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>33</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>34</sup></a></li>
 			
 		
 			
@@ -779,11 +772,11 @@
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			
