@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2023/08/30/VirtualService-和-Gateway-中hosts-字段的配置使用/" title="VirtualService 和 Gateway 中hosts 字段的配置使用" itemprop="url">VirtualService 和 Gateway 中hosts 字段的配置使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2023-08-30T09:25:58.000Z" itemprop="datePublished"> 发表于 2023-08-30</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Istio 中的 CR 资源 <code>VirtualService</code> 和 <code>Gateway</code> 都存在 <code>hosts</code> 属性，而且 <code>VirtualService.spec.http.route. destination.host</code> 也存在 <code>host</code> 字段，这些字段容易让人混淆，特以此做一解释和区分。</p>
+<h2 id="VirtualService"><a href="#VirtualService" class="headerlink" title="VirtualService"></a>VirtualService</h2><h3 id="hosts"><a href="#hosts" class="headerlink" title="hosts"></a>hosts</h3><p>VirtualService 定义了一系列针对指定服务的流量路由规则。每个路由规则都针对特定协议的匹配规则。如果流量符合这些特征，就会根据规则发送到服务注册表中的目标服务（或者目标服务的子集或版本）。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2023/08/30/VirtualService-和-Gateway-中hosts-字段的配置使用/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Istio/">Istio</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2023/08/30/VirtualService-和-Gateway-中hosts-字段的配置使用/#comments" class="ds-thread-count comments-count-link" data-thread-key="2023/08/30/VirtualService-和-Gateway-中hosts-字段的配置使用/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2023/07/25/mount-bind-使用方法/" title="mount --bind 使用方法" itemprop="url">mount --bind 使用方法</a>
   </h1>
   <p class="article-author">By
@@ -632,72 +692,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/10/09/BBR拥塞控制算法/" title="BBR拥塞控制算法" itemprop="url">BBR拥塞控制算法</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-10-09T08:44:59.000Z" itemprop="datePublished"> 发表于 2022-10-09</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>BBR (Bottleneck Bandwidth and Round-trip propagation time)是 Google 在 2016 年发布的一套拥塞控制算法。它尤其适合在存在一定丢包率的弱网环境下使用，在这类环境下，BBR 的性能远超 CUBIC 等传统的拥塞控制算法。</p>
-<p>以下是 Google 公开的的一些资料</p>
-<ul>
-<li><a href="https://legacy.netdevconf.info/1.2/papers/bbr-netdev-1.2.new.new.pdf" target="_blank" rel="noopener">paper</a></li>
-<li><a href="https://www.youtube.com/watch?v=hIl_zXzU3DA" target="_blank" rel="noopener">video</a></li>
-<li><a href="https://legacy.netdevconf.info/1.2/slides/oct5/04_Making_Linux_TCP_Fast_netdev_1.2_final.pdf" target="_blank" rel="noopener">slides</a></li>
-<li><a href="https://github.com/google/bbr" target="_blank" rel="noopener">github</a></li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/10/09/BBR拥塞控制算法/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/BBR/">BBR</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/10/09/BBR拥塞控制算法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/10/09/BBR拥塞控制算法/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/25/">25</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -781,11 +775,11 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
