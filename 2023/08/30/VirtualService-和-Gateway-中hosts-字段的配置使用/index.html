@@ -20,7 +20,7 @@
 <meta property="og:description" content="Istio 中的 CR 资源 VirtualService 和 Gateway 都存在 hosts 属性，而且 VirtualService.spec.http.route. destination.host 也存在 host 字段，这些字段容易让人混淆，特以此做一解释和区分。 VirtualServicehostsVirtualService 定义了一系列针对指定服务的流量路由规则。每个路由规则">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://luckymrwang.github.io/images/vs_gw.png">
-<meta property="og:updated_time" content="2023-08-31T08:14:38.293Z">
+<meta property="og:updated_time" content="2023-10-25T09:13:39.688Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="VirtualService 和 Gateway 中hosts 字段的配置使用">
 <meta name="twitter:description" content="Istio 中的 CR 资源 VirtualService 和 Gateway 都存在 hosts 属性，而且 VirtualService.spec.http.route. destination.host 也存在 host 字段，这些字段容易让人混淆，特以此做一解释和区分。 VirtualServicehostsVirtualService 定义了一系列针对指定服务的流量路由规则。每个路由规则">
@@ -100,7 +100,7 @@
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#VirtualService"><span class="toc-number">1.</span> <span class="toc-text">VirtualService</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hosts"><span class="toc-number">1.1.</span> <span class="toc-text">hosts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#host"><span class="toc-number">1.2.</span> <span class="toc-text">host</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway"><span class="toc-number">2.</span> <span class="toc-text">Gateway</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#VirtualService"><span class="toc-number">1.</span> <span class="toc-text">VirtualService</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hosts"><span class="toc-number">1.1.</span> <span class="toc-text">hosts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#host"><span class="toc-number">1.2.</span> <span class="toc-text">host</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway"><span class="toc-number">2.</span> <span class="toc-text">Gateway</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway-Port"><span class="toc-number">3.</span> <span class="toc-text">Gateway Port</span></a></li></ol>
 		
 		</div>
 		
@@ -131,6 +131,9 @@
 <ul>
 <li>CR <code>VirtualService</code> 通过 <code>gateways</code> 字段中的值与 CR <code>Gateway</code> 绑定</li>
 <li>CR <code>Gateway</code> 通过 <code>hosts</code> 字段中的匹配的 <code>host</code> 值选择对应的 CR <code>VirtualService</code></li>
+</ul>
+<h2 id="Gateway-Port"><a href="#Gateway-Port" class="headerlink" title="Gateway Port"></a>Gateway Port</h2><ul>
+<li><a href="How to expose custom ports on Istio ingress gateway">How to expose custom ports on Istio ingress gateway</a></li>
 </ul>
 <p>参考：</p>
 <ul>
@@ -197,7 +200,7 @@
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
  
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#VirtualService"><span class="toc-number">1.</span> <span class="toc-text">VirtualService</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hosts"><span class="toc-number">1.1.</span> <span class="toc-text">hosts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#host"><span class="toc-number">1.2.</span> <span class="toc-text">host</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway"><span class="toc-number">2.</span> <span class="toc-text">Gateway</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#VirtualService"><span class="toc-number">1.</span> <span class="toc-text">VirtualService</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hosts"><span class="toc-number">1.1.</span> <span class="toc-text">hosts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#host"><span class="toc-number">1.2.</span> <span class="toc-text">host</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway"><span class="toc-number">2.</span> <span class="toc-text">Gateway</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway-Port"><span class="toc-number">3.</span> <span class="toc-text">Gateway Port</span></a></li></ol>
  
   </div>
 
