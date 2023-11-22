@@ -82,6 +82,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/05/11/TCP源码分析-三次握手之-Connect-过程/" title="TCP源码分析 - 三次握手之 Connect 过程" itemprop="url">TCP源码分析 - 三次握手之 Connect 过程</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-11T11:45:05.000Z" itemprop="datePublished"> 发表于 2022-05-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>本文主要分析 TCP 协议的实现，但由于 TCP 协议比较复杂，所以分几篇文章进行分析，这篇主要介绍 TCP 协议建立连接时的三次握手过程。</p>
+<p>TCP 协议应该是 TCP/IP 协议栈中最为复杂的一个协议(没有之一)，TCP 协议的复杂性来源于其面向连接和保证可靠传输。</p>
+<p>如下图所示，TCP 协议位于 TCP/IP 协议栈的第四层，也就是传输层，其建立在网络层的 IP 协议。<br>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/11/TCP源码分析-三次握手之-Connect-过程/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux-TCP/">Linux/TCP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/11/TCP源码分析-三次握手之-Connect-过程/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/11/TCP源码分析-三次握手之-Connect-过程/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/05/10/Calico引入eBPF/" title="Calico引入eBPF" itemprop="url">Calico引入eBPF</a>
   </h1>
   <p class="article-author">By
@@ -627,65 +688,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/04/19/iptables中-j选项与-g选项的区别/" title="iptables中-j选项与-g选项的区别" itemprop="url">iptables中-j选项与-g选项的区别</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-04-19T06:05:06.000Z" itemprop="datePublished"> 发表于 2022-04-19</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="手册"><a href="#手册" class="headerlink" title="手册"></a>手册</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># man iptables</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">-j, --jump target</span><br><span class="line">              This  specifies  the  target  <span class="keyword">of</span>  the  rule; i.e., what to <span class="keyword">do</span> <span class="keyword">if</span> the packet matches it.  The target can be a user-</span><br><span class="line">              defined chain (other than the one <span class="keyword">this</span> rule is <span class="keyword">in</span>), one <span class="keyword">of</span> the special builtin targets which decide  the  fate  <span class="keyword">of</span></span><br><span class="line">              the  packet  immediately,  or an extension (see EXTENSIONS below).  If <span class="keyword">this</span> option is omitted <span class="keyword">in</span> a rule (and -g is</span><br><span class="line">              not used), then matching the rule will have no effect on the packet<span class="string">'s fate, but the counters on the rule  will  be</span></span><br><span class="line"><span class="string">              incremented.</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">-g, --goto chain</span></span><br><span class="line"><span class="string">              This specifies that the processing should continue in a user specified chain. Unlike the --jump option return will</span></span><br><span class="line"><span class="string">              not continue processing in this chain but instead in the chain that called us via --jump.</span></span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/04/19/iptables中-j选项与-g选项的区别/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/04/19/iptables中-j选项与-g选项的区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/19/iptables中-j选项与-g选项的区别/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/3/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/5/">Next<span></span></a>
@@ -721,7 +723,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>34</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
 			
 		
 			
@@ -765,11 +767,11 @@
 			
 		
 			
-				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			

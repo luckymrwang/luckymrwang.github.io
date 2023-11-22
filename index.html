@@ -82,6 +82,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2023/11/22/Linux系统-dev-mapper目录浅谈/" title="Linux系统/dev/mapper目录浅谈" itemprop="url">Linux系统/dev/mapper目录浅谈</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2023-11-22T07:29:59.000Z" itemprop="datePublished"> 发表于 2023-11-22</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Linux 系统的一般的文件系统名称类似于 <code>/dev/sda1</code> 或 <code>/dev/hda1</code>，但是今天在进行系统维护的时候，利用 <code>df -h</code> 命令敲出了 <code>/dev/mapper/VolGroup-lv_root</code> 和 <code>/dev/mapper/Volume-lv_home</code> 两个文件系统名，不解，在网上查找资料后，在此浅谈 <code>/dev/mapper</code> 目录。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2023/11/22/Linux系统-dev-mapper目录浅谈/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2023/11/22/Linux系统-dev-mapper目录浅谈/#comments" class="ds-thread-count comments-count-link" data-thread-key="2023/11/22/Linux系统-dev-mapper目录浅谈/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2023/08/31/kubectl-krew-离线安装插件/" title="kubectl krew 离线安装插件" itemprop="url">kubectl krew 离线安装插件</a>
   </h1>
   <p class="article-author">By
@@ -632,66 +691,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/10/21/网络性能调优/" title="网络性能调优" itemprop="url">网络性能调优</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-10-21T04:07:38.000Z" itemprop="datePublished"> 发表于 2022-10-21</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>本文整理在 K8S 环境中的网络性能调优实践。一些涉及到内核参数的调整，关于如何调整 Pod 内核参数的方法请参考 为 <a href="https://imroc.cc/kubernetes/trick/deploy/set-sysctl.html" target="_blank" rel="noopener">Pod 设置内核参数</a>。</p>
-<h2 id="高并发场景"><a href="#高并发场景" class="headerlink" title="高并发场景"></a>高并发场景</h2><h3 id="TIME-WAIT-连接复用"><a href="#TIME-WAIT-连接复用" class="headerlink" title="TIME_WAIT 连接复用"></a>TIME_WAIT 连接复用</h3><p>如果短连接并发量较高，它所在 <code>netns</code> 中 <code>TIME_WAIT</code> 状态的连接就比较多，而 <code>TIME_WAIT</code> 连接默认要等 2MSL 时长才释放，长时间占用源端口，当这种状态连接数量累积到超过一定量之后可能会导致无法新建连接。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/10/21/网络性能调优/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/Kubernetes/">Kubernetes</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/10/21/网络性能调优/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/10/21/网络性能调优/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -727,7 +726,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>34</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
 			
 		
 			
@@ -771,11 +770,11 @@
 			
 		
 			
-				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			

@@ -82,6 +82,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/04/19/iptables中-j选项与-g选项的区别/" title="iptables中-j选项与-g选项的区别" itemprop="url">iptables中-j选项与-g选项的区别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-19T06:05:06.000Z" itemprop="datePublished"> 发表于 2022-04-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="手册"><a href="#手册" class="headerlink" title="手册"></a>手册</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># man iptables</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">-j, --jump target</span><br><span class="line">              This  specifies  the  target  <span class="keyword">of</span>  the  rule; i.e., what to <span class="keyword">do</span> <span class="keyword">if</span> the packet matches it.  The target can be a user-</span><br><span class="line">              defined chain (other than the one <span class="keyword">this</span> rule is <span class="keyword">in</span>), one <span class="keyword">of</span> the special builtin targets which decide  the  fate  <span class="keyword">of</span></span><br><span class="line">              the  packet  immediately,  or an extension (see EXTENSIONS below).  If <span class="keyword">this</span> option is omitted <span class="keyword">in</span> a rule (and -g is</span><br><span class="line">              not used), then matching the rule will have no effect on the packet<span class="string">'s fate, but the counters on the rule  will  be</span></span><br><span class="line"><span class="string">              incremented.</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">-g, --goto chain</span></span><br><span class="line"><span class="string">              This specifies that the processing should continue in a user specified chain. Unlike the --jump option return will</span></span><br><span class="line"><span class="string">              not continue processing in this chain but instead in the chain that called us via --jump.</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/04/19/iptables中-j选项与-g选项的区别/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/04/19/iptables中-j选项与-g选项的区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/19/iptables中-j选项与-g选项的区别/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/04/06/使用Kubernetes-API/" title="使用Kubernetes API" itemprop="url">使用Kubernetes API</a>
   </h1>
   <p class="article-author">By
@@ -631,66 +690,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2021/04/11/Go-反向代理reverse-proxy-源码分析/" title="Go 反向代理reverse proxy 源码分析" itemprop="url">Go 反向代理reverse proxy 源码分析</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2021-04-11T04:27:10.000Z" itemprop="datePublished"> 发表于 2021-04-11</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="基于reverse-proxy实现的反向代理例子"><a href="#基于reverse-proxy实现的反向代理例子" class="headerlink" title="基于reverse proxy实现的反向代理例子"></a>基于reverse proxy实现的反向代理例子</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"log"</span></span><br><span class="line">    <span class="string">"net/http"</span></span><br><span class="line">    <span class="string">"net/http/httputil"</span></span><br><span class="line">    <span class="string">"net/url"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 地址重写实例</span></span><br><span class="line">    <span class="comment">// http://127.0.0.1:8888/test?id=1  =》 http://127.0.0.1:8081/reverse/test?id=1</span></span><br><span class="line"></span><br><span class="line">    rs1 := <span class="string">"http://127.0.0.1:8081/reverse"</span></span><br><span class="line">    targetUrl , err := url.Parse(rs1)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(<span class="string">"err"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    proxy := httputil.NewSingleHostReverseProxy(targetUrl)</span><br><span class="line">    log.Println(<span class="string">"Reverse proxy server serve at : 127.0.0.1:8888"</span>)</span><br><span class="line">    <span class="keyword">if</span> err := http.ListenAndServe(<span class="string">":8888"</span>,proxy);err != <span class="literal">nil</span>&#123;</span><br><span class="line">        log.Fatal(<span class="string">"Start server failed,err:"</span>,err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl http:<span class="comment">//127.0.0.1:8888/hello?id=123 -s</span></span><br><span class="line">http:<span class="comment">//127.0.0.1:8081/reverse/hello?id=123</span></span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2021/04/11/Go-反向代理reverse-proxy-源码分析/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2021/04/11/Go-反向代理reverse-proxy-源码分析/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/04/11/Go-反向代理reverse-proxy-源码分析/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/4/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/6/">Next<span></span></a>
@@ -726,7 +725,7 @@
 			
 		
 			
-				<li><a href="/tags/Linux/" title="Linux">Linux<sup>34</sup></a></li>
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
 			
 		
 			
@@ -770,11 +769,11 @@
 			
 		
 			
-				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			
