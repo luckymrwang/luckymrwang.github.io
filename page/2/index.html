@@ -82,6 +82,69 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/10/27/UDP-Connect/" title="UDP Connect" itemprop="url">UDP Connect</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-10-27T14:36:41.000Z" itemprop="datePublished"> 发表于 2022-10-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在 UDP 上使用 <code>connect</code> 的情况：</p>
+<ol>
+<li>需要获取 ICMP 的错误信息</li>
+<li>如果需要向同一个IP地址多次 <code>sendto</code> ，用以减少不断的连接、断开，提高性能</li>
+</ol>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/10/27/UDP-Connect/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/UDP/">UDP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/10/27/UDP-Connect/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/10/27/UDP-Connect/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/10/21/网络性能调优/" title="网络性能调优" itemprop="url">网络性能调优</a>
   </h1>
   <p class="article-author">By
@@ -632,72 +695,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/08/19/搭建-eBPF-开发环境/" title="搭建 eBPF 开发环境" itemprop="url">搭建 eBPF 开发环境</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-08-19T13:45:28.000Z" itemprop="datePublished"> 发表于 2022-08-19</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>虽然 Linux 内核很早就已经支持了 eBPF，但很多新特性都是在 4.x 版本中逐步增加的。所以，想要稳定运行 eBPF 程序，内核至少需要 4.9 或者更新的版本。而在开发和学习 eBPF 时，为了体验和掌握最新的 eBPF 特性，我推荐使用更新的 5.x 内核。</p>
-<p>作为 eBPF 最重大的改进之一，一次编译到处执行（简称 CO-RE）解决了内核数据结构在不同版本差异导致的兼容性问题。不过，在使用 CO-RE 之前，内核需要开启 <code>CONFIG_DEBUG_INFO_BTF=y</code> 和 <code>CONFIG_DEBUG_INFO=y</code> 这两个编译选项。为了避免你在首次学习 eBPF 时就去重新编译内核，我推荐使用已经默认开启这些编译选项的发行版，作为你的开发环境，比如：</p>
-<ul>
-<li>Ubuntu 20.10+</li>
-<li>Fedora 31+</li>
-<li>RHEL 8.2+</li>
-<li>Debian 11+</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/08/19/搭建-eBPF-开发环境/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/eBPF/">eBPF</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/08/19/搭建-eBPF-开发环境/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/08/19/搭建-eBPF-开发环境/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
@@ -741,7 +738,7 @@
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>13</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>14</sup></a></li>
 			
 		
 			
@@ -777,15 +774,15 @@
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			

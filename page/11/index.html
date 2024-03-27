@@ -82,6 +82,70 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2018/08/31/使用Go-Test测试单个文件和单个方法/" title="使用Go Test测试单个文件和单个方法" itemprop="url">使用Go Test测试单个文件和单个方法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2018-08-31T01:56:35.000Z" itemprop="datePublished"> 发表于 2018-08-31</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>文件名须以”_test.go”结尾</p>
+<p>方法名须以”Test”打头，并且形参为 (t *testing.T)</p>
+</blockquote>
+<p>举例：/hello_test.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"testing"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestHello</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"TestHello"</span>)</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestWorld</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"TestWorld"</span>)</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2018/08/31/使用Go-Test测试单个文件和单个方法/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2018/08/31/使用Go-Test测试单个文件和单个方法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2018/08/31/使用Go-Test测试单个文件和单个方法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2018/08/02/Golang-在-Mac、Linux、Windows-下交叉编译/" title="Golang 在 Mac、Linux、Windows 下交叉编译" itemprop="url">Golang 在 Mac、Linux、Windows 下交叉编译</a>
   </h1>
   <p class="article-author">By
@@ -618,61 +682,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2017/11/13/CGI、FAST-CGI、PHP-FPM/" title="CGI、FAST-CGI、PHP-FPM’" itemprop="url">CGI、FAST-CGI、PHP-FPM’</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2017-11-13T03:54:52.000Z" itemprop="datePublished"> 发表于 2017-11-13</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>讲Fastcgi之前需要先讲CGI，CGI是为了保证web server传递过来的数据是标准格式的，它是一个协议，方便CGI程序的编写者。Fastcgi是CGI的更高级的一种方式，是用来提高CGI程序性能的。</p>
-<p>web server（如nginx）只是内容的分发者。比如，如果请求/index.html，那么web server会去文件系统中找到这个文件，发送给浏览器，这里分发的是静态资源。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2017/11/13/CGI、FAST-CGI、PHP-FPM/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2017/11/13/CGI、FAST-CGI、PHP-FPM/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/11/13/CGI、FAST-CGI、PHP-FPM/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/10/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/12/">Next<span></span></a>
@@ -716,7 +725,7 @@
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>13</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>14</sup></a></li>
 			
 		
 			
@@ -752,15 +761,15 @@
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			

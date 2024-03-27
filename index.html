@@ -82,6 +82,72 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2024/03/27/揭秘-Kubernetes-attach-detach-controller-逻辑漏洞致使-pod-启动失败/" title="揭秘 Kubernetes attach/detach controller 逻辑漏洞致使 pod 启动失败" itemprop="url">揭秘 Kubernetes attach/detach controller 逻辑漏洞致使 pod 启动失败</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2024-03-27T11:45:52.000Z" itemprop="datePublished"> 发表于 2024-03-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>本文引自<a href="https://tencentcloudcontainerteam.github.io/2020/05/13/K8s-ad-controller-bug/" target="_blank" rel="noopener">这里</a></p>
+<p><em>该文章刊登在《腾讯云容器团队》博客上，由于网站很久不更新，担心这些好文章之后会被下架，所以做下记录。</em></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文主要通过深入学习k8s attach/detach controller源码，了解现网案例发现的attach/detach controller bug发生的原委，并给出解决方案。</p>
+<p>看完本文你也将学习到：</p>
+<ul>
+<li>attach/detach controller的主要数据结构有哪些，保存什么数据，数据从哪来，到哪去等等；</li>
+<li>k8s attach/detach volume的详细流程，如何判断volume是否需要attach/detach，attach/detach controller和kubelet(volume manager)如何协同工作等等。</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2024/03/27/揭秘-Kubernetes-attach-detach-controller-逻辑漏洞致使-pod-启动失败/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2024/03/27/揭秘-Kubernetes-attach-detach-controller-逻辑漏洞致使-pod-启动失败/#comments" class="ds-thread-count comments-count-link" data-thread-key="2024/03/27/揭秘-Kubernetes-attach-detach-controller-逻辑漏洞致使-pod-启动失败/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2023/11/22/Linux系统-dev-mapper目录浅谈/" title="Linux系统/dev/mapper目录浅谈" itemprop="url">Linux系统/dev/mapper目录浅谈</a>
   </h1>
   <p class="article-author">By
@@ -628,69 +694,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/10/27/UDP-Connect/" title="UDP Connect" itemprop="url">UDP Connect</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-10-27T14:36:41.000Z" itemprop="datePublished"> 发表于 2022-10-27</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>在 UDP 上使用 <code>connect</code> 的情况：</p>
-<ol>
-<li>需要获取 ICMP 的错误信息</li>
-<li>如果需要向同一个IP地址多次 <code>sendto</code> ，用以减少不断的连接、断开，提高性能</li>
-</ol>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/10/27/UDP-Connect/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/UDP/">UDP</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/10/27/UDP-Connect/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/10/27/UDP-Connect/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -734,7 +737,7 @@
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>13</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>14</sup></a></li>
 			
 		
 			
@@ -770,15 +773,15 @@
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			

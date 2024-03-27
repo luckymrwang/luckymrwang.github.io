@@ -82,6 +82,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/05/12/Calico-eBPF数据平面/" title="Calico eBPF数据平面" itemprop="url">Calico eBPF数据平面</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-12T03:15:35.000Z" itemprop="datePublished"> 发表于 2022-05-12</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="什么是-eBPF"><a href="#什么是-eBPF" class="headerlink" title="什么是 eBPF"></a>什么是 eBPF</h3><p>eBPF 是嵌入在 Linux 内核中的虚拟机。它允许将小程序加载到内核中，并附加到钩子上，当某些事件发生时会触发这些钩子。这允许（有时大量）定制内核的行为。虽然 eBPF 虚拟机对于每种类型的钩子都是相同的，但钩子的功能却大不相同。由于将程序加载到内核中可能很危险；内核通过非常严格的静态验证器运行所有程序；验证程序对程序进行沙箱处理，确保它只能访问允许的内存部分，并确保它必须快速终止。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/12/Calico-eBPF数据平面/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Calico/">Calico</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/12/Calico-eBPF数据平面/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/12/Calico-eBPF数据平面/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/05/11/TCP源码分析-三次握手之-Connect-过程/" title="TCP源码分析 - 三次握手之 Connect 过程" itemprop="url">TCP源码分析 - 三次握手之 Connect 过程</a>
   </h1>
   <p class="article-author">By
@@ -629,65 +688,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/04/20/Cilium安装与学习/" title="Cilium安装与学习" itemprop="url">Cilium安装与学习</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-04-20T11:29:27.000Z" itemprop="datePublished"> 发表于 2022-04-20</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><h4 id="BPF-CBPF-说明文档"><a href="#BPF-CBPF-说明文档" class="headerlink" title="BPF(CBPF) 说明文档"></a>BPF(CBPF) <a href="https://docs.cilium.io/en/latest/bpf/" target="_blank" rel="noopener">说明文档</a></h4><p>BPF 的全称是 Berkeley Packet Filter, 即伯克利报文过滤器，它的设计思想来源于 1992 年的一篇论文“The BSD packet filter: A New architecture for user-level packet capture” （《BSD数据包过滤器：一种用于用户级数据包捕获的新体系结构》）。最初，BPF是在 BSD 内核实现的， 后来，由于其出色的设计思想，其他操作系统也将其引入, 包括 Linux。<code>tcpdump</code> 使用的libpcap是基于BPF的，在使用tcpdump或者libpcap时传入的“host 192.168.1.1”、“tcp and port 80”等是过滤表达式。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/04/20/Cilium安装与学习/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Cilium/">Cilium</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/04/20/Cilium安装与学习/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/20/Cilium安装与学习/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/3/"><span></span>Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/5/">Next<span></span></a>
@@ -731,7 +731,7 @@
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>13</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>14</sup></a></li>
 			
 		
 			
@@ -767,15 +767,15 @@
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
-			
-		
-			
 				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			
