@@ -82,6 +82,75 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/09/27/Go命令行flag包/" title="Go命令行flag包" itemprop="url">Go命令行flag包</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-27T10:07:02.000Z" itemprop="datePublished"> 发表于 2016-09-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>go语言提供的flag包可以解析命令行的参数，代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"flag"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//第一个参数，为参数名称，第二个参数为默认值，第三个参数是说明</span></span><br><span class="line"></span><br><span class="line">	username := flag.String(<span class="string">"name"</span>, <span class="string">""</span>, <span class="string">"Input your username"</span>)</span><br><span class="line"></span><br><span class="line">	flag.Parse()</span><br><span class="line"></span><br><span class="line">	fmt.Println(<span class="string">"Hello, "</span>, *username)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译：</p>
+<pre><code>go build flag.go
+</code></pre><p>运行：</p>
+<pre><code>./flag -name=world
+</code></pre><p>输出：</p>
+<pre><code>Hello, world
+</code></pre><p>如果不输入name参数：</p>
+<pre><code>./flag
+</code></pre><p>则输出：</p>
+<pre><code>Hello,
+</code></pre>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/27/Go命令行flag包/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/27/Go命令行flag包/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/09/27/程序在的内存中的分配（常量，局部变量，全局变量，程序代码）/" title="程序在的内存中的分配（常量，局部变量，全局变量，程序代码）" itemprop="url">程序在的内存中的分配（常量，局部变量，全局变量，程序代码）</a>
   </h1>
   <p class="article-author">By
@@ -637,70 +706,6 @@ systemctl enable iptables.service #设置防火墙开机启动
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/08/07/CentOS7-安装-MySQL/" title="CentOS7 安装 MySQL" itemprop="url">CentOS7 安装 MySQL</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-08-07T06:42:51.000Z" itemprop="datePublished"> 发表于 2016-08-07</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><code>CentOS7</code>的<code>yum</code>源中已经没有正常安装<code>MySQL</code>时的<code>mysql-sever</code>文件，需要去官网上下载：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># wget http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm</span><br><span class="line"></span><br><span class="line"># rpm -ivh mysql-community-release-el7-5.noarch.rpm</span><br><span class="line"></span><br><span class="line"># yum install mysql-community-server</span><br></pre></td></tr></table></figure>
-<p>成功安装之后重启mysql服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># systemctl restart mysqld.service</span><br></pre></td></tr></table></figure>
-<p>初次安装mysql是root账户是没有密码的</p>
-<p>设置密码的方法</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># mysql -uroot</span><br><span class="line">mysql&gt; set password for ‘root’@‘localhost’ = password(&apos;mypasswd&apos;);</span><br><span class="line">mysql&gt; exit</span><br></pre></td></tr></table></figure>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/MySQL/">MySQL</a><a href="/tags/CentOS/">CentOS</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/08/07/CentOS7-安装-MySQL/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/07/CentOS7-安装-MySQL/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/15/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="page-number" href="/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/page/17/">17</a><a class="page-number" href="/page/18/">18</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/17/">Next<span></span></a>
@@ -744,7 +749,7 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>14</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
 			
 		
 			
@@ -784,11 +789,11 @@ systemctl enable iptables.service #设置防火墙开机启动
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			

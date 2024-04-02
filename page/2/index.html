@@ -82,6 +82,72 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2023/01/05/实验说明-Golang-HTTP-连接池参数/" title="实验说明 Golang HTTP 连接池参数" itemprop="url">实验说明 Golang HTTP 连接池参数</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2023-01-05T09:34:57.000Z" itemprop="datePublished"> 发表于 2023-01-05</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>连接相对于其他对象，创建成本较高，资源也有限。如果没有连接池，在高并发场景下，连接关闭又新建，很快就会因为过多的TIME_WAIT（连接主动关闭方）导致无法创建更多连接了，程序被压死。</p>
+<h2 id="net-http-连接池参数"><a href="#net-http-连接池参数" class="headerlink" title="net/http 连接池参数"></a>net/http 连接池参数</h2><p>Go （测试版本 go 1.14）的net/http包是有连接池功能的，具体地，是 <a href="https://golang.org/pkg/net/http/#Transport" target="_blank" rel="noopener">Transport</a> 用于连接池化。</p>
+<blockquote>
+<p>Transport is an implementation of RoundTripper that supports HTTP, HTTPS, and HTTP proxies (for either HTTP or HTTPS with CONNECT).</p>
+</blockquote>
+<blockquote>
+<p>By default, Transport caches connections for future re-use.</p>
+</blockquote>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2023/01/05/实验说明-Golang-HTTP-连接池参数/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Golang/">Golang</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2023/01/05/实验说明-Golang-HTTP-连接池参数/#comments" class="ds-thread-count comments-count-link" data-thread-key="2023/01/05/实验说明-Golang-HTTP-连接池参数/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/10/27/UDP-Connect/" title="UDP Connect" itemprop="url">UDP Connect</a>
   </h1>
   <p class="article-author">By
@@ -632,69 +698,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/08/22/bcc-ebpf-安装及示例/" title="bcc/ebpf 安装及示例" itemprop="url">bcc/ebpf 安装及示例</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-08-22T08:44:55.000Z" itemprop="datePublished"> 发表于 2022-08-22</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>eBPF 程序使用 C 语言的一个子集（restricted C）编写，然后通过 LLVM 编译成字节码注入到 内核执行。bcc是 eBPF 的一个外围工具集，使得 “编 写 BPF 代码-编译成字节码-注入内核-获取结果-展示” 整个过程更加便捷。</p>
-<p>下面我们将搭建一个基础环境，通过几个例子展示如何编写 bcc/eBPF 程序，感受它们的强大功能。</p>
-<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>环境需要以下几方面满足要求：内核、docker、bcc。</p>
-<h4 id="内核版本"><a href="#内核版本" class="headerlink" title="内核版本"></a>内核版本</h4><p>eBPF 需要较新的 Linux kernel 支持。 因此首先要确保你的内核版本足够新，至少要在 4.1 以上，最好在 4.10 以上：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ uname -r</span><br><span class="line">4.10.13-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/08/22/bcc-ebpf-安装及示例/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/eBPF/">eBPF</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/08/22/bcc-ebpf-安装及示例/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/08/22/bcc-ebpf-安装及示例/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/"><span></span>Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/3/">Next<span></span></a>
@@ -738,7 +741,7 @@
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>14</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
 			
 		
 			
@@ -778,11 +781,11 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			

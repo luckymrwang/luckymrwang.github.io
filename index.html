@@ -82,6 +82,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2024/04/02/记一次-k8s-apiserver-watch-hang-问题排查/" title="记一次 k8s apiserver watch hang 问题排查" itemprop="url">记一次 k8s apiserver watch hang 问题排查</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2024-04-02T02:37:34.000Z" itemprop="datePublished"> 发表于 2024-04-02</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>传统的 kubernetes apiserver 请求访问链路为客户端直连 apiserver，为了做 apiserver 高可用，通常我们会给 apiserver 前端再套一层4层或7层代理做多个 apiserver 实例的负载均衡。</p>
+<p>在我们的场景下，使用了 istio 的 ingressgateway 作为 <code>client -&gt; apiserver</code> 这条链路中的7层代理。链路变成了 <code>client -&gt; ingressgateway -&gt; apiserver</code> ，gateway 暴露 80 端口供客户端访问, 同时通过 istio virtualService + destinationRule 规则配置 gateway 能通过域名访问到 apiserver 6443 端口，从而实现流量路由。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2024/04/02/记一次-k8s-apiserver-watch-hang-问题排查/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2024/04/02/记一次-k8s-apiserver-watch-hang-问题排查/#comments" class="ds-thread-count comments-count-link" data-thread-key="2024/04/02/记一次-k8s-apiserver-watch-hang-问题排查/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2024/03/27/揭秘-Kubernetes-attach-detach-controller-逻辑漏洞致使-pod-启动失败/" title="揭秘 Kubernetes attach/detach controller 逻辑漏洞致使 pod 启动失败" itemprop="url">揭秘 Kubernetes attach/detach controller 逻辑漏洞致使 pod 启动失败</a>
   </h1>
   <p class="article-author">By
@@ -628,72 +688,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2023/01/05/实验说明-Golang-HTTP-连接池参数/" title="实验说明 Golang HTTP 连接池参数" itemprop="url">实验说明 Golang HTTP 连接池参数</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2023-01-05T09:34:57.000Z" itemprop="datePublished"> 发表于 2023-01-05</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>连接相对于其他对象，创建成本较高，资源也有限。如果没有连接池，在高并发场景下，连接关闭又新建，很快就会因为过多的TIME_WAIT（连接主动关闭方）导致无法创建更多连接了，程序被压死。</p>
-<h2 id="net-http-连接池参数"><a href="#net-http-连接池参数" class="headerlink" title="net/http 连接池参数"></a>net/http 连接池参数</h2><p>Go （测试版本 go 1.14）的net/http包是有连接池功能的，具体地，是 <a href="https://golang.org/pkg/net/http/#Transport" target="_blank" rel="noopener">Transport</a> 用于连接池化。</p>
-<blockquote>
-<p>Transport is an implementation of RoundTripper that supports HTTP, HTTPS, and HTTP proxies (for either HTTP or HTTPS with CONNECT).</p>
-</blockquote>
-<blockquote>
-<p>By default, Transport caches connections for future re-use.</p>
-</blockquote>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2023/01/05/实验说明-Golang-HTTP-连接池参数/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Golang/">Golang</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2023/01/05/实验说明-Golang-HTTP-连接池参数/#comments" class="ds-thread-count comments-count-link" data-thread-key="2023/01/05/实验说明-Golang-HTTP-连接池参数/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/2/">Next<span></span></a>
@@ -737,7 +731,7 @@
 			
 		
 			
-				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>14</sup></a></li>
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
 			
 		
 			
@@ -777,11 +771,11 @@
 			
 		
 			
-				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
 			
 		
 			
-				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
 			
 		
 			
