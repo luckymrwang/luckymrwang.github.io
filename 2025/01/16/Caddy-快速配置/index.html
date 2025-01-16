@@ -1,0 +1,529 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  
+    <title>Caddy 快速配置 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="官方安装文档Install - Caddy Documentation 简介&amp;lt;&amp;lt;!– more -&amp;gt;&amp;gt; Caddy 是一个现代的开源 Web 服务器，具有以下几个主要特点：  自动化 HTTPSCaddy 自动为所有托管的网站配置 HTTPS，使用 Let’s Encrypt 提供的证书。这意味着你无需手动处理证书的生成和续期，极大地简化了安全配置。 易于配置Caddy 使">
+<meta name="keywords" content="Caddy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Caddy 快速配置">
+<meta property="og:url" content="https://luckymrwang.github.io/2025/01/16/Caddy-快速配置/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="官方安装文档Install - Caddy Documentation 简介&amp;lt;&amp;lt;!– more -&amp;gt;&amp;gt; Caddy 是一个现代的开源 Web 服务器，具有以下几个主要特点：  自动化 HTTPSCaddy 自动为所有托管的网站配置 HTTPS，使用 Let’s Encrypt 提供的证书。这意味着你无需手动处理证书的生成和续期，极大地简化了安全配置。 易于配置Caddy 使">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2025-01-16T11:35:22.346Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Caddy 快速配置">
+<meta name="twitter:description" content="官方安装文档Install - Caddy Documentation 简介&amp;lt;&amp;lt;!– more -&amp;gt;&amp;gt; Caddy 是一个现代的开源 Web 服务器，具有以下几个主要特点：  自动化 HTTPSCaddy 自动为所有托管的网站配置 HTTPS，使用 Let’s Encrypt 提供的证书。这意味着你无需手动处理证书的生成和续期，极大地简化了安全配置。 易于配置Caddy 使">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2025/01/16/Caddy-快速配置/" title="Caddy 快速配置" itemprop="url">Caddy 快速配置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2025-01-16T11:26:57.000Z" itemprop="datePublished"> 发表于 2025-01-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#官方安装文档"><span class="toc-number">1.</span> <span class="toc-text">官方安装文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">2.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#适用场景"><span class="toc-number">3.</span> <span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">4.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置文件路径"><span class="toc-number">5.</span> <span class="toc-text">配置文件路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务管理"><span class="toc-number">6.</span> <span class="toc-text">服务管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置示例"><span class="toc-number">7.</span> <span class="toc-text">配置示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更多配置"><span class="toc-number">8.</span> <span class="toc-text">更多配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-负载均衡"><span class="toc-number">8.1.</span> <span class="toc-text">1. 负载均衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-路由和重定向"><span class="toc-number">8.2.</span> <span class="toc-text">2. 路由和重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-WebSocket-支持"><span class="toc-number">8.3.</span> <span class="toc-text">3. WebSocket 支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-SSL-TLS-配置"><span class="toc-number">8.4.</span> <span class="toc-text">4. SSL/TLS 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-基于路径的反向代理"><span class="toc-number">8.5.</span> <span class="toc-text">5. 基于路径的反向代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-自定义错误页面"><span class="toc-number">8.6.</span> <span class="toc-text">6. 自定义错误页面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-添加-HTTP-头"><span class="toc-number">8.7.</span> <span class="toc-text">7. 添加 HTTP 头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-使用插件"><span class="toc-number">8.8.</span> <span class="toc-text">8. 使用插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-设置速率限制"><span class="toc-number">8.9.</span> <span class="toc-text">9. 设置速率限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-访问日志和错误日志"><span class="toc-number">8.10.</span> <span class="toc-text">10. 访问日志和错误日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-真实ip"><span class="toc-number">8.11.</span> <span class="toc-text">11.真实ip</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="官方安装文档"><a href="#官方安装文档" class="headerlink" title="官方安装文档"></a><strong>官方安装文档</strong></h2><p><a href="https://caddyserver.com/docs/install" target="_blank" rel="noopener">Install - Caddy Documentation</a></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>&lt;&lt;!– more -&gt;&gt;</p>
+<p>Caddy 是一个现代的开源 Web 服务器，具有以下几个主要特点：</p>
+<ol>
+<li>自动化 HTTPS<br>Caddy 自动为所有托管的网站配置 HTTPS，使用 Let’s Encrypt 提供的证书。这意味着你无需手动处理证书的生成和续期，极大地简化了安全配置。</li>
+<li>易于配置<br>Caddy 使用一个简单的配置文件（Caddyfile），使得配置反向代理、负载均衡、路由等功能变得直观易懂。其语法设计使得用户可以快速上手。</li>
+<li>反向代理<br>Caddy 可以轻松配置为反向代理，允许你将请求转发到其他服务或应用程序。这对于微服务架构或多服务应用程序特别有用。</li>
+<li>插件系统<br>Caddy 支持插件，可以扩展其功能，例如身份验证、速率限制、监控等。这使得 Caddy 可以适应各种需求。</li>
+<li>支持 HTTP/2 和 QUIC<br>Caddy 默认支持 HTTP/2 和 QUIC，这些现代协议提供了更好的性能和用户体验。</li>
+<li>多平台支持<br>Caddy 可以在多种操作系统上运行，包括 Linux、Windows 和 macOS。</li>
+<li>丰富的社区和文档<br>Caddy 拥有活跃的社区和丰富的文档，用户可以轻松找到所需的支持和示例。</li>
+</ol>
+<h2 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a><strong>适用场景</strong></h2><ul>
+<li>静态网站托管：Caddy 非常适合托管静态网站。</li>
+<li>API 网关：可以用作 API 的反向代理。</li>
+<li>微服务架构：在微服务环境中管理请求和负载均衡。</li>
+<li>开发和测试环境：快速搭建和测试本地开发环境。</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a><strong>安装</strong></h2><p>以Debian12为例,依次执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl</span><br><span class="line"></span><br><span class="line">curl -1sLf <span class="string">'https://dl.cloudsmith.io/public/caddy/stable/gpg.key'</span> | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg</span><br><span class="line"></span><br><span class="line">curl -1sLf <span class="string">'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt'</span> | sudo tee /etc/apt/sources.list.d/caddy-stable.list</span><br><span class="line"></span><br><span class="line">sudo apt update</span><br><span class="line"></span><br><span class="line">sudo apt install caddy</span><br></pre></td></tr></table></figure>
+<h2 id="配置文件路径"><a href="#配置文件路径" class="headerlink" title="配置文件路径"></a>配置文件路径</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/caddy/Caddyfile</span><br></pre></td></tr></table></figure>
+<h2 id="服务管理"><a href="#服务管理" class="headerlink" title="服务管理"></a>服务管理</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动Caddy</span></span><br><span class="line">systemctl start caddy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 开机自启</span></span><br><span class="line">systemctl <span class="built_in">enable</span> caddy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启Caddy2</span></span><br><span class="line">systemctl restart caddy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止Caddy2</span></span><br><span class="line">systemctl stop caddy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载配置Caddy配置文件（修改配置文件后执行）</span></span><br><span class="line">systemctl reload caddy</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看Caddy2运行状态</span></span><br><span class="line">systemctl status caddy</span><br></pre></td></tr></table></figure>
+<h2 id="配置示例"><a href="#配置示例" class="headerlink" title="配置示例"></a><strong>配置示例</strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"># 反向代理</span><br><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy 127.0.0.1:8080 #这里输入你想反代的服务器IP和端口</span><br><span class="line">    encode gzip</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 反向代理+基本认证</span><br><span class="line">example.com &#123;</span><br><span class="line">    basicauth / username password</span><br><span class="line">    reverse_proxy localhost:3000</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 反向代理+负载均衡</span><br><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy backend1:3000 backend2:3000</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 重定向</span><br><span class="line">example.com &#123;</span><br><span class="line">    redir https://naiyous.com&#123;uri&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="更多配置"><a href="#更多配置" class="headerlink" title="更多配置"></a><strong>更多配置</strong></h2><h3 id="1-负载均衡"><a href="#1-负载均衡" class="headerlink" title="1. 负载均衡"></a>1. 负载均衡</h3><p>你可以通过指定多个后端服务器来实现负载均衡。Caddy 会自动在这些服务器之间分配流量。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy backend1:3000 backend2:3000 &#123;</span><br><span class="line">        lb_policy round_robin</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-路由和重定向"><a href="#2-路由和重定向" class="headerlink" title="2. 路由和重定向"></a>2. 路由和重定向</h3><p>你可以配置不同的路由和重定向规则。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy /api/* localhost:3001</span><br><span class="line">    reverse_proxy /app/* localhost:3002</span><br><span class="line">    redir /old-path /new-path 301</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-WebSocket-支持"><a href="#3-WebSocket-支持" class="headerlink" title="3. WebSocket 支持"></a>3. WebSocket 支持</h3><p>Caddy 支持 WebSocket 代理。你只需像普通的 HTTP 请求一样配置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy /ws/* localhost:3000 &#123;</span><br><span class="line">        header_up X-Real-IP &#123;remote&#125;</span><br><span class="line">        header_up X-Forwarded-For &#123;remote&#125;</span><br><span class="line">        header_up X-Forwarded-Proto &#123;scheme&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-SSL-TLS-配置"><a href="#4-SSL-TLS-配置" class="headerlink" title="4. SSL/TLS 配置"></a>4. SSL/TLS 配置</h3><p>Caddy 默认启用 HTTPS。如果你需要自定义 SSL/TLS 设置，可以在 Caddyfile 中进行配置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy localhost:3000</span><br><span class="line">    tls &#123;</span><br><span class="line">        cert_file /path/to/cert.pem</span><br><span class="line">        key_file /path/to/key.pem</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5-基于路径的反向代理"><a href="#5-基于路径的反向代理" class="headerlink" title="5. 基于路径的反向代理"></a>5. 基于路径的反向代理</h3><p>你可以根据请求的路径将请求代理到不同的服务。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy /service1/* localhost:3001</span><br><span class="line">    reverse_proxy /service2/* localhost:3002</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="6-自定义错误页面"><a href="#6-自定义错误页面" class="headerlink" title="6. 自定义错误页面"></a>6. 自定义错误页面</h3><p>你可以配置自定义错误页面。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy localhost:3000</span><br><span class="line">    handle_errors &#123;</span><br><span class="line">        respond 404 &quot;Sorry, the page was not found&quot; 404</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="7-添加-HTTP-头"><a href="#7-添加-HTTP-头" class="headerlink" title="7. 添加 HTTP 头"></a>7. 添加 HTTP 头</h3><p>你可以在反向代理请求中添加或修改 HTTP 头。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy localhost:3000 &#123;</span><br><span class="line">        header_up X-Forwarded-For &#123;remote&#125;</span><br><span class="line">        header_up X-Real-IP &#123;remote&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="8-使用插件"><a href="#8-使用插件" class="headerlink" title="8. 使用插件"></a>8. 使用插件</h3><p>Caddy 有许多插件可以扩展其功能，比如身份验证、速率限制等。你可以根据需要安装这些插件并在 Caddyfile 中配置。</p>
+<h3 id="9-设置速率限制"><a href="#9-设置速率限制" class="headerlink" title="9. 设置速率限制"></a>9. 设置速率限制</h3><p>你可以对请求设置速率限制，以防止滥用。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy localhost:3000</span><br><span class="line">    rate_limit &#123;</span><br><span class="line">        zone rate_limit 10r/s</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="10-访问日志和错误日志"><a href="#10-访问日志和错误日志" class="headerlink" title="10. 访问日志和错误日志"></a>10. 访问日志和错误日志</h3><p>你可以启用访问日志和错误日志来监控请求和错误。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy localhost:3000</span><br><span class="line">    log &#123;</span><br><span class="line">        output file /var/log/caddy/access.log</span><br><span class="line">        format json</span><br><span class="line">    &#125;</span><br><span class="line">    log &#123;</span><br><span class="line">        output file /var/log/caddy/error.log</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="11-真实ip"><a href="#11-真实ip" class="headerlink" title="11.真实ip"></a>11.真实ip</h3><ul>
+<li><code>header_up</code>：用于将请求头信息添加到代理请求中。</li>
+<li><code>X-Real-IP</code>：直接传递客户端的 IP 地址。</li>
+<li><code>X-Forwarded-For</code>：包含客户端的 IP 地址链，允许后端识别原始客户端 IP。</li>
+<li><code>X-Forwarded-Proto</code>：指示原始请求的协议（HTTP 或 HTTPS）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">example.com &#123;</span><br><span class="line">    reverse_proxy localhost:3000 &#123;</span><br><span class="line">        header_up X-Real-IP &#123;remote&#125;</span><br><span class="line">        header_up X-Forwarded-For &#123;remote&#125;</span><br><span class="line">        header_up X-Forwarded-Proto &#123;scheme&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本文转自<a href="https://www.sdqps.top/index.php/archives/24/" target="_blank" rel="noopener">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Caddy/">Caddy</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2025/01/16/Caddy-快速配置/" data-title="Caddy 快速配置 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2024/07/01/Kubernetes-配置Pod使用代理上网/"  title="Kubernetes 配置Pod使用代理上网">
+ <strong>下一篇：</strong><br/> 
+ <span>Kubernetes 配置Pod使用代理上网
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2025/01/16/Caddy-快速配置/" data-title="Caddy 快速配置" data-url="https://luckymrwang.github.io/2025/01/16/Caddy-快速配置/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#官方安装文档"><span class="toc-number">1.</span> <span class="toc-text">官方安装文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">2.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#适用场景"><span class="toc-number">3.</span> <span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">4.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置文件路径"><span class="toc-number">5.</span> <span class="toc-text">配置文件路径</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务管理"><span class="toc-number">6.</span> <span class="toc-text">服务管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置示例"><span class="toc-number">7.</span> <span class="toc-text">配置示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更多配置"><span class="toc-number">8.</span> <span class="toc-text">更多配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-负载均衡"><span class="toc-number">8.1.</span> <span class="toc-text">1. 负载均衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-路由和重定向"><span class="toc-number">8.2.</span> <span class="toc-text">2. 路由和重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-WebSocket-支持"><span class="toc-number">8.3.</span> <span class="toc-text">3. WebSocket 支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-SSL-TLS-配置"><span class="toc-number">8.4.</span> <span class="toc-text">4. SSL/TLS 配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-基于路径的反向代理"><span class="toc-number">8.5.</span> <span class="toc-text">5. 基于路径的反向代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-自定义错误页面"><span class="toc-number">8.6.</span> <span class="toc-text">6. 自定义错误页面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-添加-HTTP-头"><span class="toc-number">8.7.</span> <span class="toc-text">7. 添加 HTTP 头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-使用插件"><span class="toc-number">8.8.</span> <span class="toc-text">8. 使用插件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-设置速率限制"><span class="toc-number">8.9.</span> <span class="toc-text">9. 设置速率限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-访问日志和错误日志"><span class="toc-number">8.10.</span> <span class="toc-text">10. 访问日志和错误日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-真实ip"><span class="toc-number">8.11.</span> <span class="toc-text">11.真实ip</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
