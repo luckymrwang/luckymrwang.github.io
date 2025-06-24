@@ -1,0 +1,508 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Apache 个别参数解释 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Apache可以直接使用2.0版本产品线。针对Apache的优化主要是针对httpd.conf的优化，当然还有其他地方，如果特别留意的话，网上常有专家惊呼“居然这么多人忽略xxxx处的优化”等等，实际情况也确实如此，因为优化的地方实在太多了，httpd.conf只能做一个出发点。即便如此如果仅仅使用httpd.conf出厂默认值的话还是令人痛心不已。 httpd.conf的优化点有以下几处：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache 个别参数解释">
+<meta property="og:url" content="https://luckymrwang.github.io/2015/11/03/Apache-%E4%B8%AA%E5%88%AB%E5%8F%82%E6%95%B0%E8%A7%A3%E9%87%8A/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Apache可以直接使用2.0版本产品线。针对Apache的优化主要是针对httpd.conf的优化，当然还有其他地方，如果特别留意的话，网上常有专家惊呼“居然这么多人忽略xxxx处的优化”等等，实际情况也确实如此，因为优化的地方实在太多了，httpd.conf只能做一个出发点。即便如此如果仅仅使用httpd.conf出厂默认值的话还是令人痛心不已。 httpd.conf的优化点有以下几处：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-11-03T09:09:22.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.186Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Apache">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/03/Apache-个别参数解释/" title="Apache 个别参数解释" itemprop="url">Apache 个别参数解释</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-03T09:09:22.000Z" itemprop="datePublished"> 发表于 2015-11-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#KeepAlive"><span class="toc-number">1.</span> <span class="toc-text">KeepAlive</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MaxKeepAliveRequests"><span class="toc-number">2.</span> <span class="toc-text">MaxKeepAliveRequests</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#KeepAliveTimeout"><span class="toc-number">3.</span> <span class="toc-text">KeepAliveTimeout</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#StartServers"><span class="toc-number">4.</span> <span class="toc-text">StartServers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MinSpareServers%E3%80%81MaxSpareServers"><span class="toc-number">5.</span> <span class="toc-text">MinSpareServers、MaxSpareServers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ServerLimit%EF%BC%8CMaxClients"><span class="toc-number">6.</span> <span class="toc-text">ServerLimit，MaxClients</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MaxRequestsPerChild"><span class="toc-number">7.</span> <span class="toc-text">MaxRequestsPerChild</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HostnameLookups"><span class="toc-number">8.</span> <span class="toc-text">HostnameLookups</span></a></li></ol>
+		
+		</div>
+		
+		<p>Apache可以直接使用2.0版本产品线。针对Apache的优化主要是针对httpd.conf的优化，当然还有其他地方，如果特别留意的话，网上常有专家惊呼“居然这么多人忽略xxxx处的优化”等等，实际情况也确实如此，因为优化的地方实在太多了，httpd.conf只能做一个出发点。即便如此如果仅仅使用httpd.conf出厂默认值的话还是令人痛心不已。</p>
+<p>httpd.conf的优化点有以下几处：</p>
+<span id="more"></span>
+<h4 id="KeepAlive"><a href="#KeepAlive" class="headerlink" title="KeepAlive"></a>KeepAlive</h4><p>其实Akamai的图片存储服务主要解决服务器的KeepAlive问题。看下面这个sample.html：</p>
+<pre><code>Hello world&lt;img src=&quot;http://blog.penner.cn/hello.gif&quot; /&gt;
+</code></pre>
+<p>当浏览器将请求发送给Apache后，Apache会为该用户建立连接，返回&#x2F;sample.html的内容，浏览器解析HTML文件，发现还需要显示 &#x2F;hello.gif，就再次向Apache发出请求。这时如果KeepAlive为Off，Apache就需要重新建立连接。试想如果页面请求了 1000个图片，Apache就需要建立1000个连接（但建立第N个时候N-x个连接已经被Apache聪明的关闭了)。如果KeepAlive为 On，Apache会在同一个连接中处理所有这些请求，大大的节省了连接资源，可惜这个世界上有很多攻击者，他们会利用这个连接不断的特性不停的请求文件，耗尽服务器的资源。所以一些大公司像Yahoo、AOL都选用Akamai作为图片存储服务，结果这些公司的sample.html版本就成了这个样子：</p>
+<pre><code>Hello world&lt;img src=&quot;/hello.gif&quot; /&gt;
+</code></pre>
+<p>(真实地图片地址会比这个复杂)这样一来每次用户访问仅会向本机服务器的Apache请求一次，剩下的请求发送到akamai了。不必为akamai的能力担心，因为它有充足的抗负载技术。</p>
+<h4 id="MaxKeepAliveRequests"><a href="#MaxKeepAliveRequests" class="headerlink" title="MaxKeepAliveRequests"></a>MaxKeepAliveRequests</h4><p>明白了1中的内容，这个看名字就知道一个连接可以最多发送多少次请求。默认是500。</p>
+<h4 id="KeepAliveTimeout"><a href="#KeepAliveTimeout" class="headerlink" title="KeepAliveTimeout"></a>KeepAliveTimeout</h4><p>同样，两次请求间超过这个数字就中断这个连接。如果你的KeepAlive是On，MaxKeepAliveRequests是500， KeepAliveTimeout是100，你可以算算攻击者们用多久可以耗干你的Apache。我把KeepAliveTimeout设为5，因为从我网站受众人群的上网速度和网站的图片大小、数量考虑，5秒种可以完成加载多数页面。</p>
+<h4 id="StartServers"><a href="#StartServers" class="headerlink" title="StartServers"></a>StartServers</h4><p>StartServers 的数字表示Apache启动后直接创建的httpd数量。比如你的服务器平时平均需要100个httpd，如果把StartServers设为10就会导致Apache启动之初不停的创建剩下的90个httpd。如果你的服务器平时最多就用20个httpd，把StartServers设为50就浪费了资源。这个参数没什么大不了，因为Apache会自己趋向于适合的httpd服务数。</p>
+<h4 id="MinSpareServers、MaxSpareServers"><a href="#MinSpareServers、MaxSpareServers" class="headerlink" title="MinSpareServers、MaxSpareServers"></a>MinSpareServers、MaxSpareServers</h4><p>保留备用的httpd服务数最小值和最大值。即当不需要这么多httpd服务时，依然最少保留MinSpareServers个服务，但不超过MaxSpareServers个服务。需要根据Apache的运行寻找经验值。</p>
+<h4 id="ServerLimit，MaxClients"><a href="#ServerLimit，MaxClients" class="headerlink" title="ServerLimit，MaxClients"></a>ServerLimit，MaxClients</h4><p>比较重要的一个值。ServerLimit通常应该等于MaxClients。MaxClients决定了最大的httpd进程数，如果攻击者占用了 MaxClients的httpd服务数，你的网站就拒绝正常访问者访问了。但MaxClients的大小受内存的限制，因此Apache2的默认值是 250，并加上了ServerLimit参数作限制，如果想设大MaxClients，必须同时扩大ServerLimit，但ServerLimit不应超过MaxClients。</p>
+<h4 id="MaxRequestsPerChild"><a href="#MaxRequestsPerChild" class="headerlink" title="MaxRequestsPerChild"></a>MaxRequestsPerChild</h4><p>决定了每个httpd服务可以处理的最大请求数，超过这个数字就需要新的httpd服务，后者又由MaxClients限制，环环相套。我的MaxRequestsPerChild是10000。</p>
+<h4 id="HostnameLookups"><a href="#HostnameLookups" class="headerlink" title="HostnameLookups"></a>HostnameLookups</h4><p>设为Off，避免DNS查询的等待。<br>除了这8个参数外，Apache的另一个可塑点是加载的Module，把不需要的LoadModule注释掉即可，大大的节省了内存。但是问题是你不知道那个Module不需要，即便对照着Apache的Module文档朗读各个Module作用，也只能注释掉很少几个。下面是注释掉的几个Module：<br>mime_magic_module、info_module、userdir_module、proxy_module、proxy_ftp_module、proxy_http_module、proxy_connect_module。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Apache/">Apache</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2015/11/03/Apache-%E4%B8%AA%E5%88%AB%E5%8F%82%E6%95%B0%E8%A7%A3%E9%87%8A/" data-title="Apache 个别参数解释 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/11/12/正向代理与反向代理的区别/" title="正向代理与反向代理的区别">
+  <strong>上一篇：</strong><br/>
+  <span>
+  正向代理与反向代理的区别</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/11/03/MySQL-分表，分区的区别和联系/"  title="MySQL 分表，分区的区别和联系">
+ <strong>下一篇：</strong><br/> 
+ <span>MySQL 分表，分区的区别和联系
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/11/03/Apache-个别参数解释/" data-title="Apache 个别参数解释" data-url="https://luckymrwang.github.io/2015/11/03/Apache-%E4%B8%AA%E5%88%AB%E5%8F%82%E6%95%B0%E8%A7%A3%E9%87%8A/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#KeepAlive"><span class="toc-number">1.</span> <span class="toc-text">KeepAlive</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MaxKeepAliveRequests"><span class="toc-number">2.</span> <span class="toc-text">MaxKeepAliveRequests</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#KeepAliveTimeout"><span class="toc-number">3.</span> <span class="toc-text">KeepAliveTimeout</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#StartServers"><span class="toc-number">4.</span> <span class="toc-text">StartServers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MinSpareServers%E3%80%81MaxSpareServers"><span class="toc-number">5.</span> <span class="toc-text">MinSpareServers、MaxSpareServers</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ServerLimit%EF%BC%8CMaxClients"><span class="toc-number">6.</span> <span class="toc-text">ServerLimit，MaxClients</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MaxRequestsPerChild"><span class="toc-number">7.</span> <span class="toc-text">MaxRequestsPerChild</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HostnameLookups"><span class="toc-number">8.</span> <span class="toc-text">HostnameLookups</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

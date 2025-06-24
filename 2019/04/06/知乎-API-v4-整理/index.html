@@ -1,0 +1,579 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>知乎 API v4 整理 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="问题的答案 URL: https:&#x2F;&#x2F;www.zhihu.com&#x2F;api&#x2F;v4&#x2F;questions&#x2F;&#123;qid&#125;&#x2F;answers 参数： limit：数量，最大 20 offset：起始位置，从零开始 sort_by：{default, created}，表示默认排序或者时间排序 include：额外信息，包括is_normal,is_sticky,collapsed_by,su">
+<meta property="og:type" content="article">
+<meta property="og:title" content="知乎 API v4 整理">
+<meta property="og:url" content="https://luckymrwang.github.io/2019/04/06/%E7%9F%A5%E4%B9%8E-API-v4-%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="问题的答案 URL: https:&#x2F;&#x2F;www.zhihu.com&#x2F;api&#x2F;v4&#x2F;questions&#x2F;&#123;qid&#125;&#x2F;answers 参数： limit：数量，最大 20 offset：起始位置，从零开始 sort_by：{default, created}，表示默认排序或者时间排序 include：额外信息，包括is_normal,is_sticky,collapsed_by,su">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-04-06T13:21:53.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.214Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Api">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/04/06/知乎-API-v4-整理/" title="知乎 API v4 整理" itemprop="url">知乎 API v4 整理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-04-06T13:21:53.000Z" itemprop="datePublished"> 发表于 2019-04-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E7%9A%84%E7%AD%94%E6%A1%88"><span class="toc-number">1.</span> <span class="toc-text">问题的答案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E5%AE%9A%E4%BD%9C%E8%80%85%E7%9A%84%E5%9B%9E%E7%AD%94"><span class="toc-number">2.</span> <span class="toc-text">指定作者的回答</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E8%BA%AB%E4%BF%A1%E6%81%AF"><span class="toc-number">3.</span> <span class="toc-text">自身信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E6%B3%A8%E8%80%85%E4%BF%A1%E6%81%AF"><span class="toc-number">4.</span> <span class="toc-text">关注者信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%89%E4%B8%9D%E4%BF%A1%E6%81%AF"><span class="toc-number">5.</span> <span class="toc-text">粉丝信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B6%E8%97%8F%E5%A4%B9%E4%BF%A1%E6%81%AF"><span class="toc-number">6.</span> <span class="toc-text">收藏夹信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B6%E8%97%8F%E5%A4%B9%E4%B8%AD%E7%9A%84%E5%9B%9E%E7%AD%94%E6%91%98%E8%A6%81"><span class="toc-number">7.</span> <span class="toc-text">收藏夹中的回答摘要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E4%B9%8E%E8%AF%9D%E9%A2%98"><span class="toc-number">8.</span> <span class="toc-text">知乎话题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E4%B9%8E%E8%AF%9D%E9%A2%98%E7%B2%BE%E5%8D%8E"><span class="toc-number">9.</span> <span class="toc-text">知乎话题精华</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="问题的答案"><a href="#问题的答案" class="headerlink" title="问题的答案"></a>问题的答案</h3><ul>
+<li>URL: <code>https://www.zhihu.com/api/v4/questions/&#123;qid&#125;/answers</code></li>
+<li>参数：<ul>
+<li>limit：数量，最大 20</li>
+<li>offset：起始位置，从零开始</li>
+<li>sort_by：{default, created}，表示默认排序或者时间排序</li>
+<li>include：额外信息，包括<br><code>is_normal,is_sticky,collapsed_by,suggest_edit,comment_count,collapsed_counts,reviewing_comments_count,can_comment,content,editable_content,voteup_count,reshipment_settings,comment_permission,mark_infos,created_time,updated_time,relationship.is_author,voting,is_thanked,is_nothelp,upvoted_followees;author.is_blocking,is_blocked,is_followed,voteup_count,message_thread_token,badge[?(type=best_answerer)].topics</code></li>
+</ul>
+</li>
+</ul>
+<span id="more"></span>
+<ul>
+<li>eg: <a href="https://www.zhihu.com/api/v4/questions/51196509/answers?include=data%5B*%5D.is_normal,admin_closed_comment,reward_info,is_collapsed,annotation_action,annotation_detail,collapse_reason,is_sticky,collapsed_by,suggest_edit,comment_count,can_comment,content,editable_content,voteup_count,reshipment_settings,comment_permission,created_time,updated_time,review_info,relevant_info,question.detail,excerpt,relationship.is_authorized,is_author,voting,is_thanked,is_nothelp,is_labeled,is_recognized;data%5B*%5D.mark_infos%5B*%5D.url;data%5B*%5D.author.follower_count,badge%5B*%5D.topics&limit=5&offset=10&platform=desktop&sort_by=default">https://www.zhihu.com/api/v4/questions/51196509/answers?include=data[*].is_normal,admin_closed_comment,reward_info,is_collapsed,annotation_action,annotation_detail,collapse_reason,is_sticky,collapsed_by,suggest_edit,comment_count,can_comment,content,editable_content,voteup_count,reshipment_settings,comment_permission,created_time,updated_time,review_info,relevant_info,question.detail,excerpt,relationship.is_authorized,is_author,voting,is_thanked,is_nothelp,is_labeled,is_recognized;data[<em>].mark_infos[</em>].url;data[<em>].author.follower_count,badge[</em>].topics&amp;limit&#x3D;5&amp;offset&#x3D;10&amp;platform&#x3D;desktop&amp;sort_by&#x3D;default</a></li>
+</ul>
+<h3 id="指定作者的回答"><a href="#指定作者的回答" class="headerlink" title="指定作者的回答"></a>指定作者的回答</h3><ul>
+<li><p>URL：<code>https://www.zhihu.com/api/v4/members/&#123;un&#125;/answers</code></p>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>limit：数量，最大 20</li>
+<li>offset：起始位置，从零开始</li>
+<li>sort_by：{default, created}，表示默认排序或者时间排序</li>
+<li>include：额外信息，包括<code>is_normal,suggest_edit,comment_count,collapsed_counts,reviewing_comments_count,can_comment,content,voteup_count,reshipment_settings,comment_permission,mark_infos,created_time,updated_time,relationship.voting,is_author,is_thanked,is_nothelp,upvoted_followees;author.badge[?(type=best_answerer)].topics</code></li>
+</ul>
+</li>
+<li><p>eg: <a href="https://www.zhihu.com/api/v4/members/ying-ye-78/answers?offset=5&limit=15&sort_by=created&&include=data%5B*%5D.is_normal,suggest_edit,comment_count,collapsed_counts,reviewing_comments_count,can_comment,content,voteup_count,reshipment_settings,comment_permission,mark_infos,created_time,updated_time,relationship.voting,is_author,is_thanked,is_nothelp,upvoted_followees;data%5B*%5D.author.badge%5B?(type=best_answerer)%5D.topics">https://www.zhihu.com/api/v4/members/xxx/answers?offset=5&amp;limit=15&amp;sort_by&#x3D;created&amp;&amp;include&#x3D;data[*].is_normal,suggest_edit,comment_count,collapsed_counts,reviewing_comments_count,can_comment,content,voteup_count,reshipment_settings,comment_permission,mark_infos,created_time,updated_time,relationship.voting,is_author,is_thanked,is_nothelp,upvoted_followees;data[*].author.badge[?(type&#x3D;best_answerer)].topics</a></p>
+</li>
+</ul>
+<h3 id="自身信息"><a href="#自身信息" class="headerlink" title="自身信息"></a>自身信息</h3><ul>
+<li>URL：<code>https://www.zhihu.com/api/v4/me</code></li>
+<li>参数：<ul>
+<li>include：额外信息，包括<code>locations,employments,gender,educations,business,voteup_count,thanked_Count,follower_count,following_count,cover_url,following_topic_count,following_question_count,following_favlists_count,following_columns_count,avatar_hue,answer_count,articles_count,pins_count,question_count,columns_count,commercial_question_count,favorite_count,favorited_count,logs_count,included_answers_count,included_articles_count,included_text,message_thread_token,account_status,is_active,is_bind_phone,is_force_renamed,is_bind_sina,is_privacy_protected,sina_weibo_url,sina_weibo_name,show_sina_weibo,is_blocking,is_blocked,is_following,is_followed,is_org_createpin_white_user,mutual_followees_count,vote_to_count,vote_from_count,thank_to_count,thank_from_count,thanked_count,description,hosted_live_count,participated_live_count,allow_message,industry_category,org_name,org_homepage,badge[?(type=best_answerer)].topics</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="关注者信息"><a href="#关注者信息" class="headerlink" title="关注者信息"></a>关注者信息</h3><ul>
+<li><p>URL：<code>https://www.zhihu.com/api/v4/members/&#123;un&#125;/followees</code></p>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>limit：数量，最大 20</li>
+<li>offset：起始位置，从零开始</li>
+<li>include：额外信息，包括<code>answer_count,articles_count,gender,follower_count,is_followed,is_following,badge[?(type=best_answerer)].topics</code></li>
+</ul>
+</li>
+<li><p>eg: <a href="https://www.zhihu.com/api/v4/members/yksin/followees?include=data%5B*%5D.answer_count,articles_count,gender,follower_count,is_followed,is_following,badge%5B?(type=best_answerer)%5D.topics&offset=0&limit=20">https://www.zhihu.com/api/v4/members/xxx/followees?include=data[*].answer_count,articles_count,gender,follower_count,is_followed,is_following,badge[?(type&#x3D;best_answerer)].topics&amp;offset&#x3D;0&amp;limit&#x3D;20</a></p>
+</li>
+</ul>
+<h3 id="粉丝信息"><a href="#粉丝信息" class="headerlink" title="粉丝信息"></a>粉丝信息</h3><ul>
+<li><p>URL：<a href="https://www.zhihu.com/api/v4/members/%7Bun%7D/followers">https://www.zhihu.com/api/v4/members/{un}/followers</a></p>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>limit：数量，最大 20</li>
+<li>offset：起始位置，从零开始</li>
+<li>include：额外信息，包括<code>answer_count,articles_count,gender,follower_count,is_followed,is_following,badge[?(type=best_answerer)].topics</code></li>
+</ul>
+</li>
+<li><p>eg: <a href="https://www.zhihu.com/api/v4/members/yksin/followers?include=data%5B*%5D.answer_count,articles_count,gender,follower_count,is_followed,is_following,badge%5B?(type=best_answerer)%5D.topics&offset=0&limit=20">https://www.zhihu.com/api/v4/members/xxx/followers?include=data[*].answer_count,articles_count,gender,follower_count,is_followed,is_following,badge[?(type&#x3D;best_answerer)].topics&amp;offset&#x3D;0&amp;limit&#x3D;20</a></p>
+</li>
+</ul>
+<h3 id="收藏夹信息"><a href="#收藏夹信息" class="headerlink" title="收藏夹信息"></a>收藏夹信息</h3><ul>
+<li>URL：<code>https://api.zhihu.com/collections/&#123;cid&#125;</code></li>
+</ul>
+<h3 id="收藏夹中的回答摘要"><a href="#收藏夹中的回答摘要" class="headerlink" title="收藏夹中的回答摘要"></a>收藏夹中的回答摘要</h3><ul>
+<li>URL：<code>https://api.zhihu.com/collections/&#123;cid&#125;/answers</code></li>
+<li>参数：<ul>
+<li>limit：数量，最大 20</li>
+<li>offset：起始位置，从零开始</li>
+</ul>
+</li>
+</ul>
+<h3 id="知乎话题"><a href="#知乎话题" class="headerlink" title="知乎话题"></a>知乎话题</h3><ul>
+<li>URL：<code>https://www.zhihu.com/api/v4/topics/&#123;tid&#125;</code></li>
+</ul>
+<h3 id="知乎话题精华"><a href="#知乎话题精华" class="headerlink" title="知乎话题精华"></a>知乎话题精华</h3><ul>
+<li><p>URL：<code>https://www.zhihu.com/api/v4/topics/&#123;tid&#125;/feeds/essence</code></p>
+</li>
+<li><p>参数：</p>
+<ul>
+<li>limit：数量，最大 20</li>
+<li>offset：起始位置，从零开始</li>
+<li>include：额外信息，包括<br><code>data[?(target.type=topic_sticky_module)].target.data[?(target.type=answer)].target.content,relationship.is_authorized,is_author,voting,is_thanked,is_nothelp;data[?(target.type=topic_sticky_module)].target.data[?(target.type=answer)].target.is_normal,comment_count,voteup_count,content,relevant_info,excerpt.author.badge[?(type=best_answerer)].topics;data[?(target.type=topic_sticky_module)].target.data[?(target.type=article)].target.content,voteup_count,comment_count,voting,author.badge[?(type=best_answerer)].topics;data[?(target.type=topic_sticky_module)].target.data[?(target.type=people)].target.answer_count,articles_count,gender,follower_count,is_followed,is_following,badge[?(type=best_answerer)].topics;data[?(target.type=answer)].target.annotation_detail,content,hermes_label,is_labeled,relationship.is_authorized,is_author,voting,is_thanked,is_nothelp;data[?(target.type=answer)].target.author.badge[?(type=best_answerer)].topics;data[?(target.type=article)].target.annotation_detail,content,hermes_label,is_labeled,author.badge[?(type=best_answerer)].topics;data[?(target.type=question)].target.annotation_detail,comment_count</code></li>
+</ul>
+</li>
+<li><p>eg: <a href="https://www.zhihu.com/api/v4/topics/19555634/feeds/essence?include=data%5B?(target.type=topic_sticky_module)%5D.target.data%5B?(target.type=answer)%5D.target.content,relationship.is_authorized,is_author,voting,is_thanked,is_nothelp;data%5B?(target.type=topic_sticky_module)%5D.target.data%5B?(target.type=answer)%5D.target.is_normal,comment_count,voteup_count,content,relevant_info,excerpt.author.badge%5B?(type=best_answerer)%5D.topics;data%5B?(target.type=topic_sticky_module)%5D.target.data%5B?(target.type=article)%5D.target.content,voteup_count,comment_count,voting,author.badge%5B?(type=best_answerer)%5D.topics;data%5B?(target.type=topic_sticky_module)%5D.target.data%5B?(target.type=people)%5D.target.answer_count,articles_count,gender,follower_count,is_followed,is_following,badge%5B?(type=best_answerer)%5D.topics;data%5B?(target.type=answer)%5D.target.annotation_detail,content,hermes_label,is_labeled,relationship.is_authorized,is_author,voting,is_thanked,is_nothelp;data%5B?(target.type=answer)%5D.target.author.badge%5B?(type=best_answerer)%5D.topics;data%5B?(target.type=article)%5D.target.annotation_detail,content,hermes_label,is_labeled,author.badge%5B?(type=best_answerer)%5D.topics;data%5B?(target.type=question)%5D.target.annotation_detail,comment_count;&limit=10&offset=10">https://www.zhihu.com/api/v4/topics/19555634/feeds/essence?include=data[?(target.type&#x3D;topic_sticky_module)].target.data[?(target.type&#x3D;answer)].target.content,relationship.is_authorized,is_author,voting,is_thanked,is_nothelp;data[?(target.type&#x3D;topic_sticky_module)].target.data[?(target.type&#x3D;answer)].target.is_normal,comment_count,voteup_count,content,relevant_info,excerpt.author.badge[?(type&#x3D;best_answerer)].topics;data[?(target.type&#x3D;topic_sticky_module)].target.data[?(target.type&#x3D;article)].target.content,voteup_count,comment_count,voting,author.badge[?(type&#x3D;best_answerer)].topics;data[?(target.type&#x3D;topic_sticky_module)].target.data[?(target.type&#x3D;people)].target.answer_count,articles_count,gender,follower_count,is_followed,is_following,badge[?(type&#x3D;best_answerer)].topics;data[?(target.type&#x3D;answer)].target.annotation_detail,content,hermes_label,is_labeled,relationship.is_authorized,is_author,voting,is_thanked,is_nothelp;data[?(target.type&#x3D;answer)].target.author.badge[?(type&#x3D;best_answerer)].topics;data[?(target.type&#x3D;article)].target.annotation_detail,content,hermes_label,is_labeled,author.badge[?(type&#x3D;best_answerer)].topics;data[?(target.type&#x3D;question)].target.annotation_detail,comment_count;&amp;limit&#x3D;10&amp;offset&#x3D;10</a></p>
+</li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Api/">Api</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2019/04/06/%E7%9F%A5%E4%B9%8E-API-v4-%E6%95%B4%E7%90%86/" data-title="知乎 API v4 整理 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/05/07/Mac安装PostgreSQL/" title="Mac安装PostgreSQL">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Mac安装PostgreSQL</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/03/18/wrk-http性能测试工具使用指南/"  title="wrk - http性能测试工具使用指南">
+ <strong>下一篇：</strong><br/> 
+ <span>wrk - http性能测试工具使用指南
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2019/04/06/知乎-API-v4-整理/" data-title="知乎 API v4 整理" data-url="https://luckymrwang.github.io/2019/04/06/%E7%9F%A5%E4%B9%8E-API-v4-%E6%95%B4%E7%90%86/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E7%9A%84%E7%AD%94%E6%A1%88"><span class="toc-number">1.</span> <span class="toc-text">问题的答案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E5%AE%9A%E4%BD%9C%E8%80%85%E7%9A%84%E5%9B%9E%E7%AD%94"><span class="toc-number">2.</span> <span class="toc-text">指定作者的回答</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E8%BA%AB%E4%BF%A1%E6%81%AF"><span class="toc-number">3.</span> <span class="toc-text">自身信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E6%B3%A8%E8%80%85%E4%BF%A1%E6%81%AF"><span class="toc-number">4.</span> <span class="toc-text">关注者信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%89%E4%B8%9D%E4%BF%A1%E6%81%AF"><span class="toc-number">5.</span> <span class="toc-text">粉丝信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B6%E8%97%8F%E5%A4%B9%E4%BF%A1%E6%81%AF"><span class="toc-number">6.</span> <span class="toc-text">收藏夹信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%B6%E8%97%8F%E5%A4%B9%E4%B8%AD%E7%9A%84%E5%9B%9E%E7%AD%94%E6%91%98%E8%A6%81"><span class="toc-number">7.</span> <span class="toc-text">收藏夹中的回答摘要</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E4%B9%8E%E8%AF%9D%E9%A2%98"><span class="toc-number">8.</span> <span class="toc-text">知乎话题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%A5%E4%B9%8E%E8%AF%9D%E9%A2%98%E7%B2%BE%E5%8D%8E"><span class="toc-number">9.</span> <span class="toc-text">知乎话题精华</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,523 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>VSCode阅读Linux源码 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="前言平常都是通过网页在线查询和阅读 Linux源码 ，这个网站bootlin是一家提供在线查找阅读linux大部分内核源码的社区，支持查看不同的内核版本，特别方便。但是毕竟是网页版，每次跳转或者查看函数引用都要刷新页面，流畅度取决于使用者的网速，总归体验是不如在本地通过IDE查看的。所以才有了这篇操作手册式的文章，一是通过VSCode来流畅地查看linux源码，二是熟悉下搭建的流程。像Linux这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VSCode阅读Linux源码">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/09/09/VSCode%E9%98%85%E8%AF%BBLinux%E6%BA%90%E7%A0%81/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="前言平常都是通过网页在线查询和阅读 Linux源码 ，这个网站bootlin是一家提供在线查找阅读linux大部分内核源码的社区，支持查看不同的内核版本，特别方便。但是毕竟是网页版，每次跳转或者查看函数引用都要刷新页面，流畅度取决于使用者的网速，总归体验是不如在本地通过IDE查看的。所以才有了这篇操作手册式的文章，一是通过VSCode来流畅地查看linux源码，二是熟悉下搭建的流程。像Linux这">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/linux_sock.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/linux_gnu.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/linux_ssh.png">
+<meta property="article:published_time" content="2022-09-09T05:52:15.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.205Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/linux_sock.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/09/09/VSCode阅读Linux源码/" title="VSCode阅读Linux源码" itemprop="url">VSCode阅读Linux源码</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-09-09T05:52:15.000Z" itemprop="datePublished"> 发表于 2022-09-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83"><span class="toc-number">2.1.</span> <span class="toc-text">基本环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%B9%B6%E8%A7%A3%E5%8E%8B%E6%BA%90%E7%A0%81"><span class="toc-number">2.1.1.</span> <span class="toc-text">下载并解压源码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-global-%E5%B7%A5%E5%85%B7"><span class="toc-number">2.2.</span> <span class="toc-text">配置 global 工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-global-%E5%B7%A5%E5%85%B7"><span class="toc-number">2.2.1.</span> <span class="toc-text">安装 global 工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-global-%E6%8F%92%E4%BB%B6"><span class="toc-number">2.2.2.</span> <span class="toc-text">安装 global 插件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90-tag"><span class="toc-number">2.3.</span> <span class="toc-text">生成 tag</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>平常都是通过网页在线查询和阅读 <a href="https://elixir.bootlin.com/linux/latest/source">Linux源码</a> ，这个网站<code>bootlin</code>是一家提供在线查找阅读linux大部分内核源码的社区，支持查看不同的内核版本，特别方便。但是毕竟是网页版，每次跳转或者查看函数引用都要刷新页面，流畅度取决于使用者的网速，总归体验是不如在本地通过IDE查看的。所以才有了这篇操作手册式的文章，一是通过VSCode来流畅地查看linux源码，二是熟悉下搭建的流程。像Linux这种顶级而庞大的项目代码，本来以为会很麻烦，然而却非常地简单，毕竟VSCode足够强大。</p>
+<span id="more"></span>
+<p>先查看下最终效果图：</p>
+<p><img src="/images/linux_sock.png"></p>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><h2 id="基本环境"><a href="#基本环境" class="headerlink" title="基本环境"></a>基本环境</h2><p>这里用宿主机 <code>Mac</code> + 虚拟机 <code>Ubuntu</code> 配置环境</p>
+<h3 id="下载并解压源码"><a href="#下载并解压源码" class="headerlink" title="下载并解压源码"></a>下载并解压源码</h3><p>源码从 <a href="https://mirrors.edge.kernel.org/pub/linux/kernel/">kernel.org</a> 上下载，选择一个你想阅读的内核版本下载。<br>以 <a href="https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-5.10.142.tar.gz">linux-5.10.142.tar.gz</a> 为列</p>
+<p>在 Linux 虚拟机中执行如下命令下载内核代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://mirrors.edge.kernel.org/pub/linux/kernel/v5.x/linux-5.10.142.tar.gz</span><br></pre></td></tr></table></figure>
+
+<p>使用如下命令解压到当前目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xzvf linux-5.10.142.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置-global-工具"><a href="#配置-global-工具" class="headerlink" title="配置 global 工具"></a>配置 global 工具</h2><h3 id="安装-global-工具"><a href="#安装-global-工具" class="headerlink" title="安装 global 工具"></a>安装 global 工具</h3><p>global 工具是 GNU 协议下的源码标记软件。Ubuntu 上使用 apt 安装只需要执行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install global</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装-global-插件"><a href="#安装-global-插件" class="headerlink" title="安装 global 插件"></a>安装 global 插件</h3><p>VSCode 上有现成的插件可以直接使用，我们在 VSCode 这个 SSH 会话里安装 C&#x2F;C++ GNU Global 插件，</p>
+<p><img src="/images/linux_gnu.png"></p>
+<p>然后在内核代码项目中新建 <code>.vscode/settings.json</code>（如果自定义了 global 工具的路径的话需要在这里显式地配置 <code>gnuGlobal.globalExecutable</code> 和 <code>gnuGlobal.gtagsExecutable</code> 字段）。</p>
+<p><img src="/images/linux_ssh.png"></p>
+<p>如果不清楚 global 的路径可以使用如下命令查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> is global</span><br><span class="line"><span class="built_in">which</span> is gtags</span><br></pre></td></tr></table></figure>
+
+<p>在 vscode 的 settings.json 配置里，指定 global 的相关路径。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;gnuGlobal.globalExecutable&quot;</span>: <span class="string">&quot;/usr/bin/global&quot;</span>,</span><br><span class="line"><span class="string">&quot;gnuGlobal.gtagsExecutable&quot;</span>: <span class="string">&quot;/usr/bin/gtags&quot;</span>,</span><br><span class="line"><span class="string">&quot;gnuGlobal.objDirPrefix&quot;</span>: <span class="string">&quot;/home/sino/go/src/linux/.global&quot;</span>,</span><br></pre></td></tr></table></figure>
+
+<p>注意：”gnuGlobal.objDirPrefix” 的路径必须要手动创建好，同时也要注意读写权限，如果不存在，会导致后续 Rebuild 的失败。</p>
+<h2 id="生成-tag"><a href="#生成-tag" class="headerlink" title="生成 tag"></a>生成 tag</h2><p>在 <code>VSCode</code> 工作区中按 <code>F1</code> 执行 <code>Global: Show GNU Global Version</code>，如果配置正确，右下角会显示 <code>global (GNU GLOBAL) &lt;Global_Version&gt;</code>。</p>
+<p>再次执行 <code>Global: Rebuild Gtags Database</code>，等待完成后就可以愉快地阅读 Linux 源码了。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/09/09/VSCode%E9%98%85%E8%AF%BBLinux%E6%BA%90%E7%A0%81/" data-title="VSCode阅读Linux源码 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/09/29/socket源IP为INADDR-ANY，linux内核何时选择IP/" title="socket源IP为INADDR_ANY，linux内核何时选择IP">
+  <strong>上一篇：</strong><br/>
+  <span>
+  socket源IP为INADDR_ANY，linux内核何时选择IP</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/09/05/深入了解-Systemd-之概要介绍/"  title="深入了解 Systemd 之概要介绍">
+ <strong>下一篇：</strong><br/> 
+ <span>深入了解 Systemd 之概要介绍
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/09/09/VSCode阅读Linux源码/" data-title="VSCode阅读Linux源码" data-url="https://luckymrwang.github.io/2022/09/09/VSCode%E9%98%85%E8%AF%BBLinux%E6%BA%90%E7%A0%81/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE"><span class="toc-number">2.</span> <span class="toc-text">配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%8E%AF%E5%A2%83"><span class="toc-number">2.1.</span> <span class="toc-text">基本环境</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E5%B9%B6%E8%A7%A3%E5%8E%8B%E6%BA%90%E7%A0%81"><span class="toc-number">2.1.1.</span> <span class="toc-text">下载并解压源码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-global-%E5%B7%A5%E5%85%B7"><span class="toc-number">2.2.</span> <span class="toc-text">配置 global 工具</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-global-%E5%B7%A5%E5%85%B7"><span class="toc-number">2.2.1.</span> <span class="toc-text">安装 global 工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85-global-%E6%8F%92%E4%BB%B6"><span class="toc-number">2.2.2.</span> <span class="toc-text">安装 global 插件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90-tag"><span class="toc-number">2.3.</span> <span class="toc-text">生成 tag</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

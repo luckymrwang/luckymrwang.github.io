@@ -1,0 +1,605 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>记一次 k8s apiserver watch hang 问题排查 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="问题背景传统的 kubernetes apiserver 请求访问链路为客户端直连 apiserver，为了做 apiserver 高可用，通常我们会给 apiserver 前端再套一层4层或7层代理做多个 apiserver 实例的负载均衡。 在我们的场景下，使用了 istio 的 ingressgateway 作为 client -&gt; apiserver 这条链路中的7层代理。链路变成了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次 k8s apiserver watch hang 问题排查">
+<meta property="og:url" content="https://luckymrwang.github.io/2024/04/02/%E8%AE%B0%E4%B8%80%E6%AC%A1-k8s-apiserver-watch-hang-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="问题背景传统的 kubernetes apiserver 请求访问链路为客户端直连 apiserver，为了做 apiserver 高可用，通常我们会给 apiserver 前端再套一层4层或7层代理做多个 apiserver 实例的负载均衡。 在我们的场景下，使用了 istio 的 ingressgateway 作为 client -&gt; apiserver 这条链路中的7层代理。链路变成了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch1.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch3.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch4.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch5.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch6.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch7.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch8.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch9.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch10.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch11.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch12.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch13.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch14.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch15.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch16.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch17.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch18.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch19.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch20.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch21.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch22.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch23.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch24.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch25.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch26.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/watch27.png">
+<meta property="article:published_time" content="2024-04-02T02:37:34.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.215Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/watch1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2024/04/02/记一次-k8s-apiserver-watch-hang-问题排查/" title="记一次 k8s apiserver watch hang 问题排查" itemprop="url">记一次 k8s apiserver watch hang 问题排查</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2024-04-02T02:37:34.000Z" itemprop="datePublished"> 发表于 2024-04-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E7%8E%B0%E8%B1%A1"><span class="toc-number">2.</span> <span class="toc-text">问题现象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">排查过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83"><span class="toc-number">3.1.</span> <span class="toc-text">环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0"><span class="toc-number">3.2.</span> <span class="toc-text">复现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%96%B0%E5%BB%BA%E8%B0%83%E8%AF%95%E7%BD%91%E5%85%B3-%E9%9A%94%E7%A6%BB%E7%BA%BF%E4%B8%8A%E6%B5%81%E9%87%8F"><span class="toc-number">3.2.1.</span> <span class="toc-text">1. 新建调试网关, 隔离线上流量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BF%AE%E6%94%B9%E6%9C%AC%E5%9C%B0-dns-%E5%B0%86%E6%B5%81%E9%87%8F%E6%89%93%E5%90%91%E7%BD%91%E5%85%B3"><span class="toc-number">3.2.2.</span> <span class="toc-text">2. 修改本地 dns, 将流量打向网关</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%9C%AC%E5%9C%B0%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC%E6%A8%A1%E6%8B%9F-watch-%E8%AF%B7%E6%B1%82"><span class="toc-number">3.2.3.</span> <span class="toc-text">3. 本地启动脚本模拟 watch 请求</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%92%E6%9F%A5"><span class="toc-number">3.3.</span> <span class="toc-text">排查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%BE%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">3.4.</span> <span class="toc-text">找解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81"><span class="toc-number">3.5.</span> <span class="toc-text">验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B9%E6%8D%AE-pprof-%E8%BF%9B%E8%A1%8C%E7%BB%93%E8%AE%BA%E7%9A%84%E4%BA%8C%E6%AC%A1%E9%AA%8C%E8%AF%81"><span class="toc-number">3.6.</span> <span class="toc-text">根据 pprof 进行结论的二次验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%A0%B9%E5%9B%A0"><span class="toc-number">4.</span> <span class="toc-text">问题根因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">思考</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="问题背景"><a href="#问题背景" class="headerlink" title="问题背景"></a>问题背景</h2><p>传统的 kubernetes apiserver 请求访问链路为客户端直连 apiserver，为了做 apiserver 高可用，通常我们会给 apiserver 前端再套一层4层或7层代理做多个 apiserver 实例的负载均衡。</p>
+<p>在我们的场景下，使用了 istio 的 ingressgateway 作为 <code>client -&gt; apiserver</code> 这条链路中的7层代理。链路变成了 <code>client -&gt; ingressgateway -&gt; apiserver</code> ，gateway 暴露 80 端口供客户端访问, 同时通过 istio virtualService + destinationRule 规则配置 gateway 能通过域名访问到 apiserver 6443 端口，从而实现流量路由。</p>
+<span id="more"></span>
+<p>具体链路如下图所示，</p>
+<p><img src="/images/watch1.png" alt="现在 apiserver 访问链路"></p>
+<p>在这样的链路下，我们遇到了如下问题，</p>
+<p>在 k8s apiserver 1.18 版本的集群在滚动重启过出现部分组件无法 watch 到事件的情况，客户端 watch 请求偶发 503。需要重启组件，重建 watch 连接才能恢复。</p>
+<h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p><img src="/images/watch2.png" alt="本次故障中 apiserver 访问链路"></p>
+<p>由于 k8s watch 请求是 http2 协议, 故 client 与 gateway 之间保持了长连接，同时 gateway 与后端也保持长连接。</p>
+<p>当 apiserver 发生滚动重建后，gateway 与旧 apiserver 连接断开，同时与新 apiserver 建连。此时 client 与 gateway 仍然保持着原来那根连接，故在不重建 7 层 http2 连接的情况下，请求没法打到 new apiserver。</p>
+<p>故客户端虽然与 Upstream 网关连接正常，但网关与 apiserver 侧可能仍使用到旧 apiserver 的连接对，导致无法 watch 到事件。</p>
+<p>具体现象为</p>
+<ol>
+<li>客户端出现 watch 请求 hang 住, 偶发出现 watch 请求 503, 报错为: <code>server is currently unable to handler the requests</code> <img src="/images/watch3.png" alt="503客户端截图"></li>
+<li>通过 pprof 查看到 client-go ListAndWatch 函数中的 <code>watchHandler</code> 执行了 6000+ 分钟, 实际应该在 5-10 分钟后就退出重连。</li>
+</ol>
+<p><img src="/images/watch4.png" alt="503pprof截图"></p>
+<h2 id="排查过程"><a href="#排查过程" class="headerlink" title="排查过程"></a>排查过程</h2><p>首先我的疑点是网关侧(ingressgateway)配置不正确导致了网关和旧 apiserver 连接仍保持，从而导致了客户端(client) watch 请求没有打到新 apiserver 上，但网关侧没有了现场更多信息，且线上 apiserver 集群不能频繁重启，故尝试用风险较低的场景<strong>复现问题</strong>。</p>
+<h3 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h3><ul>
+<li>两台 apiserver 实例(apiserver1、apiserver2)</li>
+<li>一台网关实例 (ingressgateway1)</li>
+<li>个人PC启动 k8s client</li>
+</ul>
+<h3 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h3><p>线下调试集群 apiserver (之后简称该集群为 staging 集群)请求一共有2实例, 脱敏考虑，我们简写其 ip 为 apiserverIp1、apiserverIp2</p>
+<p><img src="/images/watch5.png" alt="本地netstat截图"></p>
+<h4 id="1-新建调试网关-隔离线上流量"><a href="#1-新建调试网关-隔离线上流量" class="headerlink" title="1. 新建调试网关, 隔离线上流量"></a>1. 新建调试网关, 隔离线上流量</h4><p>先在生产环境单独起了一个 ingressgateway 网关实例，用于隔离线上流量，仅接收我的本地调试流量</p>
+<p><img src="/images/watch6.png" alt="单台调试网关实例"></p>
+<h4 id="2-修改本地-dns-将流量打向网关"><a href="#2-修改本地-dns-将流量打向网关" class="headerlink" title="2. 修改本地 dns, 将流量打向网关"></a>2. 修改本地 dns, 将流量打向网关</h4><p>此时在 <code>/etc/hosts</code> 中将 staging 集群 apiserver 请求定向指向该 ingressgateway 实例</p>
+<p><img src="/images/watch7.png" alt="hosts注入内容"></p>
+<h4 id="3-本地启动脚本模拟-watch-请求"><a href="#3-本地启动脚本模拟-watch-请求" class="headerlink" title="3. 本地启动脚本模拟 watch 请求"></a>3. 本地启动脚本模拟 watch 请求</h4><p>在本地启动以下脚本 watch staging pod 事件</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;flag&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	_ <span class="string">&quot;net/http/pprof&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	v1 <span class="string">&quot;k8s.io/api/core/v1&quot;</span></span><br><span class="line">	<span class="string">&quot;k8s.io/apimachinery/pkg/fields&quot;</span></span><br><span class="line">	<span class="string">&quot;k8s.io/client-go/kubernetes&quot;</span></span><br><span class="line">	<span class="string">&quot;k8s.io/client-go/tools/cache&quot;</span></span><br><span class="line">	<span class="string">&quot;k8s.io/client-go/tools/clientcmd&quot;</span></span><br><span class="line">	<span class="string">&quot;k8s.io/klog/v2&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	kubeconfig  = flag.String(<span class="string">&quot;kubeconfig&quot;</span>, <span class="string">&quot;./config&quot;</span>, <span class="string">&quot;absolute path to the kubeconfig file&quot;</span>)</span><br><span class="line">	enableProxy = flag.Bool(<span class="string">&quot;enableProxy&quot;</span>, <span class="literal">false</span>, <span class="string">&quot;if true, enable http proxy&quot;</span>)</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	klog.InitFlags(<span class="literal">nil</span>)</span><br><span class="line">	<span class="keyword">defer</span> klog.Flush()</span><br><span class="line">	flag.Parse()</span><br><span class="line">	klog.Info(<span class="string">&quot;Starting test-watch-conn&quot;</span>)</span><br><span class="line">	config, err := clientcmd.BuildConfigFromFlags(<span class="string">&quot;&quot;</span>, *kubeconfig)</span><br><span class="line">	config.UserAgent = <span class="string">&quot;test-from-xiaoxu&quot;</span></span><br><span class="line">	<span class="keyword">if</span> *enableProxy &#123;</span><br><span class="line">		klog.Info(<span class="string">&quot;Enable proxy, disabling tls cert verification&quot;</span>)</span><br><span class="line">		config.TLSClientConfig.CAData = <span class="literal">nil</span></span><br><span class="line">		config.TLSClientConfig.Insecure = <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err.Error())</span><br><span class="line">	&#125;</span><br><span class="line">	clientset, err := kubernetes.NewForConfig(config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err.Error())</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Set hangFlag to test health of watching connection</span></span><br><span class="line">	hangFlag := <span class="number">1</span></span><br><span class="line"></span><br><span class="line">	watchlist := cache.NewListWatchFromClient(clientset.CoreV1().RESTClient(), <span class="string">&quot;pods&quot;</span>, v1.NamespaceAll,</span><br><span class="line">		fields.Everything())</span><br><span class="line">	_, controller := cache.NewInformer(</span><br><span class="line">		watchlist,</span><br><span class="line">		&amp;v1.Pod&#123;&#125;,</span><br><span class="line">		time.Second*<span class="number">0</span>,</span><br><span class="line">		cache.ResourceEventHandlerFuncs&#123;</span><br><span class="line">			AddFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">				<span class="comment">// fmt.Printf(&quot;pods added...\n&quot;)</span></span><br><span class="line">			&#125;,</span><br><span class="line">			DeleteFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">				<span class="comment">// fmt.Printf(&quot;pods deleted...\n&quot;)</span></span><br><span class="line">			&#125;,</span><br><span class="line">			UpdateFunc: <span class="function"><span class="keyword">func</span><span class="params">(oldObj, newObj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">				currentTime := time.Now()</span><br><span class="line">				fmt.Printf(<span class="string">&quot;[%s] pods(%s) changed...\n&quot;</span>, currentTime.Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>), newObj.(*v1.Pod).Name)</span><br><span class="line">				<span class="keyword">if</span> hangFlag == <span class="number">1</span> &#123;</span><br><span class="line">					<span class="comment">// Reset hangFlag</span></span><br><span class="line">					hangFlag = <span class="number">0</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">	)</span><br><span class="line">	stop := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line">	<span class="keyword">go</span> controller.Run(stop)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// periodically check the connection</span></span><br><span class="line">	timer := time.NewTimer(<span class="number">60</span> * time.Second)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			timer.Reset(<span class="number">60</span> * time.Second)</span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">case</span> &lt;-timer.C:</span><br><span class="line">				<span class="keyword">if</span> hangFlag == <span class="number">1</span> &#123;</span><br><span class="line">					fmt.Printf(<span class="string">&quot;[%s]!!!Watch connection hang\n&quot;</span>, time.Now().Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>))</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="comment">// start http server</span></span><br><span class="line">	http.ListenAndServe(<span class="string">&quot;0.0.0.0:6061&quot;</span>, <span class="literal">nil</span>)</span><br><span class="line">	klog.Info(<span class="string">&quot;Http server start, listening on 0.0.0.0:6061 : )&quot;</span>)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>启动脚本开始 watch pod, 观察到此时 watch pod 正常.</p>
+<p><img src="/images/watch8.png" alt="客户端client-go日志"></p>
+<p>此时登录 ingressgateway 容器观察到网关一共有2个与 apiserver 的连接(这儿看到的 8080 端口是因为开了 istio sidecar)</p>
+<p><img src="/images/watch9.png" alt="istio-apiserver访问链路"></p>
+<p><img src="/images/watch10.png" alt="在istio-apiserver链路下netstat信息"></p>
+<p>此时对<strong>其中一个 apiserver 实例</strong>注入丢包规则，模拟 ingress -&gt; apiserver 请求失败。(<em>另一台 apiserver 正常</em>)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -A OUTPUT -p tcp --dst apiserver_ip_1 --dport 8080 -j DROP</span><br></pre></td></tr></table></figure>
+
+<p>并且在网关侧同时对所有 apiserver 实例 8080 端口进行 tcpdump 抓包，预期情况下，apisever1 将不再出现新请求，同时另一个可用的 apiserver2 应该收到请求。</p>
+<p><img src="/images/watch11.png" alt="网关侧对异常apiserver抓包"></p>
+<p><img src="/images/watch12.png" alt="网关侧对正常apiserver抓包"></p>
+<p>此时观察到客户端 watch 请求 Hang 住，同时出现了 503, 复现了故障期间 watch 请求不断开的场景。</p>
+<h3 id="排查"><a href="#排查" class="headerlink" title="排查"></a>排查</h3><p>此时根据上述现场深挖信息，发现<strong>正常的 apiserver 抓包看到并没有收到新请求</strong>，同时异常的 apiserver 处于丢包状态无法处理请求，即从网关侧连接后端2个 apiserver 均”异常”了, 故客户端 watch 请求必然出现异常。</p>
+<p><img src="/images/watch13.png" alt="客户端client-go日志信息"></p>
+<p>此时观察到本地客户端的 4 层 tcp 连接如下 (src port: 49739)， 端口未改变过，说明客户端 -&gt; ingress 的 tcp 连接未断开过。</p>
+<p><img src="/images/watch14.png" alt="本地netstat截图"></p>
+<p>于是我怀疑请求仍然走的老连接打到了异常 apiserver 上，网关侧没有做切换，将访问 apiserver 的请求路由到未丢包的 apiserver 上</p>
+<h3 id="找解决方案"><a href="#找解决方案" class="headerlink" title="找解决方案"></a>找解决方案</h3><p>根据上述疑点，我发现网关访问新的 apiserver 仍然是能通的，只是客户端 watch 请在于网关未断开的情况下仍使用了老的 apiserver 的连接，没有使用到这根新连接上。</p>
+<p>于是解决方案的思路大致为：<strong>如何让客户端断开异常的 apiserver 连接并连上新的 apiserver 。</strong></p>
+<p>由于在我们的链路下，客户端不直接和 apiserver 通讯，而是由网关进行代理，故问题转移到了如何在网关上找到方式通知客户端进行重连。调研后得到以下两种方案：</p>
+<ul>
+<li>方案1：在网关侧配置 <code>stream_idle_timeout</code> 参数, 由于客户端与网关在该异常下长时间没有 http2 的包传输，故必然不会有 h2 stream，那么使用该参数来使得网关侧主动断开没有包传输的老连接，触发客户端重连新连接。</li>
+</ul>
+<p><img src="/images/watch15.png" alt="解决方案1"></p>
+<ul>
+<li>方案2：网关侧通过 tcpKeepalive 掐断与异常 apiserver(配置了丢包规则) 连接，使得客户端重连。</li>
+</ul>
+<p><img src="/images/watch16.png" alt="解决方案2"></p>
+<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><p>我首先验证了方案1 —- <code>stream_idle_timeout</code> 的方式，增加如下 envoyFilter 配置。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">EnvoyFilter</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">ef-enable-stream-idle-timeout</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">istio-system</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">configPatches:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">applyTo:</span> <span class="string">NETWORK_FILTER</span></span><br><span class="line">    <span class="attr">match:</span></span><br><span class="line">      <span class="attr">listener:</span></span><br><span class="line">        <span class="attr">filterChain:</span></span><br><span class="line">          <span class="attr">filter:</span></span><br><span class="line">            <span class="attr">name:</span> <span class="string">envoy.http_connection_manager</span></span><br><span class="line">    <span class="attr">patch:</span></span><br><span class="line">      <span class="attr">operation:</span> <span class="string">MERGE</span></span><br><span class="line">      <span class="attr">value:</span></span><br><span class="line">        <span class="attr">name:</span> <span class="string">envoy.http_connection_manager</span></span><br><span class="line">        <span class="attr">typed_config:</span></span><br><span class="line">          <span class="attr">&quot;@type&quot;:</span> <span class="string">type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager</span></span><br><span class="line">          <span class="attr">stream_idle_timeout:</span> <span class="string">600s</span> <span class="comment"># 10mins, must be disabled for long-lived and streaming requests</span></span><br></pre></td></tr></table></figure>
+
+<p>网关确实能掐掉异常连接了，但也会掐掉 exec 这类客户端登录容器的”正常连接”，即业务方存在需要通过和 apiserver 建立 exec 长连接且长时间不会发送数据包的情况。加上 <code>stream_idle_timeout</code> 会误掐掉这些连接，对业务是有损的，于是放弃了方案一。</p>
+<p>接着我开始验证方案2，修改 apiserver destinationRule 配置，增加 tcpKeepalive</p>
+<p><img src="/images/watch17.png" alt="tcpKeepalive参数配置"></p>
+<p>接着按照丢包的方案重新启动本地测试 client 进行验证</p>
+<p><img src="/images/watch18.png" alt="感知到报错的客户端日志"></p>
+<p>观察发现客户端在下一次 relist(ListAndWatch) 后恢复正常</p>
+<p>同时再次在本地查看客户端端口为 49739, 4 层 tcp 连接未断开，说明客户端 -&gt; ingress 链路正常.</p>
+<p><img src="/images/watch19.png" alt="感知到报错的客户端netstat截图"></p>
+<p>进一步佐证了问题可能是 ingress 连上了不可用的 apiserver，而加上 tcpKeepalive 则让网关检查到 apiserver 不可用(仅网络层)，从而切换到另一个可用的 apiserver 实例。</p>
+<h3 id="根据-pprof-进行结论的二次验证"><a href="#根据-pprof-进行结论的二次验证" class="headerlink" title="根据 pprof 进行结论的二次验证"></a>根据 pprof 进行结论的二次验证</h3><p>由于目前所使用的 client-go 代码中增加了 watchTimeout 的逻辑，会周期性地进行 relist&amp;watch, 从而保障 watch 请求不会长时间 hang 住</p>
+<p><img src="/images/watch20.png" alt="client-go watchTimeout 代码段1"></p>
+<p><img src="/images/watch21.png" alt="client-go watchTimeout 代码段2"></p>
+<p>故正常情况下 client-go watch 请求行为如下:</p>
+<ul>
+<li><strong>预期</strong>: 在每次调用 <code>ListAndWatch</code> 的时间窗口(5-10分钟内)未接收到请求，则会自动断开，进行 relist</li>
+</ul>
+<p>在未开启 tcpKeepalive 前，出现了 watchHandler goroutine hang 住问题, 观察下图 pprof 中 goroutine stack 发现，watchHandler 这个 goroutine 运行了超过 10min，未触发 client-go 中 relist 逻辑, 不符合预期。属于 watch hang 住行为。</p>
+<p><img src="/images/watch22.png" alt="本地pprof截图"></p>
+<p>而开启 tcpKeepalive 后，watchHandler goroutine hang 住问题消失，watchHandler 均不超过 5min，符合预期。watch hang 住问题消失。</p>
+<h2 id="问题根因"><a href="#问题根因" class="headerlink" title="问题根因"></a>问题根因</h2><p>定位到了 tcpKeepalive 能解这个问题后，咱开始怀疑这个参数的底层逻辑是啥，为啥能解这个问题。</p>
+<p><img src="/images/watch23.png" alt="charles k8s抓包链路"></p>
+<p>由于这个参数是作用在网络 4 层，于是我第一想法是进行抓包拿更多信息。参考上图的抓包链路，我启动了 charles 进行 k8s apiserver https 抓包。</p>
+<p>观察发现未开启 tcpKeepalive 时，异常时(ingress 侧开启了单台 apiserver 丢包) ，客户端的 watch 请求 Tcp&#x2F;Http 连接均不断开。而开启 tcpKeepalive 后，当网关访问到配置了丢包规则的 apiserver 时出现了 503, 并返回错误给客户端, 同时客户端的7层连接进行重建(streamId 变了)，重建后下一次 <code>ListAndWatch</code> 请求可以正常拿到响应。</p>
+<p><img src="/images/watch24.png" alt="charles 本地抓包截图1"></p>
+<p>所以是什么导致了这个行为呢？</p>
+<p>由于 charles 只能抓取 7 层的数据包，我想看看 4 层的网络行为，依葫芦画瓢，再次通过 wireshark 抓包</p>
+<p><img src="/images/watch25.png" alt="wireshark解包截图1"></p>
+<p><img src="/images/watch26.png" alt="wireshark解包截图2"></p>
+<p><img src="/images/watch27.png" alt="wireshark抓包截图3"></p>
+<p>发现在开启网关侧 tcpKeepalive 后，网关侧访问异常 apiserver 失败，在网关节点上掐断了与异常 apiserver 的，同时客户端在与网关的 60s tcpkeepalive timeout 后，网关侧主动向客户端发送了一条报文，触发了客户端重建7层连接，客户端在连接重建后恢复正常，观察发现请求打到了另外一台正常的 apiserver 上。</p>
+<h2 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h2><p>client-go 中的 watchTimeout 是依靠 apiserver 主动发起才能进行 relist，在上述丢包场景下，apiserver 无法回包，故 watch 连接 hang 住的问题在 client-go 自身的机制是无法保证能自愈的，故在整条 apiserver 访问连上上，需要加上健康检查&#x2F;探活逻辑(如 istio ingressgateway 对 apiserver 的探活)，才能保证 watch 请求可靠性。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2024/04/02/%E8%AE%B0%E4%B8%80%E6%AC%A1-k8s-apiserver-watch-hang-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-title="记一次 k8s apiserver watch hang 问题排查 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2024/03/27/揭秘-Kubernetes-attach-detach-controller-逻辑漏洞致使-pod-启动失败/"  title="揭秘 Kubernetes attach/detach controller 逻辑漏洞致使 pod 启动失败">
+ <strong>下一篇：</strong><br/> 
+ <span>揭秘 Kubernetes attach/detach controller 逻辑漏洞致使 pod 启动失败
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2024/04/02/记一次-k8s-apiserver-watch-hang-问题排查/" data-title="记一次 k8s apiserver watch hang 问题排查" data-url="https://luckymrwang.github.io/2024/04/02/%E8%AE%B0%E4%B8%80%E6%AC%A1-k8s-apiserver-watch-hang-%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">问题背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E7%8E%B0%E8%B1%A1"><span class="toc-number">2.</span> <span class="toc-text">问题现象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%92%E6%9F%A5%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">排查过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83"><span class="toc-number">3.1.</span> <span class="toc-text">环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%8D%E7%8E%B0"><span class="toc-number">3.2.</span> <span class="toc-text">复现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%96%B0%E5%BB%BA%E8%B0%83%E8%AF%95%E7%BD%91%E5%85%B3-%E9%9A%94%E7%A6%BB%E7%BA%BF%E4%B8%8A%E6%B5%81%E9%87%8F"><span class="toc-number">3.2.1.</span> <span class="toc-text">1. 新建调试网关, 隔离线上流量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%BF%AE%E6%94%B9%E6%9C%AC%E5%9C%B0-dns-%E5%B0%86%E6%B5%81%E9%87%8F%E6%89%93%E5%90%91%E7%BD%91%E5%85%B3"><span class="toc-number">3.2.2.</span> <span class="toc-text">2. 修改本地 dns, 将流量打向网关</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E6%9C%AC%E5%9C%B0%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC%E6%A8%A1%E6%8B%9F-watch-%E8%AF%B7%E6%B1%82"><span class="toc-number">3.2.3.</span> <span class="toc-text">3. 本地启动脚本模拟 watch 请求</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%92%E6%9F%A5"><span class="toc-number">3.3.</span> <span class="toc-text">排查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%BE%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">3.4.</span> <span class="toc-text">找解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81"><span class="toc-number">3.5.</span> <span class="toc-text">验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B9%E6%8D%AE-pprof-%E8%BF%9B%E8%A1%8C%E7%BB%93%E8%AE%BA%E7%9A%84%E4%BA%8C%E6%AC%A1%E9%AA%8C%E8%AF%81"><span class="toc-number">3.6.</span> <span class="toc-text">根据 pprof 进行结论的二次验证</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E6%A0%B9%E5%9B%A0"><span class="toc-number">4.</span> <span class="toc-text">问题根因</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%9D%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">思考</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

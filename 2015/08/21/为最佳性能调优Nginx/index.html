@@ -1,0 +1,517 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>为最佳性能调优Nginx | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="通常来说，一个优化良好的 Nginx Linux 服务器可以达到 500,000 – 600,000 次&#x2F;秒 的请求处理性能，然而我的 Nginx 服务器可以稳定地达到 904,000 次&#x2F;秒 的处理性能，并且我以此高负载测试超过 12 小时，服务器工作稳定。 这里需要特别说明的是，本文中所有列出来的配置都是在我的测试环境验证的，而你需要根据你服务器的情况进行配置：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为最佳性能调优Nginx">
+<meta property="og:url" content="https://luckymrwang.github.io/2015/08/21/%E4%B8%BA%E6%9C%80%E4%BD%B3%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98Nginx/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="通常来说，一个优化良好的 Nginx Linux 服务器可以达到 500,000 – 600,000 次&#x2F;秒 的请求处理性能，然而我的 Nginx 服务器可以稳定地达到 904,000 次&#x2F;秒 的处理性能，并且我以此高负载测试超过 12 小时，服务器工作稳定。 这里需要特别说明的是，本文中所有列出来的配置都是在我的测试环境验证的，而你需要根据你服务器的情况进行配置：">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-08-21T08:26:58.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.210Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Nginx">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/08/21/为最佳性能调优Nginx/" title="为最佳性能调优Nginx" itemprop="url">为最佳性能调优Nginx</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-21T08:26:58.000Z" itemprop="datePublished"> 发表于 2015-08-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>通常来说，一个优化良好的 Nginx Linux 服务器可以达到 500,000 – 600,000 次&#x2F;秒 的请求处理性能，然而我的 Nginx 服务器可以稳定地达到 904,000 次&#x2F;秒 的处理性能，并且我以此高负载测试超过 12 小时，服务器工作稳定。</p>
+<p>这里需要特别说明的是，本文中所有列出来的配置都是在我的测试环境验证的，而你需要根据你服务器的情况进行配置：</p>
+<span id="more"></span>
+
+<p>从 EPEL 源安装 Nginx：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install nginx</span><br></pre></td></tr></table></figure>
+
+<p>备份配置文件，然后根据你的需要进行配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line">   cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig</span><br><span class="line">   vim /etc/nginx/nginx.conf</span><br><span class="line">   # This number should be, at maximum, the number of CPU cores on your system.</span><br><span class="line">   # (since nginx doesn&#x27;t benefit from more than one worker per CPU.)</span><br><span class="line">   # 这里的数值不能超过 CPU 的总核数，因为在单个核上部署超过 1 个 Nginx 服务进程并不起到提高性能的作用。</span><br><span class="line">   worker_processes 24;</span><br><span class="line">   </span><br><span class="line">   # Number of file descriptors used for Nginx. This is set in the OS with &#x27;ulimit -n 200000&#x27;</span><br><span class="line">   # or using /etc/security/limits.conf</span><br><span class="line"># Nginx 最大可用文件描述符数量，同时需要配置操作系统的 &quot;ulimit -n 200000&quot;，或者在 /etc/security/limits.    conf 中配置。</span><br><span class="line">   worker_rlimit_nofile 200000;</span><br><span class="line">   </span><br><span class="line">   # only log critical errors</span><br><span class="line">   # 只记录 critical 级别的错误日志</span><br><span class="line">   error_log /var/log/nginx/error.log crit</span><br><span class="line">   </span><br><span class="line">   # Determines how many clients will be served by each worker process.</span><br><span class="line">   # (Max clients = worker_connections * worker_processes)</span><br><span class="line"># &quot;Max clients&quot; is also limited by the number of socket connections available on the system     (~64k)</span><br><span class="line">   # 配置单个 Nginx 单个进程可服务的客户端数量，（最大值客户端数 = 单进程连接数 * 进程数 ）</span><br><span class="line">   # 最大客户端数同时也受操作系统 socket 连接数的影响（最大 64K ）</span><br><span class="line">   worker_connections 4000;</span><br><span class="line">   </span><br><span class="line">   # essential for linux, optmized to serve many clients with each thread</span><br><span class="line">   # Linux 关键配置，允许单个线程处理多个客户端请求。</span><br><span class="line">   use epoll;</span><br><span class="line">   </span><br><span class="line"># Accept as many connections as possible, after nginx gets notification about a new     connection.</span><br><span class="line">   # May flood worker_connections, if that option is set too low.</span><br><span class="line">   # 允许尽可能地处理更多的连接数，如果 worker_connections 配置太低，会产生大量的无效连接请求。</span><br><span class="line">   multi_accept on;</span><br><span class="line">   </span><br><span class="line">   # Caches information about open FDs, freqently accessed files.</span><br><span class="line"># Changing this setting, in my environment, brought performance up from 560k req/sec, to    904k req/sec.</span><br><span class="line"># I recommend using some varient of these options, though not the specific values listed    below.</span><br><span class="line">   # 缓存高频操作文件的FDs（文件描述符/文件句柄）</span><br><span class="line">   # 在我的设备环境中，通过修改以下配置，性能从 560k 请求/秒 提升到 904k 请求/秒。</span><br><span class="line">   # 我建议你对以下配置尝试不同的组合，而不是直接使用这几个数据。</span><br><span class="line">   open_file_cache max=200000 inactive=20s;</span><br><span class="line">   open_file_cache_valid 30s;</span><br><span class="line">   open_file_cache_min_uses 2;</span><br><span class="line">   open_file_cache_errors on;</span><br><span class="line">   </span><br><span class="line">   # Buffer log writes to speed up IO, or disable them altogether</span><br><span class="line">   # 将日志写入高速 IO 存储设备，或者直接关闭日志。</span><br><span class="line">   # access_log /var/log/nginx/access.log main buffer=16k;</span><br><span class="line">   access_log off;</span><br><span class="line">   </span><br><span class="line">   # Sendfile copies data between one FD and other from within the kernel.</span><br><span class="line"># More efficient than read() + write(), since the requires transferring data to and from the    user space.</span><br><span class="line">   # 开启 sendfile 选项，使用内核的 FD 文件传输功能，这个比在用户态用 read() + write() 的方式更加高效。</span><br><span class="line">   sendfile on;</span><br><span class="line">   </span><br><span class="line">   # Tcp_nopush causes nginx to attempt to send its HTTP response head in one packet,</span><br><span class="line"># instead of using partial frames. This is useful for prepending headers before calling     sendfile,</span><br><span class="line">   # or for throughput optimization.</span><br><span class="line">   # 打开 tcp_nopush 选项，Nginux 允许将 HTTP 应答首部与数据内容在同一个报文中发出。</span><br><span class="line">   # 这个选项使服务器在 sendfile 时可以提前准备 HTTP 首部，能够达到优化吞吐的效果。</span><br><span class="line">   tcp_nopush on;</span><br><span class="line">   </span><br><span class="line"># don&#x27;t buffer data-sends (disable Nagle algorithm). Good for sending frequent small bursts     of data in real time.</span><br><span class="line">   # 不要缓存 data-sends （关闭 Nagle 算法），这个能够提高高频发送小数据报文的实时性。</span><br><span class="line">   tcp_nodelay on;</span><br><span class="line">   </span><br><span class="line">   # Timeout for keep-alive connections. Server will close connections after this time.</span><br><span class="line">   # 配置连接 keep-alive 超时时间，服务器将在超时之后关闭相应的连接。</span><br><span class="line">   keepalive_timeout 30;</span><br><span class="line">   </span><br><span class="line"># Number of requests a client can make over the keep-alive connection. This is set high for     testing.</span><br><span class="line">   # 单个客户端在 keep-alive 连接上可以发送的请求数量，在测试环境中，需要配置个比较大的值。</span><br><span class="line">   keepalive_requests 100000;</span><br><span class="line">   </span><br><span class="line"># allow the server to close the connection after a client stops responding. Frees up socket-    associated memory.</span><br><span class="line">   # 允许服务器在客户端停止发送应答之后关闭连接，以便释放连接相应的 socket 内存开销。</span><br><span class="line">   reset_timedout_connection on;</span><br><span class="line">   </span><br><span class="line">   # send the client a &quot;request timed out&quot; if the body is not loaded by this time. Default 60.</span><br><span class="line">   # 配置客户端数据请求超时时间，默认是 60 秒。</span><br><span class="line">   client_body_timeout 10;</span><br><span class="line">   </span><br><span class="line"># If the client stops reading data, free up the stale client connection after this much     time. Default 60.</span><br><span class="line">   # 客户端数据读超时配置，客户端停止读取数据，超时时间后断开相应连接，默认是 60 秒。</span><br><span class="line">   send_timeout 2;</span><br><span class="line">   </span><br><span class="line">   # Compression. Reduces the amount of data that needs to be transferred over the network</span><br><span class="line">   # 压缩参数配置，减少在网络上所传输的数据量。</span><br><span class="line">   gzip on;</span><br><span class="line">   gzip_min_length 10240;</span><br><span class="line">   gzip_proxied expired no-cache no-store private auth;</span><br><span class="line">gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/   xml;</span><br><span class="line">   gzip_disable &quot;MSIE [1-6].&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>启动 Nginx 并配置起机自动加载。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service nginx start</span><br><span class="line">chkconfig nginx on</span><br></pre></td></tr></table></figure>
+<p>配置 Tsung 并启动测试，测试差不多 10 分钟左右就能测试到服务器的峰值能力，具体的时间与你的 Tsung 配置相关。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@loadnode1 ~] vim ~/.tsung/tsung.xml</span><br><span class="line">     &lt;server host=&quot;YOURWEBSERVER&quot; port=&quot;80&quot; type=&quot;tcp&quot;/&gt;</span><br><span class="line">     </span><br><span class="line">tsung start</span><br></pre></td></tr></table></figure>
+<p>你觉得测试结果已经够了的情况下，通过 ctrl+c 退出，之后使用我们之前配置的别名命令 treport 查看测试报告。</p>
+<p>WEB 服务器调优，第二部分：TCP 协议栈调优</p>
+<p>这个部分不只是对 Ngiinx 适用，还可以在任何 WEB 服务器上使用。通过对内核 TCP 配置的优化可以提高服务器网络带宽。</p>
+<p>以下配置在我的 10-Gbase-T 服务器上工作得非常完美，服务器从默认配置下的 8Gbps 带宽提升到 9.3Gbps。</p>
+<p>当然，你的服务器上的结论可能不尽相同。</p>
+<p>下面的配置项，我建议每次只修订其中一项，之后用网络性能测试工具 netperf、iperf 或是用我类似的测试脚本 cluster-netbench.pl 对服务器进行多次测试。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">yum -y install netperf iperf</span><br><span class="line"></span><br><span class="line">vim /etc/sysctl.conf</span><br><span class="line"></span><br><span class="line">   # Increase system IP port limits to allow for more connections</span><br><span class="line">   # 调高系统的 IP 以及端口数据限制，从可以接受更多的连接</span><br><span class="line">   net.ipv4.ip_local_port_range = 2000 65000</span><br><span class="line">   </span><br><span class="line">   net.ipv4.tcp_window_scaling = 1</span><br><span class="line">   </span><br><span class="line">   # number of packets to keep in backlog before the kernel starts dropping them</span><br><span class="line">   # 设置协议栈可以缓存的报文数阀值，超过阀值的报文将被内核丢弃</span><br><span class="line">   net.ipv4.tcp_max_syn_backlog = 3240000</span><br><span class="line">   </span><br><span class="line">   # increase socket listen backlog</span><br><span class="line">   # 调高 socket 侦听数阀值</span><br><span class="line">   net.core.somaxconn = 3240000</span><br><span class="line">   net.ipv4.tcp_max_tw_buckets = 1440000</span><br><span class="line">   </span><br><span class="line">   # Increase TCP buffer sizes</span><br><span class="line">   # 调大 TCP 存储大小</span><br><span class="line">   net.core.rmem_default = 8388608</span><br><span class="line">   net.core.rmem_max = 16777216</span><br><span class="line">   net.core.wmem_max = 16777216</span><br><span class="line">   net.ipv4.tcp_rmem = 4096 87380 16777216</span><br><span class="line">   net.ipv4.tcp_wmem = 4096 65536 16777216</span><br><span class="line">   net.ipv4.tcp_congestion_control = cubic</span><br></pre></td></tr></table></figure>
+
+<p>每次修订配置之后都需要执行以下命令使之生效.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl -p /etc/sysctl.conf</span><br></pre></td></tr></table></figure>
+
+<p>别忘了在配置修订之后务必要进行网络 benchmark 测试，这样可以观测到具体是哪个配置修订的优化效果最明显。通过这种有效测试方法可以为你节省大量时间。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Nginx/">Nginx</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2015/08/21/%E4%B8%BA%E6%9C%80%E4%BD%B3%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98Nginx/" data-title="为最佳性能调优Nginx | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/08/24/DataTables中特殊的行不参与排序/" title="DataTables中特殊的行不参与排序">
+  <strong>上一篇：</strong><br/>
+  <span>
+  DataTables中特殊的行不参与排序</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/08/21/PHP算法之插入排序/"  title="PHP算法之插入排序">
+ <strong>下一篇：</strong><br/> 
+ <span>PHP算法之插入排序
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/08/21/为最佳性能调优Nginx/" data-title="为最佳性能调优Nginx" data-url="https://luckymrwang.github.io/2015/08/21/%E4%B8%BA%E6%9C%80%E4%BD%B3%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98Nginx/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

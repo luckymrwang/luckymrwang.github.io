@@ -1,0 +1,544 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>net.ipv4.ip_local_port_range的影响范围 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="前言网上关于 net.ipv4.ip_local_port_range 的值的效果众说纷纭（下面所说的连接都假定使用的是相同的协议(都是 TCP 或 UDP)）:  大部分文章都说这个值决定了客户端的一个 ip 可用的端口数量，即一个 ip 最多只能创建 60K 多一点的连接（1025-65535），如果要突破这个限制需要客户端机器绑定多个 ip。 还有部分文章说的是这个值决定的是 socket">
+<meta property="og:type" content="article">
+<meta property="og:title" content="net.ipv4.ip_local_port_range的影响范围">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/07/16/net-ipv4-ip-local-port-range%E7%9A%84%E5%BD%B1%E5%93%8D%E8%8C%83%E5%9B%B4/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="前言网上关于 net.ipv4.ip_local_port_range 的值的效果众说纷纭（下面所说的连接都假定使用的是相同的协议(都是 TCP 或 UDP)）:  大部分文章都说这个值决定了客户端的一个 ip 可用的端口数量，即一个 ip 最多只能创建 60K 多一点的连接（1025-65535），如果要突破这个限制需要客户端机器绑定多个 ip。 还有部分文章说的是这个值决定的是 socket">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-07-15T23:59:42.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.209Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/07/16/net-ipv4-ip-local-port-range的影响范围/" title="net.ipv4.ip_local_port_range的影响范围" itemprop="url">net.ipv4.ip_local_port_range的影响范围</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-07-15T23:59:42.000Z" itemprop="datePublished"> 发表于 2022-07-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%90%8C%E7%9B%AE%E6%A0%87-ip-%E5%92%8C%E7%9B%B8%E5%90%8C%E7%9B%AE%E6%A0%87%E7%AB%AF%E5%8F%A3%E4%B8%8B%E7%9A%84%E7%AB%AF%E5%8F%A3%E6%95%B0%E9%87%8F%E9%99%90%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">相同目标 ip 和相同目标端口下的端口数量限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%90%8C%E7%9B%AE%E6%A0%87-ip-%E4%B8%8D%E5%90%8C%E7%9B%AE%E6%A0%87%E7%AB%AF%E5%8F%A3"><span class="toc-number">3.</span> <span class="toc-text">相同目标 ip 不同目标端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AA%E7%9B%AE%E6%A0%87-ip-%E7%9B%B8%E5%90%8C%E7%9B%AE%E6%A0%87%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.</span> <span class="toc-text">多个目标 ip 相同目标端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AA%E7%9B%AE%E6%A0%87-ip-%E4%B8%8D%E5%90%8C%E7%9B%AE%E6%A0%87%E7%AB%AF%E5%8F%A3"><span class="toc-number">5.</span> <span class="toc-text">多个目标 ip 不同目标端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">7.</span> <span class="toc-text">参考资料</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>网上关于 net.ipv4.ip_local_port_range 的值的效果众说纷纭（下面所说的连接都假定使用的是相同的协议(都是 TCP 或 UDP)）:</p>
+<ul>
+<li>大部分文章都说这个值决定了客户端的一个 ip 可用的端口数量，即一个 ip 最多只能创建 60K 多一点的连接（1025-65535），如果要突破这个限制需要客户端机器绑定多个 ip。</li>
+<li>还有部分文章说的是这个值决定的是 socket 四元组中的本地端口数量，即一个 ip 对同一个目标 ip+port 最多可以创建 60K 多一点连接，只要目标 ip 或端口不一样就可以使用相同的本地端口，不一定需要多个客户端 ip 就可以突破端口数量限制。</li>
+</ul>
+<span id="more"></span>
+<p>文档中的介绍也很模糊:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ip_local_port_range - <span class="number">2</span> <span class="variable constant_">INTEGERS</span></span><br><span class="line">    <span class="title class_">Defines</span> the local port range that is used by <span class="variable constant_">TCP</span> and <span class="variable constant_">UDP</span> to</span><br><span class="line">    choose the local port. <span class="title class_">The</span> first number is the first, the</span><br><span class="line">    second the last local port number.</span><br><span class="line">    <span class="title class_">If</span> possible, it is better these numbers have different parity.</span><br><span class="line">    (one even and one odd values)</span><br><span class="line">    <span class="title class_">The</span> <span class="keyword">default</span> values are <span class="number">32768</span> and <span class="number">60999</span> respectively.</span><br></pre></td></tr></table></figure>
+
+<p>下面就来做一些实验来确认这个选项的实际效果。</p>
+<p>实验环境:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ uname -a</span><br><span class="line"><span class="title class_">Linux</span> vagrant <span class="number">4.15</span><span class="number">.0</span>-<span class="number">29</span>-generic #<span class="number">31</span>-<span class="title class_">Ubuntu</span> <span class="variable constant_">SMP</span> <span class="title class_">Tue</span> <span class="title class_">Jul</span> <span class="number">17</span> <span class="number">15</span>:<span class="number">39</span>:<span class="number">52</span> <span class="variable constant_">UTC</span> <span class="number">2018</span> x86_64 x86_64 x86_64 <span class="variable constant_">GNU</span>/<span class="title class_">Linux</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="相同目标-ip-和相同目标端口下的端口数量限制"><a href="#相同目标-ip-和相同目标端口下的端口数量限制" class="headerlink" title="相同目标 ip 和相同目标端口下的端口数量限制"></a>相同目标 ip 和相同目标端口下的端口数量限制</h3><p>先设置 ip_local_port_range 的值为非常小的范围:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ echo <span class="string">&quot;61000 61001&quot;</span> | sudo tee /proc/sys/net/ipv4/ip_local_port_range</span><br><span class="line"><span class="number">61000</span> <span class="number">61001</span></span><br><span class="line"></span><br><span class="line">$ cat /proc/sys/net/ipv4/ip_local_port_range</span><br><span class="line"><span class="number">61000</span>       <span class="number">61001</span></span><br></pre></td></tr></table></figure>
+
+<p>然后对相同 ip 和端口发送 tcp 请求。创建两个连接，达到最大端口数量限制:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ nohup nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">80</span> -v &amp;</span><br><span class="line">[<span class="number">1</span>] <span class="number">16196</span></span><br><span class="line">$ <span class="attr">nohup</span>: ignoring input and appending output to <span class="string">&#x27;nohup.out&#x27;</span></span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">80</span> -v &amp;</span><br><span class="line">[<span class="number">2</span>] <span class="number">16197</span></span><br><span class="line">$ <span class="attr">nohup</span>: ignoring input and appending output to <span class="string">&#x27;nohup.out&#x27;</span></span><br><span class="line"></span><br><span class="line">$ ss -ant |grep <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p>然后再创建第三个连接，此时预期应该会失败，因为超出的端口数量现在:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vagrant@<span class="attr">vagrant</span>:~$ nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">80</span> -v</span><br><span class="line"><span class="attr">nc</span>: connect to <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> port <span class="number">80</span> (tcp) <span class="attr">failed</span>: <span class="title class_">Cannot</span> assign requested address</span><br></pre></td></tr></table></figure>
+
+<p>可以看到确实如预期的失败了。</p>
+<h3 id="相同目标-ip-不同目标端口"><a href="#相同目标-ip-不同目标端口" class="headerlink" title="相同目标 ip 不同目标端口"></a>相同目标 ip 不同目标端口</h3><p>下面看看相同目标 ip 不同目标端口是否可以突破这个端口限制:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ nohup nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">443</span> -v &amp;</span><br><span class="line">[<span class="number">3</span>] <span class="number">16215</span></span><br><span class="line">$ <span class="attr">nohup</span>: ignoring input and appending output to <span class="string">&#x27;nohup.out&#x27;</span></span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">443</span> -v &amp;</span><br><span class="line">[<span class="number">4</span>] <span class="number">16216</span></span><br><span class="line">$ <span class="attr">nohup</span>: ignoring input and appending output to <span class="string">&#x27;nohup.out&#x27;</span></span><br><span class="line"></span><br><span class="line">$ ss -ant |grep <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">443</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">443</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到相同目标 ip 不同目标端口下，每个目标端口都有一个独立的端口限制，即，相同源 ip 的源端口是可以相同的。</p>
+<p>按照推测这两个目标端口应该只能创建四个连接，下面试试看:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ss -ant |grep <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">443</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">443</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>   <span class="number">0</span>        <span class="number">0</span>                <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>       <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br><span class="line"></span><br><span class="line">$ nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">443</span> -v</span><br><span class="line"><span class="attr">nc</span>: connect to <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> port <span class="number">443</span> (tcp) <span class="attr">failed</span>: <span class="title class_">Cannot</span> assign requested address</span><br></pre></td></tr></table></figure>
+
+<p>确实是不能再创建连接了，因为每个目标端口都达到了 ip_local_port_range 的限制。</p>
+<h3 id="多个目标-ip-相同目标端口"><a href="#多个目标-ip-相同目标端口" class="headerlink" title="多个目标 ip 相同目标端口"></a>多个目标 ip 相同目标端口</h3><p>下面看一下多个目标 ip 相同目标端口下的情况:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ nohup nc <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> <span class="number">80</span> -v &amp;</span><br><span class="line">[<span class="number">5</span>] <span class="number">16222</span></span><br><span class="line">$ <span class="attr">nohup</span>: ignoring input and appending output to <span class="string">&#x27;nohup.out&#x27;</span></span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> <span class="number">80</span> -v &amp;</span><br><span class="line">[<span class="number">6</span>] <span class="number">16223</span></span><br><span class="line">$ <span class="attr">nohup</span>: ignoring input and appending output to <span class="string">&#x27;nohup.out&#x27;</span></span><br><span class="line"></span><br><span class="line">$ nc <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> <span class="number">80</span> -v</span><br><span class="line"><span class="attr">nc</span>: connect to <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> port <span class="number">80</span> (tcp) <span class="attr">failed</span>: <span class="title class_">Cannot</span> assign requested address</span><br><span class="line"></span><br><span class="line">$ ss -ant |grep :<span class="number">80</span></span><br><span class="line"><span class="variable constant_">SYN</span>-<span class="variable constant_">SENT</span>  <span class="number">0</span>        <span class="number">1</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>      <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">SYN</span>-<span class="variable constant_">SENT</span>  <span class="number">0</span>        <span class="number">1</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>      <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">SYN</span>-<span class="variable constant_">SENT</span>  <span class="number">0</span>        <span class="number">1</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>      <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">SYN</span>-<span class="variable constant_">SENT</span>  <span class="number">0</span>        <span class="number">1</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>      <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，每个目标 ip 都有独立的 ip_local_port_range 限制。</p>
+<h3 id="多个目标-ip-不同目标端口"><a href="#多个目标-ip-不同目标端口" class="headerlink" title="多个目标 ip 不同目标端口"></a>多个目标 ip 不同目标端口</h3><p>下面看一下多个目标 ip 相同不同端口下的情况，按照前面的经验两个 ip 加两个端口应该只能创建 8 个连接</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">$ nohup nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">80</span> -v &amp;</span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">80</span> -v &amp;</span><br><span class="line"></span><br><span class="line">$ nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">80</span> -v</span><br><span class="line"><span class="attr">nc</span>: connect to <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> port <span class="number">80</span> (tcp) <span class="attr">failed</span>: <span class="title class_">Cannot</span> assign requested address</span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">443</span> -v &amp;</span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">443</span> -v &amp;</span><br><span class="line"></span><br><span class="line">$ nc <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> <span class="number">443</span> -v</span><br><span class="line"><span class="attr">nc</span>: connect to <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span> port <span class="number">443</span> (tcp) <span class="attr">failed</span>: <span class="title class_">Cannot</span> assign requested address</span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> <span class="number">80</span> -v &amp;</span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> <span class="number">80</span> -v &amp;</span><br><span class="line"></span><br><span class="line">$ nc <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> <span class="number">80</span> -v</span><br><span class="line"><span class="attr">nc</span>: connect to <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> port <span class="number">80</span> (tcp) <span class="attr">failed</span>: <span class="title class_">Cannot</span> assign requested address</span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> <span class="number">443</span> -v &amp;</span><br><span class="line"></span><br><span class="line">$ nohup nc <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> <span class="number">443</span> -v &amp;</span><br><span class="line"></span><br><span class="line">$ nc <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> <span class="number">443</span> -v</span><br><span class="line"><span class="attr">nc</span>: connect to <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span> port <span class="number">443</span> (tcp) <span class="attr">failed</span>: <span class="title class_">Cannot</span> assign requested address</span><br><span class="line"></span><br><span class="line">$ ss -ant |grep <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61</span></span><br><span class="line"><span class="variable constant_">SYN</span>-<span class="variable constant_">SENT</span>  <span class="number">0</span>        <span class="number">1</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>      <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>     <span class="number">0</span>        <span class="number">0</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>      <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">443</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>     <span class="number">0</span>        <span class="number">0</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>      <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span>:<span class="number">443</span></span><br><span class="line"><span class="variable constant_">SYN</span>-<span class="variable constant_">SENT</span>  <span class="number">0</span>        <span class="number">1</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>      <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">SYN</span>-<span class="variable constant_">SENT</span>  <span class="number">0</span>        <span class="number">1</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>      <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>     <span class="number">0</span>        <span class="number">0</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>      <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">443</span></span><br><span class="line"><span class="variable constant_">SYN</span>-<span class="variable constant_">SENT</span>  <span class="number">0</span>        <span class="number">1</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61000</span>      <span class="number">123.125</span><span class="number">.114</span><span class="number">.144</span>:<span class="number">80</span></span><br><span class="line"><span class="variable constant_">ESTAB</span>     <span class="number">0</span>        <span class="number">0</span>               <span class="number">10.0</span><span class="number">.2</span><span class="number">.15</span>:<span class="number">61001</span>      <span class="number">220.181</span><span class="number">.57</span><span class="number">.216</span>:<span class="number">443</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到确实如预期的只能创建8个连接。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>那么是否就可以说前言中的第一种说法就是错的呢，查了一下资料其实也不能说第一种说法是错误的：</p>
+<ul>
+<li>当系统的内核版本小于 3.2 时，第一种说法是正确的</li>
+<li>当系统的内核版本大于等于 3.2 时，第二种说法是正确的</li>
+</ul>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><ul>
+<li><a href="kernel.org/doc/Documentation/networking/ip-sysctl.txt">kernel.org&#x2F;doc&#x2F;Documentation&#x2F;networking&#x2F;ip-sysctl.txt</a></li>
+<li>[Tuning your Linux kernel and HAProxy instance for high loads](Tuning your Linux kernel and HAProxy instance for high loads)</li>
+<li>[Load Testing HAProxy (Part 2) – freeCodeCamp.org](Load Testing HAProxy (Part 2) – freeCodeCamp.org)</li>
+<li>[What is the theoretical maximum number of open TCP connections that a modern Linux box can have - Stack Overflow](What is the theoretical maximum number of open TCP connections that a modern Linux box can have - Stack Overflow)</li>
+<li>[**Coping with the TCP TIME-WAIT state on busy Linux servers | Vincent Bernat**](Coping with the TCP TIME-WAIT state on busy Linux servers | Vincent Bernat)</li>
+<li>[‘Re: Fix for rare EADDRNOTAVAIL error’ - MARC](‘Re: Fix for rare EADDRNOTAVAIL error’ - MARC)</li>
+</ul>
+<p>本文引自<a href="https://mozillazg.com/2019/05/linux-what-net.ipv4.ip_local_port_range-effect-or-mean.html">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/07/16/net-ipv4-ip-local-port-range%E7%9A%84%E5%BD%B1%E5%93%8D%E8%8C%83%E5%9B%B4/" data-title="net.ipv4.ip_local_port_range的影响范围 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/07/25/理解wireshark中的length字段含义/" title="理解wireshark中的length字段含义">
+  <strong>上一篇：</strong><br/>
+  <span>
+  理解wireshark中的length字段含义</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/06/20/设备收发包之netif-receive-skb/"  title="设备收发包之netif_receive_skb">
+ <strong>下一篇：</strong><br/> 
+ <span>设备收发包之netif_receive_skb
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/07/16/net-ipv4-ip-local-port-range的影响范围/" data-title="net.ipv4.ip_local_port_range的影响范围" data-url="https://luckymrwang.github.io/2022/07/16/net-ipv4-ip-local-port-range%E7%9A%84%E5%BD%B1%E5%93%8D%E8%8C%83%E5%9B%B4/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%90%8C%E7%9B%AE%E6%A0%87-ip-%E5%92%8C%E7%9B%B8%E5%90%8C%E7%9B%AE%E6%A0%87%E7%AB%AF%E5%8F%A3%E4%B8%8B%E7%9A%84%E7%AB%AF%E5%8F%A3%E6%95%B0%E9%87%8F%E9%99%90%E5%88%B6"><span class="toc-number">2.</span> <span class="toc-text">相同目标 ip 和相同目标端口下的端口数量限制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%90%8C%E7%9B%AE%E6%A0%87-ip-%E4%B8%8D%E5%90%8C%E7%9B%AE%E6%A0%87%E7%AB%AF%E5%8F%A3"><span class="toc-number">3.</span> <span class="toc-text">相同目标 ip 不同目标端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AA%E7%9B%AE%E6%A0%87-ip-%E7%9B%B8%E5%90%8C%E7%9B%AE%E6%A0%87%E7%AB%AF%E5%8F%A3"><span class="toc-number">4.</span> <span class="toc-text">多个目标 ip 相同目标端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AA%E7%9B%AE%E6%A0%87-ip-%E4%B8%8D%E5%90%8C%E7%9B%AE%E6%A0%87%E7%AB%AF%E5%8F%A3"><span class="toc-number">5.</span> <span class="toc-text">多个目标 ip 不同目标端口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="toc-number">7.</span> <span class="toc-text">参考资料</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

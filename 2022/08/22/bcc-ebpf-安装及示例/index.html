@@ -1,0 +1,676 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>bcc/ebpf 安装及示例 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="eBPF 程序使用 C 语言的一个子集（restricted C）编写，然后通过 LLVM 编译成字节码注入到 内核执行。bcc是 eBPF 的一个外围工具集，使得 “编 写 BPF 代码-编译成字节码-注入内核-获取结果-展示” 整个过程更加便捷。 下面我们将搭建一个基础环境，通过几个例子展示如何编写 bcc&#x2F;eBPF 程序，感受它们的强大功能。 准备工作环境需要以下几方面满足要求：内">
+<meta property="og:type" content="article">
+<meta property="og:title" content="bcc&#x2F;ebpf 安装及示例">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/08/22/bcc-ebpf-%E5%AE%89%E8%A3%85%E5%8F%8A%E7%A4%BA%E4%BE%8B/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="eBPF 程序使用 C 语言的一个子集（restricted C）编写，然后通过 LLVM 编译成字节码注入到 内核执行。bcc是 eBPF 的一个外围工具集，使得 “编 写 BPF 代码-编译成字节码-注入内核-获取结果-展示” 整个过程更加便捷。 下面我们将搭建一个基础环境，通过几个例子展示如何编写 bcc&#x2F;eBPF 程序，感受它们的强大功能。 准备工作环境需要以下几方面满足要求：内">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-22T08:44:55.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.206Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="eBPF">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/08/22/bcc-ebpf-安装及示例/" title="bcc/ebpf 安装及示例" itemprop="url">bcc/ebpf 安装及示例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-08-22T08:44:55.000Z" itemprop="datePublished"> 发表于 2022-08-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC"><span class="toc-number">1.1.</span> <span class="toc-text">内核版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#docker"><span class="toc-number">1.2.</span> <span class="toc-text">docker</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bcc-%E5%B7%A5%E5%85%B7"><span class="toc-number">1.3.</span> <span class="toc-text">bcc 工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95-bcc-%E5%B7%A5%E4%BD%9C%E6%AD%A3%E5%B8%B8"><span class="toc-number">1.4.</span> <span class="toc-text">测试 bcc 工作正常</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bcc-eBPF-%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">bcc&#x2F;eBPF 程序示例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BPF-%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.1.</span> <span class="toc-text">BPF 程序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD-BPF-%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.2.</span> <span class="toc-text">加载 BPF 程序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%A7%A3%E6%9E%90"><span class="toc-number">2.3.</span> <span class="toc-text">命令行解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C"><span class="toc-number">2.4.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">2.5.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.</span> <span class="toc-text">更多示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#References"><span class="toc-number">4.</span> <span class="toc-text">References</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-1%EF%BC%9A%E6%89%93%E5%8C%85-bcc-%E9%95%9C%E5%83%8F"><span class="toc-number">5.</span> <span class="toc-text">附录 1：打包 bcc 镜像</span></a></li></ol>
+		
+		</div>
+		
+		<p>eBPF 程序使用 C 语言的一个子集（restricted C）编写，然后通过 LLVM 编译成字节码注入到 内核执行。bcc是 eBPF 的一个外围工具集，使得 “编 写 BPF 代码-编译成字节码-注入内核-获取结果-展示” 整个过程更加便捷。</p>
+<p>下面我们将搭建一个基础环境，通过几个例子展示如何编写 bcc&#x2F;eBPF 程序，感受它们的强大功能。</p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>环境需要以下几方面满足要求：内核、docker、bcc。</p>
+<h4 id="内核版本"><a href="#内核版本" class="headerlink" title="内核版本"></a>内核版本</h4><p>eBPF 需要较新的 Linux kernel 支持。 因此首先要确保你的内核版本足够新，至少要在 4.1 以上，最好在 4.10 以上：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">uname</span> -r</span><br><span class="line">4.10.13-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+<h4 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h4><p>本文的示例需要使用 Docker，版本没有明确的限制，较新即可。</p>
+<h4 id="bcc-工具"><a href="#bcc-工具" class="headerlink" title="bcc 工具"></a>bcc 工具</h4><p>bcc 是 python 封装的 eBPF 外围工具集，可以大大方面 BPF 程序的开发。</p>
+<p>为方便使用，我们将把 bcc 打包成一个 docker 镜像，以容器的方式使用 bcc。打包镜像的过程 见附录 1，这里不再赘述。</p>
+<p>下载 bcc 代码：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/iovisor/bcc.git</span><br></pre></td></tr></table></figure>
+
+<p>然后启动 bcc 容器：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> bcc</span><br><span class="line">$ <span class="built_in">sudo</span> docker run -d --name bcc \</span><br><span class="line">    --privileged \</span><br><span class="line">    -v $(<span class="built_in">pwd</span>):/bcc \</span><br><span class="line">    -v /lib/modules:/lib/modules:ro \</span><br><span class="line">    -v /usr/src:/usr/src:ro \</span><br><span class="line">    -v /boot:/boot:ro \</span><br><span class="line">    -v /sys/kernel/debug:/sys/kernel/debug \</span><br><span class="line">    bcc:0.0.1 <span class="built_in">sleep</span> infinity</span><br></pre></td></tr></table></figure>
+
+<p>注意这里除了 bcc 代码之外，还将宿主机的 <code>/lib/</code>、<code>/usr/src</code>、<code>/boot</code>、 <code>/sys/kernel/debug</code> 等目录 mount 到容器，这些目录包含了内核源码、内核符号表、链接库 等 eBPF 程序需要用到的东西。</p>
+<h4 id="测试-bcc-工作正常"><a href="#测试-bcc-工作正常" class="headerlink" title="测试 bcc 工作正常"></a>测试 bcc 工作正常</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker <span class="built_in">exec</span> -it bcc bash</span><br></pre></td></tr></table></figure>
+
+<p>在容器内部执行 <code>funcslower.py</code> 脚本，捕获内核收包函数 <code>net_rx_action</code> 耗时大于 100us 的情况，并打印内核调用栈。注意，视机器的网络和工作负载状况，这里的打印可能没有，也可能会非常多。建议先设置一个比较大的阈值（例如<code>-u 200</code>），如果没有输出 ，再将阈值逐步改小。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">root@container <span class="comment"># cd /bcc/tools</span></span><br><span class="line">root@container <span class="comment"># ./funcslower.py -u 100 -f -K net_rx_action</span></span><br><span class="line">Tracing <span class="keyword">function</span> calls slower than 100 us... Ctrl+C to quit.</span><br><span class="line">COMM           PID    LAT(us)             RVAL FUNC</span><br><span class="line">swapper/1      0       158.21                0 net_rx_action</span><br><span class="line">    kretprobe_trampoline</span><br><span class="line">    irq_exit</span><br><span class="line">    do_IRQ</span><br><span class="line">    ret_from_intr</span><br><span class="line">    native_safe_halt</span><br><span class="line">    __cpuidle_text_start</span><br><span class="line">    arch_cpu_idle</span><br><span class="line">    default_idle_call</span><br><span class="line">    do_idle</span><br><span class="line">    cpu_startup_entry</span><br><span class="line">    start_secondary</span><br><span class="line">    verify_cpu</span><br></pre></td></tr></table></figure>
+
+<p>调节 <code>-u</code> 大小，如果有类似以上输出，就说明我们的 <code>bcc/eBPF</code> 环境可以用了。</p>
+<p>具体地，上面的输出表示，这次 <code>net_rx_action()</code> 花费了 158us，是从内核进程 <code>swapper/1</code> 调用过来，&#x2F;1 表示进程在 CPU 1 上，并且打印出当时的内核调用栈。通过这个简 单的例子，我们就隐约感受到了 <code>bcc/eBPF</code> 的强大。</p>
+<h3 id="bcc-eBPF-程序示例"><a href="#bcc-eBPF-程序示例" class="headerlink" title="bcc&#x2F;eBPF 程序示例"></a>bcc&#x2F;eBPF 程序示例</h3><p>接下来我们通过编写一个简单的 eBPF 程序 <code>simple-biolatency</code> 来展示 bcc&#x2F;eBPF 程序是如 何构成及如何工作的。</p>
+<p>我们的程序会监听块设备 IO 相关的系统调用，统计 IO 操作的耗时（I&#x2F;O latency）， 并打印出统计直方图。程序大致分为三个部分：</p>
+<ol>
+<li>核心 eBPF 代码 (hook)，C 编写，会被编译成字节码注入到内核，完成事件的采集和计时</li>
+<li>外围 Python 代码，完成 eBPF 代码的编译和注入</li>
+<li>命令行 Python 代码，完成命令行参数解析、运行程序、打印最终结果等工作</li>
+</ol>
+<p>为方便起见，以上全部代码都放到同一个文件 <code>simple-biolatency.py</code>。</p>
+<p>整个程序需要如下几个依赖库：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> __future__ <span class="keyword">import</span> print_function</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> sleep, strftime</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> bcc <span class="keyword">import</span> BPF</span><br></pre></td></tr></table></figure>
+
+<h4 id="BPF-程序"><a href="#BPF-程序" class="headerlink" title="BPF 程序"></a>BPF 程序</h4><p>首先看 BPF 程序。这里主要做三件事情：</p>
+<ol>
+<li>初始化一个 BPF hash 变量 <code>start</code> 和直方图变量 <code>dist</code>，用于计算和保存统计信息</li>
+<li>定义 <code>trace_req_start()</code> 函数：在每个 I&#x2F;O 请求开始之前会调用这个函数，记录一个时间戳</li>
+<li>定义 <code>trace_req_done()</code> 函数：在每个 I&#x2F;O 请求完成之后会调用这个函数，再根据上一步记录的开始时间戳，计算出耗时</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">bpf_text = <span class="string">&quot;&quot;</span><span class="string">&quot;</span></span><br><span class="line"><span class="string">#include &lt;uapi/linux/ptrace.h&gt;</span></span><br><span class="line"><span class="string">#include &lt;linux/blkdev.h&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">BPF_HASH(start, struct request *);</span></span><br><span class="line"><span class="string">BPF_HISTOGRAM(dist);</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">// time block I/O</span></span><br><span class="line"><span class="string">int trace_req_start(struct pt_regs *ctx, struct request *req)</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">    u64 ts = bpf_ktime_get_ns();</span></span><br><span class="line"><span class="string">    start.update(&amp;req, &amp;ts);</span></span><br><span class="line"><span class="string">    return 0;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">// output</span></span><br><span class="line"><span class="string">int trace_req_done(struct pt_regs *ctx, struct request *req)</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">    u64 *tsp, delta;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    // fetch timestamp and calculate delta</span></span><br><span class="line"><span class="string">    tsp = start.lookup(&amp;req);</span></span><br><span class="line"><span class="string">    if (tsp == 0) &#123;</span></span><br><span class="line"><span class="string">        return 0;   // missed issue</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    delta = bpf_ktime_get_ns() - *tsp;</span></span><br><span class="line"><span class="string">    delta /= 1000;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    // store as histogram</span></span><br><span class="line"><span class="string">    dist.increment(bpf_log2l(delta));</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    start.delete(&amp;req);</span></span><br><span class="line"><span class="string">    return 0;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&quot;</span><span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="加载-BPF-程序"><a href="#加载-BPF-程序" class="headerlink" title="加载 BPF 程序"></a>加载 BPF 程序</h4><p>加载 BPF 程序，然后将 hook 函数分别插入到如下几个系统调用前后：</p>
+<ol>
+<li><code>blk_start_request</code></li>
+<li><code>blk_mq_start_request</code></li>
+<li><code>blk_account_io_done</code></li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">b = BPF(text=bpf_text)</span><br><span class="line"><span class="keyword">if</span> BPF.get_kprobe_functions(<span class="string">b&#x27;blk_start_request&#x27;</span>):</span><br><span class="line">    b.attach_kprobe(event=<span class="string">&quot;blk_start_request&quot;</span>, fn_name=<span class="string">&quot;trace_req_start&quot;</span>)</span><br><span class="line">b.attach_kprobe(event=<span class="string">&quot;blk_mq_start_request&quot;</span>, fn_name=<span class="string">&quot;trace_req_start&quot;</span>)</span><br><span class="line">b.attach_kprobe(event=<span class="string">&quot;blk_account_io_done&quot;</span>, fn_name=<span class="string">&quot;trace_req_done&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="命令行解析"><a href="#命令行解析" class="headerlink" title="命令行解析"></a>命令行解析</h4><p>最后是命令行参数解析等工作。根据指定的采集间隔（秒）和采集次数运行。程序结束的时 候，打印耗时直方图：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) != <span class="number">3</span>:</span><br><span class="line">     <span class="built_in">print</span>(</span><br><span class="line"> <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string"> Simple program to trace block device I/O latency, and print the</span></span><br><span class="line"><span class="string"> distribution graph (histogram).</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> Usage: %s [interval] [count]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> interval - recording period (seconds)</span></span><br><span class="line"><span class="string"> count - how many times to record</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> Example: print 1 second summaries, 10 times</span></span><br><span class="line"><span class="string"> $ %s 1 10</span></span><br><span class="line"><span class="string"> &quot;&quot;&quot;</span> % (sys.argv[<span class="number">0</span>], sys.argv[<span class="number">0</span>]))</span><br><span class="line">     sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"> interval = <span class="built_in">int</span>(sys.argv[<span class="number">1</span>])</span><br><span class="line"> countdown = <span class="built_in">int</span>(sys.argv[<span class="number">2</span>])</span><br><span class="line"> <span class="built_in">print</span>(<span class="string">&quot;Tracing block device I/O... Hit Ctrl-C to end.&quot;</span>)</span><br><span class="line"></span><br><span class="line"> exiting = <span class="number">0</span> <span class="keyword">if</span> interval <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line"> dist = b.get_table(<span class="string">&quot;dist&quot;</span>)</span><br><span class="line"> <span class="keyword">while</span> (<span class="number">1</span>):</span><br><span class="line">     <span class="keyword">try</span>:</span><br><span class="line">         sleep(interval)</span><br><span class="line">     <span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">         exiting = <span class="number">1</span></span><br><span class="line"></span><br><span class="line">     <span class="built_in">print</span>()</span><br><span class="line">     <span class="built_in">print</span>(<span class="string">&quot;%-8s\n&quot;</span> % strftime(<span class="string">&quot;%H:%M:%S&quot;</span>), end=<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line">     dist.print_log2_hist(<span class="string">&quot;usecs&quot;</span>, <span class="string">&quot;disk&quot;</span>)</span><br><span class="line">     dist.clear()</span><br><span class="line"></span><br><span class="line">     countdown -= <span class="number">1</span></span><br><span class="line">     <span class="keyword">if</span> exiting <span class="keyword">or</span> countdown == <span class="number">0</span>:</span><br><span class="line">         exit()</span><br></pre></td></tr></table></figure>
+
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><p>实际运行效果：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">root@container <span class="comment"># ./simple-biolatency.py 1 2</span></span><br><span class="line">Tracing block device I/O... Hit Ctrl-C to end.</span><br><span class="line"></span><br><span class="line">13:12:21</span><br><span class="line"></span><br><span class="line">13:12:22</span><br><span class="line">     usecs               : count     distribution</span><br><span class="line">         0 -&gt; 1          : 0        |                                        |</span><br><span class="line">         2 -&gt; 3          : 0        |                                        |</span><br><span class="line">         4 -&gt; 7          : 0        |                                        |</span><br><span class="line">         8 -&gt; 15         : 0        |                                        |</span><br><span class="line">        16 -&gt; 31         : 0        |                                        |</span><br><span class="line">        32 -&gt; 63         : 0        |                                        |</span><br><span class="line">        64 -&gt; 127        : 0        |                                        |</span><br><span class="line">       128 -&gt; 255        : 0        |                                        |</span><br><span class="line">       256 -&gt; 511        : 0        |                                        |</span><br><span class="line">       512 -&gt; 1023       : 0        |                                        |</span><br><span class="line">      1024 -&gt; 2047       : 0        |                                        |</span><br><span class="line">      2048 -&gt; 4095       : 0        |                                        |</span><br><span class="line">      4096 -&gt; 8191       : 0        |                                        |</span><br><span class="line">      8192 -&gt; 16383      : 12       |****************************************|</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，第二秒采集到了 12 次请求，并且耗时都落在 <code>8192us ~ 16383us</code> 这个区间。</p>
+<h4 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h4><p>以上就是使用 bcc 编写一个 BPF 程序的大致过程，步骤还是很简单的，难点主要在于 hook 点的选取，这需要对探测对象（内核或应用）有较深的理解。实际上，以上代码是 bcc 自带的 <code>tools/biolatency.py</code> 的一个简化版，大家可以执行 <code>biolatency.py -h</code> 查看完整 版的功能。</p>
+<h3 id="更多示例"><a href="#更多示例" class="headerlink" title="更多示例"></a>更多示例</h3><p><code>bcc/tools</code> 目录下有大量和上面类似的工具，建议都尝试运行一下。这些程序通常都很短， 如果想自己写 bcc&#x2F;BPF 程序的话，这是非常好的学习教材。</p>
+<ol>
+<li><code>argdist.py</code> 统计指定函数的调用次数、调用所带的参数等等信息，打印直方图</li>
+<li><code>bashreadline.py</code> 获取正在运行的 bash 命令所带的参数</li>
+<li><code>biolatency.py</code> 统计 block IO 请求的耗时，打印直方图</li>
+<li><code>biosnoop.py</code> 打印每次 block IO 请求的详细信息</li>
+<li><code>biotop.py</code> 打印每个进程的 block IO 详情</li>
+<li><code>bitesize.py</code> 分别打印每个进程的 IO 请求直方图</li>
+<li><code>bpflist.py</code> 打印当前系统正在运行哪些 BPF 程序</li>
+<li><code>btrfsslower.py</code> 打印 btrfs 慢于某一阈值的 read&#x2F;write&#x2F;open&#x2F;fsync 操作的数量</li>
+<li><code>cachestat.py</code> 打印 Linux 页缓存 hit&#x2F;miss 状况</li>
+<li><code>cachetop.py</code> 分别打印每个进程的页缓存状况</li>
+<li><code>capable.py</code> 跟踪到内核函数 cap_capable()（安全检查相关）的调用，打印详情</li>
+<li><code>ujobnew.sh</code> 跟踪内存对象分配事件，打印统计，对研究 GC 很有帮助</li>
+<li><code>cpudist.py</code> 统计 task on-CPU time，即任务在被调度走之前在 CPU 上执行的时间</li>
+<li><code>cpuunclaimed.py</code> 跟踪 CPU run queues length，打印 idle CPU (yet unclaimed by waiting threads) 百分比</li>
+<li><code>criticalstat.py</code> 跟踪涉及内核原子操作的事件，打印调用栈</li>
+<li><code>dbslower.py</code> 跟踪 MySQL 或 PostgreSQL 的慢查询</li>
+<li><code>dbstat.py</code> 打印 MySQL 或 PostgreSQL 的查询耗时直方图</li>
+<li><code>dcsnoop.py</code> 跟踪目录缓存（dcache）查询请求</li>
+<li><code>dcstat.py</code> 打印目录缓存（dcache）统计信息</li>
+<li><code>deadlock.py</code> 检查运行中的进行可能存在的死锁</li>
+<li><code>execsnoop.py</code> 跟踪新进程创建事件</li>
+<li><code>ext4dist.py</code> 跟踪 ext4 文件系统的 read&#x2F;write&#x2F;open&#x2F;fsyncs 请求，打印耗时直方图</li>
+<li><code>ext4slower.py</code> 跟踪 ext4 慢请求</li>
+<li><code>filelife.py</code> 跟踪短寿命文件（跟踪期间创建然后删除）</li>
+<li><code>fileslower.py</code> 跟踪较慢的同步读写请求</li>
+<li><code>filetop.py</code> 打印文件读写排行榜（top），以及进程详细信息</li>
+<li><code>funccount.py</code> 跟踪指定函数的调用次数，支持正则表达式</li>
+<li><code>funclatency.py</code> 跟踪指定函数，打印耗时</li>
+<li><code>funcslower.py</code> 跟踪唤醒时间（function invocations）较慢的内核和用户函数</li>
+<li><code>gethostlatency.py</code> 跟踪 hostname 查询耗时</li>
+<li><code>hardirqs.py</code> 跟踪硬中断耗时</li>
+<li><code>inject.py</code></li>
+<li><code>javacalls.sh</code></li>
+<li><code>javaflow.sh</code></li>
+<li><code>javagc.sh</code></li>
+<li><code>javaobjnew.sh</code></li>
+<li><code>javastat.sh</code></li>
+<li><code>javathreads.sh</code></li>
+<li><code>killsnoop.py</code> 跟踪 kill()系统调用发出的信号</li>
+<li><code>llcstat.py</code> 跟踪缓存引用和缓存命中率事件</li>
+<li><code>mdflush.py</code> 跟踪 md driver level 的 flush 事件</li>
+<li><code>memleak.py</code> 检查内存泄漏</li>
+<li><code>mountsnoop.py</code> 跟踪 mount 和 unmount 系统调用</li>
+<li><code>mysqld_qslower.py</code> 跟踪 MySQL 慢查询</li>
+<li><code>nfsdist.py</code> 打印 NFS read&#x2F;write&#x2F;open&#x2F;getattr 耗时直方图</li>
+<li><code>nfsslower.py</code> 跟踪 NFS read&#x2F;write&#x2F;open&#x2F;getattr 慢操作</li>
+<li><code>nodegc.sh</code> 跟踪高级语言（Java&#x2F;Python&#x2F;Ruby&#x2F;Node&#x2F;）的 GC 事件</li>
+<li><code>offcputime.py</code> 跟踪被阻塞的进程，打印调用栈、阻塞耗时等信息</li>
+<li><code>offwaketime.py</code> 跟踪被阻塞且 off-CPU 的进程</li>
+<li><code>oomkill.py</code> 跟踪 Linux out-of-memory (OOM) killer</li>
+<li><code>opensnoop.py</code> 跟踪 open()系统调用</li>
+<li><code>perlcalls.sh</code></li>
+<li><code>perlstat.sh</code></li>
+<li><code>phpcalls.sh</code></li>
+<li><code>phpflow.sh</code></li>
+<li><code>phpstat.sh</code></li>
+<li><code>pidpersec.py</code> 跟踪每分钟新创建的进程数量（通过跟踪 fork()）</li>
+<li><code>profile.py</code> CPU profiler</li>
+<li><code>pythoncalls.sh</code></li>
+<li><code>pythoonflow.sh</code></li>
+<li><code>pythongc.sh</code></li>
+<li><code>pythonstat.sh</code></li>
+<li><code>reset-trace</code>.sh</li>
+<li><code>rubycalls.sh</code></li>
+<li><code>rubygc.sh</code></li>
+<li><code>rubyobjnew.sh</code></li>
+<li><code>runqlat.py</code> 调度器 run queue latency 直方图，每个 task 等待 CPU 的时间</li>
+<li><code>runqlen.py</code> 调度器 run queue 使用百分比</li>
+<li><code>runqslower.py</code> 跟踪调度延迟很大的进程（等待被执行但是没有空闲 CPU）</li>
+<li><code>shmsnoop.py</code> 跟踪 shm*()系统调用</li>
+<li><code>slabratetop.py</code> 跟踪内核内存分配缓存（SLAB 或 SLUB）</li>
+<li><code>sofdsnoop.py</code> 跟踪 unix socket 文件描述符（FD）</li>
+<li><code>softirqs.py</code> 跟踪软中断</li>
+<li><code>solisten.py</code> 跟踪内核 TCP listen 事件</li>
+<li><code>sslsniff.py</code> 跟踪 OpenSSL&#x2F;GnuTLS&#x2F;NSS 的 write&#x2F;send 和 read&#x2F;recv 函数</li>
+<li><code>stackcount.py</code> 跟踪函数和调用栈</li>
+<li><code>statsnoop.py</code> 跟踪 stat()系统调用</li>
+<li><code>syncsnoop.py</code> 跟踪 sync()系统调用</li>
+<li><code>syscount.py</code> 跟踪各系统调用次数</li>
+<li><code>tclcalls.sh</code></li>
+<li><code>tclflow.sh</code></li>
+<li><code>tclobjnew.sh</code></li>
+<li><code>tclstat.sh</code></li>
+<li><code>tcpaccept.py</code> 跟踪内核接受 TCP 连接的事件</li>
+<li><code>tcpconnect.py</code> 跟踪内核建立 TCP 连接的事件</li>
+<li><code>tcpconnlat.py</code> 跟踪建立 TCP 连接比较慢的事件，打印进程、IP、端口等详细信息</li>
+<li><code>tcpdrop.py</code> 跟踪内核 drop TCP 包或片（segment）的事件</li>
+<li><code>tcplife.py</code> 打印跟踪期间建立和关闭的的 TCP session</li>
+<li><code>tcpretrans.py</code> 跟踪 TCP 重传</li>
+<li><code>tcpstates.py</code> 跟踪 TCP 状态变化，包括每个状态的时长</li>
+<li><code>tcpsubnet.py</code> 根据 destination 打印每个 subnet 的 throughput</li>
+<li><code>tcptop.py</code> 根据 host 和 port 打印 throughput</li>
+<li><code>tcptracer.py</code> 跟踪进行 TCP connection 操作的内核函数</li>
+<li><code>tplist.py</code> 打印内核 tracepoint 和 USDT probes 点，已经它们的参数</li>
+<li><code>trace.py</code> 跟踪指定的函数，并按照指定的格式打印函数当时的参数值</li>
+<li><code>ttysnoop.py</code> 跟踪指定的 tty 或 pts 设备，将其打印复制一份输出</li>
+<li><code>vfscount.py</code> 统计 VFS（虚拟文件系统）调用</li>
+<li><code>vfsstat.py</code> 跟踪一些重要的 VFS 函数，打印统计信息</li>
+<li><code>wakeuptime.py</code> 打印进程被唤醒的延迟及其调用栈</li>
+<li><code>xfsdist.py</code> 打印 XFS read&#x2F;write&#x2F;open&#x2F;fsync 耗时直方图</li>
+<li><code>xfsslower.py</code> 打印 XFS 慢请求</li>
+<li><code>zfsdist.py</code> 打印 ZFS read&#x2F;write&#x2F;open&#x2F;fsync 耗时直方图</li>
+<li><code>zfsslower.py</code> 打印 ZFS 慢请求</li>
+</ol>
+<h3 id="References"><a href="#References" class="headerlink" title="References"></a>References</h3><ol>
+<li><a href="https://lwn.net/Articles/740157/">Kernel Document: A thorough introduction to eBPF</a></li>
+<li><a href="https://github.com/iovisor/bcc/blob/master/INSTALL.md">bcc: Install Guide</a></li>
+</ol>
+<h3 id="附录-1：打包-bcc-镜像"><a href="#附录-1：打包-bcc-镜像" class="headerlink" title="附录 1：打包 bcc 镜像"></a>附录 1：打包 bcc 镜像</h3><p>本节描述如何基于 ubuntu 18.04 打包一个 bcc 镜像，内容参考自 <a href="https://github.com/iovisor/bcc/blob/master/INSTALL.md">bcc 官方编译教程</a>。</p>
+<p>首先下载 ubuntu:20.04 作为基础镜像：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker pull ubuntu:20.04</span><br></pre></td></tr></table></figure>
+
+<p>然后将如下内容保存为 <code>Dockerfile</code>：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:20.04</span><br><span class="line"></span><br><span class="line">RUN apt update &amp;&amp; apt install -y gnupg lsb-core</span><br><span class="line">RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4052245BD4284CDD</span><br><span class="line">RUN <span class="built_in">echo</span> <span class="string">&quot;deb https://repo.iovisor.org/apt/<span class="subst">$(lsb_release -cs)</span> <span class="subst">$(lsb_release -cs)</span> main&quot;</span> &gt; <span class="built_in">tee</span> /etc/apt/sources.list.d/iovisor.list</span><br><span class="line">RUN apt-get install bcc-tools libbcc-examples linux-headers-$(<span class="built_in">uname</span> -r)</span><br></pre></td></tr></table></figure>
+
+<p>生成镜像：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">sudo</span> docker build -t bcc:0.0.1</span><br></pre></td></tr></table></figure>
+
+<p>附录 2：基于构建好的<a href="https://luckymrwang.github.io/2022/05/23/%E4%BD%BF%E7%94%A8-Docker-Desktop%E8%BF%9B%E8%A1%8C-BPF-%E5%BC%80%E5%8F%91/">镜像</a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name bcc \</span><br><span class="line">    --privileged \</span><br><span class="line">    -v /lib/modules:/lib/modules:ro \</span><br><span class="line">    -v /sys/kernel/debug:/sys/kernel/debug:ro \</span><br><span class="line">    -v /usr/src:/usr/src:ro \</span><br><span class="line">    -v /boot:/boot:ro \</span><br><span class="line">    -v /etc/localtime:/etc/localtime:ro \</span><br><span class="line">    --pid=host \</span><br><span class="line">    --workdir /root/bcc/tools \</span><br><span class="line">    luckymrwang/ebpf-for-mac <span class="built_in">sleep</span> infinity</span><br></pre></td></tr></table></figure>
+
+
+
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eBPF/">eBPF</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/08/22/bcc-ebpf-%E5%AE%89%E8%A3%85%E5%8F%8A%E7%A4%BA%E4%BE%8B/" data-title="bcc/ebpf 安装及示例 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/09/02/内核协议栈/" title="内核协议栈">
+  <strong>上一篇：</strong><br/>
+  <span>
+  内核协议栈</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/08/19/搭建-eBPF-开发环境/"  title="搭建 eBPF 开发环境">
+ <strong>下一篇：</strong><br/> 
+ <span>搭建 eBPF 开发环境
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/08/22/bcc-ebpf-安装及示例/" data-title="bcc/ebpf 安装及示例" data-url="https://luckymrwang.github.io/2022/08/22/bcc-ebpf-%E5%AE%89%E8%A3%85%E5%8F%8A%E7%A4%BA%E4%BE%8B/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E6%A0%B8%E7%89%88%E6%9C%AC"><span class="toc-number">1.1.</span> <span class="toc-text">内核版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#docker"><span class="toc-number">1.2.</span> <span class="toc-text">docker</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bcc-%E5%B7%A5%E5%85%B7"><span class="toc-number">1.3.</span> <span class="toc-text">bcc 工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95-bcc-%E5%B7%A5%E4%BD%9C%E6%AD%A3%E5%B8%B8"><span class="toc-number">1.4.</span> <span class="toc-text">测试 bcc 工作正常</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bcc-eBPF-%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">bcc&#x2F;eBPF 程序示例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BPF-%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.1.</span> <span class="toc-text">BPF 程序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD-BPF-%E7%A8%8B%E5%BA%8F"><span class="toc-number">2.2.</span> <span class="toc-text">加载 BPF 程序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%A7%A3%E6%9E%90"><span class="toc-number">2.3.</span> <span class="toc-text">命令行解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C"><span class="toc-number">2.4.</span> <span class="toc-text">运行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%8F%E7%BB%93"><span class="toc-number">2.5.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E5%A4%9A%E7%A4%BA%E4%BE%8B"><span class="toc-number">3.</span> <span class="toc-text">更多示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#References"><span class="toc-number">4.</span> <span class="toc-text">References</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E5%BD%95-1%EF%BC%9A%E6%89%93%E5%8C%85-bcc-%E9%95%9C%E5%83%8F"><span class="toc-number">5.</span> <span class="toc-text">附录 1：打包 bcc 镜像</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

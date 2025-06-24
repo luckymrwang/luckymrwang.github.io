@@ -1,0 +1,536 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Golang中TCP Socket粘包问题和处理 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="在用golang开发人工客服系统的时候碰到了粘包问题，那么什么是粘包呢？例如我们和客户端约定数据交互格式是一个json格式的字符串： 	&#123;&quot;Id&quot;:1,&quot;Name&quot;:&quot;golang&quot;,&quot;Message&quot;:&quot;message&quot;&#125;  当客户端发送数据给服务端的时候，如果服务端没有及时接">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang中TCP Socket粘包问题和处理">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/11/15/Golang%E4%B8%ADTCP-Socket%E7%B2%98%E5%8C%85%E9%97%AE%E9%A2%98%E5%92%8C%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="在用golang开发人工客服系统的时候碰到了粘包问题，那么什么是粘包呢？例如我们和客户端约定数据交互格式是一个json格式的字符串： 	&#123;&quot;Id&quot;:1,&quot;Name&quot;:&quot;golang&quot;,&quot;Message&quot;:&quot;message&quot;&#125;  当客户端发送数据给服务端的时候，如果服务端没有及时接">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/golang_stick.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/golang_stick2.jpg">
+<meta property="article:published_time" content="2016-11-15T04:21:58.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.191Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/golang_stick.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/15/Golang中TCP-Socket粘包问题和处理/" title="Golang中TCP Socket粘包问题和处理" itemprop="url">Golang中TCP Socket粘包问题和处理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-15T04:21:58.000Z" itemprop="datePublished"> 发表于 2016-11-15</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%98%E5%8C%85%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.</span> <span class="toc-text">粘包示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%98%E5%8C%85%E4%BA%A7%E7%94%9F%E5%8E%9F%E5%9B%A0"><span class="toc-number">2.</span> <span class="toc-text">粘包产生原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%98%E5%8C%85%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">粘包解决办法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-number">4.</span> <span class="toc-text">最后</span></a></li></ol>
+		
+		</div>
+		
+		<p>在用golang开发人工客服系统的时候碰到了粘包问题，那么什么是粘包呢？例如我们和客户端约定数据交互格式是一个json格式的字符串：</p>
+<pre><code>	&#123;&quot;Id&quot;:1,&quot;Name&quot;:&quot;golang&quot;,&quot;Message&quot;:&quot;message&quot;&#125;
+</code></pre>
+<p>当客户端发送数据给服务端的时候，如果服务端没有及时接收，客户端又发送了一条数据上来，这时候服务端才进行接收的话就会收到两个连续的字符串，形如：</p>
+<pre><code>	&#123;&quot;Id&quot;:1,&quot;Name&quot;:&quot;golang&quot;,&quot;Message&quot;:&quot;message&quot;&#125;&#123;&quot;Id&quot;:1,&quot;Name&quot;:&quot;golang&quot;,&quot;Message&quot;:&quot;message&quot;&#125;
+	
+</code></pre>
+<p>如果接收缓冲区满了的话，那么也有可能接收到半截的json字符串，酱紫的话还怎么用json解码呢？真是头疼。以下用golang模拟了下这个粘包的产生。</p>
+<span id="more"></span>
+<h3 id="粘包示例"><a href="#粘包示例" class="headerlink" title="粘包示例"></a>粘包示例</h3><p><code>server.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//粘包问题演示服务端</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	netListen, err := net.Listen(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;:9988&quot;</span>)</span><br><span class="line"></span><br><span class="line">	CheckError(err)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> netListen.Close()</span><br><span class="line"></span><br><span class="line">	Log(<span class="string">&quot;Waiting for clients&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line"></span><br><span class="line">		conn, err := netListen.Accept()</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		Log(conn.RemoteAddr().String(), <span class="string">&quot; tcp connect success&quot;</span>)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">go</span> handleConnection(conn)</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleConnection</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	buffer := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">1024</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line"></span><br><span class="line">		n, err := conn.Read(buffer)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">			Log(conn.RemoteAddr().String(), <span class="string">&quot; connection error: &quot;</span>, err)</span><br><span class="line"></span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		Log(conn.RemoteAddr().String(), <span class="string">&quot;receive data length:&quot;</span>, n)</span><br><span class="line"></span><br><span class="line">		Log(conn.RemoteAddr().String(), <span class="string">&quot;receive data:&quot;</span>, buffer[:n])</span><br><span class="line"></span><br><span class="line">		Log(conn.RemoteAddr().String(), <span class="string">&quot;receive data string:&quot;</span>, <span class="type">string</span>(buffer[:n]))</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Log</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	fmt.Println(v...)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CheckError</span><span class="params">(err <span class="type">error</span>)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">		fmt.Fprintf(os.Stderr, <span class="string">&quot;Fatal error: %s&quot;</span>, err.Error())</span><br><span class="line"></span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>client.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//粘包问题演示客户端</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sender</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line"></span><br><span class="line">		words := <span class="string">&quot;&#123;\&quot;Id\&quot;:1,\&quot;Name\&quot;:\&quot;golang\&quot;,\&quot;Message\&quot;:\&quot;message\&quot;&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">		conn.Write([]<span class="type">byte</span>(words))</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	server := <span class="string">&quot;127.0.0.1:9988&quot;</span></span><br><span class="line"></span><br><span class="line">	tcpAddr, err := net.ResolveTCPAddr(<span class="string">&quot;tcp4&quot;</span>, server)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">		fmt.Fprintf(os.Stderr, <span class="string">&quot;Fatal error: %s&quot;</span>, err.Error())</span><br><span class="line"></span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	conn, err := net.DialTCP(<span class="string">&quot;tcp&quot;</span>, <span class="literal">nil</span>, tcpAddr)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">		fmt.Fprintf(os.Stderr, <span class="string">&quot;Fatal error: %s&quot;</span>, err.Error())</span><br><span class="line"></span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> conn.Close()</span><br><span class="line"></span><br><span class="line">	fmt.Println(<span class="string">&quot;connect success&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> sender(conn)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line"></span><br><span class="line">		time.Sleep(<span class="number">1</span> * <span class="number">1e9</span>)</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/images/golang_stick.png" alt="粘包"><br>可以看到json格式的字符串都粘到一起</p>
+<h3 id="粘包产生原因"><a href="#粘包产生原因" class="headerlink" title="粘包产生原因"></a>粘包产生原因</h3><p>关于粘包的产生原因网上有很多相关的说明，主要原因就是tcp数据传递模式是流模式，在保持长连接的时候可以进行多次的收和发。如果要深入了解可以看看tcp协议方面的内容。这里推荐下鸟哥的私房菜，讲的非常通俗易懂。</p>
+<h3 id="粘包解决办法"><a href="#粘包解决办法" class="headerlink" title="粘包解决办法"></a>粘包解决办法</h3><ul>
+<li>客户端发送一次就断开连接，需要发送数据的时候再次连接，典型如http。下面用golang演示一下这个过程，确实不会出现粘包问题</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//客户端代码，演示了发送一次数据就断开连接的</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	server := <span class="string">&quot;127.0.0.1:9988&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line"></span><br><span class="line">		tcpAddr, err := net.ResolveTCPAddr(<span class="string">&quot;tcp4&quot;</span>, server)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">			fmt.Fprintf(os.Stderr, <span class="string">&quot;Fatal error: %s&quot;</span>, err.Error())</span><br><span class="line"></span><br><span class="line">			os.Exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		conn, err := net.DialTCP(<span class="string">&quot;tcp&quot;</span>, <span class="literal">nil</span>, tcpAddr)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">			fmt.Fprintf(os.Stderr, <span class="string">&quot;Fatal error: %s&quot;</span>, err.Error())</span><br><span class="line"></span><br><span class="line">			os.Exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		words := <span class="string">&quot;&#123;\&quot;Id\&quot;:1,\&quot;Name\&quot;:\&quot;golang\&quot;,\&quot;Message\&quot;:\&quot;message\&quot;&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">		conn.Write([]<span class="type">byte</span>(words))</span><br><span class="line"></span><br><span class="line">		conn.Close()</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line"></span><br><span class="line">		time.Sleep(<span class="number">1</span> * <span class="number">1e9</span>)</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>服务端代码参考上面演示粘包产生过程的服务端代码</p>
+<ul>
+<li>包头+数据的格式，根据包头信息读取到需要分析的数据。形式如下图：</li>
+</ul>
+<p><img src="/images/golang_stick2.jpg" alt="粘包"></p>
+<p>golang粘包问题包头定义</p>
+<p>从数据流中读取数据的时候，只要根据包头和数据长度就能取到需要的数据。这个其实就是平时说的协议（protocol），只是这个数据传输协议非常简单，不像tcp、ip等协议有较多的定义。在实际的过程中通常会定义协议类或者协议文件来封装封包和解包的过程。下面代码演示了封包和解包的过程：</p>
+<p><code>protocal.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//通讯协议处理，主要处理封包和解包的过程</span></span><br><span class="line"><span class="keyword">package</span> protocol</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;bytes&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/binary&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	ConstHeader         = <span class="string">&quot;www.01happy.com&quot;</span></span><br><span class="line">	ConstHeaderLength   = <span class="number">15</span></span><br><span class="line">	ConstSaveDataLength = <span class="number">4</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">//封包</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Packet</span><span class="params">(message []<span class="type">byte</span>)</span></span> []<span class="type">byte</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">append</span>(<span class="built_in">append</span>([]<span class="type">byte</span>(ConstHeader), IntToBytes(<span class="built_in">len</span>(message))...), message...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//解包</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Unpack</span><span class="params">(buffer []<span class="type">byte</span>, readerChannel <span class="keyword">chan</span> []<span class="type">byte</span>)</span></span> []<span class="type">byte</span> &#123;</span><br><span class="line">	length := <span class="built_in">len</span>(buffer)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> i <span class="type">int</span></span><br><span class="line">	<span class="keyword">for</span> i = <span class="number">0</span>; i &lt; length; i = i + <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> length &lt; i+ConstHeaderLength+ConstSaveDataLength &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> <span class="type">string</span>(buffer[i:i+ConstHeaderLength]) == ConstHeader &#123;</span><br><span class="line">			messageLength := BytesToInt(buffer[i+ConstHeaderLength : i+ConstHeaderLength+ConstSaveDataLength])</span><br><span class="line">			<span class="keyword">if</span> length &lt; i+ConstHeaderLength+ConstSaveDataLength+messageLength &#123;</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			&#125;</span><br><span class="line">			data := buffer[i+ConstHeaderLength+ConstSaveDataLength : i+ConstHeaderLength+ConstSaveDataLength+messageLength]</span><br><span class="line">			readerChannel &lt;- data</span><br><span class="line"></span><br><span class="line">			i += ConstHeaderLength + ConstSaveDataLength + messageLength - <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> i == length &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> buffer[i:]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//整形转换成字节</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">IntToBytes</span><span class="params">(n <span class="type">int</span>)</span></span> []<span class="type">byte</span> &#123;</span><br><span class="line">	x := <span class="type">int32</span>(n)</span><br><span class="line"></span><br><span class="line">	bytesBuffer := bytes.NewBuffer([]<span class="type">byte</span>&#123;&#125;)</span><br><span class="line">	binary.Write(bytesBuffer, binary.BigEndian, x)</span><br><span class="line">	<span class="keyword">return</span> bytesBuffer.Bytes()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//字节转换成整形</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BytesToInt</span><span class="params">(b []<span class="type">byte</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">	bytesBuffer := bytes.NewBuffer(b)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> x <span class="type">int32</span></span><br><span class="line">	binary.Read(bytesBuffer, binary.BigEndian, &amp;x)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="type">int</span>(x)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>tips：解包的过程中要注意数组越界的问题；另外包头要注意唯一性</p>
+<p><code>server.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//服务端解包过程</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;./protocol&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	netListen, err := net.Listen(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;:9988&quot;</span>)</span><br><span class="line">	CheckError(err)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> netListen.Close()</span><br><span class="line"></span><br><span class="line">	Log(<span class="string">&quot;Waiting for clients&quot;</span>)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		conn, err := netListen.Accept()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		Log(conn.RemoteAddr().String(), <span class="string">&quot; tcp connect success&quot;</span>)</span><br><span class="line">		<span class="keyword">go</span> handleConnection(conn)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleConnection</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line">	<span class="comment">//声明一个临时缓冲区，用来存储被截断的数据</span></span><br><span class="line">	tmpBuffer := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//声明一个管道用于接收解包的数据</span></span><br><span class="line">	readerChannel := <span class="built_in">make</span>(<span class="keyword">chan</span> []<span class="type">byte</span>, <span class="number">16</span>)</span><br><span class="line">	<span class="keyword">go</span> reader(readerChannel)</span><br><span class="line"></span><br><span class="line">	buffer := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">1024</span>)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		n, err := conn.Read(buffer)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			Log(conn.RemoteAddr().String(), <span class="string">&quot; connection error: &quot;</span>, err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		tmpBuffer = protocol.Unpack(<span class="built_in">append</span>(tmpBuffer, buffer[:n]...), readerChannel)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">reader</span><span class="params">(readerChannel <span class="keyword">chan</span> []<span class="type">byte</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> data := &lt;-readerChannel:</span><br><span class="line">			Log(<span class="type">string</span>(data))</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Log</span><span class="params">(v ...<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">	fmt.Println(v...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CheckError</span><span class="params">(err <span class="type">error</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Fprintf(os.Stderr, <span class="string">&quot;Fatal error: %s&quot;</span>, err.Error())</span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>client.go</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//客户端发送封包</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;./protocol&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sender</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++ &#123;</span><br><span class="line">		words := <span class="string">&quot;&#123;\&quot;Id\&quot;:1,\&quot;Name\&quot;:\&quot;golang\&quot;,\&quot;Message\&quot;:\&quot;message\&quot;&#125;&quot;</span></span><br><span class="line">		conn.Write(protocol.Packet([]<span class="type">byte</span>(words)))</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;send over&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	server := <span class="string">&quot;127.0.0.1:9988&quot;</span></span><br><span class="line">	tcpAddr, err := net.ResolveTCPAddr(<span class="string">&quot;tcp4&quot;</span>, server)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Fprintf(os.Stderr, <span class="string">&quot;Fatal error: %s&quot;</span>, err.Error())</span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	conn, err := net.DialTCP(<span class="string">&quot;tcp&quot;</span>, <span class="literal">nil</span>, tcpAddr)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Fprintf(os.Stderr, <span class="string">&quot;Fatal error: %s&quot;</span>, err.Error())</span><br><span class="line">		os.Exit(<span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> conn.Close()</span><br><span class="line">	fmt.Println(<span class="string">&quot;connect success&quot;</span>)</span><br><span class="line">	<span class="keyword">go</span> sender(conn)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		time.Sleep(<span class="number">1</span> * <span class="number">1e9</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行这个程序可以看到服务端很好的获取到期望的json格式数据 </p>
+<p><a href="https://github.com/luckymrwang/hello/tree/master/tests/example/golang%E7%B2%98%E5%8C%85%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E7%A4%BA%E4%BE%8B">完整代码展示</a></p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>上面演示的两种方法适用于不同的场景。第一种方法比较适合被动型的场景，例如打开网页，用户有请求才处理交互。第二种方法适合于主动推送的类型，例如即时聊天系统，因为要即时给用户推送消息，保持长连接是不可避免的，这时候就要用这种方法。</p>
+<p>本文引自<a href="http://studygolang.com/articles/8917">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/11/15/Golang%E4%B8%ADTCP-Socket%E7%B2%98%E5%8C%85%E9%97%AE%E9%A2%98%E5%92%8C%E5%A4%84%E7%90%86/" data-title="Golang中TCP Socket粘包问题和处理 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/15/linux-下使用-curl-访问带多参数，GET掉参数解决方案/" title="linux 下使用 curl 访问带多参数，GET掉参数解决方案">
+  <strong>上一篇：</strong><br/>
+  <span>
+  linux 下使用 curl 访问带多参数，GET掉参数解决方案</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/14/网络编程调试/"  title="网络编程调试">
+ <strong>下一篇：</strong><br/> 
+ <span>网络编程调试
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/11/15/Golang中TCP-Socket粘包问题和处理/" data-title="Golang中TCP Socket粘包问题和处理" data-url="https://luckymrwang.github.io/2016/11/15/Golang%E4%B8%ADTCP-Socket%E7%B2%98%E5%8C%85%E9%97%AE%E9%A2%98%E5%92%8C%E5%A4%84%E7%90%86/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%98%E5%8C%85%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.</span> <span class="toc-text">粘包示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%98%E5%8C%85%E4%BA%A7%E7%94%9F%E5%8E%9F%E5%9B%A0"><span class="toc-number">2.</span> <span class="toc-text">粘包产生原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B2%98%E5%8C%85%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">粘包解决办法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-number">4.</span> <span class="toc-text">最后</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,550 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go 反向代理reverse proxy 源码分析 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="基于reverse proxy实现的反向代理例子123456789101112131415161718192021222324package mainimport (    &quot;log&quot;    &quot;net&#x2F;http&quot;    &quot;net&#x2F;http&#x2F;httputil&quot;    &quot;net&#x2F;url&quot;)func main() &amp;#123">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go 反向代理reverse proxy 源码分析">
+<meta property="og:url" content="https://luckymrwang.github.io/2021/04/11/Go-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86reverse-proxy-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="基于reverse proxy实现的反向代理例子123456789101112131415161718192021222324package mainimport (    &quot;log&quot;    &quot;net&#x2F;http&quot;    &quot;net&#x2F;http&#x2F;httputil&quot;    &quot;net&#x2F;url&quot;)func main() &amp;#123">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/reverse.jpg">
+<meta property="og:image" content="https://luckymrwang.github.io/images/proxy.png">
+<meta property="article:published_time" content="2021-04-11T04:27:10.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.190Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/reverse.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/04/11/Go-反向代理reverse-proxy-源码分析/" title="Go 反向代理reverse proxy 源码分析" itemprop="url">Go 反向代理reverse proxy 源码分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-04-11T04:27:10.000Z" itemprop="datePublished"> 发表于 2021-04-11</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Ereverse-proxy%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E4%BE%8B%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">基于reverse proxy实现的反向代理例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#reverse-proxy%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">reverse proxy源码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E8%BF%94%E5%9B%9E%E5%86%85%E5%AE%B9%E5%AE%9E%E4%BE%8B"><span class="toc-number">3.</span> <span class="toc-text">修改返回内容实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%94%E5%9B%9E%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9C%9F%E5%AE%9EIP"><span class="toc-number">4.</span> <span class="toc-text">返回客户端真实IP</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="基于reverse-proxy实现的反向代理例子"><a href="#基于reverse-proxy实现的反向代理例子" class="headerlink" title="基于reverse proxy实现的反向代理例子"></a>基于reverse proxy实现的反向代理例子</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;log&quot;</span></span><br><span class="line">    <span class="string">&quot;net/http&quot;</span></span><br><span class="line">    <span class="string">&quot;net/http/httputil&quot;</span></span><br><span class="line">    <span class="string">&quot;net/url&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 地址重写实例</span></span><br><span class="line">    <span class="comment">// http://127.0.0.1:8888/test?id=1  =》 http://127.0.0.1:8081/reverse/test?id=1</span></span><br><span class="line"></span><br><span class="line">    rs1 := <span class="string">&quot;http://127.0.0.1:8081/reverse&quot;</span></span><br><span class="line">    targetUrl , err := url.Parse(rs1)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(<span class="string">&quot;err&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    proxy := httputil.NewSingleHostReverseProxy(targetUrl)</span><br><span class="line">    log.Println(<span class="string">&quot;Reverse proxy server serve at : 127.0.0.1:8888&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err := http.ListenAndServe(<span class="string">&quot;:8888&quot;</span>,proxy);err != <span class="literal">nil</span>&#123;</span><br><span class="line">        log.Fatal(<span class="string">&quot;Start server failed,err:&quot;</span>,err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl <span class="attr">http</span>:<span class="comment">//127.0.0.1:8888/hello?id=123 -s</span></span><br><span class="line"><span class="attr">http</span>:<span class="comment">//127.0.0.1:8081/reverse/hello?id=123</span></span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h3 id="reverse-proxy源码分析"><a href="#reverse-proxy源码分析" class="headerlink" title="reverse proxy源码分析"></a>reverse proxy源码分析</h3><p>主要结构体reverseproxy</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 处理进来的请求，并发送给另外一台server实现反向代理，并将请求回传给客户端</span></span><br><span class="line"><span class="keyword">type</span> ReverseProxy <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// 通过transport 可修改请求，响应体将原封不动的返回</span></span><br><span class="line">    Director <span class="function"><span class="keyword">func</span><span class="params">(*http.Request)</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 连接池复用连接，用于执行请求，为nil则默认使用http.DefaultTransport</span></span><br><span class="line">    Transport http.RoundTripper</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 刷新到客户端的刷新时间间隔</span></span><br><span class="line">    <span class="comment">// 流式请求下该参数会被忽略，所有反向代理请求将被立即刷新</span></span><br><span class="line">    FlushInterval time.Duration</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 默认为std.err，可用于自定义logger</span></span><br><span class="line">    ErrorLog *log.Logger</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 用于执行io.CopyBuffer 复制响应体，将其存放至byte切片</span></span><br><span class="line">    BufferPool BufferPool</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 用于修改响应结果及HTTP状态码，当返回结果error不为空时，会调用ErrorHandler</span></span><br><span class="line">    ModifyResponse <span class="function"><span class="keyword">func</span><span class="params">(*http.Response)</span></span> <span class="type">error</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 用于处理后端和ModifyResponse返回的错误信息，默认将返回传递过来的错误信息，并返回HTTP 502</span></span><br><span class="line">    ErrorHandler <span class="function"><span class="keyword">func</span><span class="params">(http.ResponseWriter, *http.Request, <span class="type">error</span>)</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实例化ReverseProxy</span></span><br><span class="line"><span class="comment">// 假设目标URI(target path)是/base ，请求的URI（target request）是/dir，那么请求将被反向代理到http://x.x.x.x./base/dir</span></span><br><span class="line"><span class="comment">// ReverseProxy  不会rewrite Host header，需要重写Host，可在Director函数中自定义</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewSingleHostReverseProxy</span><span class="params">(target *url.URL)</span></span> *ReverseProxy &#123;</span><br><span class="line">  <span class="comment">// 获取请求参数，例如请求的是/dir?id=123，那么rawQuery ：id=123</span></span><br><span class="line">    targetQuery := target.RawQuery</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实例化director</span></span><br><span class="line">    director := <span class="function"><span class="keyword">func</span><span class="params">(req *http.Request)</span></span> &#123;</span><br><span class="line">        req.URL.Scheme = target.Scheme   <span class="comment">// http or https</span></span><br><span class="line">        req.URL.Host = target.Host      <span class="comment">// 主机名（ip+端口 或 域名+端口）</span></span><br><span class="line">        req.URL.Path = singleJoiningSlash(target.Path, req.URL.Path) <span class="comment">// 请求URL拼接</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 使用&quot;&amp;&quot;符号拼接请求参数</span></span><br><span class="line">        <span class="keyword">if</span> targetQuery == <span class="string">&quot;&quot;</span> || req.URL.RawQuery == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">            req.URL.RawQuery = targetQuery + req.URL.RawQuery</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            req.URL.RawQuery = targetQuery + <span class="string">&quot;&amp;&quot;</span> + req.URL.RawQuery</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 若&quot;User-Agent&quot; 这个header不存在，则置空</span></span><br><span class="line">        <span class="keyword">if</span> _, ok := req.Header[<span class="string">&quot;User-Agent&quot;</span>]; !ok &#123;</span><br><span class="line">            <span class="comment">// explicitly disable User-Agent so it&#x27;s not set to default value</span></span><br><span class="line">            req.Header.Set(<span class="string">&quot;User-Agent&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> &amp;ReverseProxy&#123;Director: director&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>url 拼接方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">singleJoiningSlash</span><span class="params">(a, b <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    aslash := strings.HasSuffix(a, <span class="string">&quot;/&quot;</span>)</span><br><span class="line">    bslash := strings.HasPrefix(b, <span class="string">&quot;/&quot;</span>)</span><br><span class="line">    <span class="keyword">switch</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> aslash &amp;&amp; bslash:      <span class="comment">// 如果a,b都存在，则去掉后者第一个字符，也就是&quot;/&quot; 后拼接</span></span><br><span class="line">        <span class="keyword">return</span> a + b[<span class="number">1</span>:]</span><br><span class="line">    <span class="keyword">case</span> !aslash &amp;&amp; !bslash:  <span class="comment">// 如果a,b都不存在，则在两者间添加&quot;/&quot;</span></span><br><span class="line">        <span class="keyword">return</span> a + <span class="string">&quot;/&quot;</span> + b</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> a + b  <span class="comment">// 否则直接拼接到一块</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上面的实例中我们已经知道基本步骤是实例化一个reverseproxy对象，再传入到http.ListenAndServe方法中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">proxy := NewSingleHostReverseProxy(targetUrl)</span><br><span class="line">http.ListenAndServe(<span class="string">&quot;:8888&quot;</span>,proxy)</span><br></pre></td></tr></table></figure>
+
+<p>其中http.ListenAndServe 方法接收的是一个地址与handler，函数签名如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ListenAndServe</span><span class="params">(addr <span class="type">string</span>, handler Handler)</span></span> <span class="type">error</span> &#123;...&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的handler 是一个接口，实现的方法是ServeHTTP</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Handler <span class="keyword">interface</span> &#123;</span><br><span class="line">    ServeHTTP(ResponseWriter, *Request)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因此，我们可以肯定实例化的reverseproxy对象也实现了ServeHTTP方法<br>主要步骤有：</p>
+<ul>
+<li>拷贝上游请求的Header到下游请求</li>
+<li>修改请求（例如协议、参数、url等）</li>
+<li>判断是否需要升级协议（Upgrade）</li>
+<li>删除上游请求中的hop-by-hop Header，即不需要透传到下游的header</li>
+<li>设置X-Forward-For Header，追加当前节点IP</li>
+<li>使用连接池，向下游发起请求</li>
+<li>处理协议升级（httpcode 101）</li>
+<li>删除不需要返回给上游的逐跳Header</li>
+<li>修改响应体内容（如有需要）</li>
+<li>拷贝下游响应头部到上游响应请求</li>
+<li>返回HTTP状态码</li>
+<li>定时刷新内容到response</li>
+</ul>
+<p><img src="/images/reverse.jpg" alt="reverse"></p>
+<p>下面我们来分析下核心方法 serverHttp</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *ReverseProxy)</span></span> ServeHTTP(rw http.ResponseWriter, req *http.Request) &#123;</span><br><span class="line">    transport := p.Transport</span><br><span class="line">    <span class="keyword">if</span> transport == <span class="literal">nil</span> &#123;</span><br><span class="line">        transport = http.DefaultTransport</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 检查请求是否被终止</span></span><br><span class="line">    <span class="comment">// 获取请求的上下文，从responseWriter中获取CloseNotify实例，起一个goroutine监听notifyChan，收到请求结束通知后调用context cancel()方法</span></span><br><span class="line">    <span class="comment">// 关闭浏览器、网络中断、强行终止请求或是正常结束请求等都会收到请求结束通知</span></span><br><span class="line">    ctx := req.Context()</span><br><span class="line">    <span class="keyword">if</span> cn, ok := rw.(http.CloseNotifier); ok &#123;</span><br><span class="line">        <span class="keyword">var</span> cancel context.CancelFunc</span><br><span class="line">        ctx, cancel = context.WithCancel(ctx)</span><br><span class="line">        <span class="keyword">defer</span> cancel()</span><br><span class="line">        notifyChan := cn.CloseNotify()</span><br><span class="line">        <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">            <span class="keyword">select</span> &#123;</span><br><span class="line">            <span class="keyword">case</span> &lt;-notifyChan:</span><br><span class="line">                cancel()</span><br><span class="line">            <span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置context，这里指的是想下游请求的request</span></span><br><span class="line">    outreq := req.WithContext(ctx) <span class="comment">// includes shallow copies of maps, but okay</span></span><br><span class="line">    <span class="keyword">if</span> req.ContentLength == <span class="number">0</span> &#123;</span><br><span class="line">        outreq.Body = <span class="literal">nil</span> <span class="comment">// Issue 16036: nil Body for http.Transport retries</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 深拷贝Header，即将上游的Header复制到下游request Header中</span></span><br><span class="line">    outreq.Header = cloneHeader(req.Header)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置Director，修改request</span></span><br><span class="line">    p.Director(outreq)</span><br><span class="line">    outreq.Close = <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 升级http协议，HTTP Upgrade</span></span><br><span class="line">    <span class="comment">// 判断header Connection 中是否有Upgrade</span></span><br><span class="line">    reqUpType := upgradeType(outreq.Header)</span><br><span class="line">    removeConnectionHeaders(outreq.Header)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Remove hop-by-hop headers to the backend. Especially</span></span><br><span class="line">    <span class="comment">// important is &quot;Connection&quot; because we want a persistent</span></span><br><span class="line">    <span class="comment">// connection, regardless of what the client sent to us.</span></span><br><span class="line">    <span class="comment">// 删除 hop-by-hop headers，主要是一些规定的不需要向下游传递的header</span></span><br><span class="line">    <span class="keyword">for</span> _, h := <span class="keyword">range</span> hopHeaders &#123;</span><br><span class="line">        hv := outreq.Header.Get(h)</span><br><span class="line">        <span class="keyword">if</span> hv == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// Te 和 trailers 这两个Header 不做删除处理</span></span><br><span class="line">        <span class="keyword">if</span> h == <span class="string">&quot;Te&quot;</span> &amp;&amp; hv == <span class="string">&quot;trailers&quot;</span> &#123;</span><br><span class="line">            <span class="comment">// Issue 21096: tell backend applications that</span></span><br><span class="line">            <span class="comment">// care about trailer support that we support</span></span><br><span class="line">            <span class="comment">// trailers. (We do, but we don&#x27;t go out of</span></span><br><span class="line">            <span class="comment">// our way to advertise that unless the</span></span><br><span class="line">            <span class="comment">// incoming client request thought it was</span></span><br><span class="line">            <span class="comment">// worth mentioning)</span></span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        outreq.Header.Del(h)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// After stripping all the hop-by-hop connection headers above, add back any</span></span><br><span class="line">    <span class="comment">// necessary for protocol upgrades, such as for websockets.</span></span><br><span class="line">    <span class="comment">// 如果reqUpType 不为空，将Connection 、Upgrade值设置为Upgrade ，例如websocket的场景</span></span><br><span class="line">    <span class="keyword">if</span> reqUpType != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">        outreq.Header.Set(<span class="string">&quot;Connection&quot;</span>, <span class="string">&quot;Upgrade&quot;</span>)</span><br><span class="line">        outreq.Header.Set(<span class="string">&quot;Upgrade&quot;</span>, reqUpType)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置X-Forwarded-For，追加节点IP</span></span><br><span class="line">    <span class="keyword">if</span> clientIP, _, err := net.SplitHostPort(req.RemoteAddr); err == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// If we aren&#x27;t the first proxy retain prior</span></span><br><span class="line">        <span class="comment">// X-Forwarded-For information as a comma+space</span></span><br><span class="line">        <span class="comment">// separated list and fold multiple headers into one.</span></span><br><span class="line">        <span class="keyword">if</span> prior, ok := outreq.Header[<span class="string">&quot;X-Forwarded-For&quot;</span>]; ok &#123;</span><br><span class="line">            clientIP = strings.Join(prior, <span class="string">&quot;, &quot;</span>) + <span class="string">&quot;, &quot;</span> + clientIP</span><br><span class="line">        &#125;</span><br><span class="line">        outreq.Header.Set(<span class="string">&quot;X-Forwarded-For&quot;</span>, clientIP)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 向下游发起请求</span></span><br><span class="line">    res, err := transport.RoundTrip(outreq)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        p.getErrorHandler()(rw, outreq, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Deal with 101 Switching Protocols responses: (WebSocket, h2c, etc)</span></span><br><span class="line">    <span class="comment">// 处理升级协议请求</span></span><br><span class="line">    <span class="keyword">if</span> res.StatusCode == http.StatusSwitchingProtocols &#123;</span><br><span class="line">        <span class="keyword">if</span> !p.modifyResponse(rw, res, outreq) &#123;</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        p.handleUpgradeResponse(rw, outreq, res)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 删除响应请求的逐跳 header</span></span><br><span class="line">    removeConnectionHeaders(res.Header)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> _, h := <span class="keyword">range</span> hopHeaders &#123;</span><br><span class="line">        res.Header.Del(h)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 修改响应内容</span></span><br><span class="line">    <span class="keyword">if</span> !p.modifyResponse(rw, res, outreq) &#123;</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拷贝响应Header到上游</span></span><br><span class="line">    copyHeader(rw.Header(), res.Header)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The &quot;Trailer&quot; header isn&#x27;t included in the Transport&#x27;s response,</span></span><br><span class="line">    <span class="comment">// at least for *http.Transport. Build it up from Trailer.</span></span><br><span class="line">    announcedTrailers := <span class="built_in">len</span>(res.Trailer)</span><br><span class="line">    <span class="keyword">if</span> announcedTrailers &gt; <span class="number">0</span> &#123;</span><br><span class="line">        trailerKeys := <span class="built_in">make</span>([]<span class="type">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(res.Trailer))</span><br><span class="line">        <span class="keyword">for</span> k := <span class="keyword">range</span> res.Trailer &#123;</span><br><span class="line">            trailerKeys = <span class="built_in">append</span>(trailerKeys, k)</span><br><span class="line">        &#125;</span><br><span class="line">        rw.Header().Add(<span class="string">&quot;Trailer&quot;</span>, strings.Join(trailerKeys, <span class="string">&quot;, &quot;</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 写入状态码</span></span><br><span class="line">    rw.WriteHeader(res.StatusCode)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 周期刷新内容到response</span></span><br><span class="line">    err = p.copyResponse(rw, res.Body, p.flushInterval(req, res))</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">defer</span> res.Body.Close()</span><br><span class="line">        <span class="comment">// Since we&#x27;re streaming the response, if we run into an error all we can do</span></span><br><span class="line">        <span class="comment">// is abort the request. Issue 23643: ReverseProxy should use ErrAbortHandler</span></span><br><span class="line">        <span class="comment">// on read error while copying body.</span></span><br><span class="line">        <span class="keyword">if</span> !shouldPanicOnCopyError(req) &#123;</span><br><span class="line">            p.logf(<span class="string">&quot;suppressing panic for copyResponse error in test; copy error: %v&quot;</span>, err)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">panic</span>(http.ErrAbortHandler)</span><br><span class="line">    &#125;</span><br><span class="line">    res.Body.Close() <span class="comment">// close now, instead of defer, to populate res.Trailer</span></span><br><span class="line">  ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改返回内容实例"><a href="#修改返回内容实例" class="headerlink" title="修改返回内容实例"></a>修改返回内容实例</h3><p>核心在于修改 reverseproxy 中的ModifyResponse 方法中的响应体内容和内容长度</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">    <span class="string">&quot;log&quot;</span></span><br><span class="line">    <span class="string">&quot;net/http&quot;</span></span><br><span class="line">    <span class="string">&quot;net/http/httputil&quot;</span></span><br><span class="line">    <span class="string">&quot;net/url&quot;</span></span><br><span class="line">    <span class="string">&quot;strings&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 地址重写实例</span></span><br><span class="line">    <span class="comment">// http://127.0.0.1:8888/test?id=1  =》 http://127.0.0.1:8081/reverse/test?id=1</span></span><br><span class="line"></span><br><span class="line">    rs1 := <span class="string">&quot;http://127.0.0.1:8081/reverse&quot;</span></span><br><span class="line">    targetUrl , err := url.Parse(rs1)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(<span class="string">&quot;err&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    proxy := NewSingleHostReverseProxy(targetUrl)</span><br><span class="line">    log.Println(<span class="string">&quot;Reverse proxy server serve at : 127.0.0.1:8888&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err := http.ListenAndServe(<span class="string">&quot;:8888&quot;</span>,proxy);err != <span class="literal">nil</span>&#123;</span><br><span class="line">        log.Fatal(<span class="string">&quot;Start server failed,err:&quot;</span>,err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">singleJoiningSlash</span><span class="params">(a, b <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    aslash := strings.HasSuffix(a, <span class="string">&quot;/&quot;</span>)</span><br><span class="line">    bslash := strings.HasPrefix(b, <span class="string">&quot;/&quot;</span>)</span><br><span class="line">    <span class="keyword">switch</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> aslash &amp;&amp; bslash:</span><br><span class="line">        <span class="keyword">return</span> a + b[<span class="number">1</span>:]</span><br><span class="line">    <span class="keyword">case</span> !aslash &amp;&amp; !bslash:</span><br><span class="line">        <span class="keyword">return</span> a + <span class="string">&quot;/&quot;</span> + b</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> a + b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewSingleHostReverseProxy</span><span class="params">(target *url.URL)</span></span> *httputil.ReverseProxy &#123;</span><br><span class="line">    targetQuery := target.RawQuery</span><br><span class="line">    director := <span class="function"><span class="keyword">func</span><span class="params">(req *http.Request)</span></span> &#123;</span><br><span class="line">        req.URL.Scheme = target.Scheme</span><br><span class="line">        req.URL.Host = target.Host</span><br><span class="line">        req.URL.Path = singleJoiningSlash(target.Path, req.URL.Path)</span><br><span class="line">        <span class="keyword">if</span> targetQuery == <span class="string">&quot;&quot;</span> || req.URL.RawQuery == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">            req.URL.RawQuery = targetQuery + req.URL.RawQuery</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            req.URL.RawQuery = targetQuery + <span class="string">&quot;&amp;&quot;</span> + req.URL.RawQuery</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> _, ok := req.Header[<span class="string">&quot;User-Agent&quot;</span>]; !ok &#123;</span><br><span class="line">            <span class="comment">// explicitly disable User-Agent so it&#x27;s not set to default value</span></span><br><span class="line">            req.Header.Set(<span class="string">&quot;User-Agent&quot;</span>, <span class="string">&quot;&quot;</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 自定义ModifyResponse</span></span><br><span class="line">    modifyResp := <span class="function"><span class="keyword">func</span><span class="params">(resp *http.Response)</span></span> <span class="type">error</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> oldData,newData []<span class="type">byte</span></span><br><span class="line">        oldData,err := ioutil.ReadAll(resp.Body)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> err</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 根据不同状态码修改返回内容</span></span><br><span class="line">        <span class="keyword">if</span> resp.StatusCode == <span class="number">200</span> &#123;</span><br><span class="line">            newData = []<span class="type">byte</span>(<span class="string">&quot;[INFO] &quot;</span> + <span class="type">string</span>(oldData))</span><br><span class="line"></span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            newData = []<span class="type">byte</span>(<span class="string">&quot;[ERROR] &quot;</span> + <span class="type">string</span>(oldData))</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 修改返回内容及ContentLength</span></span><br><span class="line">        resp.Body = ioutil.NopCloser(bytes.NewBuffer(newData))</span><br><span class="line">        resp.ContentLength = <span class="type">int64</span>(<span class="built_in">len</span>(newData))</span><br><span class="line">        resp.Header.Set(<span class="string">&quot;Content-Length&quot;</span>,fmt.Sprint(<span class="built_in">len</span>(newData)))</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 传入自定义的ModifyResponse</span></span><br><span class="line">    <span class="keyword">return</span> &amp;httputil.ReverseProxy&#123;Director: director,ModifyResponse:modifyResp&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试结果</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl <span class="attr">http</span>:<span class="comment">//127.0.0.1:8888/test?id=123</span></span><br><span class="line">[<span class="variable constant_">INFO</span>] <span class="attr">http</span>:<span class="comment">//127.0.0.1:8081/reverse/test?id=123</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="返回客户端真实IP"><a href="#返回客户端真实IP" class="headerlink" title="返回客户端真实IP"></a>返回客户端真实IP</h3><p>处于安全性的考虑，通常我们不会将真实服务器也就是realserver 直接对外部用户暴露，而是通过反向代理的方式对外暴露服务，如下图所示：</p>
+<p><img src="/images/proxy.png" alt="proxy"></p>
+<p>带来的问题是，在用户与真实服务器之间经过一台或多台反向代理服务器后，真实服务器究竟应该如何获取到用户的真实IP，换句话说，中间的反向代理服务器应如何将用户真实IP原封不动的透传到后端真实服务器。</p>
+<p>通常我们会基于HTTP header实现，常用的有X-Real-IP 和 X-Forward-For 两个字段。<br>X-Real-IP ： 通常在离用户最近的代理点上设置，用于记录用户的真实IP，往后的反向代理节点不需要设置，否则将覆盖为上一个反向代理的IP<br>X-Forward-For：记录每个经过的节点IP，以”,”分隔，例如请求链路是client -&gt; proxy1 -&gt; proxy2 -&gt; webapp，那么得到的值为clientip,proxy1,proxy2</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> clientIP, _, err := net.SplitHostPort(req.RemoteAddr); err == <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// If we aren&#x27;t the first proxy retain prior</span></span><br><span class="line">        <span class="comment">// X-Forwarded-For information as a comma+space</span></span><br><span class="line">        <span class="comment">// separated list and fold multiple headers into one.</span></span><br><span class="line">        <span class="keyword">if</span> prior, ok := outreq.Header[<span class="string">&quot;X-Forwarded-For&quot;</span>]; ok &#123;</span><br><span class="line">            clientIP = strings.Join(prior, <span class="string">&quot;, &quot;</span>) + <span class="string">&quot;, &quot;</span> + clientIP</span><br><span class="line">        &#125;</span><br><span class="line">        outreq.Header.Set(<span class="string">&quot;X-Forwarded-For&quot;</span>, clientIP)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>本文引自<a href="https://blog.51cto.com/pmghong/2506101">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2021/04/11/Go-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86reverse-proxy-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" data-title="Go 反向代理reverse proxy 源码分析 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2021/04/14/Git内部存储原理/" title="Git内部存储原理">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Git内部存储原理</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2021/04/06/cert-pem和key-pem文件生成/"  title="cert.pem和key.pem文件生成">
+ <strong>下一篇：</strong><br/> 
+ <span>cert.pem和key.pem文件生成
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2021/04/11/Go-反向代理reverse-proxy-源码分析/" data-title="Go 反向代理reverse proxy 源码分析" data-url="https://luckymrwang.github.io/2021/04/11/Go-%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86reverse-proxy-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8Ereverse-proxy%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E4%BE%8B%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">基于reverse proxy实现的反向代理例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#reverse-proxy%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="toc-number">2.</span> <span class="toc-text">reverse proxy源码分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BF%AE%E6%94%B9%E8%BF%94%E5%9B%9E%E5%86%85%E5%AE%B9%E5%AE%9E%E4%BE%8B"><span class="toc-number">3.</span> <span class="toc-text">修改返回内容实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%94%E5%9B%9E%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9C%9F%E5%AE%9EIP"><span class="toc-number">4.</span> <span class="toc-text">返回客户端真实IP</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

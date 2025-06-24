@@ -1,0 +1,594 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>PHP程序的执行流程 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="为了以后能开发PHP扩展，就一定要了解PHP的执行顺序。这篇文章就是为C开发PHP扩展做铺垫。 前言：Web环境我们假设为Apache。在编译PHP的时候,为了能够让Apache支持PHP，我们会生成一个mod_php5.so的模块。Apache加载这个模块，在url访问.php文件的时候，就会转给mod_php5.so模块来处理。这个就是我们常说的SAPI。英文名字是：Server Applic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP程序的执行流程">
+<meta property="og:url" content="https://luckymrwang.github.io/2015/05/27/PHP%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="为了以后能开发PHP扩展，就一定要了解PHP的执行顺序。这篇文章就是为C开发PHP扩展做铺垫。 前言：Web环境我们假设为Apache。在编译PHP的时候,为了能够让Apache支持PHP，我们会生成一个mod_php5.so的模块。Apache加载这个模块，在url访问.php文件的时候，就会转给mod_php5.so模块来处理。这个就是我们常说的SAPI。英文名字是：Server Applic">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-05-27T06:37:15.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.197Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="PHP">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/27/PHP程序的执行流程/" title="PHP程序的执行流程" itemprop="url">PHP程序的执行流程</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-27T06:37:15.000Z" itemprop="datePublished"> 发表于 2015-05-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p><em>为了以后能开发PHP扩展，就一定要了解PHP的执行顺序。这篇文章就是为C开发PHP扩展做铺垫。</em></p>
+<p>前言：Web环境我们假设为Apache。在编译PHP的时候,为了能够让Apache支持PHP，我们会生成一个mod_php5.so的模块。Apache加载这个模块，在url访问.php文件的时候，就会转给mod_php5.so模块来处理。这个就是我们常说的SAPI。英文名字是：Server Application Programming Interface。SAPI其实是一个统称，其下有 ISAPI，CLI SAPI，CGI等。有了它，就可以很容易的跟其他东西交互，比如APACHE,IIS,CGI等。</p>
+<span id="more"></span>
+<p>Apache启动后会将mod_pho5.so模块的hook handler注册进来，当Apache检测到访问的url是一个php文件时，这时候就会把控制权交给SAPI。进入到SAPI后，首先会执行sapi&#x2F;apache&#x2F;mod_php5.c 文件的php_init_handler函数，这里摘录一段代码：</p>
+<pre><code>static void php_init_handler(server_rec *s, pool *p)
+&#123;
+	register_cleanup(p, NULL, (void (*)(void *))apache_php_module_shutdown_wrapper, (void (*)(void *))php_module_shutdown_for_exec);
+	if (!apache_php_initialized) &#123;
+	    apache_php_initialized = 1;
+	    #ifdef ZTS
+	    tsrm_startup(1, 1, 0, NULL);
+	    #endif
+	    sapi_startup(&amp;amp;apache_sapi_module);
+	    php_apache_startup(&amp;amp;apache_sapi_module);
+	&#125;
+	#if MODULE_MAGIC_NUMBER &amp;gt;= 19980527
+	&#123;
+	    TSRMLS_FETCH();
+	    if (PG(expose_php)) &#123;
+	        ap_add_version_component(&quot;PHP/&quot; PHP_VERSION);
+	    &#125;
+	&#125;
+	#endif
+&#125;
+</code></pre>
+<p>该函数主要调用两个函数：sapi_startup(&amp;apache_sapi_module); php_apache_startup(&amp;apache_sapi_module);</p>
+<pre><code>SAPI_API void sapi_startup(sapi_module_struct *sf)
+&#123;
+	sf-&amp;gt;ini_entries = NULL;
+	sapi_module = *sf;
+	.................
+	sapi_globals_ctor(&amp;amp;sapi_globals);
+	................
+	
+	virtual_cwd_startup(); /* Could use shutdown to free the main cwd but it would just slow it down for CGI */
+
+	..................
+
+	reentrancy_startup();
+&#125;
+</code></pre>
+<p>sapi_startup创建一个 sapi_globals_struct结构体。sapi_globals_struct保存了Apache请求的基本信息，如服务器信息，Header，编码等。sapi_startup执行完毕后再执行php_apache_startup。</p>
+<pre><code>static int php_apache_startup(sapi_module_struct *sapi_module)
+&#123;
+	if (php_module_startup(sapi_module, &amp;amp;apache_module_entry, 1) == FAILURE) &#123;
+    return FAILURE;
+	&#125; else &#123;
+    	return SUCCESS;
+	&#125;
+&#125;
+</code></pre>
+<p>php_module_startup 内容太多，这里介绍一下大致的作用：</p>
+<ol>
+<li>初始化zend_utility_functions 结构.这个结构是设置zend的函数指针,比如错误处理函数,输出函数,流操作函数等</li>
+<li>设置环境变量</li>
+<li>加载php.ini配置</li>
+<li>加载php内置扩展</li>
+<li>写日志</li>
+<li>注册php内部函数集</li>
+<li>调用 php_ini_register_extensions,加载所有外部扩展</li>
+<li>开启所有扩展</li>
+<li>一些清理操作</li>
+</ol>
+<p><em><strong>加载php.ini配置</strong></em></p>
+<pre><code>if (php_init_config(TSRMLS_C) == FAILURE) &#123;
+	return FAILURE;
+&#125;
+</code></pre>
+<p>php_init_config函数会在这里检查所有php.ini配置，并且找到所有加载的模块，添加到php_extension_lists结构中。</p>
+<p><em><strong>加载php内置扩展</strong></em></p>
+<p>调用 zend_register_standard_ini_entries加载所有php的内置扩展，如array,mysql等。</p>
+<p><em><strong>调用 php_ini_register_extensions,加载所有外部扩展</strong></em></p>
+<p>main&#x2F;php_ini.c</p>
+<pre><code>void php_ini_register_extensions(TSRMLS_D)
+&#123;
+	zend_llist_apply(&amp;amp;extension_lists.engine, php_load_zend_extension_cb TSRMLS_CC);
+	zend_llist_apply(&amp;amp;extension_lists.functions, php_load_php_extension_cb TSRMLS_CC);
+
+	zend_llist_destroy(&amp;amp;extension_lists.engine);
+	zend_llist_destroy(&amp;amp;extension_lists.functions);
+&#125;
+</code></pre>
+<p>zend_llist_apply函数遍历extension_lists 执行会掉函数 php_load_php_extension_cb</p>
+<p>php_load_php_extension_cb</p>
+<pre><code>static void php_load_zend_extension_cb(void *arg TSRMLS_DC)
+&#123;
+	zend_load_extension(*((char **) arg));
+&#125;
+</code></pre>
+<p>该函数最后调用</p>
+<pre><code>if ((module_entry = zend_register_module_ex(module_entry TSRMLS_CC)) == NULL) &#123;
+	DL_UNLOAD(handle);
+	return FAILURE;
+&#125;
+</code></pre>
+<p>将扩展信息放到 Hash表module_registry中，Zend&#x2F;zend_API.c</p>
+<pre><code>if (zend_hash_add(&amp;amp;module_registry, lcname, name_len+1, (void *)module, sizeof(zend_module_entry), (void**)&amp;amp;module_ptr)==FAILURE) &#123;
+	zend_error(E_CORE_WARNING, &quot;Module &#39;%s&#39; already loaded&quot;, module-&amp;gt;name);
+	efree(lcname);
+	return NULL;
+&#125;
+</code></pre>
+<p>最后，zend_startup_modules(TSRMLS_C); 对模块进行排序，并检测是否注册到module_registry HASH表里。zend_startup_extensions(); 执行extension-&gt;startup(extension);启动扩展。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2015/05/27/PHP%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/" data-title="PHP程序的执行流程 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/27/关系型数据库与NoSQL/" title="关系型数据库与NoSQL">
+  <strong>上一篇：</strong><br/>
+  <span>
+  关系型数据库与NoSQL</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/23/Cookie与Session/"  title="Cookie与Session">
+ <strong>下一篇：</strong><br/> 
+ <span>Cookie与Session
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/05/27/PHP程序的执行流程/" data-title="PHP程序的执行流程" data-url="https://luckymrwang.github.io/2015/05/27/PHP%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

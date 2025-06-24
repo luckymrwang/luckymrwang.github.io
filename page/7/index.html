@@ -1,0 +1,1001 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="学习总结 思考感悟 知识管理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="https://luckymrwang.github.io/page/7/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="学习总结 思考感悟 知识管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="luckymrwang">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/17/Examples-For-Using-io-Pipe-in-Go/" title="Examples For Using io.Pipe in Go" itemprop="url">Examples For Using io.Pipe in Go</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-17T12:13:57.000Z" itemprop="datePublished"> 发表于 2020-12-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pr, pw := io.Pipe()</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/17/Examples-For-Using-io-Pipe-in-Go/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Golang/">Golang</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/17/Examples-For-Using-io-Pipe-in-Go/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/17/Examples-For-Using-io-Pipe-in-Go/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/17/证书相关：rsa、crt文件、key文件、csr文件/" title="证书相关：rsa、crt文件、key文件、csr文件" itemprop="url">证书相关：rsa、crt文件、key文件、csr文件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-17T07:20:28.000Z" itemprop="datePublished"> 发表于 2020-12-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <ul>
+<li>非对称加密：一个公钥、一个私钥，公钥加密的文件可以用私钥解密，反之也可以；RSA就是一种常见的非对称加密算法；</li>
+</ul>
+<p>另外，私钥一般自己保存，只有自己知道；公钥则是公开的</p>
+<ul>
+<li>openssl：一个开源的组织、一个开源的软件代码库和密码库工具，囊括了主要的密码算法；</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/17/%E8%AF%81%E4%B9%A6%E7%9B%B8%E5%85%B3%EF%BC%9Arsa%E3%80%81crt%E6%96%87%E4%BB%B6%E3%80%81key%E6%96%87%E4%BB%B6%E3%80%81csr%E6%96%87%E4%BB%B6/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/17/证书相关：rsa、crt文件、key文件、csr文件/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/17/证书相关：rsa、crt文件、key文件、csr文件/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/17/openssl用法详解/" title="openssl用法详解" itemprop="url">openssl用法详解</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-17T06:48:08.000Z" itemprop="datePublished"> 发表于 2020-12-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>OpenSSL 是一个开源项目，其组成主要包括一下三个组件：</p>
+<ul>
+<li>openssl：多用途的命令行工具</li>
+<li>libcrypto：加密算法库</li>
+<li>libssl：加密模块应用库，实现了ssl及tls</li>
+</ul>
+<p>openssl可以实现：秘钥证书管理、对称加密和非对称加密。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/17/openssl%E7%94%A8%E6%B3%95%E8%AF%A6%E8%A7%A3/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/17/openssl用法详解/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/17/openssl用法详解/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/15/K8s-AdmissionWebhook/" title="K8s AdmissionWebhook" itemprop="url">K8s AdmissionWebhook</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-15T03:08:42.000Z" itemprop="datePublished"> 发表于 2020-12-15</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="AdmissionWebhook"><a href="#AdmissionWebhook" class="headerlink" title="AdmissionWebhook"></a>AdmissionWebhook</h3><p>什么是AdmissionWebhook，就要先了解k8s中的admission controller, 按照官方的解释是：</p>
+<blockquote>
+<p>admission controller是拦截(经过身份验证)API Server请求的网关，并且可以修改请求对象或拒绝请求</p>
+</blockquote>
+<p>简而言之，它可以认为是拦截器，类似web框架中的middleware。</p>
+<p>k8s默认提供很多内置的admission controller，通过kube-apiserver启动命令参数可以 查看到支持的admission controller plugin有哪些。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/15/K8s-AdmissionWebhook/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/kubernetes/">kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/15/K8s-AdmissionWebhook/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/15/K8s-AdmissionWebhook/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/09/Go性能分析/" title="Go性能分析" itemprop="url">Go性能分析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-09T00:47:22.000Z" itemprop="datePublished"> 发表于 2020-12-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Go 提供了 pprof 工具，可以用来做性能分析。pprof 可以读取分析样本的集合，并生成报告以可视化并帮助分析数据。</p>
+<h3 id="如何生成分析样本"><a href="#如何生成分析样本" class="headerlink" title="如何生成分析样本"></a>如何生成分析样本</h3><ul>
+<li><code>runtime/pprof</code>：采集程序的运行数据进行分析，通过调用如 <code>runtime.StartCPUProfile</code> 或 <code>runtime.StopCPUProfile</code> 等 API 生成分析样本。主要用于本地测试。</li>
+<li><code>net/http/pprof</code>：采集 HTTP Server 的运行时数据进行分析，通过 HTTP 服务获取 Profile 分析样本，底层还是调用的 <code>runtime/pprof</code>。主要用于服务器端测试。</li>
+<li><code>go test</code>: 通过 <code>go test -bench=. -cpuprofile cpuprofile.out</code> … 生成分析样本，主要用于本地基准测试。</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/09/Go%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/09/Go性能分析/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/09/Go性能分析/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/04/Golang-连接池的几种实现案例/" title="Golang 连接池的几种实现案例" itemprop="url">Golang 连接池的几种实现案例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-04T15:08:51.000Z" itemprop="datePublished"> 发表于 2020-12-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>因为 TCP 的三只握手等等原因，建立一个连接是一件成本比较高的行为。所以在一个需要多次与特定实体交互的程序中，就需要维持一个连接池，里面有可以复用的连接可供重复使用。</p>
+<p>而维持一个连接池，最基本的要求就是要做到：thread safe（线程安全），尤其是在 Golang 这种特性是 goroutine 的语言中。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/04/Golang-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%A1%88%E4%BE%8B/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/04/Golang-连接池的几种实现案例/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/04/Golang-连接池的几种实现案例/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/04/Security Context (安全上下文)/" title="容器 Security Context (安全上下文)" itemprop="url">容器 Security Context (安全上下文)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-04T15:08:51.000Z" itemprop="datePublished"> 发表于 2020-12-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>用来限制容器对宿主节点的可访问范围，以避免容器非法操作宿主节点的系统级别的内容，使得节点的系统或者节点上其他容器组受到影响。</p>
+<p>Kubernetes 提供了三种配置 Security Context 的方法：</p>
+<ul>
+<li>Container-level Security Context：仅应用到指定的容器</li>
+<li>Pod-level Security Context：应用到 Pod 内所有容器以及 Volume</li>
+<li>Pod Security Policies（PSP）：应用到集群内部所有 Pod 以及 Volume</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/04/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a><a href="/tags/Docker/">Docker</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/04/Security Context (安全上下文)/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/04/Security Context (安全上下文)/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/11/10/使用go的io-Pipe优雅的优化中间缓存/" title="使用go的io.Pipe优雅的优化中间缓存" itemprop="url">使用go的io.Pipe优雅的优化中间缓存</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-11-10T06:05:33.000Z" itemprop="datePublished"> 发表于 2020-11-10</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="BEFORE"><a href="#BEFORE" class="headerlink" title="BEFORE"></a>BEFORE</h3><p>向其他服务器发送json数据时，都需要先声明一个bytes缓存，然后通过json库把结构体中的内容mashal成字节流，再通过Post函数发送。<br>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">        <span class="string">&quot;bytes&quot;</span></span><br><span class="line">        <span class="string">&quot;encoding/json&quot;</span></span><br><span class="line">        <span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">        <span class="string">&quot;log&quot;</span></span><br><span class="line">        <span class="string">&quot;net/http&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">        log.SetFlags(log.Lshortfile)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">        cli := http.Client&#123;&#125;</span><br><span class="line"></span><br><span class="line">        msg := <span class="keyword">struct</span> &#123;</span><br><span class="line">            Name, Addr <span class="type">string</span></span><br><span class="line">            Price      <span class="type">float64</span></span><br><span class="line">        &#125;&#123;</span><br><span class="line">            Name:  <span class="string">&quot;hello&quot;</span>,</span><br><span class="line">            Addr:  <span class="string">&quot;beijing&quot;</span>,</span><br><span class="line">            Price: <span class="number">123.56</span>,</span><br><span class="line">        &#125;</span><br><span class="line">        buf := bytes.NewBuffer(<span class="literal">nil</span>)</span><br><span class="line">        json.NewEncoder(buf).Encode(msg)</span><br><span class="line">        resp, err := cli.Post(<span class="string">&quot;http://localhost:9999/json&quot;</span>, <span class="string">&quot;application/json&quot;</span>, buf)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            log.Fatalln(err)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        body := resp.Body</span><br><span class="line">        <span class="keyword">defer</span> body.Close()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> body_bytes, err := ioutil.ReadAll(body); err == <span class="literal">nil</span> &#123;</span><br><span class="line">            log.Println(<span class="string">&quot;response:&quot;</span>, <span class="type">string</span>(body_bytes))</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            log.Fatalln(err)</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/11/10/%E4%BD%BF%E7%94%A8go%E7%9A%84io-Pipe%E4%BC%98%E9%9B%85%E7%9A%84%E4%BC%98%E5%8C%96%E4%B8%AD%E9%97%B4%E7%BC%93%E5%AD%98/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/11/10/使用go的io-Pipe优雅的优化中间缓存/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/11/10/使用go的io-Pipe优雅的优化中间缓存/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/11/09/CentOS-7-用户账户配置/" title="CentOS 7 用户账户配置" itemprop="url">CentOS 7 用户账户配置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-11-09T00:55:52.000Z" itemprop="datePublished"> 发表于 2020-11-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h3><p>Centos 7 系统最小化安装，默认配置，是没有创建其他用户的。作为服务器操作系统，为了安全起见，一般是使用一般用户。这就牵涉到用户、用户组的创建以及删除。</p>
+<p>此外，CentOS 7 和其他版本的Linux一样，都具有相应用户的配置文件及目录，如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/etc/passwd 　　      //用户账户信息，可以看出用户名称 </span><br><span class="line">/etc/shadow          //用户账户加密后信息，包括但不限于/etc/passwd中的信息 </span><br><span class="line">/etc/group           //组账户信息，可以看出组名称 </span><br><span class="line">/etc/gshadow   　　　 //组账户安全信息，包括但不限于/etc/group中的信息 </span><br><span class="line">/etc/default/useradd //账户创建时默认值 </span><br><span class="line">/etc/skel/           //包含默认文件的目录,具体作用尚不清楚 </span><br><span class="line">/etc/login.defs      //安全性的默认配置，与上面/etc/default/useradd有区别</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/11/09/CentOS-7-%E7%94%A8%E6%88%B7%E8%B4%A6%E6%88%B7%E9%85%8D%E7%BD%AE/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/11/09/CentOS-7-用户账户配置/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/11/09/CentOS-7-用户账户配置/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/11/06/Parse-the-kubernetes-manifest-in-yaml-or-json/" title="Parse the kubernetes manifest in yaml or json" itemprop="url">Parse the kubernetes manifest in yaml or json</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-11-06T12:11:35.000Z" itemprop="datePublished"> 发表于 2020-11-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="Parse-the-kubernetes-manifest-in-yaml-or-json-don’t-care-a-manifest-type"><a href="#Parse-the-kubernetes-manifest-in-yaml-or-json-don’t-care-a-manifest-type" class="headerlink" title="Parse the kubernetes manifest in yaml or json, don’t care a manifest type."></a>Parse the kubernetes manifest in yaml or json, don’t care a manifest type.</h3><p>Examples:</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/11/06/Parse-the-kubernetes-manifest-in-yaml-or-json/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/11/06/Parse-the-kubernetes-manifest-in-yaml-or-json/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/11/06/Parse-the-kubernetes-manifest-in-yaml-or-json/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/6/">&lt;span&gt;&lt;&#x2F;span&gt;Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/8/">Next&lt;span&gt;&lt;&#x2F;span&gt;</a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>

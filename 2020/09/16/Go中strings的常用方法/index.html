@@ -1,0 +1,645 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go中strings的常用方法 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Compare func Compare(a, b string) int  按照字典序比较两个字符串，通常情况下直接使用&#x3D;，&gt;，&lt;会更快一些。 Contains，ContainsAny 和 ContainsRune func Contains(s, substr string) bool func ContainsAny(s, chars string) bool func">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go中strings的常用方法">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/09/16/Go%E4%B8%ADstrings%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Compare func Compare(a, b string) int  按照字典序比较两个字符串，通常情况下直接使用&#x3D;，&gt;，&lt;会更快一些。 Contains，ContainsAny 和 ContainsRune func Contains(s, substr string) bool func ContainsAny(s, chars string) bool func">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-16T12:39:05.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.192Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/09/16/Go中strings的常用方法/" title="Go中strings的常用方法" itemprop="url">Go中strings的常用方法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-09-16T12:39:05.000Z" itemprop="datePublished"> 发表于 2020-09-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Compare"><span class="toc-number">1.</span> <span class="toc-text">Compare</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Contains%EF%BC%8CContainsAny-%E5%92%8C-ContainsRune"><span class="toc-number">2.</span> <span class="toc-text">Contains，ContainsAny 和 ContainsRune</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Count"><span class="toc-number">3.</span> <span class="toc-text">Count</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EqualFold"><span class="toc-number">4.</span> <span class="toc-text">EqualFold</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Fields"><span class="toc-number">5.</span> <span class="toc-text">Fields</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HasPrefix-%E5%92%8C-HasSuffix"><span class="toc-number">6.</span> <span class="toc-text">HasPrefix 和 HasSuffix</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Join"><span class="toc-number">7.</span> <span class="toc-text">Join</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Index%EF%BC%8CIndexAny%EF%BC%8CIndexByte%EF%BC%8CIndexFunc%EF%BC%8CIndexRune"><span class="toc-number">8.</span> <span class="toc-text">Index，IndexAny，IndexByte，IndexFunc，IndexRune</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LastIndex%EF%BC%8CLastIndexAny%EF%BC%8CLastIndexByte%E5%92%8CLastIndexFunc"><span class="toc-number">9.</span> <span class="toc-text">LastIndex，LastIndexAny，LastIndexByte和LastIndexFunc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Map"><span class="toc-number">10.</span> <span class="toc-text">Map</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Repeat"><span class="toc-number">11.</span> <span class="toc-text">Repeat</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Replace%E5%92%8CReplaceAll"><span class="toc-number">12.</span> <span class="toc-text">Replace和ReplaceAll</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Split%EF%BC%8CSplitN%EF%BC%8CSplitAfter%E5%92%8CSplitAfterN"><span class="toc-number">13.</span> <span class="toc-text">Split，SplitN，SplitAfter和SplitAfterN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Trim%EF%BC%8CTrimFunc%EF%BC%8CTrimLeft%EF%BC%8CTrimLeftFunc%EF%BC%8CTrimPrefix%EF%BC%8CTrimSuffix%EF%BC%8CTrimRight%EF%BC%8CTrimRightFunc"><span class="toc-number">14.</span> <span class="toc-text">Trim，TrimFunc，TrimLeft，TrimLeftFunc，TrimPrefix，TrimSuffix，TrimRight，TrimRightFunc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8strings-Builder%E6%93%8D%E4%BD%9C"><span class="toc-number">15.</span> <span class="toc-text">使用strings.Builder操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8strings-Reader"><span class="toc-number">16.</span> <span class="toc-text">使用strings.Reader</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Len%EF%BC%8CSize%EF%BC%8CRead"><span class="toc-number">17.</span> <span class="toc-text">Len，Size，Read</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadAt"><span class="toc-number">18.</span> <span class="toc-text">ReadAt</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadByte-UnreadByte"><span class="toc-number">19.</span> <span class="toc-text">ReadByte,UnreadByte</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Seek"><span class="toc-number">20.</span> <span class="toc-text">Seek</span></a></li></ol>
+		
+		</div>
+		
+		<h4 id="Compare"><a href="#Compare" class="headerlink" title="Compare"></a>Compare</h4><ul>
+<li>func Compare(a, b string) int</li>
+</ul>
+<p>按照字典序比较两个字符串，通常情况下直接使用&#x3D;，&gt;，&lt;会更快一些。</p>
+<h4 id="Contains，ContainsAny-和-ContainsRune"><a href="#Contains，ContainsAny-和-ContainsRune" class="headerlink" title="Contains，ContainsAny 和 ContainsRune"></a>Contains，ContainsAny 和 ContainsRune</h4><ul>
+<li>func Contains(s, substr string) bool</li>
+<li>func ContainsAny(s, chars string) bool</li>
+<li>func ContainsRune(s string, r rune) bool</li>
+</ul>
+<span id="more"></span>
+<p>字符串s中是否包含substr，返回true或者false。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(strings.Contains(<span class="string">&quot;seafood&quot;</span>, <span class="string">&quot;foo&quot;</span>)) <span class="comment">// true</span></span><br><span class="line">fmt.Println(strings.Contains(<span class="string">&quot;seafood&quot;</span>, <span class="string">&quot;bar&quot;</span>)) <span class="comment">// false</span></span><br><span class="line">fmt.Println(strings.Contains(<span class="string">&quot;seafood&quot;</span>, <span class="string">&quot;&quot;</span>)) <span class="comment">// true </span></span><br><span class="line">fmt.Println(strings.Contains(<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>)) <span class="comment">// true </span></span><br></pre></td></tr></table></figure>
+
+<p>ContainsAny用于判断子串中是否具有一个字符在源串s中。子串为空，返回false。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(strings.ContainsAny(<span class="string">&quot;team&quot;</span>, <span class="string">&quot;i&quot;</span>)) <span class="comment">// false</span></span><br><span class="line">fmt.Println(strings.ContainsAny(<span class="string">&quot;fail&quot;</span>, <span class="string">&quot;ui&quot;</span>)) <span class="comment">// true</span></span><br><span class="line">fmt.Println(strings.ContainsAny(<span class="string">&quot;ure&quot;</span>, <span class="string">&quot;ui&quot;</span>)) <span class="comment">// true </span></span><br><span class="line">fmt.Println(strings.ContainsAny(<span class="string">&quot;failure&quot;</span>, <span class="string">&quot;ui&quot;</span>)) <span class="comment">// true </span></span><br><span class="line">fmt.Println(strings.ContainsAny(<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;&quot;</span>)) <span class="comment">// false</span></span><br><span class="line">fmt.Println(strings.ContainsAny(<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>)) <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>ContainsRune用于判断Ascall码代表的字符是否在源串s中。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Finds whether a string contains a particular Unicode code point.</span></span><br><span class="line"><span class="comment">// The code point for the lowercase letter &quot;a&quot;, for example, is 97.</span></span><br><span class="line">fmt.Println(strings.ContainsRune(<span class="string">&quot;aardvark&quot;</span>, <span class="number">97</span>))</span><br><span class="line">fmt.Println(strings.ContainsRune(<span class="string">&quot;timeout&quot;</span>, <span class="number">97</span>))</span><br></pre></td></tr></table></figure>
+
+<h4 id="Count"><a href="#Count" class="headerlink" title="Count"></a>Count</h4><ul>
+<li>func Count(s, substr string) int</li>
+</ul>
+<p>判断子串在源串中的数量，如果子串为空，则长度为源串的长度+1。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(strings.Count(<span class="string">&quot;cheese&quot;</span>, <span class="string">&quot;e&quot;</span>)) <span class="comment">// 3</span></span><br><span class="line">fmt.Println(strings.Count(<span class="string">&quot;five&quot;</span>, <span class="string">&quot;&quot;</span>)) <span class="comment">// before &amp; after each rune 5=4+1</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="EqualFold"><a href="#EqualFold" class="headerlink" title="EqualFold"></a>EqualFold</h4><ul>
+<li>func EqualFold(s, t string) bool</li>
+</ul>
+<p>在不区分大小写的情况下，判断两个字符串是否相同。</p>
+<h4 id="Fields"><a href="#Fields" class="headerlink" title="Fields"></a>Fields</h4><ul>
+<li>func Fields(s string) []string</li>
+<li>func FieldsFunc(s string, f func(rune) bool) []string</li>
+</ul>
+<p>Fields：使用空白分割字符串。 FieldsFunc：根据传入的函数分割字符串，如果当前参数c不是数字或者字母，返回true作为分割符号。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">fmt.Printf(<span class="string">&quot;Fields are: %q&quot;</span>, strings.Fields(<span class="string">&quot;  foo bar  baz   &quot;</span>)) <span class="comment">//  [&quot;foo&quot; &quot;bar&quot; &quot;baz&quot;]</span></span><br><span class="line"></span><br><span class="line">f := <span class="function"><span class="keyword">func</span><span class="params">(c <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> !unicode.IsLetter(c) &amp;&amp; !unicode.IsNumber(c)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;Fields are: %q&quot;</span>, strings.FieldsFunc(<span class="string">&quot;  foo1;bar2,baz3...&quot;</span>, f)) <span class="comment">// [&quot;foo1&quot; &quot;bar2&quot; &quot;baz3&quot;]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="HasPrefix-和-HasSuffix"><a href="#HasPrefix-和-HasSuffix" class="headerlink" title="HasPrefix 和 HasSuffix"></a>HasPrefix 和 HasSuffix</h4><ul>
+<li>func HasPrefix(s, prefix string) bool</li>
+<li>func HasSuffix(s, suffix string) bool</li>
+</ul>
+<p>判断字符串是否是以某个子串作为开头或者结尾。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(strings.HasPrefix(<span class="string">&quot;Gopher&quot;</span>, <span class="string">&quot;Go&quot;</span>)) <span class="comment">// true</span></span><br><span class="line">fmt.Println(strings.HasPrefix(<span class="string">&quot;Gopher&quot;</span>, <span class="string">&quot;C&quot;</span>)) <span class="comment">// false </span></span><br><span class="line">fmt.Println(strings.HasPrefix(<span class="string">&quot;Gopher&quot;</span>, <span class="string">&quot;&quot;</span>)) <span class="comment">// true </span></span><br><span class="line"></span><br><span class="line">fmt.Println(strings.HasSuffix(<span class="string">&quot;Amigo&quot;</span>, <span class="string">&quot;go&quot;</span>)) <span class="comment">// true </span></span><br><span class="line">fmt.Println(strings.HasSuffix(<span class="string">&quot;Amigo&quot;</span>, <span class="string">&quot;O&quot;</span>)) <span class="comment">// false</span></span><br><span class="line">fmt.Println(strings.HasSuffix(<span class="string">&quot;Amigo&quot;</span>, <span class="string">&quot;Ami&quot;</span>)) <span class="comment">// false</span></span><br><span class="line">fmt.Println(strings.HasSuffix(<span class="string">&quot;Amigo&quot;</span>, <span class="string">&quot;&quot;</span>)) <span class="comment">// true </span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Join"><a href="#Join" class="headerlink" title="Join"></a>Join</h4><p>func Join(elems []string, sep string) string</p>
+<p>使用某个sep，连接字符串。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s := []<span class="type">string</span>&#123;<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;bar&quot;</span>, <span class="string">&quot;baz&quot;</span>&#125;</span><br><span class="line">fmt.Println(strings.Join(s, <span class="string">&quot;, &quot;</span>)) <span class="comment">// foo,bar,baz</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Index，IndexAny，IndexByte，IndexFunc，IndexRune"><a href="#Index，IndexAny，IndexByte，IndexFunc，IndexRune" class="headerlink" title="Index，IndexAny，IndexByte，IndexFunc，IndexRune"></a>Index，IndexAny，IndexByte，IndexFunc，IndexRune</h4><ul>
+<li>func Index(s, substr string) int</li>
+<li>func IndexAny(s, chars string) int</li>
+<li>func IndexByte(s string, c byte) int</li>
+<li>func IndexFunc(s string, f func(rune) bool) int</li>
+<li>func IndexRune(s string, r rune) int</li>
+</ul>
+<p>Index，IndexAny，IndexByte，IndexFunc，IndexRune都是返回满足条件的第一个位置，如果没有满足条件的数据，返回-1。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(strings.Index(<span class="string">&quot;chicken&quot;</span>, <span class="string">&quot;ken&quot;</span>)) <span class="comment">// 4 </span></span><br><span class="line">fmt.Println(strings.Index(<span class="string">&quot;chicken&quot;</span>, <span class="string">&quot;dmr&quot;</span>)) <span class="comment">// -1 </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 子串中的任意字符在源串出现的位置</span></span><br><span class="line">fmt.Println(strings.IndexAny(<span class="string">&quot;chicken&quot;</span>, <span class="string">&quot;aeiouy&quot;</span>)) <span class="comment">// 2</span></span><br><span class="line">fmt.Println(strings.IndexAny(<span class="string">&quot;crwth&quot;</span>, <span class="string">&quot;aeiouy&quot;</span>)) <span class="comment">// -1 </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// IndexByte，字符在字符串中出现的位置</span></span><br><span class="line">fmt.Println(strings.IndexByte(<span class="string">&quot;golang&quot;</span>, <span class="string">&#x27;g&#x27;</span>)) <span class="comment">// 0 </span></span><br><span class="line">fmt.Println(strings.IndexByte(<span class="string">&quot;gophers&quot;</span>, <span class="string">&#x27;h&#x27;</span>)) <span class="comment">// 3</span></span><br><span class="line">fmt.Println(strings.IndexByte(<span class="string">&quot;golang&quot;</span>, <span class="string">&#x27;x&#x27;</span>)) <span class="comment">// -1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// IndexFunc 满足条件的作为筛选条件 </span></span><br><span class="line">f := <span class="function"><span class="keyword">func</span><span class="params">(c <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> unicode.Is(unicode.Han, c)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(strings.IndexFunc(<span class="string">&quot;Hello, 世界&quot;</span>, f)) <span class="comment">// 7 </span></span><br><span class="line">fmt.Println(strings.IndexFunc(<span class="string">&quot;Hello, world&quot;</span>, f)) <span class="comment">// -1 </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 某个字符在源串中的位置</span></span><br><span class="line">fmt.Println(strings.IndexRune(<span class="string">&quot;chicken&quot;</span>, <span class="string">&#x27;k&#x27;</span>)) <span class="comment">// 4 </span></span><br><span class="line">fmt.Println(strings.IndexRune(<span class="string">&quot;chicken&quot;</span>, <span class="string">&#x27;d&#x27;</span>)) <span class="comment">// -1 </span></span><br></pre></td></tr></table></figure>
+
+<h4 id="LastIndex，LastIndexAny，LastIndexByte和LastIndexFunc"><a href="#LastIndex，LastIndexAny，LastIndexByte和LastIndexFunc" class="headerlink" title="LastIndex，LastIndexAny，LastIndexByte和LastIndexFunc"></a>LastIndex，LastIndexAny，LastIndexByte和LastIndexFunc</h4><ul>
+<li>func LastIndex(s, substr string) int</li>
+<li>func LastIndexAny(s, chars string) int</li>
+<li>func LastIndexByte(s string, c byte) int</li>
+<li>func LastIndexFunc(s string, f func(rune) bool) int</li>
+</ul>
+<p>LastIndex，LastIndexAny，LastIndexByte，LastIndexFunc和Index，IndexAny，IndexByte，IndexFunc，IndexRune用法保持一致，从右往前计数。</p>
+<h4 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h4><ul>
+<li>func Map(mapping func(rune) rune, s string) string</li>
+</ul>
+<p>对字符串s中每一个字符执行map函数中的操作。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">rot13 := <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">rune</span> &#123; <span class="comment">// r是遍历的每一个字符</span></span><br><span class="line">    <span class="keyword">switch</span> &#123;</span><br><span class="line">    <span class="keyword">case</span> r &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; r &lt;= <span class="string">&#x27;Z&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;A&#x27;</span> + (r-<span class="string">&#x27;A&#x27;</span>+<span class="number">13</span>)%<span class="number">26</span></span><br><span class="line">    <span class="keyword">case</span> r &gt;= <span class="string">&#x27;a&#x27;</span> &amp;&amp; r &lt;= <span class="string">&#x27;z&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;a&#x27;</span> + (r-<span class="string">&#x27;a&#x27;</span>+<span class="number">13</span>)%<span class="number">26</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(strings.Map(rot13, <span class="string">&quot;&#x27;Twas brillig and the slithy gopher...&quot;</span>))</span><br></pre></td></tr></table></figure>
+
+<h4 id="Repeat"><a href="#Repeat" class="headerlink" title="Repeat"></a>Repeat</h4><ul>
+<li>func Repeat(s string, count int) string</li>
+</ul>
+<p>重复一下s，count是重复的次数，不能传负数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(<span class="string">&quot;ba&quot;</span> + strings.Repeat(<span class="string">&quot;na&quot;</span>, <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<h4 id="Replace和ReplaceAll"><a href="#Replace和ReplaceAll" class="headerlink" title="Replace和ReplaceAll"></a>Replace和ReplaceAll</h4><ul>
+<li>func Replace(s, old, new string, n int) string</li>
+<li>func ReplaceAll(s, old, new string) string</li>
+</ul>
+<p>使用new来替换old，替换的次数为n。如果n为负数，则替换所有的满足条件的子串。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fmt.Println(strings.Replace(<span class="string">&quot;oink oink oink&quot;</span>, <span class="string">&quot;k&quot;</span>, <span class="string">&quot;ky&quot;</span>, <span class="number">2</span>)) <span class="comment">// oinky oinkky oink</span></span><br><span class="line">fmt.Println(strings.Replace(<span class="string">&quot;oink oink oink&quot;</span>, <span class="string">&quot;oink&quot;</span>, <span class="string">&quot;moo&quot;</span>, <span class="number">-1</span>)) moo moo moo </span><br></pre></td></tr></table></figure>
+
+<p>ReplaceAll使用new替换所有的old，相当于使用Replace时n&lt;0。</p>
+<h4 id="Split，SplitN，SplitAfter和SplitAfterN"><a href="#Split，SplitN，SplitAfter和SplitAfterN" class="headerlink" title="Split，SplitN，SplitAfter和SplitAfterN"></a>Split，SplitN，SplitAfter和SplitAfterN</h4><ul>
+<li>func Split(s, sep string) []string</li>
+<li>func SplitAfter(s, sep string) []string</li>
+<li>func SplitAfterN(s, sep string, n int) []string</li>
+<li>func SplitN(s, sep string, n int) []string</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">fmt.Printf(<span class="string">&quot;%q\n&quot;</span>, strings.Split(<span class="string">&quot;a,b,c&quot;</span>, <span class="string">&quot;,&quot;</span>)) <span class="comment">// [&quot;a&quot;,&quot;b&quot;,&quot;c&quot;]</span></span><br><span class="line">fmt.Printf(<span class="string">&quot;%q\n&quot;</span>, strings.Split(<span class="string">&quot;a man a plan a canal panama&quot;</span>, <span class="string">&quot;a &quot;</span>)) <span class="comment">// [&quot;&quot; &quot;man &quot; &quot;plan &quot; &quot;canal panama&quot;]</span></span><br><span class="line">fmt.Printf(<span class="string">&quot;%q\n&quot;</span>, strings.Split(<span class="string">&quot; xyz &quot;</span>, <span class="string">&quot;&quot;</span>)) <span class="comment">// [&quot; &quot; &quot;x&quot; &quot;y&quot; &quot;z&quot; &quot; &quot;]</span></span><br><span class="line">fmt.Printf(<span class="string">&quot;%q\n&quot;</span>, strings.Split(<span class="string">&quot;&quot;</span>, <span class="string">&quot;Bernardo O&#x27;Higgins&quot;</span>)) <span class="comment">// [&quot;&quot;] </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// SplitN 定义返回之后的切片中包含的长度，最后一部分是未被处理的。</span></span><br><span class="line">fmt.Printf(<span class="string">&quot;%q\n&quot;</span>, strings.SplitN(<span class="string">&quot;a,b,c&quot;</span>, <span class="string">&quot;,&quot;</span>, <span class="number">2</span>)) <span class="comment">// [&quot;a&quot;, &quot;b,c&quot;]</span></span><br><span class="line">z := strings.SplitN(<span class="string">&quot;a,b,c&quot;</span>, <span class="string">&quot;,&quot;</span>, <span class="number">0</span>) </span><br><span class="line">fmt.Printf(<span class="string">&quot;%q (nil = %v)\n&quot;</span>, z, z == <span class="literal">nil</span>)  <span class="comment">// [] (nil = true) </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用sep分割，分割出来的字符串中包含sep，可以限定分割之后返回的长度。</span></span><br><span class="line">fmt.Printf(<span class="string">&quot;%q\n&quot;</span>, strings.SplitAfterN(<span class="string">&quot;a,b,c&quot;</span>, <span class="string">&quot;,&quot;</span>, <span class="number">2</span>)) <span class="comment">// [&quot;a,&quot;, &quot;b,c&quot;]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 完全分割 </span></span><br><span class="line">fmt.Printf(<span class="string">&quot;%q\n&quot;</span>, strings.SplitAfter(<span class="string">&quot;a,b,c&quot;</span>, <span class="string">&quot;,&quot;</span>)) <span class="comment">// [&quot;a,&quot;,&quot;b,&quot;, &quot;c&quot;]</span></span><br></pre></td></tr></table></figure>
+
+<p>对于SplitN和SplitAfterN的第二个n说明。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">n &gt; <span class="number">0</span>: at most n substrings; the last substring will be the unsplit remainder.</span><br><span class="line">n == <span class="number">0</span>: the result is <span class="literal">nil</span> (zero substrings)</span><br><span class="line">n &lt; <span class="number">0</span>: all substrings</span><br></pre></td></tr></table></figure>
+
+<h4 id="Trim，TrimFunc，TrimLeft，TrimLeftFunc，TrimPrefix，TrimSuffix，TrimRight，TrimRightFunc"><a href="#Trim，TrimFunc，TrimLeft，TrimLeftFunc，TrimPrefix，TrimSuffix，TrimRight，TrimRightFunc" class="headerlink" title="Trim，TrimFunc，TrimLeft，TrimLeftFunc，TrimPrefix，TrimSuffix，TrimRight，TrimRightFunc"></a>Trim，TrimFunc，TrimLeft，TrimLeftFunc，TrimPrefix，TrimSuffix，TrimRight，TrimRightFunc</h4><ul>
+<li>func Trim(s string, cutset string) string</li>
+<li>func TrimFunc(s string, f func(rune) bool) string</li>
+<li>func TrimLeft(s string, cutset string) string</li>
+<li>func TrimLeftFunc(s string, f func(rune) bool) string</li>
+<li>func TrimPrefix(s, prefix string) string</li>
+<li>func TrimSuffix(s, suffix string) string</li>
+<li>func TrimRight(s string, cutset string) string</li>
+<li>func TrimRightFunc(s string, f func(rune) bool) string</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Trim 包含在cutset中的元素都会被去掉</span></span><br><span class="line">fmt.Print(strings.Trim(<span class="string">&quot;¡¡¡Hello, Gophers!!!&quot;</span>, <span class="string">&quot;!¡&quot;</span>)) <span class="comment">// Hello, Gophers</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// TrimFunc去掉满足条件的字符</span></span><br><span class="line">fmt.Print(strings.TrimFunc(<span class="string">&quot;¡¡¡Hello, Gophers!!!&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> !unicode.IsLetter(r) &amp;&amp; !unicode.IsNumber(r)</span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line"><span class="comment">// TrimLeft 去掉左边满足包含在cutset中的元素，直到遇到不在cutset中的元素为止</span></span><br><span class="line">fmt.Print(strings.TrimLeft(<span class="string">&quot;¡¡¡Hello, Gophers!!!&quot;</span>, <span class="string">&quot;!¡&quot;</span>)) <span class="comment">// Hello, Gophers!!!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// TrimLeftFunc 去掉左边属于函数返回值部分，直到遇到不在cutset中的元素为止</span></span><br><span class="line">fmt.Print(strings.TrimLeftFunc(<span class="string">&quot;¡¡¡Hello, Gophers!!!&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">rune</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> !unicode.IsLetter(r) &amp;&amp; !unicode.IsNumber(r) </span><br><span class="line">&#125;)) <span class="comment">// Hello, Gophers!!!</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// TrimPrefix 去掉开头部分；TrimSuffix 去掉结尾部分 </span></span><br><span class="line"><span class="keyword">var</span> s = <span class="string">&quot;¡¡¡Hello, Gophers!!!&quot;</span></span><br><span class="line">s = strings.TrimPrefix(s, <span class="string">&quot;¡¡¡Hello, &quot;</span>)</span><br><span class="line">s = strings.TrimPrefix(s, <span class="string">&quot;¡¡¡Howdy, &quot;</span>)</span><br><span class="line">fmt.Print(s)</span><br></pre></td></tr></table></figure>
+
+<p>TrimRight，TrimRightFunc和TrimLeft，TrimLeftFunc功能保持一直，无需赘述。</p>
+<h4 id="使用strings-Builder操作"><a href="#使用strings-Builder操作" class="headerlink" title="使用strings.Builder操作"></a>使用strings.Builder操作</h4><blockquote>
+<p>A Builder is used to efficiently build a string using Write methods. It minimizes memory copying. The zero value is ready to use. Do not copy a non-zero Builder.</p>
+</blockquote>
+<p>strings.Builder使用Write方法来高效的构建字符串。它最小化了内存拷贝，耗费零内存，不要拷贝非零的Builder。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> b strings.Builder</span><br><span class="line"><span class="keyword">for</span> i := <span class="number">3</span>; i &gt;= <span class="number">1</span>; i-- &#123;</span><br><span class="line">    fmt.Fprintf(&amp;b, <span class="string">&quot;%d...&quot;</span>, i)</span><br><span class="line">&#125;</span><br><span class="line">b.WriteString(<span class="string">&quot;ignition&quot;</span>)</span><br><span class="line">fmt.Println(b.String())</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">3...2...1...ignition</span><br></pre></td></tr></table></figure>
+
+<p>strings.Builder作为字符串拼接的利器，建议加大使用力度。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span></span> Cap() <span class="type">int</span> <span class="comment">// 容量，涉及批量内存分配机制</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span></span> Grow(n <span class="type">int</span>) <span class="comment">// 手动分配内存数量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span></span> Len() <span class="type">int</span> <span class="comment">// 当前builder中含有的所有字符长度</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span></span> Reset() <span class="comment">// 清空builder</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span></span> String() <span class="type">string</span> <span class="comment">// 转化为字符串输出 </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span></span> Write(p []<span class="type">byte</span>) (<span class="type">int</span>, <span class="type">error</span>) <span class="comment">// 往builder写入数据 </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span></span> WriteByte(c <span class="type">byte</span>) <span class="type">error</span> <span class="comment">// 往builder写入数据 </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span></span> WriteRune(r <span class="type">rune</span>) (<span class="type">int</span>, <span class="type">error</span>) <span class="comment">// 往builder写入数据  </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Builder)</span></span> WriteString(s <span class="type">string</span>) (<span class="type">int</span>, <span class="type">error</span>) <span class="comment">// 往builder写入数据 </span></span><br></pre></td></tr></table></figure>
+
+<h4 id="使用strings-Reader"><a href="#使用strings-Reader" class="headerlink" title="使用strings.Reader"></a>使用strings.Reader</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Reader <span class="keyword">struct</span> &#123;</span><br><span class="line">	s        <span class="type">string</span> <span class="comment">//对应的字符串</span></span><br><span class="line">	i        <span class="type">int64</span>  <span class="comment">// 当前读取到的位置</span></span><br><span class="line">	prevRune <span class="type">int</span>   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>A Reader implements the io.Reader, io.ReaderAt, io.Seeker, io.WriterTo, io.ByteScanner, and io.RuneScanner interfaces by reading from a string. The zero value for Reader operates like a Reader of an empty string.</p>
+</blockquote>
+<p>Reader通过读取字符串的方式，实现了接口io.Reader, io.ReaderAt, io.Seeker, io.WriterTo, io.ByteScanner和io.RuneScanner。零值Reader操作起来就像操作空字符串的io.Reader一样。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewReader</span><span class="params">(s <span class="type">string</span>)</span></span> *Reader <span class="comment">// 初始化reader实例</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> Len() <span class="type">int</span> <span class="comment">// 未读字符长度 </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> Read(b []<span class="type">byte</span>) (n <span class="type">int</span>, err <span class="type">error</span>)  </span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> ReadAt(b []<span class="type">byte</span>, off <span class="type">int64</span>) (n <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> ReadByte() (<span class="type">byte</span>, <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> ReadRune() (ch <span class="type">rune</span>, size <span class="type">int</span>, err <span class="type">error</span>)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> Reset(s <span class="type">string</span>) <span class="comment">// 重置以从s中读</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> Seek(offset <span class="type">int64</span>, whence <span class="type">int</span>) (<span class="type">int64</span>, <span class="type">error</span>) <span class="comment">// Seek implements the io.Seeker interface. </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> Size() <span class="type">int64</span> <span class="comment">// 字符串的原始长度</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> UnreadByte() <span class="type">error</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> UnreadRune() <span class="type">error</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reader)</span></span> WriteTo(w io.Writer) (n <span class="type">int64</span>, err <span class="type">error</span>) <span class="comment">// WriteTo implements the io.WriterTo interface. </span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Len，Size，Read"><a href="#Len，Size，Read" class="headerlink" title="Len，Size，Read"></a>Len，Size，Read</h4><p>Len作用: 返回未读的字符串长度。</p>
+<p>Size的作用:返回字符串的长度。</p>
+<p>Read的作用: 读取字符串信息，读取之后会改变Len的返回值</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">r := strings.NewReader(<span class="string">&quot;abcdefghijklmn&quot;</span>)</span><br><span class="line">fmt.Println(r.Len())   <span class="comment">// 输出14  初始时，未读长度等于字符串长度</span></span><br><span class="line"><span class="keyword">var</span> buf []<span class="type">byte</span></span><br><span class="line">buf = <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">readLen, err := r.Read(buf)</span><br><span class="line">fmt.Println(<span class="string">&quot;读取到的长度:&quot;</span>, readLen) <span class="comment">//读取到的长度5</span></span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;错误:&quot;</span>, err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(buf)            <span class="comment">//adcde</span></span><br><span class="line">fmt.Println(r.Len())        <span class="comment">//9   读取到了5个 剩余未读是14-5</span></span><br><span class="line">fmt.Println(r.Size())       <span class="comment">//14   字符串的长度</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="ReadAt"><a href="#ReadAt" class="headerlink" title="ReadAt"></a>ReadAt</h4><ul>
+<li>func (r *Reader) ReadAt(b []byte, off int64) (n int, err error)</li>
+</ul>
+<p>读取偏移off字节后的剩余信息到b中，ReadAt函数不会影响Len的数值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">r := strings.NewReader(<span class="string">&quot;abcdefghijklmn&quot;</span>)</span><br><span class="line"><span class="keyword">var</span> bufAt, buf []<span class="type">byte</span></span><br><span class="line">buf = <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">r.Read(buf)</span><br><span class="line">fmt.Println(<span class="string">&quot;剩余未读的长度&quot;</span>, r.Len())   <span class="comment">//剩余未读的长度 9</span></span><br><span class="line">fmt.Println(<span class="string">&quot;已读取的内容&quot;</span>, <span class="type">string</span>(buf)) <span class="comment">//已读取的内容 abcde</span></span><br><span class="line">bufAt = <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">256</span>)</span><br><span class="line">r.ReadAt(bufAt, <span class="number">5</span>)</span><br><span class="line">fmt.Println(<span class="type">string</span>(bufAt))              <span class="comment">//fghijklmn</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//测试下是否影响Len和Read方法</span></span><br><span class="line">fmt.Println(<span class="string">&quot;剩余未读的长度&quot;</span>, r.Len())    <span class="comment">//剩余未读的长度 9</span></span><br><span class="line">fmt.Println(<span class="string">&quot;已读取的内容&quot;</span>, <span class="type">string</span>(buf))  <span class="comment">//已读取的内容 abcde</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="ReadByte-UnreadByte"><a href="#ReadByte-UnreadByte" class="headerlink" title="ReadByte,UnreadByte"></a>ReadByte,UnreadByte</h4><ul>
+<li>func (r *Reader) ReadByte() (byte, error)</li>
+<li>func (r *Reader) UnreadByte() error</li>
+</ul>
+<p>ReadByte从当前已读取位置继续读取一个字节。</p>
+<p>UnreadByte将当前已读取位置回退一位，当前位置的字节标记成未读取字节。</p>
+<p>ReadByte和UnreadByte会改变reader对象的长度。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">r := strings.NewReader(<span class="string">&quot;abcdefghijklmn&quot;</span>)</span><br><span class="line"><span class="comment">//读取一个字节</span></span><br><span class="line">b, _ := r.ReadByte()</span><br><span class="line">fmt.Println(<span class="type">string</span>(b))					<span class="comment">// a</span></span><br><span class="line"><span class="comment">//int(r.Size()) - r.Len() 已读取字节数</span></span><br><span class="line">fmt.Println(<span class="type">int</span>(r.Size()) - r.Len())	<span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//读取一个字节</span></span><br><span class="line">b, _ = r.ReadByte()</span><br><span class="line">fmt.Println(<span class="type">string</span>(b))					<span class="comment">// b</span></span><br><span class="line">fmt.Println(<span class="type">int</span>(r.Size()) - r.Len())	<span class="comment">// 2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//回退一个字节</span></span><br><span class="line">r.UnreadByte()</span><br><span class="line">fmt.Println(<span class="type">int</span>(r.Size()) - r.Len())	<span class="comment">// 1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//读取一个字节</span></span><br><span class="line">b, _ = r.ReadByte()</span><br><span class="line">fmt.Println(<span class="type">string</span>(b))	</span><br></pre></td></tr></table></figure>
+
+<h4 id="Seek"><a href="#Seek" class="headerlink" title="Seek"></a>Seek</h4><ul>
+<li>func (r *Reader) Seek(offset int64, whence int) (int64, error)</li>
+</ul>
+<p>ReadAt方法并不会改变Len()的值，Seek的移位操作可以改变。offset是偏移的位置，whence是偏移起始位置，支持三种位置：io.SeekStart起始位，io.SeekCurrent当前位，io.SeekEnd末位。<br>offset可以是负数，当时偏移起始位与offset相加得到的值不能小于0或者大于size()的长度。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">r := strings.NewReader(<span class="string">&quot;abcdefghijklmn&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> buf []<span class="type">byte</span></span><br><span class="line">buf = <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">r.Read(buf)</span><br><span class="line">fmt.Println(<span class="type">string</span>(buf), r.Len()) <span class="comment">//adcde 9</span></span><br><span class="line"></span><br><span class="line">buf = <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">r.Seek(<span class="number">-2</span>, io.SeekCurrent) <span class="comment">//从当前位置向前偏移两位 （5-2)</span></span><br><span class="line">r.Read(buf)</span><br><span class="line">fmt.Println(<span class="type">string</span>(buf), r.Len()) <span class="comment">//defgh 6</span></span><br><span class="line"></span><br><span class="line">buf = <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">r.Seek(<span class="number">-3</span>, io.SeekEnd) <span class="comment">//设置当前位置是末尾前移三位</span></span><br><span class="line">r.Read(buf)</span><br><span class="line">fmt.Println(<span class="type">string</span>(buf), r.Len()) <span class="comment">//lmn 0</span></span><br><span class="line"></span><br><span class="line">buf = <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">5</span>)</span><br><span class="line">r.Seek(<span class="number">3</span>, io.SeekStart) <span class="comment">//设置当前位置是起始位后移三位</span></span><br><span class="line">r.Read(buf)</span><br><span class="line">fmt.Println(<span class="type">string</span>(buf), r.Len()) <span class="comment">//defgh 6</span></span><br></pre></td></tr></table></figure>
+
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2020/09/16/Go%E4%B8%ADstrings%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/" data-title="Go中strings的常用方法 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/09/16/Go标准库flag包/" title="Go标准库flag包">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Go标准库flag包</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/08/05/Golang进度条功能实现/"  title="Golang进度条功能实现">
+ <strong>下一篇：</strong><br/> 
+ <span>Golang进度条功能实现
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2020/09/16/Go中strings的常用方法/" data-title="Go中strings的常用方法" data-url="https://luckymrwang.github.io/2020/09/16/Go%E4%B8%ADstrings%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Compare"><span class="toc-number">1.</span> <span class="toc-text">Compare</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Contains%EF%BC%8CContainsAny-%E5%92%8C-ContainsRune"><span class="toc-number">2.</span> <span class="toc-text">Contains，ContainsAny 和 ContainsRune</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Count"><span class="toc-number">3.</span> <span class="toc-text">Count</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#EqualFold"><span class="toc-number">4.</span> <span class="toc-text">EqualFold</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Fields"><span class="toc-number">5.</span> <span class="toc-text">Fields</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HasPrefix-%E5%92%8C-HasSuffix"><span class="toc-number">6.</span> <span class="toc-text">HasPrefix 和 HasSuffix</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Join"><span class="toc-number">7.</span> <span class="toc-text">Join</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Index%EF%BC%8CIndexAny%EF%BC%8CIndexByte%EF%BC%8CIndexFunc%EF%BC%8CIndexRune"><span class="toc-number">8.</span> <span class="toc-text">Index，IndexAny，IndexByte，IndexFunc，IndexRune</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LastIndex%EF%BC%8CLastIndexAny%EF%BC%8CLastIndexByte%E5%92%8CLastIndexFunc"><span class="toc-number">9.</span> <span class="toc-text">LastIndex，LastIndexAny，LastIndexByte和LastIndexFunc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Map"><span class="toc-number">10.</span> <span class="toc-text">Map</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Repeat"><span class="toc-number">11.</span> <span class="toc-text">Repeat</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Replace%E5%92%8CReplaceAll"><span class="toc-number">12.</span> <span class="toc-text">Replace和ReplaceAll</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Split%EF%BC%8CSplitN%EF%BC%8CSplitAfter%E5%92%8CSplitAfterN"><span class="toc-number">13.</span> <span class="toc-text">Split，SplitN，SplitAfter和SplitAfterN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Trim%EF%BC%8CTrimFunc%EF%BC%8CTrimLeft%EF%BC%8CTrimLeftFunc%EF%BC%8CTrimPrefix%EF%BC%8CTrimSuffix%EF%BC%8CTrimRight%EF%BC%8CTrimRightFunc"><span class="toc-number">14.</span> <span class="toc-text">Trim，TrimFunc，TrimLeft，TrimLeftFunc，TrimPrefix，TrimSuffix，TrimRight，TrimRightFunc</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8strings-Builder%E6%93%8D%E4%BD%9C"><span class="toc-number">15.</span> <span class="toc-text">使用strings.Builder操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8strings-Reader"><span class="toc-number">16.</span> <span class="toc-text">使用strings.Reader</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Len%EF%BC%8CSize%EF%BC%8CRead"><span class="toc-number">17.</span> <span class="toc-text">Len，Size，Read</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadAt"><span class="toc-number">18.</span> <span class="toc-text">ReadAt</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadByte-UnreadByte"><span class="toc-number">19.</span> <span class="toc-text">ReadByte,UnreadByte</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Seek"><span class="toc-number">20.</span> <span class="toc-text">Seek</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

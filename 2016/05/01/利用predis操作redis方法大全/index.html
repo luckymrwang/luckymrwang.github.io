@@ -1,0 +1,496 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>利用predis操作redis方法大全 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="predis是php连接redis的操作库，由于它完全使用php编写，大量使用命名空间以及闭包等功能，只支持php5.3以上版本，故实测性能一般，每秒25000次读写，相信改换c语言编写的php扩展后性能会大幅提升(比如使用C扩展phpredis)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用predis操作redis方法大全">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/05/01/%E5%88%A9%E7%94%A8predis%E6%93%8D%E4%BD%9Credis%E6%96%B9%E6%B3%95%E5%A4%A7%E5%85%A8/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="predis是php连接redis的操作库，由于它完全使用php编写，大量使用命名空间以及闭包等功能，只支持php5.3以上版本，故实测性能一般，每秒25000次读写，相信改换c语言编写的php扩展后性能会大幅提升(比如使用C扩展phpredis)。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-05-01T03:36:34.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.211Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/05/01/利用predis操作redis方法大全/" title="利用predis操作redis方法大全" itemprop="url">利用predis操作redis方法大全</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-05-01T03:36:34.000Z" itemprop="datePublished"> 发表于 2016-05-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p><a href="https://github.com/nrk/predis">predis</a>是php连接redis的操作库，由于它完全使用php编写，大量使用命名空间以及闭包等功能，只支持php5.3以上版本，故实测性能一般，每秒25000次读写，相信改换c语言编写的php扩展后性能会大幅提升(比如使用C扩展<a href="https://github.com/owlient/phpredis">phpredis</a>)。</p>
+<span id="more"></span>
+<p>将session数据存放到redis也很简单:</p>
+<p>session.save_handler &#x3D; redis</p>
+<p>session.save_path &#x3D; “tcp:&#x2F;&#x2F;127.0.0.1:6379”</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//使用autoload加载相关库,这边重点就是为了require $file;</span></span><br><span class="line"><span class="title function_ invoke__">spl_autoload_register</span> ( function ( <span class="variable">$class</span> )  &#123;</span><br><span class="line">     <span class="variable">$file</span>  = <span class="keyword">__DIR__</span> . <span class="string">&#x27;/lib/Predis/&#x27;</span> . <span class="variable">$class</span> . <span class="string">&#x27;.php&#x27;</span> ;</span><br><span class="line">     <span class="keyword">if</span>  ( <span class="title function_ invoke__">file_exists</span> ( <span class="variable">$file</span> ) )  &#123;</span><br><span class="line">         <span class="keyword">require</span>  <span class="variable">$file</span> ;</span><br><span class="line">         <span class="keyword">return</span>  <span class="literal">true</span> ;</span><br><span class="line">     &#125;</span><br><span class="line">&#125; ) ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//配置连接的IP、端口、以及相应的数据库</span></span><br><span class="line"><span class="variable">$server</span>  =  <span class="keyword">array</span> (</span><br><span class="line">     <span class="string">&#x27;host&#x27;</span>      =&gt;  <span class="string">&#x27;127.0.0.1&#x27;</span> ,</span><br><span class="line">     <span class="string">&#x27;port&#x27;</span>      =&gt;  <span class="number">6379</span> ,</span><br><span class="line">     <span class="string">&#x27;database&#x27;</span>  =&gt;  <span class="number">15</span></span><br><span class="line">) ;</span><br><span class="line"><span class="variable">$redis</span>  =  <span class="keyword">new</span> <span class="title class_">Client</span> ( <span class="variable">$server</span> ) ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//普通set/get操作</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">set</span> ( <span class="string">&#x27;library&#x27;</span> ,  <span class="string">&#x27;predis&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$retval</span>  =  <span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">get</span> ( <span class="string">&#x27;library&#x27;</span> ) ;</span><br><span class="line"><span class="keyword">echo</span>  <span class="variable">$retval</span> ;  <span class="comment">//显示 &#x27;predis&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//setex set一个存储时效</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">setex</span> ( <span class="string">&#x27;str&#x27;</span> ,  <span class="number">10</span> ,  <span class="string">&#x27;bar&#x27;</span> ) ;  <span class="comment">//表示存储有效期为10秒</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//setnx/msetnx相当于add操作,不会覆盖已有值</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">setnx</span> ( <span class="string">&#x27;foo&#x27;</span> , <span class="number">12</span> ) ;  <span class="comment">//true</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">setnx</span> ( <span class="string">&#x27;foo&#x27;</span> , <span class="number">34</span> ) ;  <span class="comment">//false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//getset操作,set的变种,结果返回替换前的值</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">getset</span> ( <span class="string">&#x27;foo&#x27;</span> , <span class="number">56</span> ) ; <span class="comment">//返回12</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// incrby/incr/decrby/decr 对值的递增和递减</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">incr</span> ( <span class="string">&#x27;foo&#x27;</span> ) ;  <span class="comment">//foo为57</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">incrby</span> ( <span class="string">&#x27;foo&#x27;</span> , <span class="number">2</span> ) ;  <span class="comment">//foo为59</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//exists检测是否存在某值</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">exists</span> ( <span class="string">&#x27;foo&#x27;</span> ) ; <span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//del 删除</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">del</span> ( <span class="string">&#x27;foo&#x27;</span> ) ; <span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//type 类型检测,字符串返回string,列表返回 list,set表返回set/zset,hash表返回hash</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">type</span> ( <span class="string">&#x27;foo&#x27;</span> ) ; <span class="comment">//不存在,返回none</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">set</span> ( <span class="string">&#x27;str&#x27;</span> , <span class="string">&#x27;test&#x27;</span> ) ; </span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">type</span> ( <span class="string">&#x27;str&#x27;</span> ) ;  <span class="comment">//字符串，返回string</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//append 连接到已存在字符串</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">append</span> ( <span class="string">&#x27;str&#x27;</span> , <span class="string">&#x27;_123&#x27;</span> ) ;  <span class="comment">//返回累加后的字符串长度8,此进str为 &#x27;test_123&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//setrange 部分替换操作</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">setrange</span> ( <span class="string">&#x27;str&#x27;</span> , <span class="number">0</span> , <span class="string">&#x27;abc&#x27;</span> ) ;  <span class="comment">//返回3,参数2为0时等同于set操作</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">setrange</span> ( <span class="string">&#x27;str&#x27;</span> , <span class="number">2</span> , <span class="string">&#x27;cd&#x27;</span> ) ; <span class="comment">//返回4,表示从第2个字符后替换,这时&#x27;str&#x27;为&#x27;abcd&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//substr 部分获取操作</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">substr</span> ( <span class="string">&#x27;str&#x27;</span> , <span class="number">0</span> , <span class="number">2</span> ) ; <span class="comment">//表示从第0个起，取到第2个字符，共3个，返回&#x27;abc&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//strlen 获取字符串长度</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">strlen</span> ( <span class="string">&#x27;str&#x27;</span> ) ;  <span class="comment">//返回4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//setbit/getbit 位存储和获取</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">setbit</span> ( <span class="string">&#x27;binary&#x27;</span> , <span class="number">31</span> , <span class="number">1</span> ) ;   <span class="comment">//表示在第31位存入1,这边可能会有大小端问题?不过没关系,getbit 应该不会有问题</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">getbit</span> ( <span class="string">&#x27;binary&#x27;</span> , <span class="number">31</span> ) ;     <span class="comment">//返回1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//keys 模糊查找功能,支持*号以及?号(匹配一个字符)</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">set</span> ( <span class="string">&#x27;foo1&#x27;</span> , <span class="number">123</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">set</span> ( <span class="string">&#x27;foo2&#x27;</span> , <span class="number">456</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">keys</span> ( <span class="string">&#x27;foo*&#x27;</span> ) ;  <span class="comment">//返回foo1和foo2的array</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">keys</span> ( <span class="string">&#x27;f?o?&#x27;</span> ) ;   <span class="comment">//同上</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//randomkey 随机返回一个key</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">randomkey</span> ( ) ;  <span class="comment">//可能是返回 &#x27;foo1&#x27;或者是&#x27;foo2&#x27;及其它任何一存在redis的key</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//rename/renamenx 对key进行改名,所不同的是renamenx不允许改成已存在的key</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rename</span> ( <span class="string">&#x27;str&#x27;</span> , <span class="string">&#x27;str2&#x27;</span> ) ;  <span class="comment">//把原先命名为&#x27;str&#x27;的key改成了&#x27;str2&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//expire 设置key-value的时效性,ttl 获取剩余有效期,persist 重新设置为永久存储</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">expire</span> ( <span class="string">&#x27;foo&#x27;</span> ,  <span class="number">1</span> ) ;  <span class="comment">//设置有效期为1秒</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">ttl</span> ( <span class="string">&#x27;foo&#x27;</span> ) ;  <span class="comment">//返回有效期值1s</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">expire</span> ( <span class="string">&#x27;foo&#x27;</span> ) ;  <span class="comment">//取消expire行为</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//dbsize 返回redis当前数据库的记录总数</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">dbsize</span> ( ) ;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">队列操作</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//rpush/rpushx 有序列表操作,从队列后插入元素</span></span><br><span class="line"><span class="comment">//lpush/lpushx 和rpush/rpushx的区别是插入到队列的头部,同上,&#x27;x&#x27;含义是只对已存在的key进行操作</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpush</span> ( <span class="string">&#x27;fooList&#x27;</span> ,  <span class="string">&#x27;bar1&#x27;</span> ) ;  <span class="comment">//返回一个列表的长度1</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">lpush</span> ( <span class="string">&#x27;fooList&#x27;</span> ,  <span class="string">&#x27;bar0&#x27;</span> ) ;  <span class="comment">//返回一个列表的长度2</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpushx</span> ( <span class="string">&#x27;fooList&#x27;</span> ,  <span class="string">&#x27;bar2&#x27;</span> ) ;  <span class="comment">//返回3,rpushx只对已存在的队列做添加,否则返回0</span></span><br><span class="line"><span class="comment">//llen返回当前列表长度</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">llen</span> ( <span class="string">&#x27;fooList&#x27;</span> ) ; <span class="comment">//3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//lrange 返回队列中一个区间的元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">lrange</span> ( <span class="string">&#x27;fooList&#x27;</span> , <span class="number">0</span> , <span class="number">1</span> ) ;  <span class="comment">//返回数组包含第0个至第1个共2个元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">lrange</span> ( <span class="string">&#x27;fooList&#x27;</span> , <span class="number">0</span> ,- <span class="number">1</span> ) ; <span class="comment">//返回第0个至倒数第一个,相当于返回所有元素,注意redis中很多时候会用到负数,下同</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//lindex 返回指定顺序位置的list元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">lindex</span> ( <span class="string">&#x27;fooList&#x27;</span> , <span class="number">1</span> ) ;  <span class="comment">//返回&#x27;bar1&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//lset 修改队列中指定位置的value</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">lset</span> ( <span class="string">&#x27;fooList&#x27;</span> , <span class="number">1</span> , <span class="string">&#x27;123&#x27;</span> ) ; <span class="comment">//修改位置1的元素,返回true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//lrem 删除队列中左起指定数量的字符</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">lrem</span> ( <span class="string">&#x27;fooList&#x27;</span> , <span class="number">1</span> , <span class="string">&#x27;_&#x27;</span> ) ;  <span class="comment">//删除队列中左起(右起使用-1)1个字符&#x27;_&#x27;(若有)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//lpop/rpop 类似栈结构地弹出(并删除)最左或最右的一个元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">lpop</span> ( <span class="string">&#x27;fooList&#x27;</span> ) ;  <span class="comment">//&#x27;bar0&#x27;</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpop</span> ( <span class="string">&#x27;fooList&#x27;</span> ) ;  <span class="comment">//&#x27;bar2&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//ltrim 队列修改，保留左边起若干元素，其余删除</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">ltrim</span> ( <span class="string">&#x27;fooList&#x27;</span> ,  <span class="number">0</span> , <span class="number">1</span> ) ;  <span class="comment">//保留左边起第0个至第1个元素</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//rpoplpush 从一个队列中pop出元素并push到另一个队列</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpush</span> ( <span class="string">&#x27;list1&#x27;</span> , <span class="string">&#x27;ab0&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpush</span> ( <span class="string">&#x27;list1&#x27;</span> , <span class="string">&#x27;ab1&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpush</span> ( <span class="string">&#x27;list2&#x27;</span> , <span class="string">&#x27;ab2&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpush</span> ( <span class="string">&#x27;list2&#x27;</span> , <span class="string">&#x27;ab3&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpoplpush</span> ( <span class="string">&#x27;list1&#x27;</span> , <span class="string">&#x27;list2&#x27;</span> ) ; <span class="comment">//结果list1 =&gt;array(&#x27;ab0&#x27;),list2 =&gt;array(&#x27;ab1&#x27;,&#x27;ab2&#x27;,&#x27;ab3&#x27;)</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpoplpush</span> ( <span class="string">&#x27;list2&#x27;</span> , <span class="string">&#x27;list2&#x27;</span> ) ; <span class="comment">//也适用于同一个队列,把最后一个元素移到头部list2 =&gt;array(&#x27;ab3&#x27;,&#x27;ab1&#x27;,&#x27;ab2&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//linsert 在队列的中间指定元素前或后插入元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">linsert</span> ( <span class="string">&#x27;list2&#x27;</span> ,  <span class="string">&#x27;before&#x27;</span> , <span class="string">&#x27;ab1&#x27;</span> , <span class="string">&#x27;123&#x27;</span> ) ;  <span class="comment">//表示在元素&#x27;ab1&#x27;之前插入&#x27;123&#x27;</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">linsert</span> ( <span class="string">&#x27;list2&#x27;</span> ,  <span class="string">&#x27;after&#x27;</span> , <span class="string">&#x27;ab1&#x27;</span> , <span class="string">&#x27;456&#x27;</span> ) ;    <span class="comment">//表示在元素&#x27;ab1&#x27;之后插入&#x27;456&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//blpop/brpop 阻塞并等待一个列队不为空时，再pop出最左或最右的一个元素（这个功能在php以外可以说非常好用）</span></span><br><span class="line"><span class="comment">//brpoplpush 同样是阻塞并等待操作，结果同rpoplpush一样</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">blpop</span> ( <span class="string">&#x27;list3&#x27;</span> , <span class="number">10</span> ) ;  <span class="comment">//如果list3为空则一直等待,直到不为空时将第一元素弹出,10秒后超时</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">set表操作</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//sadd 增加元素,返回true,重复返回false</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sadd</span> ( <span class="string">&#x27;set1&#x27;</span> , <span class="string">&#x27;ab&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sadd</span> ( <span class="string">&#x27;set1&#x27;</span> , <span class="string">&#x27;cd&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sadd</span> ( <span class="string">&#x27;set1&#x27;</span> , <span class="string">&#x27;ef&#x27;</span> ) ;</span><br><span class="line"></span><br><span class="line"><span class="comment">//srem 移除指定元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">srem</span> ( <span class="string">&#x27;set1&#x27;</span> , <span class="string">&#x27;cd&#x27;</span> ) ;  <span class="comment">//删除&#x27;cd&#x27;元素</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//spop 弹出首元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">spop</span> ( <span class="string">&#x27;set1&#x27;</span> ) ;</span><br><span class="line"></span><br><span class="line"><span class="comment">//smove 移动当前set表的指定元素到另一个set表</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sadd</span> ( <span class="string">&#x27;set2&#x27;</span> , <span class="string">&#x27;123&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">smove</span> ( <span class="string">&#x27;set1&#x27;</span> , <span class="string">&#x27;set2&#x27;</span> , <span class="string">&#x27;ab&#x27;</span> ) ; <span class="comment">//移动&#x27;set1&#x27;中的&#x27;ab&#x27;到&#x27;set2&#x27;,返回true or false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//scard 返回当前set表元素个数</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">scard</span> ( <span class="string">&#x27;set2&#x27;</span> ) ; <span class="comment">//2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//sismember 判断元素是否属于当前表</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sismember</span> ( <span class="string">&#x27;set2&#x27;</span> , <span class="string">&#x27;123&#x27;</span> ) ;  <span class="comment">//true or false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//smembers 返回当前表的所有元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">smembers</span> ( <span class="string">&#x27;set2&#x27;</span> ) ;  <span class="comment">//array(&#x27;123&#x27;,&#x27;ab&#x27;);</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//sinter/sunion/sdiff  返回两个表中元素的交集/并集/补集</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sadd</span> ( <span class="string">&#x27;set1&#x27;</span> , <span class="string">&#x27;ab&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sinter</span> ( <span class="string">&#x27;set2&#x27;</span> , <span class="string">&#x27;set1&#x27;</span> ) ;  <span class="comment">//返回array(&#x27;ab&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//sinterstore/sunionstore/sdiffstore 将两个表交集/并集/补集元素copy到第三个表中</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">set</span> ( <span class="string">&#x27;foo&#x27;</span> , <span class="number">0</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sinterstore</span> ( <span class="string">&#x27;foo&#x27;</span> , <span class="string">&#x27;set1&#x27;</span> ) ;  <span class="comment">//这边等同于将&#x27;set1&#x27;的内容copy到&#x27;foo&#x27;中，并将&#x27;foo&#x27;转为set表</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sinterstore</span> ( <span class="string">&#x27;foo&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;set1&#x27;</span> , <span class="string">&#x27;set2&#x27;</span> ) ) ;  <span class="comment">//将&#x27;set1&#x27;和&#x27;set2&#x27;中相同的元素copy到&#x27;foo&#x27;表中,覆盖&#x27;foo&#x27;原有内容</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//srandmember 返回表中一个随机元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">srandmember</span> ( <span class="string">&#x27;set1&#x27;</span> ) ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">有序set表操作</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//sadd 增加元素,并设置序号,返回true,重复返回false</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zadd</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">1</span> , <span class="string">&#x27;ab&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zadd</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">2</span> , <span class="string">&#x27;cd&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zadd</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">3</span> , <span class="string">&#x27;ef&#x27;</span> ) ;</span><br><span class="line"></span><br><span class="line"><span class="comment">//zincrby 对指定元素索引值的增减,改变元素排列次序</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zincrby</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">10</span> , <span class="string">&#x27;ab&#x27;</span> ) ; <span class="comment">//返回11</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zrem 移除指定元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zrem</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="string">&#x27;ef&#x27;</span> ) ;  <span class="comment">//true or false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zrange 按位置次序返回表中指定区间的元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zrange</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">0</span> , <span class="number">1</span> ) ;  <span class="comment">//返回位置0和1之间(两个)的元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zrange</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">0</span> ,- <span class="number">1</span> ) ; <span class="comment">//返回位置0和倒数第一个元素之间的元素(相当于所有元素)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zrevrange 同上,返回表中指定区间的元素,按次序倒排</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zrevrange</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">0</span> ,- <span class="number">1</span> ) ;  <span class="comment">//元素顺序和zrange相反</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zrangebyscore/zrevrangebyscore 按顺序/降序返回表中指定索引区间的元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zadd</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">3</span> , <span class="string">&#x27;ef&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zadd</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">5</span> , <span class="string">&#x27;gh&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zrangebyscore</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">2</span> , <span class="number">9</span> ) ;  <span class="comment">//返回索引值2-9之间的元素 array(&#x27;ef&#x27;,&#x27;gh&#x27;)</span></span><br><span class="line"><span class="comment">//参数形式</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zrangebyscore</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">2</span> , <span class="number">9</span> , <span class="string">&#x27;withscores&#x27;</span> ) ;  <span class="comment">//返回索引值2-9之间的元素并包含索引值 array(array(&#x27;ef&#x27;,3),array(&#x27;gh&#x27;,5))</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zrangebyscore</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">2</span> , <span class="number">9</span> , <span class="keyword">array</span> ( <span class="string">&#x27;withscores&#x27;</span>  =&gt; <span class="literal">true</span> , <span class="string">&#x27;limit&#x27;</span> =&gt; <span class="keyword">array</span> ( <span class="number">1</span> ,  <span class="number">2</span> ) ) ) ;  <span class="comment">//返回索引值2-9之间的元素,&#x27;withscores&#x27; =&gt;true表示包含索引值; &#x27;limit&#x27;=&gt;array(1, 2),表示最多返回2条,结果为array(array(&#x27;ef&#x27;,3),array(&#x27;gh&#x27;,5))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zunionstore/zinterstore 将多个表的并集/交集存入另一个表中</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zunionstore</span> ( <span class="string">&#x27;zset3&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="string">&#x27;zset2&#x27;</span> , <span class="string">&#x27;zset0&#x27;</span> ) ) ;  <span class="comment">//将&#x27;zset1&#x27;,&#x27;zset2&#x27;,&#x27;zset0&#x27;的并集存入&#x27;zset3&#x27;</span></span><br><span class="line"><span class="comment">//其它参数 </span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zunionstore</span> ( <span class="string">&#x27;zset3&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="string">&#x27;zset2&#x27;</span> ) , <span class="keyword">array</span> ( <span class="string">&#x27;weights&#x27;</span>  =&gt;  <span class="keyword">array</span> ( <span class="number">5</span> , <span class="number">0</span> ) ) ) ; <span class="comment">//weights参数表示权重，其中表示并集后值大于5的元素排在前，大于0的排在后</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zunionstore</span> ( <span class="string">&#x27;zset3&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="string">&#x27;zset2&#x27;</span> ) , <span class="keyword">array</span> ( <span class="string">&#x27;aggregate&#x27;</span>  =&gt;  <span class="string">&#x27;max&#x27;</span> ) ) ; <span class="comment">//&#x27;aggregate&#x27; =&gt; &#x27;max&#x27;或&#x27;min&#x27;表示并集后相同的元素是取大值或是取小值</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zcount 统计一个索引区间的元素个数</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zcount</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">3</span> , <span class="number">5</span> ) ; <span class="comment">//2</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zcount</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="string">&#x27;(3&#x27;</span> , <span class="number">5</span> ) ) ;  <span class="comment">//&#x27;(3&#x27;表示索引值在3-5之间但不含3,同理也可以使用&#x27;(5&#x27;表示上限为5但不含5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zcard 统计元素个数</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zcard</span> ( <span class="string">&#x27;zset1&#x27;</span> ) ; <span class="comment">//4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zscore 查询元素的索引</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zscore</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="string">&#x27;ef&#x27;</span> ) ; <span class="comment">//3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zremrangebyscore 删除一个索引区间的元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zremrangebyscore</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">0</span> , <span class="number">2</span> ) ;  <span class="comment">//删除索引在0-2之间的元素(&#x27;ab&#x27;,&#x27;cd&#x27;),返回删除元素个数2</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zrank/zrevrank 返回元素所在表顺序/降序的位置(不是索引)</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zrank</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="string">&#x27;ef&#x27;</span> ) ; <span class="comment">//返回0,因为它是第一个元素;zrevrank则返回1(最后一个)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//zremrangebyrank 删除表中指定位置区间的元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">zremrangebyrank</span> ( <span class="string">&#x27;zset1&#x27;</span> , <span class="number">0</span> , <span class="number">10</span> ) ;  <span class="comment">//删除位置为0-10的元素,返回删除的元素个数2 </span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">hash表操作</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hset/hget 存取hash表的数据</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hset</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="string">&#x27;key1&#x27;</span> , <span class="string">&#x27;v1&#x27;</span> ) ;  <span class="comment">//将key为&#x27;key1&#x27; value为&#x27;v1&#x27;的元素存入hash1表</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hset</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="string">&#x27;key2&#x27;</span> , <span class="string">&#x27;v2&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hget</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="string">&#x27;key1&#x27;</span> ) ;   <span class="comment">//取出表&#x27;hash1&#x27;中的key &#x27;key1&#x27;的值,返回&#x27;v1&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hexists 返回hash表中的指定key是否存在</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hexists</span>  ( <span class="string">&#x27;hash1&#x27;</span> , <span class="string">&#x27;key1&#x27;</span> ) ;  <span class="comment">//true or false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hdel 删除hash表中指定key的元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hdel</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="string">&#x27;key2&#x27;</span> ) ;  <span class="comment">//true or false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hlen 返回hash表元素个数</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hlen</span> ( <span class="string">&#x27;hash1&#x27;</span> ) ;  <span class="comment">//1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hsetnx 增加一个元素,但不能重复</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hsetnx</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="string">&#x27;key1&#x27;</span> , <span class="string">&#x27;v2&#x27;</span> ) ;  <span class="comment">//false</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hsetnx</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="string">&#x27;key2&#x27;</span> , <span class="string">&#x27;v2&#x27;</span> ) ;  <span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hmset/hmget 存取多个元素到hash表</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hmset</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;key3&#x27;</span> =&gt; <span class="string">&#x27;v3&#x27;</span> , <span class="string">&#x27;key4&#x27;</span> =&gt; <span class="string">&#x27;v4&#x27;</span> ) ) ; </span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hmget</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;key3&#x27;</span> , <span class="string">&#x27;key4&#x27;</span> ) ) ;  <span class="comment">//返回相应的值 array(&#x27;v3&#x27;,&#x27;v4&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hincrby 对指定key进行累加</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hincrby</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="string">&#x27;key5&#x27;</span> , <span class="number">3</span> ) ;  <span class="comment">//返回3</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hincrby</span> ( <span class="string">&#x27;hash1&#x27;</span> , <span class="string">&#x27;key5&#x27;</span> , <span class="number">10</span> ) ;  <span class="comment">//返回13</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hkeys 返回hash表中的所有key</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hkeys</span> ( <span class="string">&#x27;hash1&#x27;</span> ) ;  <span class="comment">//返回array(&#x27;key1&#x27;,&#x27;key2&#x27;,&#x27;key3&#x27;,&#x27;key4&#x27;,&#x27;key5&#x27;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hvals 返回hash表中的所有value</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hvals</span> ( <span class="string">&#x27;hash1&#x27;</span> ) ;  <span class="comment">//返回array(&#x27;v1&#x27;,&#x27;v2&#x27;,&#x27;v3&#x27;,&#x27;v4&#x27;,13)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hgetall 返回整个hash表元素</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">hgetall</span> ( <span class="string">&#x27;hash1&#x27;</span> ) ;  <span class="comment">//返回array(&#x27;key1&#x27;=&gt;&#x27;v1&#x27;,&#x27;key2&#x27;=&gt;&#x27;v2&#x27;,&#x27;key3&#x27;=&gt;&#x27;v3&#x27;,&#x27;key4&#x27;=&gt;&#x27;v4&#x27;,&#x27;key5&#x27;=&gt;13)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">排序操作</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//sort 排序</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpush</span> ( <span class="string">&#x27;tab&#x27;</span> , <span class="number">3</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpush</span> ( <span class="string">&#x27;tab&#x27;</span> , <span class="number">2</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">rpush</span> ( <span class="string">&#x27;tab&#x27;</span> , <span class="number">17</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sort</span> ( <span class="string">&#x27;tab&#x27;</span> ) ;   <span class="comment">//返回array(2,3,17)</span></span><br><span class="line"><span class="comment">//使用参数,可组合使用 array(&#x27;sort&#x27; =&gt; &#x27;desc&#x27;,&#x27;limit&#x27; =&gt; array(1, 2))</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sort</span> ( <span class="string">&#x27;tab&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;sort&#x27;</span>  =&gt;  <span class="string">&#x27;desc&#x27;</span> ) ) ;   <span class="comment">//降序排列,返回array(17,3,2)</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sort</span> ( <span class="string">&#x27;tab&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;limit&#x27;</span>  =&gt;  <span class="keyword">array</span> ( <span class="number">1</span> ,  <span class="number">2</span> ) ) ) ;   <span class="comment">//返回顺序位置中1的元素2个(这里的2是指个数,而不是位置),返回array(3,17)</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sort</span> ( <span class="string">&#x27;tab&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;limit&#x27;</span>  =&gt;  <span class="keyword">array</span> ( <span class="string">&#x27;alpha&#x27;</span>  =&gt;  <span class="literal">true</span> ) ) ) ;  <span class="comment">//按首字符排序返回array(17,2,3),因为17的首字符是&#x27;1&#x27;所以排首位置</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sort</span> ( <span class="string">&#x27;tab&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;limit&#x27;</span>  =&gt;  <span class="keyword">array</span> ( <span class="string">&#x27;store&#x27;</span>  =&gt;  <span class="string">&#x27;ordered&#x27;</span> ) ) ) ;  <span class="comment">//表示永久性排序,返回元素个数</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">sort</span> ( <span class="string">&#x27;tab&#x27;</span> , <span class="keyword">array</span> ( <span class="string">&#x27;limit&#x27;</span>  =&gt;  <span class="keyword">array</span> ( <span class="string">&#x27;get&#x27;</span>  =&gt;  <span class="string">&#x27;pre_*&#x27;</span> ) ) ) ;  <span class="comment">//使用了通配符&#x27;*&#x27;过滤元素,表示只返回以&#x27;pre_&#x27;开头的元素</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">redis管理操作</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//select 指定要操作的数据库</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">select</span> ( <span class="string">&#x27;mydb&#x27;</span> ) ;  <span class="comment">//指定为mydb,不存在则创建</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//flushdb 清空当前库</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">flushdb</span> ( ) ;</span><br><span class="line"></span><br><span class="line"><span class="comment">//move 移动当库的元素到其它库</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">set</span> ( <span class="string">&#x27;foo&#x27;</span> ,  <span class="string">&#x27;bar&#x27;</span> ) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">move</span> ( <span class="string">&#x27;foo&#x27;</span> ,  <span class="string">&#x27;mydb2&#x27;</span> ) ;  <span class="comment">//若&#x27;mydb2&#x27;库存在</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//info 显示服务当状态信息</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">info</span> ( ) ;</span><br><span class="line"></span><br><span class="line"><span class="comment">//slaveof 配置从服务器</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">slaveof</span> ( <span class="string">&#x27;127.0.0.1&#x27;</span> , <span class="number">80</span> ) ;  <span class="comment">//配置127.0.0.1端口80的服务器为从服务器</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">slaveof</span> ( ) ;  <span class="comment">//清除从服务器</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//同步保存服务器数据到磁盘</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">save</span> ( ) ;</span><br><span class="line"><span class="comment">//异步保存服务器数据到磁盘</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">bgsave</span> ( ) ;</span><br><span class="line"><span class="comment">//??</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">bgrewriteaof</span> ( ) ;</span><br><span class="line"><span class="comment">//返回最后更新磁盘的时间</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">lastsave</span> ( ) ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//set/get多个key-value</span></span><br><span class="line"><span class="variable">$mkv</span>  =  <span class="keyword">array</span> (</span><br><span class="line">     <span class="string">&#x27;usr:0001&#x27;</span>  =&gt;  <span class="string">&#x27;First user&#x27;</span> ,</span><br><span class="line">     <span class="string">&#x27;usr:0002&#x27;</span>  =&gt;  <span class="string">&#x27;Second user&#x27;</span> ,</span><br><span class="line">     <span class="string">&#x27;usr:0003&#x27;</span>  =&gt;  <span class="string">&#x27;Third user&#x27;</span></span><br><span class="line">) ;</span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">mset</span> ( <span class="variable">$mkv</span> ) ;  <span class="comment">//存储多个key对应的value</span></span><br><span class="line"><span class="variable">$retval</span>  =  <span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">mget</span> ( <span class="title function_ invoke__">array_keys</span> ( <span class="variable">$mkv</span> ) ) ;  <span class="comment">//获取多个key对应的value</span></span><br><span class="line"><span class="title function_ invoke__">print_r</span> ( <span class="variable">$retval</span> ) ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//批量操作</span></span><br><span class="line"><span class="variable">$replies</span>  =  <span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">pipeline</span> ( function ( <span class="variable">$pipe</span> )  &#123;</span><br><span class="line">     <span class="variable">$pipe</span> -&gt; <span class="title function_ invoke__">ping</span> ( ) ;</span><br><span class="line">     <span class="variable">$pipe</span> -&gt; <span class="title function_ invoke__">flushdb</span> ( ) ;</span><br><span class="line">     <span class="variable">$pipe</span> -&gt; <span class="title function_ invoke__">incrby</span> ( <span class="string">&#x27;counter&#x27;</span> ,  <span class="number">10</span> ) ;  <span class="comment">//增量操作</span></span><br><span class="line">     <span class="variable">$pipe</span> -&gt; <span class="title function_ invoke__">incrby</span> ( <span class="string">&#x27;counter&#x27;</span> ,  <span class="number">30</span> ) ;</span><br><span class="line">     <span class="variable">$pipe</span> -&gt; <span class="title function_ invoke__">exists</span> ( <span class="string">&#x27;counter&#x27;</span> ) ;</span><br><span class="line">     <span class="variable">$pipe</span> -&gt; <span class="title function_ invoke__">get</span> ( <span class="string">&#x27;counter&#x27;</span> ) ;</span><br><span class="line">     <span class="variable">$pipe</span> -&gt; <span class="title function_ invoke__">mget</span> ( <span class="string">&#x27;does_not_exist&#x27;</span> ,  <span class="string">&#x27;counter&#x27;</span> ) ;  </span><br><span class="line">&#125; ) ;</span><br><span class="line"><span class="title function_ invoke__">print_r</span> ( <span class="variable">$replies</span> ) ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//CAS,事务性操作</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">zpop</span> (<span class="params"> <span class="variable">$client</span> ,  <span class="variable">$zsetKey</span> </span>)  </span>&#123;</span><br><span class="line">     <span class="variable">$element</span>  =  <span class="literal">null</span> ;</span><br><span class="line">     <span class="variable">$options</span>  =  <span class="keyword">array</span> (</span><br><span class="line">         <span class="string">&#x27;cas&#x27;</span>    =&gt;  <span class="literal">true</span> ,      <span class="comment">// Initialize with support for CAS operations</span></span><br><span class="line">         <span class="string">&#x27;watch&#x27;</span>  =&gt;  <span class="variable">$zsetKey</span> ,  <span class="comment">// Key that needs to be WATCHed to detect changes</span></span><br><span class="line">         <span class="string">&#x27;retry&#x27;</span>  =&gt;  <span class="number">3</span> ,         <span class="comment">// Number of retries on aborted transactions, after</span></span><br><span class="line">                              <span class="comment">// which the client bails out with an exception.</span></span><br><span class="line">     ) ;</span><br><span class="line"></span><br><span class="line">     <span class="variable">$txReply</span>  =  <span class="variable">$client</span> -&gt; <span class="title function_ invoke__">multiExec</span> ( <span class="variable">$options</span> ,  function ( <span class="variable">$tx</span> )</span><br><span class="line">         <span class="keyword">use</span>  ( $<span class="title">zsetKey</span> ,  &amp; $<span class="title">element</span> )  &#123;</span><br><span class="line">         @ <span class="title">list</span> ( $<span class="title">element</span> )  =  $<span class="title">tx</span> -&gt; <span class="title">zrange</span> ( $<span class="title">zsetKey</span> ,  0 ,  0 ) ;</span><br><span class="line">         <span class="keyword">if</span>  ( <span class="keyword">isset</span> ( <span class="variable">$element</span> ) )  &#123;</span><br><span class="line">             <span class="variable">$tx</span> -&gt; <span class="title function_ invoke__">multi</span> ( ) ;      <span class="comment">// With CAS, MULTI *must* be explicitly invoked.</span></span><br><span class="line">             <span class="variable">$tx</span> -&gt; <span class="title function_ invoke__">zrem</span> ( <span class="variable">$zsetKey</span> ,  <span class="variable">$element</span> ) ;</span><br><span class="line">         &#125;</span><br><span class="line">     &#125; ) ;</span><br><span class="line">     <span class="keyword">return</span>  <span class="variable">$element</span> ;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$zpopped</span>  = <span class="title function_ invoke__">zpop</span> ( <span class="variable">$redis</span> ,  <span class="string">&#x27;zset&#x27;</span> ) ;</span><br><span class="line"><span class="keyword">echo</span>  <span class="keyword">isset</span> ( <span class="variable">$zpopped</span> ) ?  <span class="string">&quot;ZPOPed <span class="subst">$zpopped</span>&quot;</span>  :  <span class="string">&quot;Nothing to ZPOP!&quot;</span> ,  <span class="string">&quot;\n&quot;</span> ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//对存取的key加前缀,如: &#x27;nrk:&#x27;</span></span><br><span class="line"><span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">getProfile</span> ( ) -&gt; <span class="title function_ invoke__">setPreprocessor</span> ( <span class="keyword">new</span> <span class="title class_">KeyPrefixPreprocessor</span> ( <span class="string">&#x27;nrk:&#x27;</span> ) ) ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//分布式存储的一些方法</span></span><br><span class="line"><span class="variable">$multiple_servers</span>  =  <span class="keyword">array</span> (</span><br><span class="line">     <span class="keyword">array</span> (</span><br><span class="line">        <span class="string">&#x27;host&#x27;</span>      =&gt;  <span class="string">&#x27;127.0.0.1&#x27;</span> ,</span><br><span class="line">        <span class="string">&#x27;port&#x27;</span>      =&gt;  <span class="number">6379</span> ,</span><br><span class="line">        <span class="string">&#x27;database&#x27;</span>  =&gt;  <span class="number">15</span> ,</span><br><span class="line">        <span class="string">&#x27;alias&#x27;</span>     =&gt;  <span class="string">&#x27;first&#x27;</span> ,</span><br><span class="line">     ) ,</span><br><span class="line">     <span class="keyword">array</span> (</span><br><span class="line">        <span class="string">&#x27;host&#x27;</span>      =&gt;  <span class="string">&#x27;127.0.0.1&#x27;</span> ,</span><br><span class="line">        <span class="string">&#x27;port&#x27;</span>      =&gt;  <span class="number">6380</span> ,</span><br><span class="line">        <span class="string">&#x27;database&#x27;</span>  =&gt;  <span class="number">15</span> ,</span><br><span class="line">        <span class="string">&#x27;alias&#x27;</span>     =&gt;  <span class="string">&#x27;second&#x27;</span> ,</span><br><span class="line">     ) ,</span><br><span class="line">) ;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Predis</span>\<span class="title">Distribution</span>\<span class="title">IDistributionStrategy</span> ;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NaiveDistributionStrategy</span> <span class="keyword">implements</span> <span class="title">IDistributionStrategy</span>  </span>&#123;</span><br><span class="line">     <span class="keyword">private</span>  <span class="variable">$_nodes</span> ,  <span class="variable">$_nodesCount</span> ;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span>  <span class="function"><span class="keyword">function</span> <span class="title">__constructor</span> (<span class="params"> </span>)  </span>&#123;</span><br><span class="line">         <span class="variable language_">$this</span> -&gt;_nodes  =  <span class="keyword">array</span> ( ) ;</span><br><span class="line">         <span class="variable language_">$this</span> -&gt;_nodesCount  =  <span class="number">0</span> ;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span>  <span class="function"><span class="keyword">function</span> <span class="title">add</span> (<span class="params"> <span class="variable">$node</span> ,  <span class="variable">$weight</span>  =  <span class="literal">null</span> </span>)  </span>&#123;</span><br><span class="line">         <span class="variable language_">$this</span> -&gt;_nodes [ ]  =  <span class="variable">$node</span> ;</span><br><span class="line">         <span class="variable language_">$this</span> -&gt;_nodesCount ++;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span>  <span class="function"><span class="keyword">function</span> <span class="title">remove</span> (<span class="params"> <span class="variable">$node</span> </span>)  </span>&#123;</span><br><span class="line">         <span class="variable language_">$this</span> -&gt;_nodes  =  <span class="title function_ invoke__">array_filter</span> ( <span class="variable">$this</span> -&gt;_nodes ,  function ( <span class="variable">$n</span> )  <span class="keyword">use</span> ( $<span class="title">node</span> )  &#123;</span><br><span class="line">             <span class="title">return</span>  $<span class="title">n</span>  !==  $<span class="title">node</span> ;</span><br><span class="line">         &#125; ) ;</span><br><span class="line">         <span class="variable language_">$this</span> -&gt;_nodesCount  =  <span class="title function_ invoke__">count</span> ( <span class="variable">$this</span> -&gt;_nodes ) ;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span>  <span class="function"><span class="keyword">function</span> <span class="title">get</span> (<span class="params"> <span class="variable">$key</span> </span>)  </span>&#123;</span><br><span class="line">         <span class="variable">$count</span>  =  <span class="variable language_">$this</span> -&gt;_nodesCount ;</span><br><span class="line">         <span class="keyword">if</span>  ( <span class="variable">$count</span>  ===  <span class="number">0</span> )  &#123;</span><br><span class="line">             <span class="keyword">throw</span>  <span class="keyword">new</span> <span class="built_in">RuntimeException</span> ( <span class="string">&#x27;No connections&#x27;</span> ) ;</span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">return</span>  <span class="variable language_">$this</span> -&gt;_nodes [ <span class="variable">$count</span>  &gt;  <span class="number">1</span> ?  <span class="title function_ invoke__">abs</span> ( <span class="title function_ invoke__">crc32</span> ( <span class="variable">$key</span> )  %  <span class="variable">$count</span> )  :  <span class="number">0</span> ] ;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span>  <span class="function"><span class="keyword">function</span> <span class="title">generateKey</span> (<span class="params"> <span class="variable">$value</span> </span>)  </span>&#123;</span><br><span class="line">         <span class="keyword">return</span>  <span class="title function_ invoke__">crc32</span> ( <span class="variable">$value</span> ) ;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//配置键分布策略</span></span><br><span class="line"><span class="variable">$options</span>  =  <span class="keyword">array</span> (</span><br><span class="line">     <span class="string">&#x27;key_distribution&#x27;</span>  =&gt;  <span class="keyword">new</span> <span class="title class_">NaiveDistributionStrategy</span> ( ) ,</span><br><span class="line">) ;</span><br><span class="line"></span><br><span class="line"><span class="variable">$redis</span>  =  <span class="keyword">new</span> <span class="title class_">Predis\Client</span> ( <span class="variable">$multiple_servers</span> ,  <span class="variable">$options</span> ) ;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>  ( <span class="variable">$i</span>  =  <span class="number">0</span> ;  <span class="variable">$i</span> <span class="title function_ invoke__">set</span> ( <span class="string">&quot;key:<span class="subst">$i</span>&quot;</span> ,  <span class="title function_ invoke__">str_pad</span> ( <span class="variable">$i</span> ,  <span class="number">4</span> ,  <span class="string">&#x27;0&#x27;</span> ,  <span class="number">0</span> ) ) ;</span><br><span class="line">     <span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">get</span> ( <span class="string">&quot;key:<span class="subst">$i</span>&quot;</span> ) ;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$server1</span>  =  <span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">getClientFor</span> ( <span class="string">&#x27;first&#x27;</span> ) -&gt; <span class="title function_ invoke__">info</span> ( ) ;</span><br><span class="line"><span class="variable">$server2</span>  =  <span class="variable">$redis</span> -&gt; <span class="title function_ invoke__">getClientFor</span> ( <span class="string">&#x27;second&#x27;</span> ) -&gt; <span class="title function_ invoke__">info</span> ( ) ;</span><br><span class="line"></span><br><span class="line"><span class="title function_ invoke__">printf</span> ( <span class="string">&quot;Server &#x27;%s&#x27; has %d keys while server &#x27;%s&#x27; has %d keys.\n&quot;</span> ,</span><br><span class="line">     <span class="string">&#x27;first&#x27;</span> ,  <span class="variable">$server1</span> [ <span class="string">&#x27;db15&#x27;</span> ] [ <span class="string">&#x27;keys&#x27;</span> ] ,  <span class="string">&#x27;second&#x27;</span> ,  <span class="variable">$server2</span> [ <span class="string">&#x27;db15&#x27;</span> ] [ <span class="string">&#x27;keys&#x27;</span> ]</span><br><span class="line">) ; </span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Redis/">Redis</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/05/01/%E5%88%A9%E7%94%A8predis%E6%93%8D%E4%BD%9Credis%E6%96%B9%E6%B3%95%E5%A4%A7%E5%85%A8/" data-title="利用predis操作redis方法大全 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/05/01/如何使用PHP编写RESTful接口/" title="如何使用PHP编写RESTful接口">
+  <strong>上一篇：</strong><br/>
+  <span>
+  如何使用PHP编写RESTful接口</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/04/05/PHPexcel单元格换行/"  title="PHPexcel单元格内换行">
+ <strong>下一篇：</strong><br/> 
+ <span>PHPexcel单元格内换行
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/05/01/利用predis操作redis方法大全/" data-title="利用predis操作redis方法大全" data-url="https://luckymrwang.github.io/2016/05/01/%E5%88%A9%E7%94%A8predis%E6%93%8D%E4%BD%9Credis%E6%96%B9%E6%B3%95%E5%A4%A7%E5%85%A8/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

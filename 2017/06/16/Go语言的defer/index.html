@@ -1,0 +1,511 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go语言的defer | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="eg1123456func f() (result int) &#123;    defer func() &#123;        result++    &#125;()    return 0&#125;  eg21234567func f() (r int) &#123;     t :&#x3D; 5     defer func() &#123;       t &#x3D; t + 5     &amp;#1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go语言的defer">
+<meta property="og:url" content="https://luckymrwang.github.io/2017/06/16/Go%E8%AF%AD%E8%A8%80%E7%9A%84defer/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="eg1123456func f() (result int) &#123;    defer func() &#123;        result++    &#125;()    return 0&#125;  eg21234567func f() (r int) &#123;     t :&#x3D; 5     defer func() &#123;       t &#x3D; t + 5     &amp;#1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-06-16T08:39:16.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.193Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/06/16/Go语言的defer/" title="Go语言的defer" itemprop="url">Go语言的defer</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-06-16T08:39:16.000Z" itemprop="datePublished"> 发表于 2017-06-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#eg1"><span class="toc-number">1.</span> <span class="toc-text">eg1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg2"><span class="toc-number">2.</span> <span class="toc-text">eg2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg3"><span class="toc-number">3.</span> <span class="toc-text">eg3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg1-%E6%94%B9%E5%86%99%E5%90%8E"><span class="toc-number">4.</span> <span class="toc-text">eg1 改写后</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg2-%E6%94%B9%E5%86%99%E5%90%8E"><span class="toc-number">5.</span> <span class="toc-text">eg2 改写后</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg3-%E6%94%B9%E5%86%99%E5%90%8E"><span class="toc-number">6.</span> <span class="toc-text">eg3 改写后</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="eg1"><a href="#eg1" class="headerlink" title="eg1"></a>eg1</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> (result <span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        result++</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="eg2"><a href="#eg2" class="headerlink" title="eg2"></a>eg2</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> (r <span class="type">int</span>) &#123;</span><br><span class="line">     t := <span class="number">5</span></span><br><span class="line">     <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">       t = t + <span class="number">5</span></span><br><span class="line">     &#125;()</span><br><span class="line">     <span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="eg3"><a href="#eg3" class="headerlink" title="eg3"></a>eg3</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> (r <span class="type">int</span>) &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">          r = r + <span class="number">5</span></span><br><span class="line">    &#125;(r)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>明确一点：<code>defer是在return之前执行的</code></p>
+<p><code>defer的实现方式</code>大致就是在defer出现的地方，插入指令CALL runtime.deferproc，然后在函数返回之前的地方，插入指令CALL runtime.deferreturn。再就是明确go返回值的方式跟C是不一样的，为了支持多值返回，go是用栈返回值的，而C是用寄存器。</p>
+<p>重要的一点就是：<code>return xxx这一条语句并不是一条原子指令</code></p>
+<p>整个return过程，没有defer之前，先在栈中写一个值，这个值会被当作返回值，然后再调用RET指令返回。return xxx语句汇编后是先给返回值赋值，再做一个空的return，( 赋值指令 ＋ RET指令)。defer的执行是被插入到return指令之前的，有了defer之后，就变成了(赋值指令 + CALL defer指令 + RET指令)。而在CALL defer函数中，有可能将最终的返回值改写了…也有可能没改写。总之，如果改写了，那么看上去就像defer是在return xxx之后执行的~</p>
+<p>可以利用简单的转换规则，将return语句分开成两句写，return xxx会被改写成:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">返回值 = xxx</span><br><span class="line">调用defer函数</span><br><span class="line">空的return</span><br></pre></td></tr></table></figure>
+
+<h3 id="eg1-改写后"><a href="#eg1-改写后" class="headerlink" title="eg1 改写后"></a>eg1 改写后</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> (result <span class="type">int</span>) &#123;</span><br><span class="line">     result = <span class="number">0</span>  <span class="comment">//return语句不是一条原子调用，return xxx其实是赋值＋RET指令</span></span><br><span class="line">     <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; <span class="comment">//defer被插入到return之前执行，也就是赋返回值和RET指令之间</span></span><br><span class="line">         result++</span><br><span class="line">     &#125;()</span><br><span class="line">     <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回值为1</p>
+<h3 id="eg2-改写后"><a href="#eg2-改写后" class="headerlink" title="eg2 改写后"></a>eg2 改写后</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> (r <span class="type">int</span>) &#123;</span><br><span class="line">     t := <span class="number">5</span></span><br><span class="line">     r = t <span class="comment">//赋值指令</span></span><br><span class="line">     <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;        <span class="comment">//defer被插入到赋值与返回之间执行，这个例子中返回值r没被修改过</span></span><br><span class="line">         t = t + <span class="number">5</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span>        <span class="comment">//空的return指令</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回值为5</p>
+<h3 id="eg3-改写后"><a href="#eg3-改写后" class="headerlink" title="eg3 改写后"></a>eg3 改写后</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> (r <span class="type">int</span>) &#123;</span><br><span class="line">     r = <span class="number">1</span>  <span class="comment">//给返回值赋值</span></span><br><span class="line">     <span class="function"><span class="keyword">func</span><span class="params">(r <span class="type">int</span>)</span></span> &#123;        <span class="comment">//这里改的r是传值传进去的r，不会改变要返回的那个r值</span></span><br><span class="line">          r = r + <span class="number">5</span></span><br><span class="line">     &#125;(r)</span><br><span class="line">     <span class="keyword">return</span>        <span class="comment">//空的return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>返回值为1</p>
+<p>本文引自<a href="http://www.zenlife.tk/golang-defer.md">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2017/06/16/Go%E8%AF%AD%E8%A8%80%E7%9A%84defer/" data-title="Go语言的defer | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/06/20/Urlooker流程图/" title="Urlooker流程图">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Urlooker流程图</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/03/21/Go语言并发模型：使用-context/"  title="Go语言并发模型：使用 context">
+ <strong>下一篇：</strong><br/> 
+ <span>Go语言并发模型：使用 context
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/06/16/Go语言的defer/" data-title="Go语言的defer" data-url="https://luckymrwang.github.io/2017/06/16/Go%E8%AF%AD%E8%A8%80%E7%9A%84defer/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#eg1"><span class="toc-number">1.</span> <span class="toc-text">eg1</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg2"><span class="toc-number">2.</span> <span class="toc-text">eg2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg3"><span class="toc-number">3.</span> <span class="toc-text">eg3</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg1-%E6%94%B9%E5%86%99%E5%90%8E"><span class="toc-number">4.</span> <span class="toc-text">eg1 改写后</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg2-%E6%94%B9%E5%86%99%E5%90%8E"><span class="toc-number">5.</span> <span class="toc-text">eg2 改写后</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eg3-%E6%94%B9%E5%86%99%E5%90%8E"><span class="toc-number">6.</span> <span class="toc-text">eg3 改写后</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

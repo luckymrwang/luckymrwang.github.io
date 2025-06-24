@@ -1,0 +1,615 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go性能分析-内存 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="前言之前整理过Go性能分析，讲述了pprof的基本使用方式，本篇着重采用pprof来帮助我们分析Golang进程的内存使用。 pprof 实例通常我们采用http api来将pprof信息暴露出来以供分析，我们可以采用net&#x2F;http&#x2F;pprof这个package。下面是一个简单的示例：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go性能分析-内存">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/05/08/Go%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-%E5%86%85%E5%AD%98/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="前言之前整理过Go性能分析，讲述了pprof的基本使用方式，本篇着重采用pprof来帮助我们分析Golang进程的内存使用。 pprof 实例通常我们采用http api来将pprof信息暴露出来以供分析，我们可以采用net&#x2F;http&#x2F;pprof这个package。下面是一个简单的示例：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/golang-memory-pprof.png">
+<meta property="article:published_time" content="2022-05-08T00:31:51.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.193Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/golang-memory-pprof.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/08/Go性能分析-内存/" title="Go性能分析-内存" itemprop="url">Go性能分析-内存</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-08T00:31:51.000Z" itemprop="datePublished"> 发表于 2022-05-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pprof-%E5%AE%9E%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">pprof 实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#go-tool"><span class="toc-number">3.</span> <span class="toc-text">go tool</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%9D%E5%A4%96"><span class="toc-number">4.</span> <span class="toc-text">额外</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#top"><span class="toc-number">4.1.</span> <span class="toc-text">top</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#list"><span class="toc-number">4.2.</span> <span class="toc-text">list</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#traces"><span class="toc-number">4.3.</span> <span class="toc-text">traces</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2"><span class="toc-number">4.4.</span> <span class="toc-text">内存泄露</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E7%94%A8heap%E5%8F%91%E7%8E%B0%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98"><span class="toc-number">4.4.1.</span> <span class="toc-text">怎么用heap发现内存问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#go-torch"><span class="toc-number">5.</span> <span class="toc-text">go-torch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#testing"><span class="toc-number">6.</span> <span class="toc-text">testing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="toc-number">7.</span> <span class="toc-text">优化建议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>之前整理过<a href="/Go%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90.md">Go性能分析</a>，讲述了pprof的基本使用方式，本篇着重采用pprof来帮助我们分析Golang进程的内存使用。</p>
+<h3 id="pprof-实例"><a href="#pprof-实例" class="headerlink" title="pprof 实例"></a>pprof 实例</h3><p>通常我们采用<code>http api</code>来将pprof信息暴露出来以供分析，我们可以采用<code>net/http/pprof</code>这个package。下面是一个简单的示例：</p>
+<span id="more"></span>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// pprof 的init函数会将pprof里的一些handler注册到http.DefaultServeMux上</span></span><br><span class="line"><span class="comment">// 当不使用http.DefaultServeMux来提供http api时，可以查阅其init函数，自己注册handler</span></span><br><span class="line"><span class="keyword">import</span> _ <span class="string">&quot;net/http/pprof&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    http.ListenAndServe(<span class="string">&quot;0.0.0.0:8080&quot;</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;()</span><br></pre></td></tr></table></figure>
+
+<p>此时我们可以启动进程，然后访问 <code>http://localhost:8080/debug/pprof/</code> 可以看到一个简单的页面，页面上显示: </p>
+<p>注意: 以下的全部数据，包括<code>go tool pprof</code>采集到的数据都依赖进程中的pprof采样率，默认<code>512kb</code>进行一次采样，当我们认为数据不够细致时，可以调节采样率<code>runtime.MemProfileRate</code>，但是采样率越低，进程运行速度越慢。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">/debug/pprof/</span><br><span class="line"></span><br><span class="line"><span class="attr">profiles</span>:</span><br><span class="line"><span class="number">0</span>         block</span><br><span class="line"><span class="number">136840</span>    goroutine</span><br><span class="line"><span class="number">902</span>       heap</span><br><span class="line"><span class="number">0</span>         mutex</span><br><span class="line"><span class="number">40</span>        threadcreate</span><br><span class="line"></span><br><span class="line">full goroutine stack dump</span><br></pre></td></tr></table></figure>
+
+<p>上面简单暴露出了几个内置的Profile统计项。例如有136840个goroutine在运行，点击<code>相关链接</code>可以看到详细信息。</p>
+<p>当我们分析内存相关的问题时，可以点击heap项，进入 <code>http://127.0.0.1:8080/debug/pprof/heap?debug=1</code> 可以查看具体的显示：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">heap <span class="attr">profile</span>: <span class="number">3190</span>: <span class="number">77516056</span> [<span class="number">54762</span>: <span class="number">612664248</span>] @ heap/<span class="number">1048576</span></span><br><span class="line"><span class="number">1</span>: <span class="number">29081600</span> [<span class="number">1</span>: <span class="number">29081600</span>] @ <span class="number">0x89368e</span> <span class="number">0x894cd9</span> <span class="number">0x8a5a9d</span> <span class="number">0x8a9b7c</span> <span class="number">0x8af578</span> <span class="number">0x8b4441</span> <span class="number">0x8b4c6d</span> <span class="number">0x8b8504</span> <span class="number">0x8b2bc3</span> <span class="number">0x45b1c1</span></span><br><span class="line">#    <span class="number">0x89368d</span>    github.<span class="property">com</span>/syndtr/goleveldb/leveldb/memdb.(*<span class="variable constant_">DB</span>).<span class="property">Put</span>+<span class="number">0x59d</span></span><br><span class="line">#    <span class="number">0x894cd8</span>    xxxxx/storage/internal/memtable.(*<span class="title class_">MemTable</span>).<span class="property">Set</span>+<span class="number">0x88</span></span><br><span class="line">#    <span class="number">0x8a5a9c</span>    xxxxx/storage.(*snapshotter).<span class="property">AppendCommitLog</span>+<span class="number">0x1cc</span></span><br><span class="line">#    <span class="number">0x8a9b7b</span>    xxxxx/storage.(*store).<span class="property">Update</span>+<span class="number">0x26b</span></span><br><span class="line">#    <span class="number">0x8af577</span>    xxxxx/config.(*config).<span class="property">Update</span>+<span class="number">0xa7</span></span><br><span class="line">#    <span class="number">0x8b4440</span>    xxxxx/naming.(*naming).<span class="property">update</span>+<span class="number">0x120</span></span><br><span class="line">#    <span class="number">0x8b4c6c</span>    xxxxx/naming.(*naming).<span class="property">instanceTimeout</span>+<span class="number">0x27c</span></span><br><span class="line">#    <span class="number">0x8b8503</span>    xxxxx/naming.(*naming).(xxxxx/naming.<span class="property">instanceTimeout</span>)-fm+<span class="number">0x63</span></span><br><span class="line"></span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"># runtime.<span class="property">MemStats</span></span><br><span class="line"># <span class="title class_">Alloc</span> = <span class="number">2463648064</span></span><br><span class="line"># <span class="title class_">TotalAlloc</span> = <span class="number">31707239480</span></span><br><span class="line"># <span class="title class_">Sys</span> = <span class="number">4831318840</span></span><br><span class="line"># <span class="title class_">Lookups</span> = <span class="number">2690464</span></span><br><span class="line"># <span class="title class_">Mallocs</span> = <span class="number">274619648</span></span><br><span class="line"># <span class="title class_">Frees</span> = <span class="number">262711312</span></span><br><span class="line"># <span class="title class_">HeapAlloc</span> = <span class="number">2463648064</span></span><br><span class="line"># <span class="title class_">HeapSys</span> = <span class="number">3877830656</span></span><br><span class="line"># <span class="title class_">HeapIdle</span> = <span class="number">854990848</span></span><br><span class="line"># <span class="title class_">HeapInuse</span> = <span class="number">3022839808</span></span><br><span class="line"># <span class="title class_">HeapReleased</span> = <span class="number">0</span></span><br><span class="line"># <span class="title class_">HeapObjects</span> = <span class="number">11908336</span></span><br><span class="line"># <span class="title class_">Stack</span> = <span class="number">655949824</span> / <span class="number">655949824</span></span><br><span class="line"># <span class="title class_">MSpan</span> = <span class="number">63329432</span> / <span class="number">72040448</span></span><br><span class="line"># <span class="title class_">MCache</span> = <span class="number">38400</span> / <span class="number">49152</span></span><br><span class="line"># <span class="title class_">BuckHashSys</span> = <span class="number">1706593</span></span><br><span class="line"># <span class="title class_">GCSys</span> = <span class="number">170819584</span></span><br><span class="line"># <span class="title class_">OtherSys</span> = <span class="number">52922583</span></span><br><span class="line"># <span class="title class_">NextGC</span> = <span class="number">3570699312</span></span><br><span class="line"># <span class="title class_">PauseNs</span> = [<span class="number">1052815</span> <span class="number">217503</span> <span class="number">208124</span> <span class="number">233034</span> <span class="number">1146462</span> <span class="number">456882</span> <span class="number">1098525</span> <span class="number">530706</span> <span class="number">551702</span> <span class="number">419372</span> <span class="number">768322</span> <span class="number">596273</span> <span class="number">387826</span> <span class="number">455807</span> <span class="number">563621</span> <span class="number">587849</span> <span class="number">416204</span> <span class="number">599143</span> <span class="number">572823</span> <span class="number">488681</span> <span class="number">701731</span> <span class="number">656358</span> <span class="number">2476770</span> <span class="number">12141392</span> <span class="number">5827253</span> <span class="number">3508261</span> <span class="number">1715582</span> <span class="number">1295487</span> <span class="number">908563</span> <span class="number">788435</span> <span class="number">718700</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span> <span class="number">0</span>]</span><br><span class="line"># <span class="title class_">NumGC</span> = <span class="number">31</span></span><br><span class="line"># <span class="title class_">DebugGC</span> = <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>其中显示的内容会比较多，但是主体分为2个部分: 第一个部分打印为通过<code>runtime.MemProfile()</code>获取的<code>runtime.MemProfileRecord</code>记录。 其含义为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">heap <span class="attr">profile</span>: <span class="number">3190</span>(inused objects): <span class="number">77516056</span>(inused bytes) [<span class="number">54762</span>(alloc objects): <span class="number">612664248</span>(alloc bytes)] @ heap/<span class="number">1048576</span>(<span class="number">2</span>*<span class="title class_">MemProfileRate</span>)</span><br><span class="line"><span class="number">1</span>: <span class="number">29081600</span> [<span class="number">1</span>: <span class="number">29081600</span>] (前面<span class="number">4</span>个数跟第一行的一样，此行以后是每次记录的，后面的地址是记录中的栈指针)@ <span class="number">0x89368e</span> <span class="number">0x894cd9</span> <span class="number">0x8a5a9d</span> <span class="number">0x8a9b7c</span> <span class="number">0x8af578</span> <span class="number">0x8b4441</span> <span class="number">0x8b4c6d</span> <span class="number">0x8b8504</span> <span class="number">0x8b2bc3</span> <span class="number">0x45b1c1</span></span><br><span class="line">#    <span class="number">0x89368d</span>    github.<span class="property">com</span>/syndtr/goleveldb/leveldb/memdb.(*<span class="variable constant_">DB</span>).<span class="property">Put</span>+<span class="number">0x59d</span> 栈信息</span><br></pre></td></tr></table></figure>
+
+<p>第二部分就比较好理解，打印的是通过<code>runtime.ReadMemStats()</code>读取的<code>runtime.MemStats</code>信息。 我们可以重点关注一下</p>
+<ul>
+<li><strong>Sys</strong> 进程从系统获得的内存空间，虚拟地址空间。</li>
+<li><strong>HeapAlloc</strong> 进程堆内存分配使用的空间，通常是用户new出来的堆对象，包含未被gc掉的。</li>
+<li><strong>HeapSys</strong> 进程从系统获得的堆内存，因为golang底层使用TCmalloc机制，会缓存一部分堆内存，虚拟地址空间。</li>
+<li><strong>PauseNs</strong> 记录每次gc暂停的时间(纳秒)，最多记录256个最新记录。</li>
+<li><strong>NumGC</strong> 记录gc发生的次数。</li>
+</ul>
+<p>相信，对pprof不了解的用户看了以上内容，很难获得更多的有用信息。因此我们需要引用更多工具来帮助 我们更加简单的解读pprof内容。</p>
+<h3 id="go-tool"><a href="#go-tool" class="headerlink" title="go tool"></a>go tool</h3><p>我们可以采用 <code>go tool pprof -inuse_space http://127.0.0.1:8080/debug/pprof/heap</code> 命令连接到进程中查看正在使用的一些内存相关信息，此时我们得到一个可以交互的命令行。</p>
+<p>可以使用参数指明分析的类型：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">inuse_space — amount <span class="keyword">of</span> memory allocated and not released yet</span><br><span class="line">inuse_objects — amount <span class="keyword">of</span> objects allocated and not released yet</span><br><span class="line">alloc_space — total amount <span class="keyword">of</span> memory <span class="title function_">allocated</span> (regardless <span class="keyword">of</span> released)</span><br><span class="line">alloc_objects — total amount <span class="keyword">of</span> objects <span class="title function_">allocated</span> (regardless <span class="keyword">of</span> released)</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看数据<code>top10</code>来查看正在使用的对象较多的10个函数入口。通常用来检测有没有不符合预期的内存 对象引用。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">(pprof) top10</span><br><span class="line"><span class="number">1355.</span>47MB <span class="keyword">of</span> <span class="number">1436.</span>26MB <span class="title function_">total</span> (<span class="number">94.38</span>%)</span><br><span class="line"><span class="title class_">Dropped</span> <span class="number">371</span> <span class="title function_">nodes</span> (cum &lt;= <span class="number">7.</span>18MB)</span><br><span class="line"><span class="title class_">Showing</span> top <span class="number">10</span> nodes out <span class="keyword">of</span> <span class="number">61</span> (cum &gt;= <span class="number">23.</span>50MB)</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">  <span class="number">512.</span>96MB <span class="number">35.71</span>% <span class="number">35.71</span>%   <span class="number">512.</span>96MB <span class="number">35.71</span>%  net/http.<span class="property">newBufioWriterSize</span></span><br><span class="line">  <span class="number">503.</span>93MB <span class="number">35.09</span>% <span class="number">70.80</span>%   <span class="number">503.</span>93MB <span class="number">35.09</span>%  net/http.<span class="property">newBufioReader</span></span><br><span class="line">  <span class="number">113.</span>04MB  <span class="number">7.87</span>% <span class="number">78.67</span>%   <span class="number">113.</span>04MB  <span class="number">7.87</span>%  runtime.<span class="property">rawstringtmp</span></span><br><span class="line">   <span class="number">55.</span>02MB  <span class="number">3.83</span>% <span class="number">82.50</span>%    <span class="number">55.</span>02MB  <span class="number">3.83</span>%  runtime.<span class="property">malg</span></span><br><span class="line">   <span class="number">45.</span>01MB  <span class="number">3.13</span>% <span class="number">85.64</span>%    <span class="number">45.</span>01MB  <span class="number">3.13</span>%  xxxxx/storage.(*<span class="title class_">Node</span>).<span class="property">clone</span></span><br><span class="line">   <span class="number">26.</span>50MB  <span class="number">1.85</span>% <span class="number">87.48</span>%    <span class="number">52.</span>50MB  <span class="number">3.66</span>%  context.<span class="property">WithCancel</span></span><br><span class="line">   <span class="number">25.</span>50MB  <span class="number">1.78</span>% <span class="number">89.26</span>%    <span class="number">83.</span>58MB  <span class="number">5.82</span>%  runtime.<span class="property">systemstack</span></span><br><span class="line">   <span class="number">25.</span>01MB  <span class="number">1.74</span>% <span class="number">91.00</span>%    <span class="number">58.</span>51MB  <span class="number">4.07</span>%  net/http.<span class="property">readRequest</span></span><br><span class="line">      25MB  <span class="number">1.74</span>% <span class="number">92.74</span>%    <span class="number">29.</span>03MB  <span class="number">2.02</span>%  runtime.<span class="property">mapassign</span></span><br><span class="line">   <span class="number">23.</span>50MB  <span class="number">1.64</span>% <span class="number">94.38</span>%    <span class="number">23.</span>50MB  <span class="number">1.64</span>%  net/http.(*<span class="title class_">Server</span>).<span class="property">newConn</span></span><br></pre></td></tr></table></figure>
+
+<p><code>top</code>会列出5个统计数据：</p>
+<ul>
+<li>flat: 本函数占用的内存量。</li>
+<li>flat%: 本函数内存占使用中内存总量的百分比。</li>
+<li>sum%: 前面每一行flat百分比的和，比如第2行虽然的100% 是 100% + 0%。</li>
+<li>cum: 是累计量，加入main函数调用了函数f，函数f占用的内存量，也会记进来。</li>
+<li>cum%: 是累计量占总量的百分比。</li>
+</ul>
+<p>然后我们在用 <code>go tool pprof -alloc_space http://127.0.0.1:8080/debug/pprof/heap</code> 命令链接程序来查看内存对象分配的相关情况。然后输入top来查看累积分配内存较多的一些函数调用:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">(pprof) top</span><br><span class="line"><span class="number">523.</span>38GB <span class="keyword">of</span> <span class="number">650.</span>90GB <span class="title function_">total</span> (<span class="number">80.41</span>%)</span><br><span class="line"><span class="title class_">Dropped</span> <span class="number">342</span> <span class="title function_">nodes</span> (cum &lt;= <span class="number">3.</span>25GB)</span><br><span class="line"><span class="title class_">Showing</span> top <span class="number">10</span> nodes out <span class="keyword">of</span> <span class="number">106</span> (cum &gt;= <span class="number">28.</span>02GB)</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">  <span class="number">147.</span>59GB <span class="number">22.68</span>% <span class="number">22.68</span>%   <span class="number">147.</span>59GB <span class="number">22.68</span>%  runtime.<span class="property">rawstringtmp</span></span><br><span class="line">  <span class="number">129.</span>23GB <span class="number">19.85</span>% <span class="number">42.53</span>%   <span class="number">129.</span>24GB <span class="number">19.86</span>%  runtime.<span class="property">mapassign</span></span><br><span class="line">   <span class="number">48.</span>23GB  <span class="number">7.41</span>% <span class="number">49.94</span>%    <span class="number">48.</span>23GB  <span class="number">7.41</span>%  bytes.<span class="property">makeSlice</span></span><br><span class="line">   <span class="number">46.</span>25GB  <span class="number">7.11</span>% <span class="number">57.05</span>%    <span class="number">71.</span>06GB <span class="number">10.92</span>%  encoding/json.<span class="property">Unmarshal</span></span><br><span class="line">   <span class="number">31.</span>41GB  <span class="number">4.83</span>% <span class="number">61.87</span>%   <span class="number">113.</span>86GB <span class="number">17.49</span>%  net/http.<span class="property">readRequest</span></span><br><span class="line">   <span class="number">30.</span>55GB  <span class="number">4.69</span>% <span class="number">66.57</span>%   <span class="number">171.</span>20GB <span class="number">26.30</span>%  net/http.(*conn).<span class="property">readRequest</span></span><br><span class="line">   <span class="number">22.</span>95GB  <span class="number">3.53</span>% <span class="number">70.09</span>%    <span class="number">22.</span>95GB  <span class="number">3.53</span>%  net/url.<span class="property">parse</span></span><br><span class="line">   <span class="number">22.</span>70GB  <span class="number">3.49</span>% <span class="number">73.58</span>%    <span class="number">22.</span>70GB  <span class="number">3.49</span>%  runtime.<span class="property">stringtoslicebyte</span></span><br><span class="line">   <span class="number">22.</span>70GB  <span class="number">3.49</span>% <span class="number">77.07</span>%    <span class="number">22.</span>70GB  <span class="number">3.49</span>%  runtime.<span class="property">makemap</span></span><br><span class="line">   <span class="number">21.</span>75GB  <span class="number">3.34</span>% <span class="number">80.41</span>%    <span class="number">28.</span>02GB  <span class="number">4.31</span>%  context.<span class="property">WithCancel</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看出<code>string-[]byte</code>相互转换、分配<code>map</code>、<code>bytes.makeSlice</code>、<code>encoding/json.Unmarshal</code>等调用累积分配的内存较多。 此时我们就可以review代码，如何减少这些相关的调用，或者优化相关代码逻辑。</p>
+<p>当我们不明确这些调用时是被哪些函数引起的时，我们可以输入<code>top -cum</code>来查找，<code>-cum</code>的意思就是，将函数调用关系 中的数据进行累积，比如A函数调用的B函数，则B函数中的内存分配量也会累积到A上面，这样就可以很容易的找出调用链。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">(pprof) top20 -cum</span><br><span class="line"><span class="number">322890.</span>40MB <span class="keyword">of</span> <span class="number">666518.</span>53MB <span class="title function_">total</span> (<span class="number">48.44</span>%)</span><br><span class="line"><span class="title class_">Dropped</span> <span class="number">342</span> <span class="title function_">nodes</span> (cum &lt;= <span class="number">3332.</span>59MB)</span><br><span class="line"><span class="title class_">Showing</span> top <span class="number">20</span> nodes out <span class="keyword">of</span> <span class="number">106</span> (cum &gt;= <span class="number">122316.</span>23MB)</span><br><span class="line">      flat  flat%   sum%        cum   cum%</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%     <span class="number">0</span>% <span class="number">643525.</span>16MB <span class="number">96.55</span>%  runtime.<span class="property">goexit</span></span><br><span class="line"> <span class="number">2184.</span>63MB  <span class="number">0.33</span>%  <span class="number">0.33</span>% <span class="number">620745.</span>26MB <span class="number">93.13</span>%  net/http.(*conn).<span class="property">serve</span></span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%  <span class="number">0.33</span>% <span class="number">435300.</span>50MB <span class="number">65.31</span>%  xxxxx/api/server.(*<span class="title class_">HTTPServer</span>).<span class="property">ServeHTTP</span></span><br><span class="line"> <span class="number">5865.</span>22MB  <span class="number">0.88</span>%  <span class="number">1.21</span>% <span class="number">435300.</span>50MB <span class="number">65.31</span>%  xxxxx/api/server/router.(*httpRouter).<span class="property">ServeHTTP</span></span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%  <span class="number">1.21</span>% <span class="number">433121.</span>39MB <span class="number">64.98</span>%  net/http.<span class="property">serverHandler</span>.<span class="property">ServeHTTP</span></span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%  <span class="number">1.21</span>% <span class="number">430456.</span>29MB <span class="number">64.58</span>%  xxxxx/api/server/filter.(*chain).<span class="property">Next</span></span><br><span class="line">   <span class="number">43.</span>50MB <span class="number">0.0065</span>%  <span class="number">1.21</span>% <span class="number">429469.</span>71MB <span class="number">64.43</span>%  xxxxx/api/server/filter.<span class="property">TransURLTov1</span></span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%  <span class="number">1.21</span>% <span class="number">346440.</span>39MB <span class="number">51.98</span>%  xxxxx/api/server/filter.<span class="property">Role30x</span></span><br><span class="line"><span class="number">31283.</span>56MB  <span class="number">4.69</span>%  <span class="number">5.91</span>% <span class="number">175309.</span>48MB <span class="number">26.30</span>%  net/http.(*conn).<span class="property">readRequest</span></span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%  <span class="number">5.91</span>% <span class="number">153589.</span>85MB <span class="number">23.04</span>%  github.<span class="property">com</span>/julienschmidt/httprouter.(*<span class="title class_">Router</span>).<span class="property">ServeHTTP</span></span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%  <span class="number">5.91</span>% <span class="number">153589.</span>85MB <span class="number">23.04</span>%  github.<span class="property">com</span>/julienschmidt/httprouter.(*<span class="title class_">Router</span>).<span class="property">ServeHTTP</span>-fm</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>%  <span class="number">5.91</span>% <span class="number">153540.</span>85MB <span class="number">23.04</span>%  xxxxx/api/server/router.(*httpRouter).<span class="property">Register</span>.<span class="property">func1</span></span><br><span class="line">       2MB <span class="number">0.0003</span>%  <span class="number">5.91</span>% <span class="number">153117.</span>78MB <span class="number">22.97</span>%  xxxxx/api/server/filter.<span class="property">Validate</span></span><br><span class="line"><span class="number">151134.</span>52MB <span class="number">22.68</span>% <span class="number">28.58</span>% <span class="number">151135.</span>02MB <span class="number">22.68</span>%  runtime.<span class="property">rawstringtmp</span></span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>% <span class="number">28.58</span>% <span class="number">150714.</span>90MB <span class="number">22.61</span>%  xxxxx/api/server/router/naming/v1.(*serviceRouter).(git.<span class="property">intra</span>.<span class="property">weibo</span>.<span class="property">com</span>/platform/vintage/api/server/router/naming/v1.<span class="property">service</span>)-fm</span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>% <span class="number">28.58</span>% <span class="number">150714.</span>90MB <span class="number">22.61</span>%  xxxxx/api/server/router/naming/v1.(*serviceRouter).<span class="property">service</span></span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>% <span class="number">28.58</span>% <span class="number">141200.</span>76MB <span class="number">21.18</span>%  net/http.<span class="property">Redirect</span></span><br><span class="line"><span class="number">132334.</span>96MB <span class="number">19.85</span>% <span class="number">48.44</span>% <span class="number">132342.</span>95MB <span class="number">19.86</span>%  runtime.<span class="property">mapassign</span></span><br><span class="line">      42MB <span class="number">0.0063</span>% <span class="number">48.44</span>% <span class="number">125834.</span>16MB <span class="number">18.88</span>%  xxxxx/api/server/router/naming/v1.<span class="property">heartbeat</span></span><br><span class="line">         <span class="number">0</span>     <span class="number">0</span>% <span class="number">48.44</span>% <span class="number">122316.</span>23MB <span class="number">18.35</span>%  xxxxxx/config.(*config).<span class="property">Lookup</span></span><br></pre></td></tr></table></figure>
+
+<p>如上所示，我们就很容易的查找到这些函数是被哪些函数调用的。</p>
+<p>根据代码的调用关系，<code>filter.TransURLTov1</code> 会调用 <code>filter.Role30x</code>，但是他们之间的 <code>cum%</code> 差值有 <code>12.45%</code>，因此 我们可以得知 <code>filter.TransURLTov1</code> 内部自己直接分配的内存量达到了整个进程分配内存总量的 <code>12.45%</code>，这可是一个 值得大大优化的地方。</p>
+<p>然后我们可以输入命令 <code>web</code>，其会给我们的浏览器弹出一个 <code>.svg</code> 图片，其会把这些累积关系画成一个拓扑图，提供给 我们。或者直接执行：</p>
+<p><code>go tool pprof -alloc_space -cum -svg http://127.0.0.1:8080/debug/pprof/heap &gt; heap.svg</code></p>
+<p>来生成 <code>heap.svg</code> 图片。</p>
+<p>下面我们取一个图片中的一个片段进行分析：</p>
+<p><img src="/images/golang-memory-pprof.png" alt="image"></p>
+<p>每一个方块为<code>pprof</code>记录的一个函数调用栈，指向方块的箭头上的数字是记录的该栈累积分配的内存向，从方块指出的 箭头上的数字为该函数调用的其他函数累积分配的内存。他们之间的差值可以简单理解为本函数除调用其他函数外，自身分配的。方块内部的数字也体现了这一点，其数字为：(自身分配的内存 of 该函数累积分配的内存)。</p>
+<p>–inuse&#x2F;alloc_space –inuse&#x2F;alloc_objects 区别：</p>
+<p>通常情况下：</p>
+<ul>
+<li>用 <code>--inuse_space</code> 来分析程序常驻内存的占用情况;</li>
+<li>用 <code>--alloc_objects</code> 来分析内存的临时分配情况，可以提高程序的运行速度。</li>
+</ul>
+<h3 id="额外"><a href="#额外" class="headerlink" title="额外"></a>额外</h3><p>进入交互式模式后，比较常用的有 top、list、traces、web 等命令</p>
+<h4 id="top"><a href="#top" class="headerlink" title="top"></a>top</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">(pprof) top</span><br><span class="line"><span class="title class_">Showing</span> nodes accounting <span class="keyword">for</span> <span class="number">15624.</span>87MB, <span class="number">50.48</span>% <span class="keyword">of</span> <span class="number">30953.</span>89MB total</span><br><span class="line"><span class="title class_">Dropped</span> <span class="number">229</span> <span class="title function_">nodes</span> (cum &lt;= <span class="number">154.</span>77MB)</span><br><span class="line"><span class="title class_">Showing</span> top <span class="number">10</span> nodes out <span class="keyword">of</span> <span class="number">167</span></span><br><span class="line">flat  flat%   sum%        cum   cum%</span><br><span class="line"><span class="number">6272.</span>15MB <span class="number">20.26</span>% <span class="number">20.26</span>%  <span class="number">6272.</span>15MB <span class="number">20.26</span>%  github.<span class="property">com</span>/emicklei/go-restful.<span class="property">CurlyRouter</span>.<span class="property">selectRoutes</span></span><br><span class="line"><span class="number">1457.</span>12MB  <span class="number">4.71</span>% <span class="number">30.48</span>%  <span class="number">1457.</span>12MB  <span class="number">4.71</span>%  bytes.<span class="property">makeSlice</span></span><br><span class="line"><span class="number">1177.</span>26MB  <span class="number">3.80</span>% <span class="number">38.47</span>%  <span class="number">1260.</span>76MB  <span class="number">4.07</span>%  net/textproto.(*<span class="title class_">Reader</span>).<span class="property">ReadMIMEHeader</span></span><br><span class="line"><span class="number">900.</span>41MB  <span class="number">2.91</span>% <span class="number">41.38</span>%   <span class="number">987.</span>41MB  <span class="number">3.19</span>%  google.<span class="property">golang</span>.<span class="property">org</span>/grpc/internal/transport.(*http2Client).<span class="property">createHeaderFields</span></span><br><span class="line"><span class="number">780.</span>13MB  <span class="number">2.52</span>% <span class="number">43.90</span>%  <span class="number">3044.</span>06MB  <span class="number">9.83</span>%  net/http.(*conn).<span class="property">readRequest</span></span><br><span class="line"><span class="number">705.</span>24MB  <span class="number">2.28</span>% <span class="number">46.18</span>%   <span class="number">705.</span>24MB  <span class="number">2.28</span>%  github.<span class="property">com</span>/emicklei/go-restful.<span class="property">sortableCurlyRoutes</span>.<span class="property">routes</span></span><br><span class="line"><span class="number">678.</span>09MB  <span class="number">2.19</span>% <span class="number">48.37</span>%  <span class="number">1112.</span>62MB  <span class="number">3.59</span>%  google.<span class="property">golang</span>.<span class="property">org</span>/grpc/internal/transport.(*http2Client).<span class="property">newStream</span></span><br><span class="line"><span class="number">653.</span>03MB  <span class="number">2.11</span>% <span class="number">50.48</span>%   <span class="number">653.</span>03MB  <span class="number">2.11</span>%  context.<span class="property">WithValue</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="list"><a href="#list" class="headerlink" title="list"></a>list</h4><p>查看某个函数的代码，以及该函数每行代码的指标信息，如果函数名不明确，会进行模糊匹配，比如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">(pprof) list github.<span class="property">com</span>/emicklei/go-restful.<span class="property">CurlyRouter</span>.<span class="property">selectRoutes</span></span><br><span class="line"><span class="title class_">Total</span>: <span class="number">30.</span>45GB</span><br><span class="line"><span class="variable constant_">ROUTINE</span> ======================== github.<span class="property">com</span>/emicklei/go-restful.<span class="property">CurlyRouter</span>.<span class="property">selectRoutes</span> <span class="keyword">in</span> /<span class="title class_">Users</span>/michaelliu/go/pkg/mod/github.<span class="property">com</span>/emicklei/go-restful@v2<span class="number">.12</span><span class="number">.0</span>+incompatible/curly.<span class="property">go</span></span><br><span class="line"><span class="number">6.</span>13GB     <span class="number">6.</span>13GB (flat, cum) <span class="number">20.11</span>% <span class="keyword">of</span> <span class="title class_">Total</span></span><br><span class="line">.          .     <span class="number">43</span>:	<span class="keyword">return</span> detectedService, selectedRoute, nil</span><br><span class="line">.          .     <span class="number">44</span>:&#125;</span><br><span class="line">.          .     <span class="number">45</span>:</span><br><span class="line">.          .     <span class="number">46</span>:<span class="comment">// selectRoutes return a collection of Route from a WebService that matches the path tokens from the request.</span></span><br><span class="line">.          .     <span class="number">47</span>:<span class="title function_">func</span> (c <span class="title class_">CurlyRouter</span>) <span class="title function_">selectRoutes</span>(ws *<span class="title class_">WebService</span>, requestTokens []string) sortableCurlyRoutes &#123;</span><br><span class="line"><span class="number">6.</span>06GB     <span class="number">6.</span>06GB     <span class="number">48</span>:	candidates := <span class="title function_">make</span>(sortableCurlyRoutes, <span class="number">0</span>, <span class="number">8</span>)</span><br><span class="line">.          .     <span class="number">49</span>:	<span class="keyword">for</span> _, each := range ws.<span class="property">routes</span> &#123;</span><br><span class="line">.          .     <span class="number">50</span>:		matches, paramCount, staticCount := c.<span class="title function_">matchesRouteByPathTokens</span>(each.<span class="property">pathParts</span>, requestTokens, each.<span class="property">hasCustomVerb</span>)</span><br><span class="line">.          .     <span class="number">51</span>:		<span class="keyword">if</span> matches &#123;</span><br><span class="line">.          .     <span class="number">52</span>:			candidates.<span class="title function_">add</span>(curlyRoute&#123;each, paramCount, staticCount&#125;) <span class="comment">// TODO make sure Routes() return pointers?</span></span><br><span class="line">.          .     <span class="number">53</span>:		&#125;</span><br><span class="line">.          .     <span class="number">54</span>:	&#125;</span><br><span class="line"><span class="number">64.</span>50MB    <span class="number">64.</span>50MB     <span class="number">55</span>:	sort.<span class="title class_">Sort</span>(candidates)</span><br><span class="line">.          .     <span class="number">56</span>:	<span class="keyword">return</span> candidates</span><br><span class="line">.          .     <span class="number">57</span>:&#125;</span><br><span class="line">.          .     <span class="number">58</span>:</span><br><span class="line">.          .     <span class="number">59</span>:<span class="comment">// matchesRouteByPathTokens computes whether it matches, howmany parameters do match and what the number of static path elements are.</span></span><br><span class="line">.          .     <span class="number">60</span>:<span class="title function_">func</span> (c <span class="title class_">CurlyRouter</span>) <span class="title function_">matchesRouteByPathTokens</span>(routeTokens, requestTokens []string, routeHasCustomVerb bool) (matches bool, paramCount int, staticCount int) &#123;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到在<code>github.com/emicklei/go-restful.CurlyRouter.selectRoutes</code>中的第48行占用了6.06GB内存。</p>
+<h4 id="traces"><a href="#traces" class="headerlink" title="traces"></a>traces</h4><p>traces可以打印所有调用栈，以及调用栈的指标信息。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">(pprof) traces github.<span class="property">com</span>/emicklei/go-restful.<span class="property">CurlyRouter</span>.<span class="property">selectRoutes</span></span><br><span class="line"><span class="title class_">Type</span>: alloc_space</span><br><span class="line"><span class="title class_">Time</span>: <span class="title class_">Sep</span> <span class="number">20</span>, <span class="number">2020</span> at <span class="number">7</span>:39pm (<span class="variable constant_">CST</span>)</span><br><span class="line">-----------+-------------------------------------------------------</span><br><span class="line"><span class="attr">bytes</span>:  32B</span><br><span class="line"><span class="number">64.</span>50MB   github.<span class="property">com</span>/emicklei/go-restful.<span class="property">CurlyRouter</span>.<span class="property">selectRoutes</span></span><br><span class="line">github.<span class="property">com</span>/emicklei/go-restful.<span class="property">CurlyRouter</span>.<span class="property">SelectRoute</span></span><br><span class="line">github.<span class="property">com</span>/emicklei/go-restful.(*<span class="title class_">Container</span>).<span class="property">dispatch</span>.<span class="property">func3</span></span><br><span class="line">github.<span class="property">com</span>/emicklei/go-restful.(*<span class="title class_">Container</span>).<span class="property">dispatch</span></span><br><span class="line">net/http.<span class="property">HandlerFunc</span>.<span class="property">ServeHTTP</span></span><br><span class="line">net/http.(*<span class="title class_">ServeMux</span>).<span class="property">ServeHTTP</span></span><br><span class="line">github.<span class="property">com</span>/emicklei/go-restful.(*<span class="title class_">Container</span>).<span class="property">ServeHTTP</span></span><br><span class="line">net/http.<span class="property">serverHandler</span>.<span class="property">ServeHTTP</span></span><br><span class="line">net/http.(*conn).<span class="property">serve</span></span><br><span class="line">-----------+-------------------------------------------------------</span><br><span class="line"><span class="attr">bytes</span>:  3kB</span><br><span class="line"><span class="number">6.</span>06GB   github.<span class="property">com</span>/emicklei/go-restful.<span class="property">CurlyRouter</span>.<span class="property">selectRoutes</span></span><br><span class="line">github.<span class="property">com</span>/emicklei/go-restful.<span class="property">CurlyRouter</span>.<span class="property">SelectRoute</span></span><br><span class="line">github.<span class="property">com</span>/emicklei/go-restful.(*<span class="title class_">Container</span>).<span class="property">dispatch</span>.<span class="property">func3</span></span><br><span class="line">github.<span class="property">com</span>/emicklei/go-restful.(*<span class="title class_">Container</span>).<span class="property">dispatch</span></span><br><span class="line">net/http.<span class="property">HandlerFunc</span>.<span class="property">ServeHTTP</span></span><br><span class="line">net/http.(*<span class="title class_">ServeMux</span>).<span class="property">ServeHTTP</span></span><br><span class="line">github.<span class="property">com</span>/emicklei/go-restful.(*<span class="title class_">Container</span>).<span class="property">ServeHTTP</span></span><br><span class="line">net/http.<span class="property">serverHandler</span>.<span class="property">ServeHTTP</span></span><br><span class="line">net/http.(*conn).<span class="property">serve</span></span><br><span class="line">-----------+-------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<p>每个 <code>- - - - -</code> 隔开的是一个调用栈。</p>
+<h4 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h4><p>内存泄露指的是程序运行过程中已不再使用的内存，没有被释放掉，导致这些内存无法被使用，直到程序结束这些内存才被释放的问题。</p>
+<p>内存profiling记录的是堆内存分配的情况，以及调用栈信息，并不是进程完整的内存情况。基于抽样和它跟踪的是已分配的内存，而不是使用中的内存，（比如有些内存已经分配，看似使用，但实际以及不使用的内存，比如内存泄露的那部分），所以不能使用内存profiling衡量程序总体的内存使用情况。</p>
+<p>只能通过heap观察内存的变化，增长与减少，内存主要被哪些代码占用了，程序存在内存问题，这只能说明内存有使用不合理的地方，但并不能说明这是内存泄露。</p>
+<p>heap在帮助定位内存泄露原因上贡献的力量微乎其微。能通过heap找到占用内存多的位置，但这个位置通常不一定是内存泄露，就算是内存泄露，也只是内存泄露的结果，并不是真正导致内存泄露的根源。</p>
+<h5 id="怎么用heap发现内存问题"><a href="#怎么用heap发现内存问题" class="headerlink" title="怎么用heap发现内存问题"></a>怎么用heap发现内存问题</h5><p>使用pprof的heap能够获取程序运行时的内存信息，在程序平稳运行的情况下，每个一段时间使用heap获取内存的profile，然后使用base能够对比两个profile文件的差别，就像diff命令一样显示出增加和减少的变化：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">➜  pprof go tool pprof -alloc_space -base pprof.<span class="property">alloc_objects</span>.<span class="property">alloc_space</span>.<span class="property">inuse_objects</span>.<span class="property">inuse_space</span><span class="number">.149</span>.<span class="property">pb</span>.<span class="property">gz</span> pprof.<span class="property">alloc_objects</span>.<span class="property">alloc_space</span>.<span class="property">inuse_objects</span>.<span class="property">inuse_space</span><span class="number">.150</span>.<span class="property">pb</span>.<span class="property">gz</span></span><br><span class="line"><span class="title class_">Type</span>: alloc_space</span><br><span class="line"><span class="title class_">Time</span>: <span class="title class_">Sep</span> <span class="number">20</span>, <span class="number">2020</span> at <span class="number">7</span>:23pm (<span class="variable constant_">CST</span>)</span><br><span class="line"><span class="title class_">Entering</span> interactive <span class="title function_">mode</span> (type <span class="string">&quot;help&quot;</span> <span class="keyword">for</span> commands, <span class="string">&quot;o&quot;</span> <span class="keyword">for</span> options)</span><br><span class="line">(pprof) top</span><br><span class="line"><span class="title class_">Showing</span> nodes accounting <span class="keyword">for</span> <span class="number">221.</span>95MB, <span class="number">97.36</span>% <span class="keyword">of</span> <span class="number">227.</span>97MB total</span><br><span class="line"><span class="title class_">Dropped</span> <span class="number">51</span> <span class="title function_">nodes</span> (cum &lt;= <span class="number">1.</span>14MB)</span><br><span class="line"><span class="title class_">Showing</span> top <span class="number">10</span> nodes out <span class="keyword">of</span> <span class="number">55</span></span><br><span class="line">flat  flat%   sum%        cum   cum%</span><br><span class="line"><span class="number">199.</span>29MB <span class="number">87.42</span>% <span class="number">87.42</span>%   <span class="number">199.</span>29MB <span class="number">87.42</span>%  bytes.<span class="property">makeSlice</span></span><br><span class="line"><span class="number">9.</span>52MB  <span class="number">4.17</span>% <span class="number">91.59</span>%     <span class="number">9.</span>52MB  <span class="number">4.17</span>%  regexp/syntax.(*compiler).<span class="property">inst</span> (inline)</span><br><span class="line"><span class="number">2.</span>64MB  <span class="number">1.16</span>% <span class="number">92.75</span>%     <span class="number">2.</span>64MB  <span class="number">1.16</span>%  compress/flate.<span class="property">NewWriter</span></span><br><span class="line"><span class="number">2.</span>50MB  <span class="number">1.10</span>% <span class="number">93.85</span>%     <span class="number">4.</span>50MB  <span class="number">1.97</span>%  regexp/syntax.(*<span class="title class_">Regexp</span>).<span class="property">Simplify</span></span><br><span class="line">2MB  <span class="number">0.88</span>% <span class="number">94.73</span>%        2MB  <span class="number">0.88</span>%  regexp/syntax.<span class="property">simplify1</span> (inline)</span><br><span class="line">2MB  <span class="number">0.88</span>% <span class="number">95.61</span>%        2MB  <span class="number">0.88</span>%  time.<span class="property">NewTimer</span></span><br><span class="line"><span class="number">1.</span>50MB  <span class="number">0.66</span>% <span class="number">96.26</span>%     <span class="number">1.</span>50MB  <span class="number">0.66</span>%  os.<span class="property">lstatNolog</span></span><br><span class="line"><span class="number">1.</span>50MB  <span class="number">0.66</span>% <span class="number">96.92</span>%     <span class="number">1.</span>50MB  <span class="number">0.66</span>%  regexp/syntax.(*parser).<span class="property">newRegexp</span> (inline)</span><br><span class="line"><span class="number">0.</span>50MB  <span class="number">0.22</span>% <span class="number">97.14</span>%     <span class="number">1.</span>50MB  <span class="number">0.66</span>%  github.<span class="property">com</span>/go-chassis/go-chassis/pkg/scclient.(*<span class="title class_">RegistryClient</span>).<span class="property">HTTPDo</span></span><br><span class="line"><span class="number">0.</span>50MB  <span class="number">0.22</span>% <span class="number">97.36</span>%    <span class="number">16.</span>01MB  <span class="number">7.02</span>%  regexp.<span class="property">compile</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">(pprof) traces bytes.<span class="property">makeSlice</span></span><br><span class="line"><span class="title class_">Type</span>: alloc_space</span><br><span class="line"><span class="title class_">Time</span>: <span class="title class_">Sep</span> <span class="number">20</span>, <span class="number">2020</span> at <span class="number">7</span>:23pm (<span class="variable constant_">CST</span>)</span><br><span class="line">-----------+-------------------------------------------------------</span><br><span class="line"><span class="attr">bytes</span>:  <span class="number">199.</span>29MB</span><br><span class="line"><span class="number">199.</span>29MB   bytes.<span class="property">makeSlice</span></span><br><span class="line">bytes.(*<span class="title class_">Buffer</span>).<span class="property">grow</span></span><br><span class="line">bytes.(*<span class="title class_">Buffer</span>).<span class="property">Grow</span></span><br><span class="line">io/ioutil.<span class="property">readAll</span></span><br><span class="line">io/ioutil.<span class="property">ReadFile</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">CopyFile</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">doRollover</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">logRotateFile</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">LogRotate</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.(*rotators).<span class="property">Rotate</span>.<span class="property">func1</span></span><br><span class="line">-----------+-------------------------------------------------------</span><br><span class="line"><span class="attr">bytes</span>:  <span class="number">613.</span>91MB</span><br><span class="line"><span class="number">0</span>   bytes.<span class="property">makeSlice</span></span><br><span class="line">bytes.(*<span class="title class_">Buffer</span>).<span class="property">grow</span></span><br><span class="line">bytes.(*<span class="title class_">Buffer</span>).<span class="property">ReadFrom</span></span><br><span class="line">io/ioutil.<span class="property">readAll</span></span><br><span class="line">io/ioutil.<span class="property">ReadFile</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">CopyFile</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">doRollover</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">logRotateFile</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">LogRotate</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.(*rotators).<span class="property">Rotate</span>.<span class="property">func1</span></span><br><span class="line">-----------+-------------------------------------------------------</span><br><span class="line"><span class="attr">bytes</span>:  <span class="number">306.</span>95MB</span><br><span class="line"><span class="number">0</span>   bytes.<span class="property">makeSlice</span></span><br><span class="line">bytes.(*<span class="title class_">Buffer</span>).<span class="property">grow</span></span><br><span class="line">bytes.(*<span class="title class_">Buffer</span>).<span class="property">Grow</span></span><br><span class="line">io/ioutil.<span class="property">readAll</span></span><br><span class="line">io/ioutil.<span class="property">ReadFile</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">CopyFile</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">doRollover</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">logRotateFile</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.<span class="property">LogRotate</span></span><br><span class="line">github.<span class="property">com</span>/go-chassis/go-chassis/core/lager.(*rotators).<span class="property">Rotate</span>.<span class="property">func1</span></span><br><span class="line">-----------+-------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<h3 id="go-torch"><a href="#go-torch" class="headerlink" title="go-torch"></a>go-torch</h3><p>除了直接使用<code>go tool pprof</code>外，我们还可以使用更加直观了<a href="http://www.brendangregg.com/FlameGraphs/memoryflamegraphs.html">火焰图</a>。因此我们可以直接使用<a href="https://github.com/uber/go-torch">go-torch</a>来生成golang程序的火焰图，该工具也直接 依赖<code>pprof/go tool pprof</code>等。该工具的相关安装请看该项目的介绍。该软件的<a href="https://github.com/uber/go-torch/tree/a4daa2b9d2816627365ca5a4e8cfcd5186ac3659">a4daa2b</a>以后版本才支持内存的profiling。</p>
+<p>我们可以使用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">go-torch -alloc_space <span class="attr">http</span>:<span class="comment">//127.0.0.1:8080/debug/pprof/heap --colors=mem</span></span><br><span class="line">go-torch -inuse_space <span class="attr">http</span>:<span class="comment">//127.0.0.1:8080/debug/pprof/heap --colors=mem</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：<code>-alloc_space/-inuse_space</code>参数与<code>-u/-b</code>等参数有冲突，使用了<code>-alloc_space/-inuse_space</code>后请将pprof的 资源直接追加在参数后面，而不要使用<code>-u/-b</code>参数去指定，这与go-torch的参数解析问题有关，看过其源码后既能明白。 同时还要注意，分析内存的URL一定是heap结尾的，因为默认路径是profile的，其用来分析cpu相关问题。</p>
+<p>通过上面2个命令，我们就可以得到<code>alloc_space/inuse_space</code>含义的2个火焰图，例如<a href="https://lrita.github.io/images/posts/tools/alloc_space.svg">alloc_space.svg</a>&#x2F;<a href="https://lrita.github.io/images/posts/tools/inuse_space.svg">inuse_space.svg</a>。 我们可以使用浏览器观察这2张图，这张图，就像一个山脉的截面图，从下而上是每个函数的调用栈，因此山的高度跟函数 调用的深度正相关，而山的宽度跟使用&#x2F;分配内存的数量成正比。我们只需要留意那些宽而平的山顶，这些部分通常是我们 需要优化的地方。</p>
+<h3 id="testing"><a href="#testing" class="headerlink" title="testing"></a>testing</h3><p>当我们需要对<code>go test</code>中某些<code>test/benchmark</code>进行<code>profiling</code>时，我们可以使用类似的方法。例如我们可以先使用<code>go test</code>内置的参数生成<code>pprof</code>数据，然后借助<code>go tool pprof/go-torch</code>来分析。</p>
+<p>1、生成<code>cpu</code>、<code>mem</code>的<code>pprof</code>文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go test -bench=<span class="title class_">BenchmarkStorageXXX</span> -cpuprofile cpu.<span class="property">out</span> -memprofile mem.<span class="property">out</span></span><br></pre></td></tr></table></figure>
+
+<p>2、此时会生成一个二进制文件和2个pprof数据文件，例如</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">storage.<span class="property">test</span> cpu.<span class="property">out</span> mem.<span class="property">out</span></span><br></pre></td></tr></table></figure>
+
+<p>3、然后使用go-torch来分析，二进制文件放前面</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#分析cpu</span><br><span class="line">go-torch storage.<span class="property">test</span> cpu.<span class="property">out</span></span><br><span class="line">#分析内存</span><br><span class="line">go-torch --colors=mem -alloc_space storage.<span class="property">test</span> mem.<span class="property">out</span></span><br><span class="line">go-torch --colors=mem -inuse_space storage.<span class="property">test</span> mem.<span class="property">out</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="优化建议"><a href="#优化建议" class="headerlink" title="优化建议"></a>优化建议</h3><p><a href="https://software.intel.com/en-us/blogs/2014/05/10/debugging-performance-issues-in-go-programs">Debugging performance issues in Go programs</a> 提供了一些常用的优化建议：</p>
+<p>1、将多个小对象合并成一个大的对象<br>2、减少不必要的指针间接引用，多使用copy引用</p>
+<p>例如使用bytes.Buffer代替*bytes.Buffer，因为使用指针时，会分配2个对象来完成引用。</p>
+<p>3、局部变量逃逸时，将其聚合起来</p>
+<p>这一点理论跟1相同，核心在于减少<code>object</code>的分配，减少<code>gc</code>的压力。 例如，以下代码</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> k, v := <span class="keyword">range</span> m &#123;</span><br><span class="line">	k, v := k, v   <span class="comment">// copy for capturing by the goroutine</span></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="comment">// use k and v</span></span><br><span class="line">	&#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以修改为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> k, v := <span class="keyword">range</span> m &#123;</span><br><span class="line">	x := <span class="keyword">struct</span>&#123; k, v <span class="type">string</span> &#125;&#123;k, v&#125;   <span class="comment">// copy for capturing by the goroutine</span></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="comment">// use x.k and x.v</span></span><br><span class="line">	&#125;()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改后，逃逸的对象变为了 <code>x</code>，将 <code>k，v</code> 2个对象减少为1个对象。</p>
+<p>4、[]byte的预分配</p>
+<p>当我们比较清楚的知道[]byte会到底使用多少字节，我们就可以采用一个数组来预分配这段内存。 例如:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> X <span class="keyword">struct</span> &#123;</span><br><span class="line">    buf      []<span class="type">byte</span></span><br><span class="line">    bufArray [<span class="number">16</span>]<span class="type">byte</span> <span class="comment">// Buf usually does not grow beyond 16 bytes.</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MakeX</span><span class="params">()</span></span> *X &#123;</span><br><span class="line">    x := &amp;X&#123;&#125;</span><br><span class="line">    <span class="comment">// Preinitialize buf with the backing array.</span></span><br><span class="line">    x.buf = x.bufArray[:<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>5、尽可能使用字节数少的类型</p>
+<p>当我们的一些const或者计数字段不需要太大的字节数时，我们通常可以将其声明为int8类型。</p>
+<p>6、减少不必要的指针引用</p>
+<p>当一个对象不包含任何指针（注意：strings，slices，maps 和chans包含隐含的指针），时，对gc的扫描影响很小。 比如，1GB byte 的slice事实上只包含有限的几个object，不会影响垃圾收集时间。 因此，我们可以尽可能的减少指针的引用。</p>
+<p>7、使用sync.Pool来缓存常用的对象</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li>(<a href="https://lrita.github.io/2017/05/26/golang-memory-pprof/">https://lrita.github.io/2017/05/26/golang-memory-pprof/</a>)</li>
+<li><a href="https://cloud.tencent.com/developer/article/1703742">https://cloud.tencent.com/developer/article/1703742</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/05/08/Go%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-%E5%86%85%E5%AD%98/" data-title="Go性能分析-内存 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/05/08/Kubernetes-内存资源限制实战/" title="Kubernetes 内存资源限制实战">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Kubernetes 内存资源限制实战</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/05/06/使用-etcdctl-访问-Kubernetes-数据/"  title="使用 etcdctl 访问 Kubernetes 数据">
+ <strong>下一篇：</strong><br/> 
+ <span>使用 etcdctl 访问 Kubernetes 数据
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/05/08/Go性能分析-内存/" data-title="Go性能分析-内存" data-url="https://luckymrwang.github.io/2022/05/08/Go%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-%E5%86%85%E5%AD%98/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pprof-%E5%AE%9E%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">pprof 实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#go-tool"><span class="toc-number">3.</span> <span class="toc-text">go tool</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A2%9D%E5%A4%96"><span class="toc-number">4.</span> <span class="toc-text">额外</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#top"><span class="toc-number">4.1.</span> <span class="toc-text">top</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#list"><span class="toc-number">4.2.</span> <span class="toc-text">list</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#traces"><span class="toc-number">4.3.</span> <span class="toc-text">traces</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2"><span class="toc-number">4.4.</span> <span class="toc-text">内存泄露</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E7%94%A8heap%E5%8F%91%E7%8E%B0%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98"><span class="toc-number">4.4.1.</span> <span class="toc-text">怎么用heap发现内存问题</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#go-torch"><span class="toc-number">5.</span> <span class="toc-text">go-torch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#testing"><span class="toc-number">6.</span> <span class="toc-text">testing</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="toc-number">7.</span> <span class="toc-text">优化建议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

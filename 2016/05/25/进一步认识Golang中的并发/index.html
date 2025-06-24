@@ -1,0 +1,561 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>进一步认识Golang中的并发 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="go提供了sync包和channel机制来解决协程间的同步与通信。channel的用法非常灵活，使用的方式多种多样，而且官网的Effective Go中给出了channel的一种并发以外的方式。我们先来介绍sync包提供的调度支持吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进一步认识Golang中的并发">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/05/25/%E8%BF%9B%E4%B8%80%E6%AD%A5%E8%AE%A4%E8%AF%86Golang%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="go提供了sync包和channel机制来解决协程间的同步与通信。channel的用法非常灵活，使用的方式多种多样，而且官网的Effective Go中给出了channel的一种并发以外的方式。我们先来介绍sync包提供的调度支持吧。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-05-25T04:00:15.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.216Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/05/25/进一步认识Golang中的并发/" title="进一步认识Golang中的并发" itemprop="url">进一步认识Golang中的并发</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-05-25T04:00:15.000Z" itemprop="datePublished"> 发表于 2016-05-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#sync-WaitGroup"><span class="toc-number">1.</span> <span class="toc-text">sync.WaitGroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#channel"><span class="toc-number">2.</span> <span class="toc-text">channel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8channel%E6%8E%A7%E5%88%B6goroutine%E6%95%B0%E9%87%8F"><span class="toc-number">3.</span> <span class="toc-text">使用channel控制goroutine数量</span></a></li></ol>
+		
+		</div>
+		
+		<p>go提供了sync包和channel机制来解决协程间的同步与通信。channel的用法非常灵活，使用的方式多种多样，而且官网的Effective Go中给出了channel的一种并发以外的方式。我们先来介绍sync包提供的调度支持吧。</p>
+<span id="more"></span>
+<h3 id="sync-WaitGroup"><a href="#sync-WaitGroup" class="headerlink" title="sync.WaitGroup"></a>sync.WaitGroup</h3><p>WaitGroup用于等待一组线程的结束。父线程调用Add方法来设定应等待的线程的数量。每个被等待的线程在结束时应调用Done方法。同时，主线程里可以调用Wait方法阻塞至所有线程结束。具体用法参考如下代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码粘上就可以跑通</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		wg.Add(<span class="number">1</span>) <span class="comment">//每创建一个goroutine，就把任务队列中任务的数量+1</span></span><br><span class="line">		<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(shownum <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">			<span class="keyword">defer</span> wg.Done() <span class="comment">//任务完成，将任务队列中的任务数量-1，其实.Done就是.Add(-1)</span></span><br><span class="line">			fmt.Println(shownum)</span><br><span class="line">		&#125;(i)</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Wait() <span class="comment">//.Wait()这里会发生阻塞，直到队列中所有的任务结束就会解除阻塞</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以利用sync.WaitGroup来满足这样的情况：</p>
+<ul>
+<li>某个地方需要创建多个goroutine，并且一定要等它们都执行完毕后再继续执行接下来的操作。</li>
+</ul>
+<p><em>是的，WaitGroup最大的优点就是.Wait()可以阻塞到队列中的任务都完毕后才解除阻塞。</em></p>
+<h3 id="channel"><a href="#channel" class="headerlink" title="channel"></a>channel</h3><p>channel是一种golang内置的类型，英语的直译为”通道”，其实，它真的就是一根管道，而且是一个先进先出的数据结构。</p>
+<p>我们能对channel进行的操作只有4种：</p>
+<ul>
+<li>创建chennel (通过make()函数)</li>
+<li>放入数据 (通过 channel &lt;- data 操作) </li>
+<li>取出数据 (通过 &lt;-channel 操作)</li>
+<li>关闭channel (通过close()函数)</li>
+</ul>
+<p>但是channel有一些非常给力的性质需要你牢记，请一定要记住并理解好它们：</p>
+<p>(1) <strong>channel是一种阻塞管道，是自动阻塞的。</strong> 意思就是，如果管道满了，一个对channel放入数据的操作就会阻塞，直到有某个routine从channel中取出数据，这个放入数据的操作才会执行。相反同理，如果管道是空的，一个从channel取出数据的操作就会阻塞，直到某个routine向这个channel中放入数据，这个取出数据的操作才会执行。这事channel最重要的一个性质，没有之一。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">3</span>)</span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span> <span class="comment">//这一行操作就会发生阻塞，因为前三行的放入数据的操作已经把channel填满了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">3</span>)</span><br><span class="line">	&lt;-ch <span class="comment">//这一行会发生阻塞，因为channel才刚创建，是空的，没有东西可以取出</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>(2)**channel分为有缓冲的channel和无缓冲的channel。**两种channel的创建方法如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>) <span class="comment">//无缓冲的channel，同等于make(chan int, 0)</span></span><br><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">5</span>) <span class="comment">//一个缓冲区大小为5的channel</span></span><br></pre></td></tr></table></figure>
+
+<p>操作一个channel时一定要注意其是否带有缓冲，因为有些操作会触发channel的阻塞导致死锁。下面就来解释这些需要注意的情景。<br>首先来看一个一个例子，这个例子是两段只有主函数不同的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Afuntion</span><span class="params">(ch <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;finish&quot;</span>)</span><br><span class="line">	&lt;-ch</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>) <span class="comment">//无缓冲的channel</span></span><br><span class="line">	<span class="keyword">go</span> Afuntion(ch)</span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 输出结果：</span></span><br><span class="line">	<span class="comment">// finish</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Afuntion</span><span class="params">(ch <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;finish&quot;</span>)</span><br><span class="line">	&lt;-ch</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>) <span class="comment">//无缓冲的channel</span></span><br><span class="line">	<span class="comment">//只是把这两行的代码顺序对调一下</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	<span class="keyword">go</span> Afuntion(ch)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 输出结果：</span></span><br><span class="line">	<span class="comment">// 死锁，无结果</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>前一段代码最终会输出”finish”并正常结束，但是后一段代码会发生死锁。为什么会出现这种现象呢，咱们把上面两段代码的逻辑跑一下。</p>
+<p>第一段代码：</p>
+<ol>
+<li>创建了一个无缓冲channel</li>
+<li>启动了一个goroutine，这个routine中对channel执行取出操作，但是因为这时候channel为空，所以这个取出操作发生阻塞，但是主routine可没有发生阻塞，它还在继续运行呢</li>
+<li>主goroutine这时候继续执行下一行，往channel中放入了一个数据</li>
+<li>这时阻塞的那个routine检测到了channel中存在数据了，所以接触阻塞，从channel中取出数据，程序就此完毕</li>
+</ol>
+<p>第二段代码：</p>
+<ol>
+<li>创建了一个无缓冲的channel</li>
+<li>主routine要向channel中放入一个数据，但是因为channel没有缓冲，相当于channel一直都是满的，所以这里会发生阻塞。可是下面的那个goroutine还没有创建呢，主routine在这里一阻塞，整个程序就只能这么一直阻塞下去了，然后。。。然后就没有然后了。。死锁！</li>
+</ol>
+<p><em>从这里可以看出，对于无缓冲的channel，放入操作和取出操作不能再同一个routine中，而且应该是先确保有某个routine对它执行取出操作，然后才能在另一个routine中执行放入操作。</em></p>
+<p>对于带缓冲的channel，就没那么多讲究了，因为有缓冲空间，所以只要缓冲区不满，放入操作就不会阻塞，同样，只要缓冲区不空，取出操作就不会阻塞。而且，带有缓冲的channel的放入和取出可以用在同一个routine中。</p>
+<p>但是，并不是说有了缓冲就可以随意使用channel的放入和取出了，我们<strong>一定要注意放入和取出的速率问题</strong>。下面我们就举个例子来说明这种问题：<br>我们经常会用利用channel自动阻塞的性质来控制当前运行的goroutine的总数量，如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Afunction</span><span class="params">(ch <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;finish&quot;</span>)</span><br><span class="line">	&lt;-ch <span class="comment">//goroutine执行完了就从channel取出一个数据</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++ &#123;</span><br><span class="line">		<span class="comment">//每当创建goroutine的时候就向channel中放入一个数据，如果里面已经有10个数据了，就会</span></span><br><span class="line">		<span class="comment">//阻塞，由此我们将同时运行的goroutine的总数控制在&lt;=10个的范围内</span></span><br><span class="line">		ch &lt;- <span class="number">1</span></span><br><span class="line">		<span class="keyword">go</span> Afunction(ch)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 这里只是示范个例子，当然，接下来应该有些更加周密的同步操作</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面这种channel的使用方式几乎经常会用到，但是再看一下接下来这段代码，它和上面这种使用channel的方式几乎一样，但是它会造成问题：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Afunction</span><span class="params">(ch <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line"></span><br><span class="line">	&lt;-ch</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//主routine的操作同上面那段代码</span></span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">10</span>)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">		ch &lt;- <span class="number">1</span></span><br><span class="line">		<span class="keyword">go</span> Afunction(ch)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 这段代码运行的结果为死锁</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面这段运行和之前那一段基本上原理是一样的，但是运行后却会发生死锁。为什么呢？其实总结起来就一句话，”放得太快，取得太慢了”。<br>按理说，我们应该在我们主routine中创建子goroutine并每次向channel中放入数据，而子goroutine负责从channel中取出数据。但是我们的这段代码在创建了子goroutine后，每个routine会向channel中放入5个数据。这样，每向channel中放入6个数据才会执行一次取出操作，这样一来就可能会有某一时刻，channel已经满了，但是所有的routine都在执行放入操作(因为它们当前执行放入操作的概率是执行取出操作的6倍)，这样一来，所有的routine都阻塞了，从而导致死锁。</p>
+<p>在使用带缓冲的channel时一定要注意放入与取出的速率问题。</p>
+<p>(3)<strong>关闭后的channel可以取数据，但是不能放数据。而且，channel在执行了close()后并没有真的关闭，channel中的数据全部取走之后才会真正关闭。</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">5</span>)</span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	<span class="built_in">close</span>(ch)</span><br><span class="line">	ch &lt;- <span class="number">1</span> <span class="comment">//不能对关闭的channel执行放入操作</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 会触发panic</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">5</span>)</span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	<span class="built_in">close</span>(ch)</span><br><span class="line">	&lt;-ch <span class="comment">//只要channel还有数据，就可能执行取出操作</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//正常结束</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">5</span>)</span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">	<span class="built_in">close</span>(ch)  <span class="comment">//如果执行了close()就立即关闭channel的话，下面的循环就不会有任何输出了</span></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		data, ok := &lt;-ch</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">		fmt.Println(data)</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 输出：</span></span><br><span class="line">	<span class="comment">// 1</span></span><br><span class="line">	<span class="comment">// 1</span></span><br><span class="line">	<span class="comment">// 1</span></span><br><span class="line">	<span class="comment">// 1</span></span><br><span class="line">	<span class="comment">// </span></span><br><span class="line">	<span class="comment">// 调用了close()后，只有channel为空时，channel才会真的关闭</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="使用channel控制goroutine数量"><a href="#使用channel控制goroutine数量" class="headerlink" title="使用channel控制goroutine数量"></a>使用channel控制goroutine数量</h3><p>channel的性质到这里就介绍完了，但是看上去，channel的使用似乎比WaitGroup要注意更多的细节，那么有什么理由一定要用channel来实现同步呢？channel相比WaitGroup有一个很大的优点，就是channel不仅可以实现协程的同步，而且可以控制当前正在运行的goroutine的总数。</p>
+<p>下面就介绍几种利用channel控制goroutine数量的方法：</p>
+<p>一.如果任务数量是固定的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Afunction</span><span class="params">(ch <span class="keyword">chan</span> <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	ch &lt;- <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		ch        <span class="keyword">chan</span> <span class="type">int</span> = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">20</span>) <span class="comment">//可以同时运行的routine数量为20</span></span><br><span class="line">		dutycount <span class="type">int</span>      = <span class="number">500</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; dutycount; i++ &#123;</span><br><span class="line">		<span class="keyword">go</span> Afunction(ch)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//知道了任务总量，可以像这样利用固定循环次数的循环检测所有的routine是否工作完毕</span></span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; dutycount; i++ &#123;</span><br><span class="line">		&lt;-ch</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>二.如果任务的数量不固定</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Afunction</span><span class="params">(routineControl <span class="keyword">chan</span> <span class="type">int</span>, feedback <span class="keyword">chan</span> <span class="type">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		&lt;-routineControl</span><br><span class="line">		feedback &lt;- <span class="string">&quot;finish&quot;</span></span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// do some process</span></span><br><span class="line">	<span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		routineCtl <span class="keyword">chan</span> <span class="type">int</span>    = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">20</span>)</span><br><span class="line">		feedback   <span class="keyword">chan</span> <span class="type">string</span> = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">string</span>, <span class="number">10000</span>)</span><br><span class="line"></span><br><span class="line">		msg      <span class="type">string</span></span><br><span class="line">		allwork  <span class="type">int</span></span><br><span class="line">		finished <span class="type">int</span></span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">1000</span>; i++ &#123;</span><br><span class="line">		routineCtl &lt;- <span class="number">1</span></span><br><span class="line">		allwork++</span><br><span class="line">		<span class="keyword">go</span> Afunction(routineCtl, feedback)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		msg = &lt;-feedback</span><br><span class="line">		<span class="keyword">if</span> msg == <span class="string">&quot;finish&quot;</span> &#123;</span><br><span class="line">			finished++</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> finished == allwork &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>转自<a href="http://blog.csdn.net/gophers/article/details/24665419">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/05/25/%E8%BF%9B%E4%B8%80%E6%AD%A5%E8%AE%A4%E8%AF%86Golang%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91/" data-title="进一步认识Golang中的并发 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/05/25/Golang安装及配置/" title="Golang安装及配置">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Golang安装及配置</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/05/24/React-Native/"  title="React-Native">
+ <strong>下一篇：</strong><br/> 
+ <span>React-Native
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/05/25/进一步认识Golang中的并发/" data-title="进一步认识Golang中的并发" data-url="https://luckymrwang.github.io/2016/05/25/%E8%BF%9B%E4%B8%80%E6%AD%A5%E8%AE%A4%E8%AF%86Golang%E4%B8%AD%E7%9A%84%E5%B9%B6%E5%8F%91/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#sync-WaitGroup"><span class="toc-number">1.</span> <span class="toc-text">sync.WaitGroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#channel"><span class="toc-number">2.</span> <span class="toc-text">channel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8channel%E6%8E%A7%E5%88%B6goroutine%E6%95%B0%E9%87%8F"><span class="toc-number">3.</span> <span class="toc-text">使用channel控制goroutine数量</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

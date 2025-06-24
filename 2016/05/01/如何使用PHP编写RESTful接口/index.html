@@ -1,0 +1,523 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>如何使用PHP编写RESTful接口 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="PHPRS @github这是一个轻量级框架，专为快速开发RESTful接口而设计。如果你和我一样，厌倦了使用传统的MVC框架编写微服务或者前后端分离的API接口，受不了为了一个简单接口而做的很多多余的coding（和CTRL-C&#x2F;CTRL-V），那么，你肯定会喜欢这个框架！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何使用PHP编写RESTful接口">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/05/01/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8PHP%E7%BC%96%E5%86%99RESTful%E6%8E%A5%E5%8F%A3/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="PHPRS @github这是一个轻量级框架，专为快速开发RESTful接口而设计。如果你和我一样，厌倦了使用传统的MVC框架编写微服务或者前后端分离的API接口，受不了为了一个简单接口而做的很多多余的coding（和CTRL-C&#x2F;CTRL-V），那么，你肯定会喜欢这个框架！">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-05-01T04:01:32.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.212Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="PHP">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/05/01/如何使用PHP编写RESTful接口/" title="如何使用PHP编写RESTful接口" itemprop="url">如何使用PHP编写RESTful接口</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-05-01T04:01:32.000Z" itemprop="datePublished"> 发表于 2016-05-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%88%E4%B8%BE%E4%B8%AA%E6%A0%97%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">先举个栗子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">发生了什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%8D%E7%9C%8B%E4%B8%AA%E6%9B%B4%E5%85%B7%E4%BD%93%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">3.</span> <span class="toc-text">再看个更具体的例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%98%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-number">4.</span> <span class="toc-text">还能做什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E5%90%88-ezsql-%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">5.</span> <span class="toc-text">配合 ezsql 访问数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%86%8C"><span class="toc-number">6.</span> <span class="toc-text">手册</span></a></li></ol>
+		
+		</div>
+		
+		<p>PHPRS <a href="https://github.com/caoym/phprs">@github</a><br>这是一个轻量级框架，专为快速开发RESTful接口而设计。如果你和我一样，厌倦了使用传统的MVC框架编写微服务或者前后端分离的API接口，受不了为了一个简单接口而做的很多多余的coding（和CTRL-C&#x2F;CTRL-V），那么，你肯定会喜欢这个框架！</p>
+<span id="more"></span>
+<h3 id="先举个栗子"><a href="#先举个栗子" class="headerlink" title="先举个栗子"></a>先举个栗子</h3><ul>
+<li>写个HelloWorld.php，放到框架指定的目录下（默认是和index.php同级的apis&#x2F;目录）</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@path</span>(&quot;/hw&quot;)</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HelloWorld</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@route</span>(&#123;&quot;GET&quot;,&quot;/&quot;&#125;)</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">doSomething</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Hello World!&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>浏览器输入 <a href="http://your-domain/hw/">http://your-domain/hw/</a></li>
+</ul>
+<p>你将看到： Hello World! 就是这么简单，不需要额外配置，不需要继承也不需要组合。</p>
+<h3 id="发生了什么"><a href="#发生了什么" class="headerlink" title="发生了什么"></a>发生了什么</h3><p>回过头看HelloWorld.php，特殊的地方在于注释（@path，@route），没错，框架 通过注释获取路由信息和绑定输入输出 。但不要担心性能，注释只会在类文件修改后解析一次。更多的@注释后面会说明。</p>
+<h3 id="再看个更具体的例子"><a href="#再看个更具体的例子" class="headerlink" title="再看个更具体的例子"></a>再看个更具体的例子</h3><p>这是一个登录接口的例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用户权限验证</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@path</span>(&quot;/tokens/&quot;) </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tokens</span></span></span><br><span class="line"><span class="class"></span>&#123; </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 登录</span></span><br><span class="line"><span class="comment">     * 通过用户名密码授权</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@route</span>(&#123;&quot;POST&quot;,&quot;/accounts/&quot;&#125;) </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>(&#123;&quot;account&quot;, &quot;$._POST.account&quot;&#125;) 账号</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span>(&#123;&quot;password&quot;, &quot;$._POST.password&quot;&#125;) 密码</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> (&#123;&quot;InvalidPassword&quot;, &quot;res&quot;, &quot;403 Forbidden&quot;, &#123;&quot;error&quot;:&quot;InvalidPassword&quot;&#125; &#125;) 用户名或密码无效</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span>(&#123;&quot;body&quot;&#125;)    </span></span><br><span class="line"><span class="comment">     * 返回token，同cookie中的token相同,</span></span><br><span class="line"><span class="comment">     * &#123;&quot;token&quot;:&quot;xxx&quot;, &quot;uid&quot; = &quot;xxx&quot;&#125;</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span>(&#123;&quot;cookie&quot;,&quot;token&quot;,&quot;$token&quot;,&quot;+365 days&quot;,&quot;/&quot;&#125;)  通过cookie返回token</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span>(&#123;&quot;cookie&quot;,&quot;uid&quot;,&quot;$uid&quot;,&quot;+365 days&quot;,&quot;/&quot;&#125;)  通过cookie返回uid</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">createTokenByAccounts</span>(<span class="params"><span class="variable">$account</span>, <span class="variable">$password</span>, &amp;<span class="variable">$token</span>,&amp;<span class="variable">$uid</span></span>)</span>&#123;</span><br><span class="line">        <span class="comment">//验证用户</span></span><br><span class="line">        <span class="variable">$uid</span> = <span class="variable language_">$this</span>-&gt;users-&gt;<span class="title function_ invoke__">verifyPassword</span>(<span class="variable">$account</span>, <span class="variable">$password</span>);</span><br><span class="line">        <span class="title class_">Verify</span>::<span class="title function_ invoke__">isTrue</span>(<span class="variable">$uid</span>, <span class="keyword">new</span> <span class="title class_">InvalidPassword</span>(<span class="variable">$account</span>));</span><br><span class="line">        <span class="variable">$token</span> = ...;</span><br><span class="line">        <span class="keyword">return</span> [<span class="string">&#x27;token&#x27;</span>=&gt;<span class="variable">$token</span>, <span class="string">&#x27;uid&#x27;</span>=&gt;<span class="variable">$uid</span>];</span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@property</span>(&#123;&quot;default&quot;:&quot;<span class="doctag">@Users</span>&quot;&#125;)   依赖的属性，由框架注入</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> Users</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$users</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="还能做什么"><a href="#还能做什么" class="headerlink" title="还能做什么"></a>还能做什么</h3><ul>
+<li><p>依赖管理（依赖注入），</p>
+</li>
+<li><p>自动输出接口文档（不是doxgen式的类、方法文档，而是描述http接口的文档）</p>
+</li>
+<li><p>接口缓存</p>
+</li>
+<li><p>hook</p>
+</li>
+</ul>
+<h3 id="配合-ezsql-访问数据库"><a href="#配合-ezsql-访问数据库" class="headerlink" title="配合 ezsql 访问数据库"></a>配合 <a href="https://github.com/caoym/ezsql">ezsql</a> 访问数据库</h3><p>ezsql是一款简单的面向对象的sql构建工具，提供简单的基本sql操作。接口</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** <span class="doctag">@path</span>(/myclass) */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span></span>&#123;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@route</span>(&#123;&quot;GET&quot;,&quot;/do&quot;&#125;)</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span>(&#123;&quot;arg0&quot;,&quot;$._GET.arg0&quot;&#125;)</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">public</span> <span class="title function_ invoke__">doSomething</span>(<span class="variable">$arg0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="title class_">Sql</span>::<span class="title function_ invoke__">select</span>(<span class="string">&#x27;xxx&#x27;</span>)-&gt;<span class="keyword">from</span>(<span class="string">&#x27;table_xxx&#x27;</span>)-&gt;<span class="title function_ invoke__">where</span>( <span class="string">&#x27;xxx = ?&#x27;</span>, <span class="variable">$arg0</span>)-&gt;<span class="title function_ invoke__">get</span>(<span class="variable">$this</span>-&gt;db);</span><br><span class="line">   &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 依赖注入PDO实例</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@property</span></span></span><br><span class="line"><span class="comment">     * <span class="doctag">@var</span> PDO</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$db</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>配置文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;MyClass&quot;</span>:&#123;</span><br><span class="line">            <span class="string">&quot;properties&quot;</span>:&#123;</span><br><span class="line">                <span class="string">&quot;db&quot;</span>:<span class="string">&quot;@db1&quot;</span>     </span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;db1&quot;</span>:&#123;</span><br><span class="line">        <span class="string">&quot;singleton&quot;</span>:<span class="literal">true</span>,</span><br><span class="line">        <span class="string">&quot;class&quot;</span>:<span class="string">&quot;PDO&quot;</span>,</span><br><span class="line">        <span class="string">&quot;pass_by_construct&quot;</span>:<span class="literal">true</span>,</span><br><span class="line">        <span class="string">&quot;properties&quot;</span>:&#123;</span><br><span class="line">            <span class="string">&quot;dsn&quot;</span>:<span class="string">&quot;mysql:host=127.0.0.1;dbname=xxx&quot;</span>,</span><br><span class="line">            <span class="string">&quot;username&quot;</span>:<span class="string">&quot;xxxx&quot;</span>,</span><br><span class="line">            <span class="string">&quot;passwd&quot;</span>:<span class="string">&quot;xxxx&quot;</span>           </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="手册"><a href="#手册" class="headerlink" title="手册"></a>手册</h3><p>请移步 <a href="https://github.com/caoym/phprs">github</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/05/01/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8PHP%E7%BC%96%E5%86%99RESTful%E6%8E%A5%E5%8F%A3/" data-title="如何使用PHP编写RESTful接口 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/05/04/React-Native-学习笔记/" title="React-Native 学习笔记">
+  <strong>上一篇：</strong><br/>
+  <span>
+  React-Native 学习笔记</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/05/01/利用predis操作redis方法大全/"  title="利用predis操作redis方法大全">
+ <strong>下一篇：</strong><br/> 
+ <span>利用predis操作redis方法大全
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/05/01/如何使用PHP编写RESTful接口/" data-title="如何使用PHP编写RESTful接口" data-url="https://luckymrwang.github.io/2016/05/01/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8PHP%E7%BC%96%E5%86%99RESTful%E6%8E%A5%E5%8F%A3/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%88%E4%B8%BE%E4%B8%AA%E6%A0%97%E5%AD%90"><span class="toc-number">1.</span> <span class="toc-text">先举个栗子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">发生了什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%8D%E7%9C%8B%E4%B8%AA%E6%9B%B4%E5%85%B7%E4%BD%93%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">3.</span> <span class="toc-text">再看个更具体的例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%98%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-number">4.</span> <span class="toc-text">还能做什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E5%90%88-ezsql-%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">5.</span> <span class="toc-text">配合 ezsql 访问数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%8B%E5%86%8C"><span class="toc-number">6.</span> <span class="toc-text">手册</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

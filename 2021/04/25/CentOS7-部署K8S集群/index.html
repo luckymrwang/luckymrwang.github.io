@@ -1,0 +1,645 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>CentOS7 部署K8S集群 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="部署规划 12310.211.55.18     k8s-node110.211.55.19     k8s-node210.211.55.20     k8s-node3  备注：第1步~第8步，所有的节点都要操作，第9、10步Master节点操作，第11步Node节点操作。 如果第9、10、11步操作失败，可以通过 kubeadm reset 命令来清理环境重新安装。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS7 部署K8S集群">
+<meta property="og:url" content="https://luckymrwang.github.io/2021/04/25/CentOS7-%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="部署规划 12310.211.55.18     k8s-node110.211.55.19     k8s-node210.211.55.20     k8s-node3  备注：第1步~第8步，所有的节点都要操作，第9、10步Master节点操作，第11步Node节点操作。 如果第9、10、11步操作失败，可以通过 kubeadm reset 命令来清理环境重新安装。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-25T11:34:16.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.187Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/04/25/CentOS7-部署K8S集群/" title="CentOS7 部署K8S集群" itemprop="url">CentOS7 部署K8S集群</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-04-25T11:34:16.000Z" itemprop="datePublished"> 发表于 2021-04-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E9%98%B2%E7%81%AB%E5%A2%99"><span class="toc-number">1.</span> <span class="toc-text">关闭防火墙</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%ADselinux"><span class="toc-number">2.</span> <span class="toc-text">关闭selinux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%ADswap"><span class="toc-number">3.</span> <span class="toc-text">关闭swap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E6%97%B6%E9%97%B4"><span class="toc-number">4.</span> <span class="toc-text">同步时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E4%B8%BB%E6%9C%BA%E5%90%8D%E4%B8%8EIP%E5%AF%B9%E5%BA%94%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">5.</span> <span class="toc-text">添加主机名与IP对应的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%A1%A5%E6%8E%A5%E7%9A%84IPV4%E6%B5%81%E9%87%8F%E4%BC%A0%E9%80%92%E5%88%B0iptables-%E7%9A%84%E9%93%BE"><span class="toc-number">6.</span> <span class="toc-text">将桥接的IPV4流量传递到iptables 的链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Docker"><span class="toc-number">7.</span> <span class="toc-text">安装Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E9%98%BF%E9%87%8C%E4%BA%91YUM%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="toc-number">8.</span> <span class="toc-text">添加阿里云YUM软件源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85kubeadm%EF%BC%8Ckubelet%E5%92%8Ckubectl"><span class="toc-number">9.</span> <span class="toc-text">安装kubeadm，kubelet和kubectl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2Kubernetes-Master"><span class="toc-number">10.</span> <span class="toc-text">部署Kubernetes Master</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96kubeadm"><span class="toc-number">10.1.</span> <span class="toc-text">初始化kubeadm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8kubectl%E5%B7%A5%E5%85%B7"><span class="toc-number">10.2.</span> <span class="toc-text">使用kubectl工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Pod%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6%EF%BC%88CNI%EF%BC%89"><span class="toc-number">10.3.</span> <span class="toc-text">安装Pod网络插件（CNI）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Node%E8%8A%82%E7%82%B9%E5%8A%A0%E5%85%A5%E9%9B%86%E7%BE%A4"><span class="toc-number">11.</span> <span class="toc-text">Node节点加入集群</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E6%9E%9Ctoken%E5%BF%98%E8%AE%B0%E4%BA%86%EF%BC%8C%E5%88%99%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E5%A6%82%E4%B8%8B%E6%93%8D%E4%BD%9C%EF%BC%9A"><span class="toc-number">11.1.</span> <span class="toc-text">如果token忘记了，则可以通过如下操作：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95kubernetes%E9%9B%86%E7%BE%A4"><span class="toc-number">12.</span> <span class="toc-text">测试kubernetes集群</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Node%E8%8A%82%E7%82%B9%E7%9A%84%E6%B7%BB%E5%8A%A0%E5%92%8C%E5%88%A0%E9%99%A4%EF%BC%8C%E5%8F%8A%E9%9B%86%E7%BE%A4%E8%A7%92%E8%89%B2%E8%AE%BE%E5%AE%9A"><span class="toc-number">12.1.</span> <span class="toc-text">Node节点的添加和删除，及集群角色设定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86Pod%E8%B0%83%E5%BA%A6%E5%88%B0Master%E8%8A%82%E7%82%B9"><span class="toc-number">12.2.</span> <span class="toc-text">将Pod调度到Master节点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E4%B9%A6%E8%BF%87%E6%9C%9F"><span class="toc-number">13.</span> <span class="toc-text">证书过期</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%AF%81%E4%B9%A6%E8%BF%87%E6%9C%9F%E6%97%B6%E9%97%B4"><span class="toc-number">13.1.</span> <span class="toc-text">查看证书过期时间</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AF%81%E4%B9%A6"><span class="toc-number">13.2.</span> <span class="toc-text">更新证书</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0-kube-config-%E6%96%87%E4%BB%B6"><span class="toc-number">13.3.</span> <span class="toc-text">更新 ~&#x2F;.kube&#x2F;config 文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#kubelet-client-certificate"><span class="toc-number">13.4.</span> <span class="toc-text">kubelet client certificate</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#reboot-node"><span class="toc-number">13.4.1.</span> <span class="toc-text">reboot node</span></a></li></ol></li></ol></li></ol>
+		
+		</div>
+		
+		<p>部署规划</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10.211</span><span class="number">.55</span><span class="number">.18</span>     k8s-node1</span><br><span class="line"><span class="number">10.211</span><span class="number">.55</span><span class="number">.19</span>     k8s-node2</span><br><span class="line"><span class="number">10.211</span><span class="number">.55</span><span class="number">.20</span>     k8s-node3</span><br></pre></td></tr></table></figure>
+
+<p>备注：第1步~第8步，所有的节点都要操作，第9、10步Master节点操作，第11步Node节点操作。 如果第9、10、11步操作失败，可以通过 kubeadm reset 命令来清理环境重新安装。</p>
+<span id="more"></span>
+<h3 id="关闭防火墙"><a href="#关闭防火墙" class="headerlink" title="关闭防火墙"></a>关闭防火墙</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ systemctl stop firewalld</span><br></pre></td></tr></table></figure>
+
+<h3 id="关闭selinux"><a href="#关闭selinux" class="headerlink" title="关闭selinux"></a>关闭selinux</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ setenforce <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="关闭swap"><a href="#关闭swap" class="headerlink" title="关闭swap"></a>关闭swap</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ swapoff -a    临时关闭</span><br><span class="line">$ free             可以通过这个命令查看swap是否关闭了</span><br><span class="line">$ vim /etc/fstab  永久关闭</span><br></pre></td></tr></table></figure>
+
+<h3 id="同步时间"><a href="#同步时间" class="headerlink" title="同步时间"></a>同步时间</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install ntpdate</span><br><span class="line">ntpdate cn.pool.ntp.org</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加主机名与IP对应的关系"><a href="#添加主机名与IP对应的关系" class="headerlink" title="添加主机名与IP对应的关系"></a>添加主机名与IP对应的关系</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/hosts</span><br><span class="line"> 添加如下内容：</span><br><span class="line"><span class="number">10.211</span><span class="number">.55</span><span class="number">.18</span>     k8s-node1</span><br><span class="line"><span class="number">10.211</span><span class="number">.55</span><span class="number">.19</span>     k8s-node2</span><br><span class="line"><span class="number">10.211</span><span class="number">.55</span><span class="number">.20</span>     k8s-node3</span><br></pre></td></tr></table></figure>
+
+<h3 id="将桥接的IPV4流量传递到iptables-的链"><a href="#将桥接的IPV4流量传递到iptables-的链" class="headerlink" title="将桥接的IPV4流量传递到iptables 的链"></a>将桥接的IPV4流量传递到iptables 的链</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cat &gt; <span class="regexp">/etc/</span>sysctl.<span class="property">d</span>/k8s.<span class="property">conf</span> &lt;&lt; <span class="variable constant_">EOF</span></span><br><span class="line">net.<span class="property">bridge</span>.<span class="property">bridge</span>-nf-call-ip6tables = <span class="number">1</span></span><br><span class="line">net.<span class="property">bridge</span>.<span class="property">bridge</span>-nf-call-iptables = <span class="number">1</span></span><br><span class="line"><span class="variable constant_">EOF</span></span><br><span class="line">$ sysctl --system</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>）下载并安装</span><br><span class="line">$ wget <span class="attr">https</span>:<span class="comment">//mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo -O/etc/yum.repos.d/docker-ce.repo</span></span><br><span class="line">$ yum install docker-ce-<span class="number">20.10</span><span class="number">.17</span></span><br><span class="line"></span><br><span class="line"><span class="number">2</span>）配置镜像加速</span><br><span class="line">mkdir -p /etc/docker</span><br><span class="line">tee /etc/docker/daemon.<span class="property">json</span> &lt;&lt;-<span class="string">&#x27;EOF&#x27;</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;registry-mirrors&quot;</span>: [<span class="string">&quot;http://hub-mirror.c.163.com&quot;</span>, <span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable constant_">EOF</span></span><br><span class="line"></span><br><span class="line"><span class="number">3</span>）设置开机启动</span><br><span class="line">$ systemctl enable docker</span><br><span class="line">$ systemctl start docker</span><br><span class="line"></span><br><span class="line"><span class="number">4</span>）查看<span class="title class_">Docker</span>版本</span><br><span class="line">$ docker --version</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加阿里云YUM软件源"><a href="#添加阿里云YUM软件源" class="headerlink" title="添加阿里云YUM软件源"></a>添加阿里云YUM软件源</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; <span class="regexp">/etc/yum</span>.<span class="property">repos</span>.<span class="property">d</span>/kubernetes.<span class="property">repo</span> &lt;&lt; <span class="variable constant_">EOF</span></span><br><span class="line">[kubernetes]</span><br><span class="line">name=<span class="title class_">Kubernetes</span></span><br><span class="line">baseurl=<span class="attr">https</span>:<span class="comment">//mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64</span></span><br><span class="line">enabled=<span class="number">1</span></span><br><span class="line">gpgcheck=<span class="number">1</span></span><br><span class="line">repo_gpgcheck=<span class="number">1</span></span><br><span class="line">gpgkey=<span class="attr">https</span>:<span class="comment">//mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</span></span><br><span class="line"><span class="attr">https</span>:<span class="comment">//mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</span></span><br><span class="line"><span class="variable constant_">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="安装kubeadm，kubelet和kubectl"><a href="#安装kubeadm，kubelet和kubectl" class="headerlink" title="安装kubeadm，kubelet和kubectl"></a>安装kubeadm，kubelet和kubectl</h3><p>在部署kubernetes时，要求master node和worker node上的版本保持一致，否则会出现版本不匹配导致奇怪的问题出现。本文将介绍如何在CentOS系统上，使用yum安装指定版本的Kubernetes。<br>我们需要安装指定版本的kubernetes。那么如何做呢？在进行yum安装时，可以使用下列的格式来进行安装：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install -y kubelet-&lt;version&gt; kubectl-&lt;version&gt; kubeadm-&lt;version&gt;</span><br><span class="line">$ yum install -y kubelet-<span class="number">1.20</span><span class="number">.1</span> kubectl-<span class="number">1.20</span><span class="number">.1</span> kubeadm-<span class="number">1.20</span><span class="number">.1</span> kubernetes-cni-<span class="number">1.20</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
+
+<p><em>如果出现错误提示，只需要清除yum缓存即可，然后再执行安装命令</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum clean all </span><br></pre></td></tr></table></figure>
+<p>使用yum安装程序时，提示xxx.rpm公钥尚未安装<br>使用 –nogpgcheck 命令格式跳过公钥检查，如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y kubelet-1.20.1 kubectl-1.20.1 kubeadm-1.20.1 kubernetes-cni-1.20.1 --nogpgcheck</span><br><span class="line"></span><br><span class="line"># 开机启动</span><br><span class="line">$ systemctl enable kubelet</span><br></pre></td></tr></table></figure>
+
+<h3 id="部署Kubernetes-Master"><a href="#部署Kubernetes-Master" class="headerlink" title="部署Kubernetes Master"></a>部署Kubernetes Master</h3><h4 id="初始化kubeadm"><a href="#初始化kubeadm" class="headerlink" title="初始化kubeadm"></a>初始化kubeadm</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init \</span><br><span class="line">--apiserver-advertise-address=<span class="number">10.211</span><span class="number">.55</span><span class="number">.18</span> \</span><br><span class="line">--image-repository registry.<span class="property">aliyuncs</span>.<span class="property">com</span>/google_containers \</span><br><span class="line">--kubernetes-version v1<span class="number">.20</span><span class="number">.1</span> \</span><br><span class="line">--service-cidr=<span class="number">10.1</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">16</span> \</span><br><span class="line">--pod-network-cidr=<span class="number">10.244</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">16</span></span><br></pre></td></tr></table></figure>
+
+<p>当出现如下结果，表示初始化顺利</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Your Kubernetes control-plane has initialized successfully!</span><br><span class="line"></span><br><span class="line">To start using your cluster, you need to run the following as a regular user:</span><br><span class="line"></span><br><span class="line">  mkdir -p $HOME/.kube</span><br><span class="line">  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">  sudo chown $(id -u):$(id -g) $HOME/.kube/config</span><br><span class="line"></span><br><span class="line">Alternatively, if you are the root user, you can run:</span><br><span class="line"></span><br><span class="line">  export KUBECONFIG=/etc/kubernetes/admin.conf</span><br><span class="line"></span><br><span class="line">You should now deploy a pod network to the cluster.</span><br><span class="line">Run &quot;kubectl apply -f [podnetwork].yaml&quot; with one of the options listed at:</span><br><span class="line">  https://kubernetes.io/docs/concepts/cluster-administration/addons/</span><br><span class="line"></span><br><span class="line">Then you can join any number of worker nodes by running the following on each as root:</span><br><span class="line"></span><br><span class="line">kubeadm join 10.211.55.18:6443 --token m5fkxk.kf136eeya8v8ye5u \</span><br><span class="line">    --discovery-token-ca-cert-hash sha256:3cf64ae72021e28adba5a7a99d2897b4f6a8a338997258027473cab4bf3d4f39</span><br></pre></td></tr></table></figure>
+
+<p>建议至少2 cpu ,2G，非硬性要求，1cpu，1G也可以搭建起集群。但是：1个cpu的话初始化master的时候会报 [WARNING NumCPU]: the number of available CPUs 1 is less than the required 2部署插件或者pod时可能会报warning：FailedScheduling：Insufficient cpu, Insufficient memory如果出现这种提示，说明你的虚拟机分配的CPU为1核，需要重新设置虚拟机master节点内核数。</p>
+<p>查看镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker images</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用kubectl工具"><a href="#使用kubectl工具" class="headerlink" title="使用kubectl工具"></a>使用kubectl工具</h4><p>复制如下命令直接执行</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p $HOME/.<span class="property">kube</span></span><br><span class="line">sudo cp -i /etc/kubernetes/admin.<span class="property">conf</span> $HOME/.<span class="property">kube</span>/config</span><br><span class="line">sudo chown $(id -u):$(id -g) $HOME/.<span class="property">kube</span>/config</span><br></pre></td></tr></table></figure>
+
+<p>下面就可以直接使用kubectl命令了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get node</span><br></pre></td></tr></table></figure>
+
+<h4 id="安装Pod网络插件（CNI）"><a href="#安装Pod网络插件（CNI）" class="headerlink" title="安装Pod网络插件（CNI）"></a>安装Pod网络插件（CNI）</h4><ul>
+<li>安装插件</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f <span class="attr">https</span>:<span class="comment">//raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>查看是否部署成功</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get pods -n kube-system</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>再次查看node，可以看到状态为ready</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get node</span><br></pre></td></tr></table></figure>
+
+<p>安装失败了，执行如下命令，清理环境重新安装：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ kubeadm reset</span><br><span class="line"></span><br><span class="line">$ rm -rf /etc/kubernetes</span><br><span class="line">$ rm -rf /<span class="keyword">var</span>/lib/etcd/</span><br></pre></td></tr></table></figure>
+
+<h3 id="Node节点加入集群"><a href="#Node节点加入集群" class="headerlink" title="Node节点加入集群"></a>Node节点加入集群</h3><p>向集群添加新节点，执行在kubeadm init输出的kubeadm join命令：<br>复制上面命令，在node节点上执行</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join <span class="number">10.211</span><span class="number">.55</span><span class="number">.18</span>:<span class="number">6443</span> --token m5fkxk.<span class="property">kf136eeya8v8ye5u</span> \</span><br><span class="line">    --discovery-token-ca-cert-hash <span class="attr">sha256</span>:3cf64ae72021e28adba5a7a99d2897b4f6a8a338997258027473cab4bf3d4f39</span><br></pre></td></tr></table></figure>
+
+<p>如果一直卡在 “Running pre-flight checks” 上，则很可能是时间未同步，token失效导致</p>
+<p>第一步，检查master、node时间是否同步？</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ date</span><br><span class="line">执行如下命令同步时间</span><br><span class="line">$ ntpdate time.<span class="property">nist</span>.<span class="property">gov</span></span><br></pre></td></tr></table></figure>
+
+<p>第二步：如果还有其它错误如 Port 10250 is in use，执行如下命令</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ kubeadm reset</span><br><span class="line"></span><br><span class="line">$ rm -rf /etc/kubernetes</span><br><span class="line">$ rm -rf /<span class="keyword">var</span>/lib/etcd/</span><br></pre></td></tr></table></figure>
+
+<p>然后再重新执行kubeadm join … 操作</p>
+<p>执行成功后：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">[preflight] <span class="attr">FYI</span>: <span class="title class_">You</span> can look at <span class="variable language_">this</span> config file <span class="keyword">with</span> <span class="string">&#x27;kubectl -n kube-system get cm kubeadm-config -o yaml&#x27;</span></span><br><span class="line">[kubelet-start] <span class="title class_">Writing</span> kubelet configuration to file <span class="string">&quot;/var/lib/kubelet/config.yaml&quot;</span></span><br><span class="line">[kubelet-start] <span class="title class_">Writing</span> kubelet environment file <span class="keyword">with</span> flags to file <span class="string">&quot;/var/lib/kubelet/kubeadm-flags.env&quot;</span></span><br><span class="line">[kubelet-start] <span class="title class_">Starting</span> the kubelet</span><br><span class="line">[kubelet-start] <span class="title class_">Waiting</span> <span class="keyword">for</span> the kubelet to perform the <span class="variable constant_">TLS</span> <span class="title class_">Bootstrap</span>...</span><br><span class="line"></span><br><span class="line"><span class="title class_">This</span> node has joined the <span class="attr">cluster</span>:</span><br><span class="line">* <span class="title class_">Certificate</span> signing request was sent to apiserver and a response was received.</span><br><span class="line">* <span class="title class_">The</span> <span class="title class_">Kubelet</span> was informed <span class="keyword">of</span> the <span class="keyword">new</span> secure connection details.</span><br><span class="line"></span><br><span class="line"><span class="title class_">Run</span> <span class="string">&#x27;kubectl get nodes&#x27;</span> on the control-plane to see <span class="variable language_">this</span> node join the cluster.</span><br></pre></td></tr></table></figure>
+
+<p>再通过master节点查看node，发现node节点已以成功加入集群，并且Status状态为Ready</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable constant_">NAME</span>         <span class="variable constant_">STATUS</span>   <span class="variable constant_">ROLES</span>                  <span class="variable constant_">AGE</span>    <span class="variable constant_">VERSION</span></span><br><span class="line">k8s-node1   <span class="title class_">Ready</span>    control-plane,master   13m    v1<span class="number">.20</span><span class="number">.1</span></span><br><span class="line">k8s-node2    <span class="title class_">Ready</span>    &lt;none&gt;                 4m8s   v1<span class="number">.20</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="如果token忘记了，则可以通过如下操作："><a href="#如果token忘记了，则可以通过如下操作：" class="headerlink" title="如果token忘记了，则可以通过如下操作："></a>如果token忘记了，则可以通过如下操作：</h4><ul>
+<li>查看token，如果token失效，则重新生成一个</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ kubeadm token list</span><br><span class="line">$ kubeadm token create</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>获取ca证书sha256编码hash值</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ openssl x509 -pubkey -<span class="keyword">in</span> /etc/kubernetes/pki/ca.<span class="property">crt</span> | openssl rsa -pubin -outform der <span class="number">2</span>&gt;<span class="regexp">/dev/</span><span class="literal">null</span> | openssl dgst -sha256 -hex | sed <span class="string">&#x27;s/^.* //&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>节点加入集群</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join <span class="number">10.211</span><span class="number">.55</span><span class="number">.18</span>:<span class="number">6443</span> --token m5fkxk.<span class="property">kf136eeya8v8ye5u</span> \</span><br><span class="line">    --discovery-token-ca-cert-hash <span class="attr">sha256</span>:3cf64ae72021e28adba5a7a99d2897b4f6a8a338997258027473cab4bf3d4f39 </span><br></pre></td></tr></table></figure>
+
+<h3 id="测试kubernetes集群"><a href="#测试kubernetes集群" class="headerlink" title="测试kubernetes集群"></a>测试kubernetes集群</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl create deployment nginx --image=nginx</span><br><span class="line">$ kubectl expose deployment nginx --port=<span class="number">80</span> --<span class="string">``</span>type<span class="string">``</span>=<span class="title class_">NodePort</span></span><br><span class="line">$ kubectl get pod,svc</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl get pod,svc -o wide</span><br></pre></td></tr></table></figure>
+
+<p>通过浏览器访问：<a href="http://10.211.55.18:30328/">http://10.211.55.18:30328</a> 可以正常访问</p>
+<h4 id="Node节点的添加和删除，及集群角色设定"><a href="#Node节点的添加和删除，及集群角色设定" class="headerlink" title="Node节点的添加和删除，及集群角色设定"></a>Node节点的添加和删除，及集群角色设定</h4><ul>
+<li>添加node节点</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join <span class="number">10.211</span><span class="number">.55</span><span class="number">.18</span>:<span class="number">6443</span> --token m5fkxk.<span class="property">kf136eeya8v8ye5u</span> \</span><br><span class="line">    --discovery-token-ca-cert-hash <span class="attr">sha256</span>:3cf64ae72021e28adba5a7a99d2897b4f6a8a338997258027473cab4bf3d4f39</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>执行成功后会在node节点的&#x2F;etc&#x2F;kubernetes目录下出创建kubelet.conf和pki等文件信息，同一节点再次加入时需要清空该目录下的文件信息</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@centos-7-node ~]# cd /etc/kubernetes</span><br><span class="line">[root@centos-7-node kubernetes]# pwd</span><br><span class="line">/etc/kubernetes</span><br><span class="line">[root@centos-7-node kubernetes]# ll</span><br><span class="line">总用量 4</span><br><span class="line">-rw-------. 1 root root 1909 4月  25 20:22 kubelet.conf</span><br><span class="line">drwxr-xr-x. 2 root root    6 12月 19 01:28 manifests</span><br><span class="line">drwxr-xr-x. 2 root root   20 4月  25 20:22 pki</span><br><span class="line">[root@centos-7-node kubernetes]# </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在master节点查看集群节点信息</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@k8s-<span class="number">3</span> ~]# kubectl  get node</span><br><span class="line">[root@centos-<span class="number">7</span>-master ~]# kubectl  get node</span><br><span class="line"><span class="variable constant_">NAME</span>         <span class="variable constant_">STATUS</span>   <span class="variable constant_">ROLES</span>                  <span class="variable constant_">AGE</span>   <span class="variable constant_">VERSION</span></span><br><span class="line">k8s-node1   <span class="title class_">Ready</span>    control-plane,master   33m   v1<span class="number">.20</span><span class="number">.1</span></span><br><span class="line">k8s-node2    <span class="title class_">NotReady</span>    &lt;none&gt;                 23m   v1<span class="number">.20</span><span class="number">.1</span></span><br><span class="line"># 查看信息时，看到几个节点的状态都是<span class="title class_">NotReady</span>，是因为还没有安装flannel插件，</span><br><span class="line"></span><br><span class="line"># 等待几分钟后的信息，查看node节点的docker镜像，自动下载flannel镜像并创建网卡信息 </span><br><span class="line">[root@centos-<span class="number">7</span>-master ~]# kubectl  get node</span><br><span class="line"><span class="variable constant_">NAME</span>         <span class="variable constant_">STATUS</span>   <span class="variable constant_">ROLES</span>                  <span class="variable constant_">AGE</span>   <span class="variable constant_">VERSION</span></span><br><span class="line">k8s-node1   <span class="title class_">Ready</span>    control-plane,master   33m   v1<span class="number">.20</span><span class="number">.1</span></span><br><span class="line">k8s-node2    <span class="title class_">Ready</span>    &lt;none&gt;                 23m   v1<span class="number">.20</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置node的角色</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@centos-<span class="number">7</span>-master ~]# kubectl label nodes k8s-<span class="title function_">node1</span>(节点名字)  node-role.<span class="property">kubernetes</span>.<span class="property">io</span>/node=</span><br><span class="line">node/k8s-node1 labeled</span><br><span class="line">[root@centos-<span class="number">7</span>-master ~]# kubectl  get node</span><br><span class="line"><span class="variable constant_">NAME</span>         <span class="variable constant_">STATUS</span>   <span class="variable constant_">ROLES</span>                  <span class="variable constant_">AGE</span>   <span class="variable constant_">VERSION</span></span><br><span class="line">k8s-node1   <span class="title class_">Ready</span>    control-plane,master   36m   v1<span class="number">.20</span><span class="number">.1</span></span><br><span class="line">k8s-node2    <span class="title class_">Ready</span>    node                   27m   v1<span class="number">.20</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>先将节点设置为维护模式(k8s-4是节点名称)</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@centos-<span class="number">7</span>-master ~]# kubectl drain k8s-node1 --<span class="keyword">delete</span>-local-data --ignore-daemonsets --force</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>删除k8s-node1节点</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@centos-<span class="number">7</span>-master ~]# kubectl <span class="keyword">delete</span> node k8s-node1</span><br><span class="line">node <span class="string">&quot;k8s-node1&quot;</span> deleted</span><br><span class="line">[root@centos-<span class="number">7</span>-master ~]# kubectl  get node</span><br><span class="line"><span class="variable constant_">NAME</span>         <span class="variable constant_">STATUS</span>   <span class="variable constant_">ROLES</span>                  <span class="variable constant_">AGE</span>   <span class="variable constant_">VERSION</span></span><br><span class="line">k8s-node1   <span class="title class_">Ready</span>    control-plane,master   36m   v1<span class="number">.20</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="将Pod调度到Master节点"><a href="#将Pod调度到Master节点" class="headerlink" title="将Pod调度到Master节点"></a>将Pod调度到Master节点</h4><ul>
+<li>出于安全考虑，默认配置下Kubernetes不会将Pod调度到Master节点。如果希望将k8s-master也当作Node使用，可以执行如下命令：</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint node k8s-node1 node-role.<span class="property">kubernetes</span>.<span class="property">io</span>/master-</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>其中k8s-master是主机节点hostname如果要恢复Master Only状态，执行如下命令：</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint node k8s-node1 node-role.<span class="property">kubernetes</span>.<span class="property">io</span>/master=<span class="string">&quot;&quot;</span>:<span class="title class_">NoSchedule</span></span><br></pre></td></tr></table></figure>
+
+<p><em>当只有一个master和一个node节点，在master可调度的情况下，node节点失联或者挂掉，node节点上的pod在k8s默认的检查时间之后并不会重新调度到master的情况</em></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">If the cluster contains <span class="number">1</span> master and <span class="number">1</span> worker and the nodeName of your master node is ending with <span class="string">&quot;master&quot;</span>(e.g XXXmaster).</span><br><span class="line">The pod will not be evicted from the worker node.</span><br><span class="line"></span><br><span class="line">It is because the controller-manager does not take the node with nodeName ends with <span class="string">&quot;master&quot;</span> as the worker node.</span><br><span class="line">kubernetes/pkg/controller/nodelifecycle/node_lifecycle_controller.<span class="keyword">go</span></span><br><span class="line"></span><br><span class="line">Lines <span class="number">1004</span> to <span class="number">1016</span> in <span class="number">2</span>adc8d7</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">func</span> <span class="title">legacyIsMasterNode</span><span class="params">(nodeName <span class="type">string</span>)</span></span> <span class="type">bool</span> &#123; </span><br><span class="line"> 	<span class="comment">// We are trying to capture &quot;master(-...)?$&quot; regexp. </span></span><br><span class="line"> 	<span class="comment">// However, using regexp.MatchString() results even in more than 35% </span></span><br><span class="line"> 	<span class="comment">// of all space allocations in ControllerManager spent in this function. </span></span><br><span class="line"> 	<span class="comment">// That&#x27;s why we are trying to be a bit smarter. </span></span><br><span class="line"> 	<span class="keyword">if</span> strings.HasSuffix(nodeName, <span class="string">&quot;master&quot;</span>) &#123; </span><br><span class="line"> 		<span class="keyword">return</span> <span class="literal">true</span> </span><br><span class="line"> 	&#125; </span><br><span class="line"> 	<span class="keyword">if</span> <span class="built_in">len</span>(nodeName) &gt;= <span class="number">10</span> &#123; </span><br><span class="line"> 		<span class="keyword">return</span> strings.HasSuffix(nodeName[:<span class="built_in">len</span>(nodeName)<span class="number">-3</span>], <span class="string">&quot;master-&quot;</span>) </span><br><span class="line"> 	&#125; </span><br><span class="line"> 	<span class="keyword">return</span> <span class="literal">false</span> </span><br><span class="line"> &#125; </span><br><span class="line"></span><br><span class="line">If all worker nodes are NotReady, the controller-manager will enter master disruption mode.</span><br><span class="line">Disruption mode ：#<span class="number">42733</span> (comment)</span><br><span class="line"></span><br><span class="line">Around August last year we introduced a protection against master machine network isolation, which prevents any evictions from happening <span class="keyword">if</span> master can<span class="string">&#x27;t see any healthy Node. It then assumes that it&#x27;</span>s not a problem with Nodes, but with itself and just don<span class="string">&#x27;t do anything.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">I stop the kubelet on worker node and the controller-manager logs shows:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">I0126 15:19:20.901414       1 node_lifecycle_controller.go:1230] Controller detected that all Nodes are not-Ready. Entering master disruption mode.</span></span><br><span class="line"><span class="string">If you want your pod can be evicted from worker node in 1 master 1 worker cluster, you can:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">set LegacyNodeRoleBehavior feature gate on controller-manager to false, for example, edit the controller-manager manifest, which is located at /etc/kubernetes/manifests/kube-controller-manager.yaml on your master node</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string">spec:</span></span><br><span class="line"><span class="string">  containers:</span></span><br><span class="line"><span class="string">  - command:</span></span><br><span class="line"><span class="string">    - kube-controller-manager</span></span><br><span class="line"><span class="string">    - --allocate-node-cidrs=true</span></span><br><span class="line"><span class="string">    - --feature-gates=LegacyNodeRoleBehavior=false  &lt;-- add this line</span></span><br><span class="line"><span class="string">    - --authentication-kubeconfig=/etc/kubernetes/controller-manager.conf</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">rename the nodeName of your master node, do not ends with &quot;master&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><a href="https://github.com/kubernetes/kubernetes/issues/55713">Pods are not moved when Node in NotReady state</a></p>
+<p><a href="https://stackoverflow.com/questions/53641252/kubernetes-recreate-pod-if-node-becomes-offline-timeout">Kubernetes recreate pod if node becomes offline timeout</a></p>
+<h3 id="证书过期"><a href="#证书过期" class="headerlink" title="证书过期"></a>证书过期</h3><h4 id="查看证书过期时间"><a href="#查看证书过期时间" class="headerlink" title="查看证书过期时间"></a>查看证书过期时间</h4><p>在 Master 节点上，执行 <code>kubeadm certs check-expiration</code> 命令，查看证书过期时间。</p>
+<h4 id="更新证书"><a href="#更新证书" class="headerlink" title="更新证书"></a>更新证书</h4><p>使用 </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm certs renew all</span><br></pre></td></tr></table></figure>
+
+<p>命令来更新证书。</p>
+<h4 id="更新-kube-config-文件"><a href="#更新-kube-config-文件" class="headerlink" title="更新 ~&#x2F;.kube&#x2F;config 文件"></a>更新 ~&#x2F;.kube&#x2F;config 文件</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"><span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">chmod</span> 644 <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="kubelet-client-certificate"><a href="#kubelet-client-certificate" class="headerlink" title="kubelet client certificate"></a>kubelet client certificate</h4><p>执行如下命令生成新的 <code>kubelet.conf</code> 配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># $NODE 表示集群中的节点名称</span></span><br><span class="line">kubeadm kubeconfig user --org system:nodes --client-name system:node:<span class="variable">$NODE</span> --config=/etc/kubernetes/kubeadm-config.yaml &gt; kubelet.conf</span><br><span class="line"></span><br><span class="line"><span class="built_in">cp</span> -i kubelet.conf /etc/kubernetes/kubelet.conf</span><br><span class="line">systemctl restart kubelet</span><br></pre></td></tr></table></figure>
+
+<h5 id="reboot-node"><a href="#reboot-node" class="headerlink" title="reboot node"></a>reboot node</h5>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2021/04/25/CentOS7-%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/" data-title="CentOS7 部署K8S集群 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2021/07/16/使用-dlv-GoLand-远程调试/" title="使用 dlv + GoLand 远程调试">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用 dlv + GoLand 远程调试</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2021/04/15/istio-externaltrafficpolicy-outboundTrafficPolicy/"  title="istio externaltrafficpolicy outboundTrafficPolicy">
+ <strong>下一篇：</strong><br/> 
+ <span>istio externaltrafficpolicy outboundTrafficPolicy
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2021/04/25/CentOS7-部署K8S集群/" data-title="CentOS7 部署K8S集群" data-url="https://luckymrwang.github.io/2021/04/25/CentOS7-%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E9%98%B2%E7%81%AB%E5%A2%99"><span class="toc-number">1.</span> <span class="toc-text">关闭防火墙</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%ADselinux"><span class="toc-number">2.</span> <span class="toc-text">关闭selinux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%ADswap"><span class="toc-number">3.</span> <span class="toc-text">关闭swap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%AD%A5%E6%97%B6%E9%97%B4"><span class="toc-number">4.</span> <span class="toc-text">同步时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E4%B8%BB%E6%9C%BA%E5%90%8D%E4%B8%8EIP%E5%AF%B9%E5%BA%94%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number">5.</span> <span class="toc-text">添加主机名与IP对应的关系</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86%E6%A1%A5%E6%8E%A5%E7%9A%84IPV4%E6%B5%81%E9%87%8F%E4%BC%A0%E9%80%92%E5%88%B0iptables-%E7%9A%84%E9%93%BE"><span class="toc-number">6.</span> <span class="toc-text">将桥接的IPV4流量传递到iptables 的链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Docker"><span class="toc-number">7.</span> <span class="toc-text">安装Docker</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E9%98%BF%E9%87%8C%E4%BA%91YUM%E8%BD%AF%E4%BB%B6%E6%BA%90"><span class="toc-number">8.</span> <span class="toc-text">添加阿里云YUM软件源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85kubeadm%EF%BC%8Ckubelet%E5%92%8Ckubectl"><span class="toc-number">9.</span> <span class="toc-text">安装kubeadm，kubelet和kubectl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2Kubernetes-Master"><span class="toc-number">10.</span> <span class="toc-text">部署Kubernetes Master</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96kubeadm"><span class="toc-number">10.1.</span> <span class="toc-text">初始化kubeadm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8kubectl%E5%B7%A5%E5%85%B7"><span class="toc-number">10.2.</span> <span class="toc-text">使用kubectl工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Pod%E7%BD%91%E7%BB%9C%E6%8F%92%E4%BB%B6%EF%BC%88CNI%EF%BC%89"><span class="toc-number">10.3.</span> <span class="toc-text">安装Pod网络插件（CNI）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Node%E8%8A%82%E7%82%B9%E5%8A%A0%E5%85%A5%E9%9B%86%E7%BE%A4"><span class="toc-number">11.</span> <span class="toc-text">Node节点加入集群</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A6%82%E6%9E%9Ctoken%E5%BF%98%E8%AE%B0%E4%BA%86%EF%BC%8C%E5%88%99%E5%8F%AF%E4%BB%A5%E9%80%9A%E8%BF%87%E5%A6%82%E4%B8%8B%E6%93%8D%E4%BD%9C%EF%BC%9A"><span class="toc-number">11.1.</span> <span class="toc-text">如果token忘记了，则可以通过如下操作：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95kubernetes%E9%9B%86%E7%BE%A4"><span class="toc-number">12.</span> <span class="toc-text">测试kubernetes集群</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Node%E8%8A%82%E7%82%B9%E7%9A%84%E6%B7%BB%E5%8A%A0%E5%92%8C%E5%88%A0%E9%99%A4%EF%BC%8C%E5%8F%8A%E9%9B%86%E7%BE%A4%E8%A7%92%E8%89%B2%E8%AE%BE%E5%AE%9A"><span class="toc-number">12.1.</span> <span class="toc-text">Node节点的添加和删除，及集群角色设定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B0%86Pod%E8%B0%83%E5%BA%A6%E5%88%B0Master%E8%8A%82%E7%82%B9"><span class="toc-number">12.2.</span> <span class="toc-text">将Pod调度到Master节点</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%81%E4%B9%A6%E8%BF%87%E6%9C%9F"><span class="toc-number">13.</span> <span class="toc-text">证书过期</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%AF%81%E4%B9%A6%E8%BF%87%E6%9C%9F%E6%97%B6%E9%97%B4"><span class="toc-number">13.1.</span> <span class="toc-text">查看证书过期时间</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%AF%81%E4%B9%A6"><span class="toc-number">13.2.</span> <span class="toc-text">更新证书</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0-kube-config-%E6%96%87%E4%BB%B6"><span class="toc-number">13.3.</span> <span class="toc-text">更新 ~&#x2F;.kube&#x2F;config 文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#kubelet-client-certificate"><span class="toc-number">13.4.</span> <span class="toc-text">kubelet client certificate</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#reboot-node"><span class="toc-number">13.4.1.</span> <span class="toc-text">reboot node</span></a></li></ol></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

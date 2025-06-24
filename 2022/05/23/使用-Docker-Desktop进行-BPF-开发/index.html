@@ -1,0 +1,536 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>使用 Docker Desktop进行 BPF 开发 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Docker Desktop 是 Windows 和 Mac 上最为流行 Docker 开发环境，是否有办法在Docker Desktop中，利用容器来使用eBPF呢？本文参考了部分 https:&#x2F;&#x2F;github.com&#x2F;singe&#x2F;ebpf-docker-for-mac 相关实现，来帮助大家尝试一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 Docker Desktop进行 BPF 开发">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/05/23/%E4%BD%BF%E7%94%A8-Docker-Desktop%E8%BF%9B%E8%A1%8C-BPF-%E5%BC%80%E5%8F%91/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Docker Desktop 是 Windows 和 Mac 上最为流行 Docker 开发环境，是否有办法在Docker Desktop中，利用容器来使用eBPF呢？本文参考了部分 https:&#x2F;&#x2F;github.com&#x2F;singe&#x2F;ebpf-docker-for-mac 相关实现，来帮助大家尝试一下。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/macebpf.jpeg">
+<meta property="og:image" content="https://luckymrwang.github.io/images/macebpf1.png">
+<meta property="article:published_time" content="2022-05-23T07:36:20.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.210Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="eBPF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/macebpf.jpeg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/23/使用-Docker-Desktop进行-BPF-开发/" title="使用 Docker Desktop进行 BPF 开发" itemprop="url">使用 Docker Desktop进行 BPF 开发</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-23T07:36:20.000Z" itemprop="datePublished"> 发表于 2022-05-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#bcc-bpftrace"><span class="toc-number">1.</span> <span class="toc-text">bcc &amp; bpftrace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8Kubernetes%E4%B8%8A%E8%B0%83%E5%BA%A6-bpftrace-%E5%BA%94%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">在Kubernetes上调度 bpftrace 应用</span></a></li></ol>
+		
+		</div>
+		
+		<p>Docker Desktop 是 Windows 和 Mac 上最为流行 Docker 开发环境，是否有办法在Docker Desktop中，利用容器来使用eBPF呢？本文参考了部分 <a href="https://github.com/singe/ebpf-docker-for-mac?spm=a2c6h.12873639.article-detail.4.3e805798KLBkfr">https://github.com/singe/ebpf-docker-for-mac</a> 相关实现，来帮助大家尝试一下。</p>
+<span id="more"></span>
+
+<p><img src="/images/macebpf.jpeg" alt="image"></p>
+<h2 id="bcc-bpftrace"><a href="#bcc-bpftrace" class="headerlink" title="bcc &amp; bpftrace"></a>bcc &amp; bpftrace</h2><p>Docker Desktop for Mac 通过一个虚拟机，来运行基于<a href="https://github.com/linuxkit/linuxkit?spm=a2c6h.12873639.article-detail.5.3e805798KLBkfr">Linuxkit</a>构建的操作系统支持Docker环境。我们无法直接访问Virtual Machine，我们需要在 Docker容器中运行 eBPF 工具, 这需要有如下的前提条件：</p>
+<ul>
+<li>&#x2F;usr&#x2F;src&#x2F; 需要包含内核源代码</li>
+<li>debugfs 被正确挂载。 <code>mount -t debugfs debugfs /sys/kernel/debug</code></li>
+<li>&#x2F;lib&#x2F;modules&#x2F; 需要挂载 host 宿主机上相关目录</li>
+<li>需要在特权方式运行，比如 <code>docker run --privileged ...</code></li>
+<li>需要使用宿主机 PID 名空间，比如 <code>docker run --pid=host ...</code></li>
+</ul>
+<p>我们首先获取当前宿主机内核版本信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -it --<span class="built_in">rm</span> --privileged --pid=host justincormack/nsenter1</span><br><span class="line"><span class="comment"># uname -r</span></span><br><span class="line">5.10.47-linuxkit</span><br></pre></td></tr></table></figure>
+
+<p>在Docker Hub上，Docker 在 <a href="https://hub.docker.com/r/docker/for-desktop-kernel/tags?spm=a2c6h.12873639.article-detail.6.3e805798KLBkfr">docker&#x2F;for-desktop-kernel</a> 仓库中发布了 Docker Desktop 所包含的 linuxkit 内核代码的容器镜像。大家根据上面的内核版本信息就能定位相应的镜像 tag。</p>
+<p>然后，我们来构建属于自己的 Docker 镜像，比如我希望构建一个Docker镜像包含，<a href="https://github.com/iovisor/bcc?spm=a2c6h.12873639.article-detail.7.3e805798KLBkfr">bcc</a> 和 <a href="https://github.com/iovisor/bpftrace?spm=a2c6h.12873639.article-detail.8.3e805798KLBkfr">bpftrace</a> 等eBPF开发工具。我们创建如下 Dockerfile.tools 来构建相应镜像</p>
+<figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> docker/for-desktop-kernel:<span class="number">5.10</span>.<span class="number">47</span>-<span class="number">0</span>b705d955f5e283f62583c4e227d64a7924c138f AS ksrc</span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">20.04</span> AS bpftrace</span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> --from=ksrc /kernel-dev.tar /</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> tar xf kernel-dev.tar &amp;&amp; <span class="built_in">rm</span> kernel-dev.tar</span></span><br><span class="line"><span class="comment"># Use Alibaba Cloud mirror for ubuntu</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> sed -i <span class="string">&#x27;s/archive.ubuntu.com/mirrors.aliyun.com/&#x27;</span> /etc/apt/sources.list</span></span><br><span class="line"><span class="comment"># Install LLVM 10.0.1</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update &amp;&amp; apt install -y wget lsb-release software-properties-common &amp;&amp; wget https://apt.llvm.org/llvm.sh &amp;&amp; <span class="built_in">chmod</span> +x llvm.sh &amp;&amp; ./llvm.sh 10</span></span><br><span class="line"><span class="keyword">ENV</span> PATH <span class="string">&quot;$PATH:/usr/lib/llvm-10/bin&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Build/Install bpftrace</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get install -y bpftrace</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Build/Install bcc</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /root</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> DEBIAN_FRONTEND=<span class="string">&quot;noninteractive&quot;</span> apt install -y kmod vim bison build-essential cmake flex git libedit-dev \</span></span><br><span class="line"><span class="language-bash">  libcap-dev zlib1g-dev libelf-dev libfl-dev python3.8 python3-pip python3.8-dev clang libclang-dev &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">  <span class="built_in">ln</span> -s $(<span class="built_in">which</span> python3) /usr/bin/python</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> git <span class="built_in">clone</span> https://github.com/iovisor/bcc.git &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    <span class="built_in">mkdir</span> bcc/build &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    <span class="built_in">cd</span> bcc/build &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    cmake .. &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    make &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    make install &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    cmake -DPYTHON_CMD=python3 .. &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    <span class="built_in">cd</span> src/python/ &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    make &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    make install &amp;&amp; \</span></span><br><span class="line"><span class="language-bash">    sed -i <span class="string">&quot;s/self._syscall_prefixes\[0\]/self._syscall_prefixes\[1\]/g&quot;</span> /usr/lib/python3/dist-packages/bcc/__init__.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> mount -t debugfs debugfs /sys/kernel/debug &amp;&amp; /bin/bash</span></span><br></pre></td></tr></table></figure>
+
+<p>运行如下命令，构建镜像</p>
+<figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ docker build -t ebpf-for-mac -f ./Dockerfile.tools .</span><br><span class="line">[+] Building <span class="number">6097.8</span>s (<span class="number">16</span>/<span class="number">16</span>) FINISHED</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>或者可以直接拉取以构建好的镜像，</p>
+<figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker pull registry.cn-hangzhou.aliyuncs.com/denverdino/ebpf-for-mac</span><br><span class="line">$ docker tag registry.cn-hangzhou.aliyuncs.com/denverdino/ebpf-for-mac ebpf-for-mac</span><br></pre></td></tr></table></figure>
+
+<p>运行如下命令，来通过Docker镜像运行 bcc 测试应用。</p>
+<figure class="highlight docker"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ docker <span class="keyword">run</span><span class="language-bash"> -it --<span class="built_in">rm</span> \</span></span><br><span class="line"><span class="language-bash">  --name ebpf-for-mac \</span></span><br><span class="line"><span class="language-bash">  --privileged \</span></span><br><span class="line"><span class="language-bash">  -v /lib/modules:/lib/modules:ro \</span></span><br><span class="line"><span class="language-bash">  -v /etc/localtime:/etc/localtime:ro \</span></span><br><span class="line"><span class="language-bash">  --pid=host \</span></span><br><span class="line"><span class="language-bash">  ebpf-for-mac</span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># wget https://raw.githubusercontent.com/singe/ebpf-docker-for-mac/main/hello_world.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># python3 hello_world.py</span></span><br><span class="line">b<span class="string">&#x27;      kube-proxy-5454    [003] d... 10679.347316: bpf_trace_printk: Hello world&#x27;</span></span><br><span class="line">b<span class="string">&#x27;&#x27;</span></span><br><span class="line">b<span class="string">&#x27;      kube-proxy-5469    [002] d... 10679.355387: bpf_trace_printk: Hello world&#x27;</span></span><br><span class="line">b<span class="string">&#x27;&#x27;</span></span><br><span class="line">b<span class="string">&#x27;         dockerd-1807    [001] d... 10680.178545: bpf_trace_printk: Hello world&#x27;</span></span><br><span class="line">b<span class="string">&#x27;&#x27;</span></span><br><span class="line">b<span class="string">&#x27;            runc-95361   [003] d... 10680.191472: bpf_trace_printk: Hello world&#x27;</span></span><br><span class="line">b<span class="string">&#x27;&#x27;</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>bpftrace 是IO Visor开发的eBPF的追踪工具。它允许开发者用简洁的DSL（Domain Specific Language）编写eBPF程序，而不必在内核中手动编译和加载它们。具体验证可以参考 Brendan Gregg 的<a href="https://www.brendangregg.com/blog/2019-08-19/bpftrace.html">A thorough introduction to bpftrace
+</a></p>
+<h2 id="在Kubernetes上调度-bpftrace-应用"><a href="#在Kubernetes上调度-bpftrace-应用" class="headerlink" title="在Kubernetes上调度 bpftrace 应用"></a>在Kubernetes上调度 bpftrace 应用</h2><p>Docker Desktop也内置了Kubernetes集群开发环境。为了帮助国内开发者解决由于无法访问 gcr.io 镜像仓库，导致无法开启 Kubernetes 的问题，阿里云团队维护了一个简单的 helper 工具可以解决相应问题，请参考： <a href="https://github.com/AliyunContainerService/k8s-for-docker-desktop?spm=a2c6h.12873639.article-detail.10.3e805798KLBkfr">https://github.com/AliyunContainerService/k8s-for-docker-desktop</a> 。</p>
+<p>kubectl-trace 是可以让用户在Kubernetes集群中安排执行bpftrace程序的kubectl插件。它的架构图如下，当通过 <code>kubectl trace</code> 命令创建一个trace应用时，kubectl-trace插件会在Kubernetes集群上，通过API创建一个被称作“trace-runner”的临时任务来执行bpftrace应用，可以调度到指定的节点或者Pod对其进行追踪。</p>
+<p><img src="/images/macebpf1.png" alt="image"></p>
+<p>kubectl-trace的安装过程比较简单，请参考 <a href="https://github.com/iovisor/kubectl-trace?spm=a2c6h.12873639.article-detail.11.3e805798KLBkfr#installing">Installing</a> 进行操作。然而其默认带的 trace-runner 镜像是不支持 Docker Desktop，执行会自动退出。我们来根据上文原理，hack 一个扩展的版本。其中的代码实现在 <a href="https://github.com/denverdino/trace-runner-for-docker-desktop?spm=a2c6h.12873639.article-detail.12.3e805798KLBkfr">https://github.com/denverdino/trace-runner-for-docker-desktop</a> 项目中。</p>
+<p>其实现与上文类似，在 &#x2F;usr&#x2F;src&#x2F; 中添加内核源代码，并挂载 debugfs , 然后就可以愉快的玩耍了。具体实现可以参见项目中 Dockerfile 与 main.go ，此处不在赘述。其运行效果如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$ kubectl trace run docker-desktop --imagename=registry.cn-hangzhou.aliyuncs.com/denverdino/kubectl-trace-runner -e <span class="string">&quot;tracepoint:syscalls:sys_enter_* &#123; @[probe] = count(); &#125;&quot;</span></span><br><span class="line">trace 7b64f4b4-226e-4aaf-83b1-94858c72f91f created</span><br><span class="line"></span><br><span class="line">$ kubectl trace attach 7b64f4b4-226e-4aaf-83b1-94858c72f91f</span><br><span class="line">Attaching 327 probes...</span><br><span class="line"></span><br><span class="line">^C</span><br><span class="line">first SIGINT received, now <span class="keyword">if</span> your program had maps and did not free them it should <span class="built_in">print</span> them out</span><br><span class="line"></span><br><span class="line">@[tracepoint:syscalls:sys_enter_getrlimit]: 1</span><br><span class="line">@[tracepoint:syscalls:sys_enter_newstat]: 1</span><br><span class="line">@[tracepoint:syscalls:sys_enter_fsync]: 1</span><br><span class="line">@[tracepoint:syscalls:sys_enter_rt_sigsuspend]: 2</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>或者利用别名来简化命令使用</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">alias</span> kubectl-trace-run=<span class="string">&quot;kubectl trace run --imagename=registry.cn-hangzhou.aliyuncs.com/denverdino/kubectl-trace-runner&quot;</span></span><br><span class="line">$ kubectl-trace-run docker-desktop -e <span class="string">&#x27;tracepoint:syscalls:sys_enter_open &#123; printf(&quot;%s %s\n&quot;, comm, str(args-&gt;filename)); &#125;&#x27;</span></span><br><span class="line">trace 96209723-f439-4fb8-8bdc-d32e41e53e35 created</span><br><span class="line"></span><br><span class="line">$ kubectl trace attach 96209723-f439-4fb8-8bdc-d32e41e53e35</span><br><span class="line">Attaching 1 probe...</span><br><span class="line">sntpc /etc/services</span><br><span class="line">sntpc /dev/urandom</span><br><span class="line">sntpc /dev/urandom</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>Have fun and Happy Halloween!</p>
+<p>本文引自<a href="https://developer.aliyun.com/article/798714">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eBPF/">eBPF</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/05/23/%E4%BD%BF%E7%94%A8-Docker-Desktop%E8%BF%9B%E8%A1%8C-BPF-%E5%BC%80%E5%8F%91/" data-title="使用 Docker Desktop进行 BPF 开发 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/05/24/Go-mod-同一个module的多版本问题/" title="Go mod 同一个module的多版本问题">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Go mod 同一个module的多版本问题</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/"  title="XFRM -- IPsec协议的内核实现框架">
+ <strong>下一篇：</strong><br/> 
+ <span>XFRM -- IPsec协议的内核实现框架
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/05/23/使用-Docker-Desktop进行-BPF-开发/" data-title="使用 Docker Desktop进行 BPF 开发" data-url="https://luckymrwang.github.io/2022/05/23/%E4%BD%BF%E7%94%A8-Docker-Desktop%E8%BF%9B%E8%A1%8C-BPF-%E5%BC%80%E5%8F%91/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#bcc-bpftrace"><span class="toc-number">1.</span> <span class="toc-text">bcc &amp; bpftrace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%A8Kubernetes%E4%B8%8A%E8%B0%83%E5%BA%A6-bpftrace-%E5%BA%94%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">在Kubernetes上调度 bpftrace 应用</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

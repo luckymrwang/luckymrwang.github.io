@@ -1,0 +1,503 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Bash 日期时间戳格式化 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="1UDF - 2016-11-29 00:00:35 --&gt; tdParams_to&#x3D;&#x3D;&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348772878&quot;,&quot;spreadurl&quot;:&quot;dMxpxx&quot;,&quot;appkey&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Bash 日期时间戳格式化">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/12/05/Bash-%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%88%B3%E6%A0%BC%E5%BC%8F%E5%8C%96/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="1UDF - 2016-11-29 00:00:35 --&gt; tdParams_to&#x3D;&#x3D;&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348772878&quot;,&quot;spreadurl&quot;:&quot;dMxpxx&quot;,&quot;appkey&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-12-05T04:09:45.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.187Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Bash">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/12/05/Bash-日期时间戳格式化/" title="Bash 日期时间戳格式化" itemprop="url">Bash 日期时间戳格式化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-12-05T04:09:45.000Z" itemprop="datePublished"> 发表于 2016-12-05</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%951%E2%80%94%E2%80%94%E5%91%BD%E4%BB%A4%E8%A1%8C"><span class="toc-number">1.</span> <span class="toc-text">方法1——命令行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%952%E2%80%94%E2%80%94shell%E8%84%9A%E6%9C%AC"><span class="toc-number">2.</span> <span class="toc-text">方法2——shell脚本</span></a></li></ol>
+		
+		</div>
+		
+		<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UDF - 2016-11-29 00:00:35 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348772878&quot;,&quot;spreadurl&quot;:&quot;dMxpxx&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;adnetname&quot;:&quot;UC&quot;,&quot;osversion&quot;:&quot;10.1.1&quot;,&quot;idfa&quot;:&quot;DE055F0E-72D7-4A72-B7A0-C3E45A3A33XX&quot;,&quot;clicktime&quot;:&quot;1480348581122&quot;,&quot;ip&quot;:&quot;117.38.163.147&quot;&#125;UDF - 2016-11-29 00:00:41 --&gt; tdParams_to==&gt;&#123;&quot;appid&quot;:&quot;2005001xxx&quot;,&quot;eventtime&quot;:&quot;1480348766255&quot;,&quot;appkey&quot;:&quot;XXbbf2fbaeb64d7b9623ec4ee3cde575&quot;,&quot;devicetype&quot;:&quot;iPhone7,2&quot;,&quot;osversion&quot;:&quot;10.0.2&quot;,&quot;idfa&quot;:&quot;93271665-1341-499C-BDD6-6797699B9AXX&quot;,&quot;ip&quot;:&quot;58.59.64.234&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有以上格式的数据，需要将其中的<code>eventtime</code>时间戳筛选出来并格式化</p>
+<span id="more"></span>
+<h3 id="方法1——命令行"><a href="#方法1——命令行" class="headerlink" title="方法1——命令行"></a>方法1——命令行</h3><p>将数据保存到<code>1.txt</code>中，执行如下命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk &#x27;&#123;print substr($0,80,10)&#125;&#x27; 1.txt | xargs -I &#123;&#125; date -d @&#123;&#125;  &quot;+%Y-%m-%d %H:%M:%S&quot;</span><br></pre></td></tr></table></figure>
+
+<p>上述命令中<code>xargs</code>表示将之前的内容作为参数，<code>&#123;&#125;</code>为其参数别名，然后调用系统命令<code>date</code>将日期格式化</p>
+<h3 id="方法2——shell脚本"><a href="#方法2——shell脚本" class="headerlink" title="方法2——shell脚本"></a>方法2——shell脚本</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash#grep &quot;tdParam&quot; $1 | while read line cat $1 | while read line do        eventtime=$&#123;line:79:10&#125;        pos=$(echo $line | sed &#x27;s/\(.*clicktime\)\(.*\)/\1/&#x27;)        p=$(($&#123;#pos&#125; + 3))        clicktime=$&#123;line:p:10&#125;        echo $&#123;line:6:19&#125;&quot; &quot;`date -d @$&#123;eventtime&#125; &quot;+%Y-%m-%d %H:%M:%S&quot;`&quot; &quot;`date -d @$&#123;clicktime&#125; &quot;+%Y-%m-%d %H:%M:%S&quot;`done</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>pos</code>那一表示获取关键字<code>clicktime</code>在行中的位置</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/Bash/">Bash</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/12/05/Bash-%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%88%B3%E6%A0%BC%E5%BC%8F%E5%8C%96/" data-title="Bash 日期时间戳格式化 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/12/23/Supervisor安装使用/" title="Supervisor安装使用">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Supervisor安装使用</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/11/23/Read-Files/"  title="Read_Files">
+ <strong>下一篇：</strong><br/> 
+ <span>Read_Files
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/12/05/Bash-日期时间戳格式化/" data-title="Bash 日期时间戳格式化" data-url="https://luckymrwang.github.io/2016/12/05/Bash-%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E6%88%B3%E6%A0%BC%E5%BC%8F%E5%8C%96/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%951%E2%80%94%E2%80%94%E5%91%BD%E4%BB%A4%E8%A1%8C"><span class="toc-number">1.</span> <span class="toc-text">方法1——命令行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%952%E2%80%94%E2%80%94shell%E8%84%9A%E6%9C%AC"><span class="toc-number">2.</span> <span class="toc-text">方法2——shell脚本</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

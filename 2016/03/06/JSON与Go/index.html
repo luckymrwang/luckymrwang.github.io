@@ -1,0 +1,592 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>JSON与Go | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="介绍JSON(JavaScript Object Notation)是一种简单的数据交换格式。从语法上来说，它综合了JavaScript的对象(objects)和列表(lists)。通常用于在web后端和运行在浏览器中的JavaScript程序之间通信，不过也可以用在很多其他的地方。官方主页，json.org，提供了对标准的详尽说明。 使用json 包可以轻松地在Go程序中读写JSON数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JSON与Go">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/03/06/JSON%E4%B8%8EGo/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="介绍JSON(JavaScript Object Notation)是一种简单的数据交换格式。从语法上来说，它综合了JavaScript的对象(objects)和列表(lists)。通常用于在web后端和运行在浏览器中的JavaScript程序之间通信，不过也可以用在很多其他的地方。官方主页，json.org，提供了对标准的详尽说明。 使用json 包可以轻松地在Go程序中读写JSON数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-03-06T10:34:19.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.194Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/03/06/JSON与Go/" title="JSON与Go" itemprop="url">JSON与Go</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-03-06T10:34:19.000Z" itemprop="datePublished"> 发表于 2016-03-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text">编码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E7%A0%81"><span class="toc-number">3.</span> <span class="toc-text">解码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generic-JSON-with-interface"><span class="toc-number">4.</span> <span class="toc-text">Generic JSON with interface{}</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E7%A0%81%E4%BB%BB%E6%84%8F%E6%95%B0%E6%8D%AE"><span class="toc-number">5.</span> <span class="toc-text">解码任意数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">6.</span> <span class="toc-text">引用类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E5%BC%8F%E7%BC%96%E8%A7%A3%E7%A0%81"><span class="toc-number">7.</span> <span class="toc-text">流式编解码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E4%B8%80%E6%AE%B5%E8%A7%A3%E6%9E%90json%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-number">9.</span> <span class="toc-text">附一段解析json字符串的代码</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>JSON(JavaScript Object Notation)是一种简单的数据交换格式。从语法上来说，它综合了JavaScript的对象(objects)和列表(lists)。通常用于在web后端和运行在浏览器中的JavaScript程序之间通信，不过也可以用在很多其他的地方。官方主页，<a href="http://json.org/">json.org</a>，提供了对标准的详尽说明。</p>
+<p>使用<a href="http://golang.org/pkg/encoding/json/">json</a> 包可以轻松地在Go程序中读写JSON数据</p>
+<span id="more"></span>
+<h3 id="编码"><a href="#编码" class="headerlink" title="编码"></a>编码</h3><p>通过函数<a href="http://golang.org/pkg/encoding/json/#Marshal">Marshal</a>编码JSON数据。</p>
+<pre><code>func Marshal(v interface&#123;&#125;) ([]byte, error)
+</code></pre>
+<p>给定Go的数据结构， Message，</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Message <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="type">string</span></span><br><span class="line">    Body <span class="type">string</span></span><br><span class="line">    Time <span class="type">int64</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以及Message的一个实例</p>
+<pre><code>m := Message&#123;&quot;Alice&quot;, &quot;Hello&quot;, 1294706395881547000&#125;
+</code></pre>
+<p>通过json.Marshal就可以得到一个JSON格式的m：</p>
+<p>b, err :&#x3D; json.Marshal(m)<br>如果一切顺利，err将会是nil，b将会是一个包含JSON数据的 []byte：</p>
+<pre><code>b == []byte(`&#123;&quot;Name&quot;:&quot;Alice&quot;,&quot;Body&quot;:&quot;Hello&quot;,&quot;Time&quot;:1294706395881547000&#125;`)
+</code></pre>
+<p>只有能够被表示成合法的JSON的数据才会被编码：</p>
+<ul>
+<li>JSON objects 只支持字符串作为 keys；要对 Go map 类型编码，必须是这是形式map[string]T（其中T任意一种 json 包支持的 Go 类型）</li>
+<li>Channel， complex 以及函数不能被编码</li>
+<li>不支持循环的数据结构；这会导致 Marshal 进入死循环</li>
+<li>指针会被编码成它们指向的值（或者null如果指针是nil）</li>
+</ul>
+<h3 id="解码"><a href="#解码" class="headerlink" title="解码"></a>解码</h3><p>通过函数Unmarshal解码JSON数据。</p>
+<pre><code>func Unmarshal(data []byte, v interface&#123;&#125;) error
+</code></pre>
+<p>首先，声明一个变量用于存放解码后的数据</p>
+<p>var m Message<br>然后调用json.Unmarshal，传递参数JSON数据的[]byte以及指向m的指针</p>
+<pre><code>err := json.Unmarshal(b, &amp;m)
+</code></pre>
+<p>如果b中包含匹配m的合法的JSON，那么函数调用之后，err值为nil，b中的数据会存到结构体m中，就像下面这样的赋值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">m = Message&#123;</span><br><span class="line">    Name: <span class="string">&quot;Alice&quot;</span>,</span><br><span class="line">    Body: <span class="string">&quot;Hello&quot;</span>,</span><br><span class="line">    Time: <span class="number">1294706395881547000</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Unmarshal是如何定义存放解码的数据的呢？对于一个给定的 JSON key “Foo”，Unmarshal会查询结构体的域来寻找（in order of preference）：</p>
+<ul>
+<li>一个带有标签”Foo” 的可导出域（更多关于结构体标签见Go spec）</li>
+<li>一个名为”Foo” 的可导出域，或者</li>
+<li>一个名为”FOO” 或者 “FoO 或者其他大小写的匹配”Foo”的可导出域</li>
+<li></li>
+</ul>
+<p>当 JSON 数据结构跟 Go 类型不一致会怎么样呢？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">b := []<span class="type">byte</span>(<span class="string">`&#123;&quot;Name&quot;:&quot;Bob&quot;,&quot;Food&quot;:&quot;Pickle&quot;&#125;`</span>)</span><br><span class="line"><span class="keyword">var</span> m Message</span><br><span class="line">err := json.Unmarshal(b, &amp;m)</span><br></pre></td></tr></table></figure>
+
+<p>Unmarshal只会解码在目标类型中出现的域。在上面的例子中，m只有Name域会被填充，Food域将被忽略。这种行为在你想从一个大的JSON blob中选择几个指定的域时会特别有用。这也意味着Unmarshal不会影响目标结构体中的不可导出域。</p>
+<p>但是，如果你事先并不了解JSON数据的结构，又该如何呢？</p>
+<h3 id="Generic-JSON-with-interface"><a href="#Generic-JSON-with-interface" class="headerlink" title="Generic JSON with interface{}"></a>Generic JSON with interface{}</h3><p>interface{}类型（空接口）表示一个没有方法的接口。每一个Go类型至少实现了0个方法，因此都符合空接口。</p>
+<p>空接口可以作为一个通用的容器类型：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">i = <span class="string">&quot;a string&quot;</span></span><br><span class="line">i = <span class="number">2011</span></span><br><span class="line">i = <span class="number">2.777</span></span><br></pre></td></tr></table></figure>
+
+<p>类型断言可以访问底层的具体类型：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r := i.(<span class="type">float64</span>)</span><br><span class="line">fmt.Println(<span class="string">&quot;the circle&#x27;s area&quot;</span>, math.Pi*r*r)</span><br></pre></td></tr></table></figure>
+
+<p>或者，如果底层的类型是未知的，通过类型switch来确定类型：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> v := i.(<span class="keyword">type</span>) &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="type">int</span>:</span><br><span class="line">    fmt.Println(<span class="string">&quot;twice i is&quot;</span>, v*<span class="number">2</span>)</span><br><span class="line"><span class="keyword">case</span> <span class="type">float64</span>:</span><br><span class="line">    fmt.Println(<span class="string">&quot;the reciprocal of i is&quot;</span>, <span class="number">1</span>/v)</span><br><span class="line"><span class="keyword">case</span> <span class="type">string</span>:</span><br><span class="line">    h := <span class="built_in">len</span>(v) / <span class="number">2</span></span><br><span class="line">    fmt.Println(<span class="string">&quot;i swapped by halves is&quot;</span>, v[h:]+v[:h])</span><br><span class="line"><span class="keyword">default</span>:</span><br><span class="line">    <span class="comment">// i isn&#x27;t one of the types above</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>json 包使用 map[string]interface{} 和 []interface{} 来存储任意 JSON objects 以及 arrays；它很乐意将任意合法的 JSON blob unmarshal 到普通的 interface{} 中。默认的具体 Go 类型是：</p>
+<ul>
+<li>bool JSON booleans</li>
+<li>float64 JSON numbers</li>
+<li>string JSON strings</li>
+<li>nil JSON null</li>
+</ul>
+<h3 id="解码任意数据"><a href="#解码任意数据" class="headerlink" title="解码任意数据"></a>解码任意数据</h3><p>考虑这样一个存放在变量b中的JSON数据：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b := []<span class="type">byte</span>(<span class="string">`&#123;&quot;Name&quot;:&quot;Wednesday&quot;,&quot;Age&quot;:6,&quot;Parents&quot;:[&quot;Gomez&quot;,&quot;Morticia&quot;]&#125;`</span>)</span><br></pre></td></tr></table></figure>
+
+<p>当不知道数据结构时，我们可以将它Unmarshal到interface{} ：</p>
+<pre><code>var f interface&#123;&#125;
+err := json.Unmarshal(b, &amp;f)
+</code></pre>
+<p>现在f中的值就是一个map，key为字符串，值就是以空接口存储的自身：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">f = <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">    <span class="string">&quot;Name&quot;</span>: <span class="string">&quot;Wednesday&quot;</span>,</span><br><span class="line">    <span class="string">&quot;Age&quot;</span>:  <span class="number">6</span>,</span><br><span class="line">    <span class="string">&quot;Parents&quot;</span>: []<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">        <span class="string">&quot;Gomez&quot;</span>,</span><br><span class="line">        <span class="string">&quot;Morticia&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>要访问这样的数据，我们通过类型断言来访问f底层的map[string]interface{}：</p>
+<pre><code>m := f.(map[string]interface&#123;&#125;)
+</code></pre>
+<p>通过 range 语句来迭代map，并通过类型选择来访问具体类型的值：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> k, v := <span class="keyword">range</span> m &#123;</span><br><span class="line">    <span class="keyword">switch</span> vv := v.(<span class="keyword">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="type">string</span>:</span><br><span class="line">        fmt.Println(k, <span class="string">&quot;is string&quot;</span>, vv)</span><br><span class="line">    <span class="keyword">case</span> <span class="type">int</span>:</span><br><span class="line">        fmt.Println(k, <span class="string">&quot;is int&quot;</span>, vv)</span><br><span class="line">    <span class="keyword">case</span> []<span class="keyword">interface</span>&#123;&#125;:</span><br><span class="line">        fmt.Println(k, <span class="string">&quot;is an array:&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> i, u := <span class="keyword">range</span> vv &#123;</span><br><span class="line">            fmt.Println(i, u)</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        fmt.Println(k, <span class="string">&quot;is of a type I don&#x27;t know how to handle&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方式我们可以访问未知的 JSON 数据，同时还获得了类型安全的好处。</p>
+<h3 id="引用类型"><a href="#引用类型" class="headerlink" title="引用类型"></a>引用类型</h3><p>现在定义一个Go类型来包含上一个例子中的数据：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> FamilyMember <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name    <span class="type">string</span></span><br><span class="line">    Age     <span class="type">int</span></span><br><span class="line">    Parents []<span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> m FamilyMember</span><br><span class="line">    err := json.Unmarshal(b, &amp;m)    </span><br></pre></td></tr></table></figure>
+
+<p>可以正常地将数据 unmarshal 到FamilyMember中，但是如果仔细观察就能看到有意思的事情发生了。通过 var 语句我们分配了一个FamilyMember结构体，然后将指向结构体的指针传递给Unmarshal，但是现在Parents还是一个nil的slice。为了填充Parents域，Unmarshal在内部分配了一个新的slice。这是Unmarshal 支持reference（pointers，slices和maps）类型的典型做法。</p>
+<p>考虑 unmarshal 数据到这个结构：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Foo <span class="keyword">struct</span> &#123;</span><br><span class="line">    Bar *Bar</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果在JSON object 中有一个域 Bar，那么Unmarshal就会分配一个新的Bar并填充。如果没有，Bar就是一个nil指针。</p>
+<p>根据这个可以得到一个规则：如果应用接收几个不同的消息类型，你可能会像下面这样定义”receiver”结构：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> IncomingMessage <span class="keyword">struct</span> &#123;</span><br><span class="line">    Cmd *Command</span><br><span class="line">    Msg *Message</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>取决于要通信的消息类型，发送方以top-level JSON object 填充 Cmd 域和&#x2F;或者Msg域。Unmarshal在将数据解码到IncomingMessage结构中时，只会分配在出现在JSON 数据中的结构。要知道处理哪个消息，程序员只需简单的测试下Cmd还是Msg不是nil。</p>
+<h3 id="流式编解码"><a href="#流式编解码" class="headerlink" title="流式编解码"></a>流式编解码</h3><p>json 包提供了Decoder 和 Encoder 用来支持JSON 数据流的读写。函数NewDecoder 和 NewEncoder 封装了io.Reader和io.Writer 接口类型。</p>
+<pre><code>func NewDecoder(r io.Reader) *Decoder
+func NewEncoder(w io.Writer) *Encoder
+</code></pre>
+<p>下面是一个从标准输入读入连续的JSON object的实例程序，每个结构体只留下Name域，然后把objects写到标准输出：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;encoding/json&quot;</span></span><br><span class="line">    <span class="string">&quot;log&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    dec := json.NewDecoder(os.Stdin)</span><br><span class="line">    enc := json.NewEncoder(os.Stdout)</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        <span class="keyword">var</span> v <span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">        <span class="keyword">if</span> err := dec.Decode(&amp;v); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            log.Println(err)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> k := <span class="keyword">range</span> v &#123;</span><br><span class="line">            <span class="keyword">if</span> k != <span class="string">&quot;Name&quot;</span> &#123;</span><br><span class="line">                <span class="built_in">delete</span>(v, k)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> err := enc.Encode(&amp;v); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            log.Println(err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于读写操作的普遍性，类型Encode和Decoder可以用于多种场合，例如读写HTTP 链接，WebSockets或者文件。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>更多信息请参考[json package documentation]。[jsonrpc] 包中的源文件给出了一个使用json的例子。</p>
+<p>作者 Andrew Gerrand</p>
+<h3 id="附一段解析json字符串的代码"><a href="#附一段解析json字符串的代码" class="headerlink" title="附一段解析json字符串的代码"></a>附一段解析json字符串的代码</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;encoding/json&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> desc <span class="keyword">struct</span> &#123;</span><br><span class="line">    Lang <span class="type">string</span> <span class="string">`json:&quot;lang&quot;`</span></span><br><span class="line">    Content <span class="type">string</span> <span class="string">`json:&quot;content&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> DescSlice <span class="keyword">struct</span> &#123;</span><br><span class="line">    Desc []desc <span class="string">`json:&quot;body&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    app1 := <span class="string">`&#123;&quot;lang&quot;:&quot;ch&quot;, &quot;content&quot;:&quot;1233456&quot;&#125;`</span></span><br><span class="line">    <span class="keyword">var</span>  info1 desc</span><br><span class="line">    err := json.Unmarshal([]<span class="type">byte</span>(app1), &amp;info1)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;error is %v\n&quot;</span>, err)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, info1)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    app2 := <span class="string">`[&#123;&quot;lang&quot;:&quot;ch01&quot;,&quot;content&quot;:&quot;1233456&quot;&#125;,&#123;&quot;lang&quot;:&quot;ch02&quot;,&quot;content&quot;:&quot;1233456&quot;&#125;]`</span></span><br><span class="line">    <span class="keyword">var</span> info2 []desc</span><br><span class="line">    err = json.Unmarshal([]<span class="type">byte</span>(app2), &amp;info2)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;error is %v\n&quot;</span>, err)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, info2)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    app3 := <span class="string">`&#123;&quot;body&quot;:[&#123;&quot;lang&quot;:&quot;ch01&quot;,&quot;content&quot;:&quot;1233456&quot;&#125;,&#123;&quot;lang&quot;:&quot;ch02&quot;,&quot;content&quot;:&quot;1233456&quot;&#125;]&#125;`</span></span><br><span class="line">    info3 := DescSlice&#123;&#125;</span><br><span class="line">    err = json.Unmarshal([]<span class="type">byte</span>(app3), &amp;info3)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;error is %v\n&quot;</span>, err)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, info3)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/03/06/JSON%E4%B8%8EGo/" data-title="JSON与Go | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/03/31/React-入门/" title="React 入门">
+  <strong>上一篇：</strong><br/>
+  <span>
+  React 入门</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/03/06/Go的-byte与string/"  title="Go的[]byte与string">
+ <strong>下一篇：</strong><br/> 
+ <span>Go的[]byte与string
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/03/06/JSON与Go/" data-title="JSON与Go" data-url="https://luckymrwang.github.io/2016/03/06/JSON%E4%B8%8EGo/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text">编码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E7%A0%81"><span class="toc-number">3.</span> <span class="toc-text">解码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generic-JSON-with-interface"><span class="toc-number">4.</span> <span class="toc-text">Generic JSON with interface{}</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E7%A0%81%E4%BB%BB%E6%84%8F%E6%95%B0%E6%8D%AE"><span class="toc-number">5.</span> <span class="toc-text">解码任意数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">6.</span> <span class="toc-text">引用类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E5%BC%8F%E7%BC%96%E8%A7%A3%E7%A0%81"><span class="toc-number">7.</span> <span class="toc-text">流式编解码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E4%B8%80%E6%AE%B5%E8%A7%A3%E6%9E%90json%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-number">9.</span> <span class="toc-text">附一段解析json字符串的代码</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

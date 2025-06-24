@@ -1,0 +1,990 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="学习总结 思考感悟 知识管理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="https://luckymrwang.github.io/page/4/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="学习总结 思考感悟 知识管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="luckymrwang">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/" title="XFRM -- IPsec协议的内核实现框架" itemprop="url">XFRM -- IPsec协议的内核实现框架</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-23T06:16:10.000Z" itemprop="datePublished"> 发表于 2022-05-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><code>IPsec</code>协议帮助IP层建立安全可信的数据包传输通道。当前已经有了如<a href="https://link.segmentfault.com/?enc=yiJRfjDaOBtxIPM5EjpbsA==.Ex4qizN1gKKgbufiqSFjTmO3Q2gj2DujT2N7t2kQhKM=">StrongSwan</a>、<a href="https://link.segmentfault.com/?enc=T3gYD1nBaO8i7odY0GxMxQ==.+n11tAQvYuD0p2voWWWbrQiAh8iqTkWiqQfS536cp0M=">OpenSwan</a>等比较成熟的解决方案，而它们都使用了Linux内核中的<code>XFRM</code>框架进行报文接收发送。</p>
+<p><img src="/images/xfrm1.webp" alt="image"></p>
+<p><img src="/images/xfrm2.gif" alt="image"></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/23/XFRM-IPsec%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%86%85%E6%A0%B8%E5%AE%9E%E7%8E%B0%E6%A1%86%E6%9E%B6/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/23/XFRM-IPsec协议的内核实现框架/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/12/Calico-eBPF数据平面/" title="Calico eBPF数据平面" itemprop="url">Calico eBPF数据平面</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-12T03:15:35.000Z" itemprop="datePublished"> 发表于 2022-05-12</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="什么是-eBPF"><a href="#什么是-eBPF" class="headerlink" title="什么是 eBPF"></a>什么是 eBPF</h3><p>eBPF 是嵌入在 Linux 内核中的虚拟机。它允许将小程序加载到内核中，并附加到钩子上，当某些事件发生时会触发这些钩子。这允许（有时大量）定制内核的行为。虽然 eBPF 虚拟机对于每种类型的钩子都是相同的，但钩子的功能却大不相同。由于将程序加载到内核中可能很危险；内核通过非常严格的静态验证器运行所有程序；验证程序对程序进行沙箱处理，确保它只能访问允许的内存部分，并确保它必须快速终止。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/12/Calico-eBPF%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Calico/">Calico</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/12/Calico-eBPF数据平面/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/12/Calico-eBPF数据平面/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/11/TCP源码分析-三次握手之-Connect-过程/" title="TCP源码分析 - 三次握手之 Connect 过程" itemprop="url">TCP源码分析 - 三次握手之 Connect 过程</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-11T11:45:05.000Z" itemprop="datePublished"> 发表于 2022-05-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>本文主要分析 TCP 协议的实现，但由于 TCP 协议比较复杂，所以分几篇文章进行分析，这篇主要介绍 TCP 协议建立连接时的三次握手过程。</p>
+<p>TCP 协议应该是 TCP&#x2F;IP 协议栈中最为复杂的一个协议(没有之一)，TCP 协议的复杂性来源于其面向连接和保证可靠传输。</p>
+<p>如下图所示，TCP 协议位于 TCP&#x2F;IP 协议栈的第四层，也就是传输层，其建立在网络层的 IP 协议。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/11/TCP%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E4%B9%8B-Connect-%E8%BF%87%E7%A8%8B/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux-TCP/">Linux/TCP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/11/TCP源码分析-三次握手之-Connect-过程/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/11/TCP源码分析-三次握手之-Connect-过程/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/10/Calico引入eBPF/" title="Calico引入eBPF" itemprop="url">Calico引入eBPF</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-10T08:17:55.000Z" itemprop="datePublished"> 发表于 2022-05-10</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Calico团队在3.13版本引入了eBPF，这个新的dataplane与传统的linux dataplane有哪些区别呢？</p>
+<ul>
+<li>它可以扩展到更高的吞吐量。</li>
+<li>每个GBit使用更少的CPU。</li>
+<li>它具有对Kubernetes服务的本机支持（无需kube-proxy），该支持：<ul>
+<li>减少服务数据包的第一个数据包延迟。</li>
+<li>一直保留到外部主机的外部客户端源IP地址。</li>
+<li>支持DSR（直接服务器返回），以实现更高效的服务路由。</li>
+<li>与kube-proxy相比，使用更少的CPU来保持数据平面同步。</li>
+</ul>
+</li>
+</ul>
+<p>此外，社区对新dataplane进行了性能测试，在短连接延时、服务访问时间、cpu使用率等方面，性能都有明显提升，详见：<a href="https://www.tigera.io/blog/introducing-the-calico-ebpf-dataplane/">https://www.tigera.io/blog/introducing-the-calico-ebpf-dataplane/</a></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/10/Calico%E5%BC%95%E5%85%A5eBPF/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Calico/">Calico</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/10/Calico引入eBPF/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/10/Calico引入eBPF/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/08/Golang内存分配源码解析/" title="Golang内存分配源码解析" itemprop="url">Golang内存分配源码解析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-08T02:09:01.000Z" itemprop="datePublished"> 发表于 2022-05-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="Golang内存分配整体架构"><a href="#Golang内存分配整体架构" class="headerlink" title="Golang内存分配整体架构"></a>Golang内存分配整体架构</h3><p><img src="/images/golang-memory1.jpg" alt="image"></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/08/Golang%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Golang/">Golang</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/08/Golang内存分配源码解析/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/08/Golang内存分配源码解析/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/08/Kubernetes-内存资源限制实战/" title="Kubernetes 内存资源限制实战" itemprop="url">Kubernetes 内存资源限制实战</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-08T01:47:24.000Z" itemprop="datePublished"> 发表于 2022-05-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Kubernetes 对内存资源的限制实际上是通过 cgroup 来控制的，cgroup 是容器的一组用来控制内核如何运行进程的相关属性集合。针对内存、CPU 和各种设备都有对应的 cgroup。cgroup 是具有层级的，这意味着每个 cgroup 拥有一个它可以继承属性的父亲，往上一直直到系统启动时创建的 root cgroup。关于其背后的原理可以参考： <a href="https://medium.com/@betz.mark/understanding-resource-limits-in-kubernetes-memory-6b41e9a955f9">深入理解Kubernetes资源限制：内存</a>。</p>
+<p>今天我们将通过实验来探索容器在什么情况下会被 oom-killed。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/08/Kubernetes-%E5%86%85%E5%AD%98%E8%B5%84%E6%BA%90%E9%99%90%E5%88%B6%E5%AE%9E%E6%88%98/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/08/Kubernetes-内存资源限制实战/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/08/Kubernetes-内存资源限制实战/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/08/Go性能分析-内存/" title="Go性能分析-内存" itemprop="url">Go性能分析-内存</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-08T00:31:51.000Z" itemprop="datePublished"> 发表于 2022-05-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>之前整理过<a href="/Go%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90.md">Go性能分析</a>，讲述了pprof的基本使用方式，本篇着重采用pprof来帮助我们分析Golang进程的内存使用。</p>
+<h3 id="pprof-实例"><a href="#pprof-实例" class="headerlink" title="pprof 实例"></a>pprof 实例</h3><p>通常我们采用<code>http api</code>来将pprof信息暴露出来以供分析，我们可以采用<code>net/http/pprof</code>这个package。下面是一个简单的示例：</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/08/Go%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-%E5%86%85%E5%AD%98/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/08/Go性能分析-内存/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/08/Go性能分析-内存/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/06/使用-etcdctl-访问-Kubernetes-数据/" title="使用 etcdctl 访问 Kubernetes 数据" itemprop="url">使用 etcdctl 访问 Kubernetes 数据</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-06T08:01:16.000Z" itemprop="datePublished"> 发表于 2022-05-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Kubenretes1.6 中使用 <code>etcd V3</code> 版本的 API，使用 <code>etcdctl</code> 直接 <code>ls</code> 的话只能看到 <code>/kube-centos</code> 一个路径。需要在命令前加上 <code>ETCDCTL_API=3</code> 这个环境变量才能看到 kuberentes 在 etcd 中保存的数据。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable constant_">ETCDCTL_API</span>=<span class="number">3</span> etcdctl get /registry/namespaces/<span class="keyword">default</span> -w=json|python -m json.<span class="property">tool</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/06/%E4%BD%BF%E7%94%A8-etcdctl-%E8%AE%BF%E9%97%AE-Kubernetes-%E6%95%B0%E6%8D%AE/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/06/使用-etcdctl-访问-Kubernetes-数据/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/06/使用-etcdctl-访问-Kubernetes-数据/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/04/24/iptables-nat-conntrack的特殊之处/" title="iptables nat&amp;conntrack的特殊之处" itemprop="url">iptables nat&amp;conntrack的特殊之处</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-24T02:07:09.000Z" itemprop="datePublished"> 发表于 2022-04-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="问题与解释"><a href="#问题与解释" class="headerlink" title="问题与解释"></a>问题与解释</h3><p>我在<code>PREROUTING</code>上做了一个<code>REDIRECT</code>端口改写，相应的服务处理请求后会返回应答。</p>
+<p>按照我以往的认识，认为回包的流量应该先后经过<code>OUTPUT</code>和<code>POSTROUTING</code>，所以我利用<code>iptables -t nat -nvL</code>去查看<code>NAT</code>表在<code>OUTPUT</code>链和<code>POSTROUTING</code>链上的<code>packge</code>计数器，结果发现没有上涨，这让我陷入了沉思。</p>
+<p>经过谷歌后找到了完美的解释：<a href="https://superuser.com/questions/1269859/linux-netfilter-how-does-connection-tracking-track-connections-changed-by-nat">linux-netfilter-how-does-connection-tracking-track-connections-changed-by-nat</a>。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/04/24/iptables-nat-conntrack%E7%9A%84%E7%89%B9%E6%AE%8A%E4%B9%8B%E5%A4%84/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/04/24/iptables-nat-conntrack的特殊之处/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/24/iptables-nat-conntrack的特殊之处/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/04/23/calico-iptables/" title="calico-iptables" itemprop="url">calico-iptables</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-23T15:56:15.000Z" itemprop="datePublished"> 发表于 2022-04-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="Calico-iptables"><a href="#Calico-iptables" class="headerlink" title="Calico-iptables"></a>Calico-iptables</h2>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/04/23/calico-iptables/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/04/23/calico-iptables/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/23/calico-iptables/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/3/">&lt;span&gt;&lt;&#x2F;span&gt;Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/5/">Next&lt;span&gt;&lt;&#x2F;span&gt;</a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>

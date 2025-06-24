@@ -1,0 +1,534 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go语言的bytes.buffer | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="bytes.bufferbytes.buffer是一个缓冲byte类型的缓冲器，这个缓冲器里存放着都是byte 创建一个缓冲器NewBuffer如果在使用bytes.NewBuffer的时候，参数是[]byte的slice的话缓冲器里就是这个slice的内容，如果参数是nil的话，意思是New一个空的缓冲器里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go语言的bytes.buffer">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/06/11/Go%E8%AF%AD%E8%A8%80%E7%9A%84bytes-buffer/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="bytes.bufferbytes.buffer是一个缓冲byte类型的缓冲器，这个缓冲器里存放着都是byte 创建一个缓冲器NewBuffer如果在使用bytes.NewBuffer的时候，参数是[]byte的slice的话缓冲器里就是这个slice的内容，如果参数是nil的话，意思是New一个空的缓冲器里">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-06-11T12:43:24.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.193Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/06/11/Go语言的bytes-buffer/" title="Go语言的bytes.buffer" itemprop="url">Go语言的bytes.buffer</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-06-11T12:43:24.000Z" itemprop="datePublished"> 发表于 2016-06-11</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#bytes-buffer"><span class="toc-number">1.</span> <span class="toc-text">bytes.buffer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E7%BC%93%E5%86%B2%E5%99%A8"><span class="toc-number">2.</span> <span class="toc-text">创建一个缓冲器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NewBuffer"><span class="toc-number">2.1.</span> <span class="toc-text">NewBuffer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NewBufferString"><span class="toc-number">2.2.</span> <span class="toc-text">NewBufferString</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E5%88%B0%E7%BC%93%E5%86%B2%E5%99%A8%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%A4%A7%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">写入到缓冲器（缓冲器变大）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Write%E2%80%94-func-b-Buffer-Write-p-byte-n-int-err-error"><span class="toc-number">3.1.</span> <span class="toc-text">Write—- func (b *Buffer) Write(p []byte) (n int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WriteString%E2%80%94-func-b-Buffer-WriteString-s-string-n-int-err-error"><span class="toc-number">3.2.</span> <span class="toc-text">WriteString—- func (b *Buffer) WriteString(s string) (n int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WriteByte%E2%80%94-func-b-Buffer-WriteByte-c-byte-error"><span class="toc-number">3.3.</span> <span class="toc-text">WriteByte—- func (b *Buffer) WriteByte(c byte) error</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WriteRune%E2%80%94-func-b-Buffer-WriteRune-r-rune-n-int-err-error"><span class="toc-number">3.4.</span> <span class="toc-text">WriteRune—- func (b *Buffer) WriteRune(r rune) (n int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%8E%E7%BC%93%E5%86%B2%E5%99%A8%E5%86%99%E5%87%BA%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%B0%8F%EF%BC%89"><span class="toc-number">3.5.</span> <span class="toc-text">从缓冲器写出（缓冲器变小）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WriteTo%E2%80%94-func-b-Buffer-WriteTo-w-io-Writer-n-int64-err-error"><span class="toc-number">3.6.</span> <span class="toc-text">WriteTo—- func (b *Buffer) WriteTo(w io.Writer) (n int64, err error)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%87%BA%E7%BC%93%E5%86%B2%E5%99%A8%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%B0%8F%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">读出缓冲器（缓冲器变小）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Read%E2%80%94-func-b-Buffer-Read-p-byte-n-int-err-error"><span class="toc-number">4.1.</span> <span class="toc-text">Read—-func (b *Buffer) Read(p []byte) (n int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadByte%E2%80%94-func-b-Buffer-ReadByte-c-byte-err-error"><span class="toc-number">4.2.</span> <span class="toc-text">ReadByte—- func (b *Buffer) ReadByte() (c byte, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadRune%E2%80%94-func-b-Buffer-ReadRune-r-rune-size-int-err-error"><span class="toc-number">4.3.</span> <span class="toc-text">ReadRune—- func (b *Buffer) ReadRune() (r rune, size int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadBytes%E2%80%94-func-b-Buffer-ReadBytes-delim-byte-line-byte-err-error"><span class="toc-number">4.4.</span> <span class="toc-text">ReadBytes—- func (b *Buffer) ReadBytes(delim byte) (line []byte, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadString%E2%80%94-func-b-Buffer-ReadString-delim-byte-line-string-err-error"><span class="toc-number">4.5.</span> <span class="toc-text">ReadString—- func (b *Buffer) ReadString(delim byte) (line string, err error)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%85%A5%E7%BC%93%E5%86%B2%E5%99%A8%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%A4%A7%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">读入缓冲器（缓冲器变大）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadFrom%E2%80%94-func-b-Buffer-ReadFrom-r-io-Reader-n-int64-err-error"><span class="toc-number">5.1.</span> <span class="toc-text">ReadFrom—- func (b *Buffer) ReadFrom(r io.Reader) (n int64, err error)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%96%E5%87%BA%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%B0%8F%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">从缓冲器取出（缓冲器变小）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Next-%E2%80%94-func-b-Buffer-Next-n-int-byte"><span class="toc-number">6.1.</span> <span class="toc-text">Next —- func (b *Buffer) Next(n int) []byte</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h3 id="bytes-buffer"><a href="#bytes-buffer" class="headerlink" title="bytes.buffer"></a>bytes.buffer</h3><p>bytes.buffer是一个缓冲byte类型的缓冲器，这个缓冲器里存放着都是byte</p>
+<h3 id="创建一个缓冲器"><a href="#创建一个缓冲器" class="headerlink" title="创建一个缓冲器"></a>创建一个缓冲器</h3><h4 id="NewBuffer"><a href="#NewBuffer" class="headerlink" title="NewBuffer"></a>NewBuffer</h4><p>如果在使用bytes.NewBuffer的时候，参数是[]byte的slice的话<br>缓冲器里就是这个slice的内容，如果参数是nil的话，意思是New一个空的缓冲器里</p>
+<span id="more"></span>
+<h4 id="NewBufferString"><a href="#NewBufferString" class="headerlink" title="NewBufferString"></a>NewBufferString</h4><p>还可以用bytes.NewBufferString(“hello”)来建立一个内容是hello的缓冲器</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">buf1:=bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">buf2:=bytes.NewBuffer([]<span class="type">byte</span>(<span class="string">&quot;hello&quot;</span>))</span><br><span class="line">buf3:=bytes.NewBuffer([]<span class="type">byte</span>&#123;<span class="string">&quot;h&quot;</span>,<span class="string">&quot;e&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;l&quot;</span>,<span class="string">&quot;o&quot;</span>&#125;)</span><br><span class="line">以上三者等效</span><br><span class="line">buf4:=bytes.NewBufferString(<span class="string">&quot;&quot;</span>)</span><br><span class="line">buf5:=bytes.NewBuffer([]<span class="type">byte</span>&#123;&#125;)</span><br><span class="line">以上两者等效</span><br></pre></td></tr></table></figure>
+
+<p>如果buffer在new的时候是空的也没关系，因为可以用Write来写入，写在尾部</p>
+<h3 id="写入到缓冲器（缓冲器变大）"><a href="#写入到缓冲器（缓冲器变大）" class="headerlink" title="写入到缓冲器（缓冲器变大）"></a>写入到缓冲器（缓冲器变大）</h3><h4 id="Write—-func-b-Buffer-Write-p-byte-n-int-err-error"><a href="#Write—-func-b-Buffer-Write-p-byte-n-int-err-error" class="headerlink" title="Write—- func (b *Buffer) Write(p []byte) (n int, err error)"></a>Write—- func (b *Buffer) Write(p []byte) (n int, err error)</h4><p>使用Write方法，将一个byte类型的slice放到缓冲器的尾部</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := []<span class="type">byte</span>(<span class="string">&quot; world&quot;</span>)</span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    fmt.Println(buf.String())  <span class="comment">//buf.String()方法是吧buf里的内容转成string，以便于打印</span></span><br><span class="line">    buf.Write(s) <span class="comment">//将s这个slice写到buf的尾部</span></span><br><span class="line">    fmt.Println(buf.String())  <span class="comment">//打印 hello world</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="WriteString—-func-b-Buffer-WriteString-s-string-n-int-err-error"><a href="#WriteString—-func-b-Buffer-WriteString-s-string-n-int-err-error" class="headerlink" title="WriteString—- func (b *Buffer) WriteString(s string) (n int, err error)"></a>WriteString—- func (b *Buffer) WriteString(s string) (n int, err error)</h4><p>使用WriteString方法，将一个字符串放到缓冲器的尾部</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s := <span class="string">&quot; world&quot;</span></span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    fmt.Println(buf.String())  <span class="comment">//buf.String()方法是吧buf里的内容转成string，以便于打印</span></span><br><span class="line">    buf.WriteString(s) <span class="comment">//将s这个string写到buf的尾部</span></span><br><span class="line">    fmt.Println(buf.String())  <span class="comment">//打印 hello world</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="WriteByte—-func-b-Buffer-WriteByte-c-byte-error"><a href="#WriteByte—-func-b-Buffer-WriteByte-c-byte-error" class="headerlink" title="WriteByte—- func (b *Buffer) WriteByte(c byte) error"></a>WriteByte—- func (b *Buffer) WriteByte(c byte) error</h4><p>使用WriteByte方法，将一个byte类型的数据放到缓冲器的尾部</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> s <span class="type">byte</span> = <span class="string">&#x27;!&#x27;</span></span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    fmt.Println(buf.String())  <span class="comment">//buf.String()方法是吧buf里的内容转成string，以便于打印</span></span><br><span class="line">    buf.WriteByte(s) <span class="comment">//将s这个string写到buf的尾部</span></span><br><span class="line">    fmt.Println(buf.String())  <span class="comment">//打印 hello!</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="WriteRune—-func-b-Buffer-WriteRune-r-rune-n-int-err-error"><a href="#WriteRune—-func-b-Buffer-WriteRune-r-rune-n-int-err-error" class="headerlink" title="WriteRune—- func (b *Buffer) WriteRune(r rune) (n int, err error)"></a>WriteRune—- func (b *Buffer) WriteRune(r rune) (n int, err error)</h4><p>使用WriteRune方法，将一个rune类型的数据放到缓冲器的尾部</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> s <span class="type">rune</span> = <span class="string">&#x27;好&#x27;</span></span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    fmt.Println(buf.String())  <span class="comment">//buf.String()方法是吧buf里的内容转成string，以便于打印</span></span><br><span class="line">    buf.WriteRune(s) <span class="comment">//将s这个string写到buf的尾部</span></span><br><span class="line">    fmt.Println(buf.String())  <span class="comment">//打印 hello好</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="从缓冲器写出（缓冲器变小）"><a href="#从缓冲器写出（缓冲器变小）" class="headerlink" title="从缓冲器写出（缓冲器变小）"></a>从缓冲器写出（缓冲器变小）</h4><h4 id="WriteTo—-func-b-Buffer-WriteTo-w-io-Writer-n-int64-err-error"><a href="#WriteTo—-func-b-Buffer-WriteTo-w-io-Writer-n-int64-err-error" class="headerlink" title="WriteTo—- func (b *Buffer) WriteTo(w io.Writer) (n int64, err error)"></a>WriteTo—- func (b *Buffer) WriteTo(w io.Writer) (n int64, err error)</h4><p>使用WriteTo方法，将一个缓冲器的数据写到w里，w是实现io.Writer的，比如os.File就是实现io.Writer</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    file , _ := os.Create(<span class="string">&quot;text.txt&quot;</span>)</span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    buf.WriteTo(file) <span class="comment">//hello写到text.txt文件中了</span></span><br><span class="line">    fmt.Fprintf(file, buf.String()) <span class="comment">//虽然这不在讨论范围，但这句效果同上</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="读出缓冲器（缓冲器变小）"><a href="#读出缓冲器（缓冲器变小）" class="headerlink" title="读出缓冲器（缓冲器变小）"></a>读出缓冲器（缓冲器变小）</h3><h4 id="Read—-func-b-Buffer-Read-p-byte-n-int-err-error"><a href="#Read—-func-b-Buffer-Read-p-byte-n-int-err-error" class="headerlink" title="Read—-func (b *Buffer) Read(p []byte) (n int, err error)"></a>Read—-func (b *Buffer) Read(p []byte) (n int, err error)</h4><p>给Read方法一个容器p，读完后，p就满了，缓冲器相应的减少了，返回的n为成功读的数量<br>如，缓冲器是一个装满5升水的杯子，这个杯子有Read方法，给Read方法一个3升的杯子<br>Read完后，5升杯子里有2升水，3升的杯子满了，返回的n为3 在一次Read时，5升杯子里有0升水，3升的杯子还是满的，但其中有2升的水被新倒入的水替代了，返回的n为2</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span>(</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    s1:=[]<span class="type">byte</span>(<span class="string">&quot;hello&quot;</span>)                <span class="comment">//申明一个slice为s1</span></span><br><span class="line">    buff:=bytes.NewBuffer(s1)     <span class="comment">//new一个缓冲器buff，里面存着hello这5个byte</span></span><br><span class="line">    s2:=[]<span class="type">byte</span>(<span class="string">&quot; world&quot;</span>)                 <span class="comment">//申明另一个slice为s2</span></span><br><span class="line">    buff.Write(s2)                     <span class="comment">//把s2写入添加到buff缓冲器内</span></span><br><span class="line">    fmt.Println(buff.String())            <span class="comment">//使用缓冲器的String方法转成字符串，并打印：&quot;hello world&quot;</span></span><br><span class="line"></span><br><span class="line">    s3:=<span class="built_in">make</span>([]<span class="type">byte</span>,<span class="number">3</span>)               <span class="comment">//申明一个空的slice为s3，容量为3</span></span><br><span class="line">    buff.Read(s3)                       <span class="comment">//把buff的内容读入到s3内，因为s3的容量为3，所以只读了3个过来</span></span><br><span class="line">    fmt.Println(buff.String())       <span class="comment">//buff的前3个字符被读走了，所以buff变成：&quot;lo world&quot;</span></span><br><span class="line">    fmt.Println(<span class="type">string</span>(s3))          <span class="comment">//空的s3被写入3个字符，所以为&quot;hel&quot;</span></span><br><span class="line">    buff.Read(s3)                       <span class="comment">//把buff的内容读入到s3内，因为s3的容量为3，所以只读了3个过来，原来s3的内容被覆盖了</span></span><br><span class="line">    fmt.Println(buff.String())       <span class="comment">//buff的前3个字符又被读走了，所以buff变成：&quot;world&quot;</span></span><br><span class="line">    fmt.Println(<span class="type">string</span>(s3))          <span class="comment">//原来的s3被从&quot;hel&quot;变成&quot;lo &quot;，因为&quot;hel&quot;被覆盖了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ReadByte—-func-b-Buffer-ReadByte-c-byte-err-error"><a href="#ReadByte—-func-b-Buffer-ReadByte-c-byte-err-error" class="headerlink" title="ReadByte—- func (b *Buffer) ReadByte() (c byte, err error)"></a>ReadByte—- func (b *Buffer) ReadByte() (c byte, err error)</h4><p>返回缓冲器头部的第一个byte，缓冲器头部第一个byte被拿掉</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    fmt.Println(buf.String()) <span class="comment">//buf.String()方法是吧buf里的内容转成string，&gt;以便于打印</span></span><br><span class="line">    b, _ := buf.ReadByte()    <span class="comment">//读取第一个byte，赋值给b</span></span><br><span class="line">    fmt.Println(buf.String()) <span class="comment">//打印 ello，缓冲器头部第一个h被拿掉</span></span><br><span class="line">    fmt.Println(<span class="type">string</span>(b))    <span class="comment">//打印 h</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ReadRune—-func-b-Buffer-ReadRune-r-rune-size-int-err-error"><a href="#ReadRune—-func-b-Buffer-ReadRune-r-rune-size-int-err-error" class="headerlink" title="ReadRune—- func (b *Buffer) ReadRune() (r rune, size int, err error)"></a>ReadRune—- func (b *Buffer) ReadRune() (r rune, size int, err error)</h4><p>ReadRune和ReadByte很像 返回缓冲器头部的第一个rune，缓冲器头部第一个rune被拿掉</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;好hello&quot;</span>)</span><br><span class="line">    fmt.Println(buf.String()) <span class="comment">//buf.String()方法是吧buf里的内容转成string，&gt;以便于打印</span></span><br><span class="line">    b, n, _ := buf.ReadRune() <span class="comment">//读取第一个rune，赋值给b</span></span><br><span class="line">    fmt.Println(buf.String()) <span class="comment">//打印 hello</span></span><br><span class="line">    fmt.Println(<span class="type">string</span>(b))    <span class="comment">//打印中文字： 好，缓冲器头部第一个“好”被拿掉</span></span><br><span class="line">    fmt.Println(n)            <span class="comment">//打印3，“好”作为utf8储存占3个byte</span></span><br><span class="line">    b, n, _ = buf.ReadRune()  <span class="comment">//再读取第一个rune，赋值给b</span></span><br><span class="line">    fmt.Println(buf.String()) <span class="comment">//打印 ello</span></span><br><span class="line">    fmt.Println(<span class="type">string</span>(b))    <span class="comment">//打印h，缓冲器头部第一个h被拿掉</span></span><br><span class="line">    fmt.Println(n)            <span class="comment">//打印 1，“h”作为utf8储存占1个byte</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ReadBytes—-func-b-Buffer-ReadBytes-delim-byte-line-byte-err-error"><a href="#ReadBytes—-func-b-Buffer-ReadBytes-delim-byte-line-byte-err-error" class="headerlink" title="ReadBytes—- func (b *Buffer) ReadBytes(delim byte) (line []byte, err error)"></a>ReadBytes—- func (b *Buffer) ReadBytes(delim byte) (line []byte, err error)</h4><p>ReadBytes和ReadByte根本就不是一回事，MD<br>ReadBytes需要一个byte作为分隔符，读的时候从缓冲器里找第一个出现的分隔符（delim），找到后，把从缓冲器头部开始到分隔符之间的所有byte进行返回，作为byte类型的slice，返回后，缓冲器也会空掉一部分</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> d <span class="type">byte</span> = <span class="string">&#x27;e&#x27;</span> <span class="comment">//分隔符为e</span></span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    fmt.Println(buf.String()) <span class="comment">//buf.String()方法是吧buf里的内容转成string，以便于打印</span></span><br><span class="line">    b, _ := buf.ReadBytes(d)  <span class="comment">//读到分隔符，并返回给b</span></span><br><span class="line">    fmt.Println(buf.String()) <span class="comment">//打印 llo，缓冲器被取走一些数据</span></span><br><span class="line">    fmt.Println(<span class="type">string</span>(b))    <span class="comment">//打印 he，找到e了，将缓冲器从头开始，到e的内容都返回给b</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ReadString—-func-b-Buffer-ReadString-delim-byte-line-string-err-error"><a href="#ReadString—-func-b-Buffer-ReadString-delim-byte-line-string-err-error" class="headerlink" title="ReadString—- func (b *Buffer) ReadString(delim byte) (line string, err error)"></a>ReadString—- func (b *Buffer) ReadString(delim byte) (line string, err error)</h4><p>ReadBytes和ReadString基本就是一回事<br>ReadBytes需要一个byte作为分隔符，读的时候从缓冲器里找第一个出现的分隔符（delim），找到后，把从缓冲器头部开始到分隔符之间的所有byte进行返回，作为字符串，返回后，缓冲器也会空掉一部分</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> d <span class="type">byte</span> = <span class="string">&#x27;e&#x27;</span> <span class="comment">//分隔符为e</span></span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    fmt.Println(buf.String()) <span class="comment">//buf.String()方法是吧buf里的内容转成string，以便于打印</span></span><br><span class="line">    b, _ := buf.ReadString(d)  <span class="comment">//读到分隔符，并返回给b</span></span><br><span class="line">    fmt.Println(buf.String()) <span class="comment">//打印 llo，缓冲器被取走一些数据</span></span><br><span class="line">    fmt.Println(b)    <span class="comment">//打印 he，找到e了，将缓冲器从头开始，到e的内容都返回给b</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="读入缓冲器（缓冲器变大）"><a href="#读入缓冲器（缓冲器变大）" class="headerlink" title="读入缓冲器（缓冲器变大）"></a>读入缓冲器（缓冲器变大）</h3><h4 id="ReadFrom—-func-b-Buffer-ReadFrom-r-io-Reader-n-int64-err-error"><a href="#ReadFrom—-func-b-Buffer-ReadFrom-r-io-Reader-n-int64-err-error" class="headerlink" title="ReadFrom—- func (b *Buffer) ReadFrom(r io.Reader) (n int64, err error)"></a>ReadFrom—- func (b *Buffer) ReadFrom(r io.Reader) (n int64, err error)</h4><p>从一个实现io.Reader接口的r，把r里的内容读到缓冲器里，n返回读的数量</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    file, _ := os.Open(<span class="string">&quot;test.txt&quot;</span>)  <span class="comment">//test.txt的内容是“world”</span></span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello &quot;</span>)</span><br><span class="line">    buf.ReadFrom(file)              <span class="comment">//将text.txt内容追加到缓冲器的尾部</span></span><br><span class="line">    fmt.Println(buf.String())    <span class="comment">//打印“hello world”</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="从缓冲器取出（缓冲器变小）"><a href="#从缓冲器取出（缓冲器变小）" class="headerlink" title="从缓冲器取出（缓冲器变小）"></a>从缓冲器取出（缓冲器变小）</h3><h4 id="Next-—-func-b-Buffer-Next-n-int-byte"><a href="#Next-—-func-b-Buffer-Next-n-int-byte" class="headerlink" title="Next —- func (b *Buffer) Next(n int) []byte"></a>Next —- func (b *Buffer) Next(n int) []byte</h4><p>返回前n个byte，成为slice返回，原缓冲器变小</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;bytes&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    buf := bytes.NewBufferString(<span class="string">&quot;hello&quot;</span>)</span><br><span class="line">    fmt.Println(buf.String())</span><br><span class="line">    b := buf.Next(<span class="number">2</span>)   <span class="comment">//重头开始，取2个</span></span><br><span class="line">    fmt.Println(buf.String())  <span class="comment">//变小了</span></span><br><span class="line">    fmt.Println(<span class="type">string</span>(b))   <span class="comment">//打印he</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>引自<a href="http://my.oschina.net/u/943306/blog/127981">waynehu</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/06/11/Go%E8%AF%AD%E8%A8%80%E7%9A%84bytes-buffer/" data-title="Go语言的bytes.buffer | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/06/13/闭包-closure-与协程共用时要注意的事情/" title=" 闭包(closure)与协程共用时要注意的事情">
+  <strong>上一篇：</strong><br/>
+  <span>
+   闭包(closure)与协程共用时要注意的事情</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/06/01/使用微信JSSDK上传图片到七牛/"  title="使用微信JSSDK上传图片到七牛">
+ <strong>下一篇：</strong><br/> 
+ <span>使用微信JSSDK上传图片到七牛
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/06/11/Go语言的bytes-buffer/" data-title="Go语言的bytes.buffer" data-url="https://luckymrwang.github.io/2016/06/11/Go%E8%AF%AD%E8%A8%80%E7%9A%84bytes-buffer/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#bytes-buffer"><span class="toc-number">1.</span> <span class="toc-text">bytes.buffer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%80%E4%B8%AA%E7%BC%93%E5%86%B2%E5%99%A8"><span class="toc-number">2.</span> <span class="toc-text">创建一个缓冲器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#NewBuffer"><span class="toc-number">2.1.</span> <span class="toc-text">NewBuffer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#NewBufferString"><span class="toc-number">2.2.</span> <span class="toc-text">NewBufferString</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%99%E5%85%A5%E5%88%B0%E7%BC%93%E5%86%B2%E5%99%A8%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%A4%A7%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">写入到缓冲器（缓冲器变大）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Write%E2%80%94-func-b-Buffer-Write-p-byte-n-int-err-error"><span class="toc-number">3.1.</span> <span class="toc-text">Write—- func (b *Buffer) Write(p []byte) (n int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WriteString%E2%80%94-func-b-Buffer-WriteString-s-string-n-int-err-error"><span class="toc-number">3.2.</span> <span class="toc-text">WriteString—- func (b *Buffer) WriteString(s string) (n int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WriteByte%E2%80%94-func-b-Buffer-WriteByte-c-byte-error"><span class="toc-number">3.3.</span> <span class="toc-text">WriteByte—- func (b *Buffer) WriteByte(c byte) error</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WriteRune%E2%80%94-func-b-Buffer-WriteRune-r-rune-n-int-err-error"><span class="toc-number">3.4.</span> <span class="toc-text">WriteRune—- func (b *Buffer) WriteRune(r rune) (n int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%8E%E7%BC%93%E5%86%B2%E5%99%A8%E5%86%99%E5%87%BA%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%B0%8F%EF%BC%89"><span class="toc-number">3.5.</span> <span class="toc-text">从缓冲器写出（缓冲器变小）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WriteTo%E2%80%94-func-b-Buffer-WriteTo-w-io-Writer-n-int64-err-error"><span class="toc-number">3.6.</span> <span class="toc-text">WriteTo—- func (b *Buffer) WriteTo(w io.Writer) (n int64, err error)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%87%BA%E7%BC%93%E5%86%B2%E5%99%A8%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%B0%8F%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">读出缓冲器（缓冲器变小）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Read%E2%80%94-func-b-Buffer-Read-p-byte-n-int-err-error"><span class="toc-number">4.1.</span> <span class="toc-text">Read—-func (b *Buffer) Read(p []byte) (n int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadByte%E2%80%94-func-b-Buffer-ReadByte-c-byte-err-error"><span class="toc-number">4.2.</span> <span class="toc-text">ReadByte—- func (b *Buffer) ReadByte() (c byte, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadRune%E2%80%94-func-b-Buffer-ReadRune-r-rune-size-int-err-error"><span class="toc-number">4.3.</span> <span class="toc-text">ReadRune—- func (b *Buffer) ReadRune() (r rune, size int, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadBytes%E2%80%94-func-b-Buffer-ReadBytes-delim-byte-line-byte-err-error"><span class="toc-number">4.4.</span> <span class="toc-text">ReadBytes—- func (b *Buffer) ReadBytes(delim byte) (line []byte, err error)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadString%E2%80%94-func-b-Buffer-ReadString-delim-byte-line-string-err-error"><span class="toc-number">4.5.</span> <span class="toc-text">ReadString—- func (b *Buffer) ReadString(delim byte) (line string, err error)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%BB%E5%85%A5%E7%BC%93%E5%86%B2%E5%99%A8%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%A4%A7%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">读入缓冲器（缓冲器变大）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ReadFrom%E2%80%94-func-b-Buffer-ReadFrom-r-io-Reader-n-int64-err-error"><span class="toc-number">5.1.</span> <span class="toc-text">ReadFrom—- func (b *Buffer) ReadFrom(r io.Reader) (n int64, err error)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%8E%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%96%E5%87%BA%EF%BC%88%E7%BC%93%E5%86%B2%E5%99%A8%E5%8F%98%E5%B0%8F%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">从缓冲器取出（缓冲器变小）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Next-%E2%80%94-func-b-Buffer-Next-n-int-byte"><span class="toc-number">6.1.</span> <span class="toc-text">Next —- func (b *Buffer) Next(n int) []byte</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

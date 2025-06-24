@@ -1,0 +1,500 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Linux系统/dev/mapper目录浅谈 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Linux 系统的一般的文件系统名称类似于 &#x2F;dev&#x2F;sda1 或 &#x2F;dev&#x2F;hda1，但是今天在进行系统维护的时候，利用 df -h 命令敲出了 &#x2F;dev&#x2F;mapper&#x2F;VolGroup-lv_root 和 &#x2F;dev&#x2F;mapper&#x2F;Volume-lv_home 两个文件系统名，不解，在网上查找资料后，在此浅谈 &#x2F;dev&#x2F;mapper 目录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux系统&#x2F;dev&#x2F;mapper目录浅谈">
+<meta property="og:url" content="https://luckymrwang.github.io/2023/11/22/Linux%E7%B3%BB%E7%BB%9F-dev-mapper%E7%9B%AE%E5%BD%95%E6%B5%85%E8%B0%88/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Linux 系统的一般的文件系统名称类似于 &#x2F;dev&#x2F;sda1 或 &#x2F;dev&#x2F;hda1，但是今天在进行系统维护的时候，利用 df -h 命令敲出了 &#x2F;dev&#x2F;mapper&#x2F;VolGroup-lv_root 和 &#x2F;dev&#x2F;mapper&#x2F;Volume-lv_home 两个文件系统名，不解，在网上查找资料后，在此浅谈 &#x2F;dev&#x2F;mapper 目录。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-11-22T07:29:59.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.195Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2023/11/22/Linux系统-dev-mapper目录浅谈/" title="Linux系统/dev/mapper目录浅谈" itemprop="url">Linux系统/dev/mapper目录浅谈</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2023-11-22T07:29:59.000Z" itemprop="datePublished"> 发表于 2023-11-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%A7%A3-Linux-%E7%B3%BB%E7%BB%9F%E7%9A%84-Device-mapper-%E6%9C%BA%E5%88%B6"><span class="toc-number">1.</span> <span class="toc-text">理解 Linux 系统的 Device mapper 机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dev-mapper-%E7%9B%AE%E5%BD%95%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="toc-number">2.</span> <span class="toc-text">&#x2F;dev&#x2F;mapper 目录的解释</span></a></li></ol>
+		
+		</div>
+		
+		<p>Linux 系统的一般的文件系统名称类似于 <code>/dev/sda1</code> 或 <code>/dev/hda1</code>，但是今天在进行系统维护的时候，利用 <code>df -h</code> 命令敲出了 <code>/dev/mapper/VolGroup-lv_root</code> 和 <code>/dev/mapper/Volume-lv_home</code> 两个文件系统名，不解，在网上查找资料后，在此浅谈 <code>/dev/mapper</code> 目录。</p>
+<span id="more"></span>
+<h2 id="理解-Linux-系统的-Device-mapper-机制"><a href="#理解-Linux-系统的-Device-mapper-机制" class="headerlink" title="理解 Linux 系统的 Device mapper 机制"></a>理解 Linux 系统的 Device mapper 机制</h2><p>Device mapper 是 Linux2.6 内核中提供的一种从逻辑设备到物理设备的映射机制，在该机制下，用户能够很方便的根据自己的需要实现对存储资源的管理。在具体管理时需要用到 Linux 下的逻辑卷管理器，当前比较流行的逻辑卷管理器有 LVM2（Linux Volume Manager 2 version)、EVMS(Enterprise Volume Management System)、dmraid(Device Mapper Raid Tool) 等。</p>
+<p>   想要详细了解 Device mapper 机制，可参考博文 <a href="http://blog.sina.com.cn/s/blog_6237dcca0100hnwb.html">http://blog.sina.com.cn/s/blog_6237dcca0100hnwb.html</a> ，此处不再赘述。</p>
+<h2 id="dev-mapper-目录的解释"><a href="#dev-mapper-目录的解释" class="headerlink" title="&#x2F;dev&#x2F;mapper 目录的解释"></a>&#x2F;dev&#x2F;mapper 目录的解释</h2><p>为了方便叙述，假设一台服务器有三块硬盘分别为a，b，c，每块硬盘的容量为 1T。在安装 Linux 的时候，先根据系统及自身的需要建立基本的分区，假设对硬盘 a 进行了分区，分出去了 0.1T 的空间挂载在 &#x2F;boot 目录下，其他硬盘未进行分区。系统利用 Device mapper 机制建立了一个卷组（volume group，VG），可以把 VG 当做一个资源池来看待，最后在 VG 上面再创建逻辑卷（logical volume，LV）。若要将硬盘a的剩余空间、硬盘b和硬盘c都加入到 VG 中，则硬盘a的剩余空间首先会被系统建立为一个物理卷（physical volume，PV），并且这个物理卷的大小就是 0.9T，之后硬盘a的剩余的空间、硬盘b和硬盘c以 PV 的身份加入到 VG 这个资源池中，然后你需要多大的空间，就可以从VG中划出多大的空间（当然最大不能超过VG的容量）。比如此时池中的空间就是 2.9T，此时你就可以建立一个1T以上的空间出来，而不像以前最大的容量空间只能为 1T。</p>
+<p><code>/dev/mapper/Volume-lv_root</code> 的意思是说有一个 VG (volume group卷组) 叫作 Volume, 这个 Volume 里面有一个 LV 叫作 lv_root。其实这个 <code>/dev/mapper/Volume-lv_root</code> 文件是一个连接文件，是连接到 <code>/dev/dm-0</code> 的，可以用命令<code>ll /dev/mapper/Volume-lv_root</code> 进行查看。</p>
+<p>其实在系统里 <code>/dev/Volume/lv_root</code> 和 <code>/dev/mapper/Volume-lv_root</code> 以及 <code>/dev/dm-0</code> 都是一个东西，都可当作一个分区来对待。</p>
+<p>若要了解硬盘的具体情况，可通过 <code>fdisk</code> 或者 <code>pvdisplay</code> 命令进行查看。</p>
+<p>若想要重装系统到 <code>/dev/sda</code> 下，且安装时有些东西不想被格式化想转移到 <code>/dev/sdb</code> 下，但此时 <code>/dev/sda</code> 和 <code>/dev/sdb</code> 被放到 VG 中了，那该如何解决该问题呢？这种情况下，由于此时根本没办法确定数据在哪一个硬盘上,因为这两个硬盘就如同加到池里，被 Device mapper 管理，所以解决方案就是再建个逻辑卷出来，把数据移到新的卷里，这样就可以重装系统时只删掉之前分区里的东西，而新的卷里的东西不动，就不会丢失了。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2023/11/22/Linux%E7%B3%BB%E7%BB%9F-dev-mapper%E7%9B%AE%E5%BD%95%E6%B5%85%E8%B0%88/" data-title="Linux系统/dev/mapper目录浅谈 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2024/03/27/揭秘-Kubernetes-attach-detach-controller-逻辑漏洞致使-pod-启动失败/" title="揭秘 Kubernetes attach/detach controller 逻辑漏洞致使 pod 启动失败">
+  <strong>上一篇：</strong><br/>
+  <span>
+  揭秘 Kubernetes attach/detach controller 逻辑漏洞致使 pod 启动失败</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2023/08/31/kubectl-krew-离线安装插件/"  title="kubectl krew 离线安装插件">
+ <strong>下一篇：</strong><br/> 
+ <span>kubectl krew 离线安装插件
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2023/11/22/Linux系统-dev-mapper目录浅谈/" data-title="Linux系统/dev/mapper目录浅谈" data-url="https://luckymrwang.github.io/2023/11/22/Linux%E7%B3%BB%E7%BB%9F-dev-mapper%E7%9B%AE%E5%BD%95%E6%B5%85%E8%B0%88/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%A7%A3-Linux-%E7%B3%BB%E7%BB%9F%E7%9A%84-Device-mapper-%E6%9C%BA%E5%88%B6"><span class="toc-number">1.</span> <span class="toc-text">理解 Linux 系统的 Device mapper 机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dev-mapper-%E7%9B%AE%E5%BD%95%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="toc-number">2.</span> <span class="toc-text">&#x2F;dev&#x2F;mapper 目录的解释</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

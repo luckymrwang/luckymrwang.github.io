@@ -1,0 +1,538 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>VirtualService 和 Gateway 中hosts 字段的配置使用 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Istio 中的 CR 资源 VirtualService 和 Gateway 都存在 hosts 属性，而且 VirtualService.spec.http.route. destination.host 也存在 host 字段，这些字段容易让人混淆，特以此做一解释和区分。 VirtualServicehostsVirtualService 定义了一系列针对指定服务的流量路由规则。每个路由规则">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VirtualService 和 Gateway 中hosts 字段的配置使用">
+<meta property="og:url" content="https://luckymrwang.github.io/2023/08/30/VirtualService-%E5%92%8C-Gateway-%E4%B8%ADhosts-%E5%AD%97%E6%AE%B5%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Istio 中的 CR 资源 VirtualService 和 Gateway 都存在 hosts 属性，而且 VirtualService.spec.http.route. destination.host 也存在 host 字段，这些字段容易让人混淆，特以此做一解释和区分。 VirtualServicehostsVirtualService 定义了一系列针对指定服务的流量路由规则。每个路由规则">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/vs_gw.png">
+<meta property="article:published_time" content="2023-08-30T09:25:58.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.205Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Istio">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/vs_gw.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2023/08/30/VirtualService-和-Gateway-中hosts-字段的配置使用/" title="VirtualService 和 Gateway 中hosts 字段的配置使用" itemprop="url">VirtualService 和 Gateway 中hosts 字段的配置使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2023-08-30T09:25:58.000Z" itemprop="datePublished"> 发表于 2023-08-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#VirtualService"><span class="toc-number">1.</span> <span class="toc-text">VirtualService</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hosts"><span class="toc-number">1.1.</span> <span class="toc-text">hosts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#host"><span class="toc-number">1.2.</span> <span class="toc-text">host</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway"><span class="toc-number">2.</span> <span class="toc-text">Gateway</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway-Port"><span class="toc-number">3.</span> <span class="toc-text">Gateway Port</span></a></li></ol>
+		
+		</div>
+		
+		<p>Istio 中的 CR 资源 <code>VirtualService</code> 和 <code>Gateway</code> 都存在 <code>hosts</code> 属性，而且 <code>VirtualService.spec.http.route. destination.host</code> 也存在 <code>host</code> 字段，这些字段容易让人混淆，特以此做一解释和区分。</p>
+<h2 id="VirtualService"><a href="#VirtualService" class="headerlink" title="VirtualService"></a>VirtualService</h2><h3 id="hosts"><a href="#hosts" class="headerlink" title="hosts"></a>hosts</h3><p>VirtualService 定义了一系列针对指定服务的流量路由规则。每个路由规则都针对特定协议的匹配规则。如果流量符合这些特征，就会根据规则发送到服务注册表中的目标服务（或者目标服务的子集或版本）。</p>
+<span id="more"></span>
+
+<p>VirtualService 配置示例：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">VirtualService</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">mesh</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">172.16</span><span class="number">.85</span><span class="number">.174</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nginx-test.mesh.svc.cluster.local</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nginx-test</span></span><br><span class="line">  <span class="attr">gateways:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">mesh-gw</span></span><br><span class="line">  <span class="attr">http:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">route:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">destination:</span></span><br><span class="line">            <span class="attr">host:</span> <span class="string">nginx</span></span><br><span class="line">            <span class="attr">subset:</span> <span class="string">v1</span></span><br><span class="line">          <span class="attr">weight:</span> <span class="number">20</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">destination:</span></span><br><span class="line">            <span class="attr">host:</span> <span class="string">nginx2</span></span><br><span class="line">            <span class="attr">subset:</span> <span class="string">v2</span></span><br><span class="line">          <span class="attr">weight:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p>使用 hosts 字段列举虚拟服务的主机——即用户指定的目标或是路由规则设定的目标。这是客户端向服务发送请求时使用的一个或多个地址。只有访问客户端的 Host 字段为 hosts 配置的地址才能路由到后端服务。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hosts</span>:</span><br><span class="line"></span><br><span class="line"><span class="number">172.16</span><span class="number">.85</span><span class="number">.174</span></span><br><span class="line">nginx-test.<span class="property">mesh</span>.<span class="property">svc</span>.<span class="property">cluster</span>.<span class="property">local</span></span><br><span class="line">nginx-test</span><br></pre></td></tr></table></figure>
+
+<p>虚拟服务主机名可以是 IP 地址、DNS 名称，或者依赖于平台的一个简称（例如 Kubernetes 服务的短名称），隐式或显式地指向一个完全限定域名（FQDN）。也可以使用通配符（“*”）前缀，让您创建一组匹配所有服务的路由规则。</p>
+<p>上面的 VirtualService 配置了多个 <code>hosts</code>，并且挂载了一个 <code>gateway</code>，客户端直接访问后端的 service 是可以通的，但是我们通过域名访问后端服务时候就需要指定 <code>host</code> 了。</p>
+<p>首先我们直接访问下gateway域名，是无法访问通的，因为 <code>VirtualService</code> 流量规则指定了 <code>hosts</code>，我们的请求 <code>Host</code> 没在配置列表中。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># curl nginx.<span class="property">istio</span>.<span class="property">niewx</span>.<span class="property">top</span></span><br></pre></td></tr></table></figure>
+
+<p>如果你希望能通过域名直接访问，可以将域名配置到 hosts 下，默认发起请求的 Host 就是域名本身</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">172.16</span><span class="number">.85</span><span class="number">.174</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nginx-test.mesh.svc.cluster.local</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nginx-test</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">nginx.istio.niewx.top</span></span><br></pre></td></tr></table></figure>
+
+<p>直接访问域名</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">bash-4.4# curl -Iv nginx.istio.niewx.top</span><br><span class="line">* Rebuilt URL to: nginx.istio.niewx.top/</span><br><span class="line">*   Trying 10.0.0.183...</span><br><span class="line">* TCP_NODELAY set</span><br><span class="line">* Connected to nginx.istio.niewx.top (10.0.0.183) port 80 (#0)</span><br><span class="line">&gt; HEAD / HTTP/1.1</span><br><span class="line">&gt; Host: nginx.istio.niewx.top</span><br><span class="line">&gt; User-Agent: curl/7.61.1</span><br><span class="line">&gt; Accept: */*</span><br><span class="line">&gt; </span><br><span class="line">&lt; HTTP/1.1 200 OK</span><br><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">200</span> OK</span><br><span class="line">&lt; server: envoy</span><br><span class="line"><span class="attribute">server</span><span class="punctuation">: </span>envoy</span><br><span class="line">&lt; date: Mon, 13 Sep 2021 10:34:12 GMT</span><br><span class="line"><span class="attribute">date</span><span class="punctuation">: </span>Mon, 13 Sep 2021 10:34:12 GMT</span><br><span class="line">&lt; content-type: text/html</span><br><span class="line"><span class="attribute">content-type</span><span class="punctuation">: </span>text/html</span><br><span class="line">&lt; content-length: 15</span><br><span class="line"><span class="attribute">content-length</span><span class="punctuation">: </span>15</span><br><span class="line">&lt; last-modified: Mon, 13 Sep 2021 05:50:32 GMT</span><br><span class="line"><span class="attribute">last-modified</span><span class="punctuation">: </span>Mon, 13 Sep 2021 05:50:32 GMT</span><br><span class="line">&lt; etag: &quot;613ee6a8-f&quot;</span><br><span class="line"><span class="attribute">etag</span><span class="punctuation">: </span>&quot;613ee6a8-f&quot;</span><br><span class="line">&lt; accept-ranges: bytes</span><br><span class="line"><span class="attribute">accept-ranges</span><span class="punctuation">: </span>bytes</span><br><span class="line">&lt; x-envoy-upstream-service-time: 12</span><br><span class="line"><span class="attribute">x-envoy-upstream-service-time</span><span class="punctuation">: </span>12</span><br><span class="line"></span><br><span class="line"><span class="language-cal">&lt; </span></span><br><span class="line"><span class="language-cal">* Connection <span class="string">#0</span> <span class="keyword">to</span> host nginx.istio.niewx.top left intact</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="host"><a href="#host" class="headerlink" title="host"></a>host</h3><p>上例中的 <code>VirtualService</code> 指定的路由中有两个 subnet ，一个是 <code>host: nginx</code> ，另一个是 <code>host: nginx2</code>。这里的 host 值指对应的 kubernetes 中的 service 的名称，即流量目标对应的服务。</p>
+<p>如果查找失败，则丢弃流量。Kubernetes 用户注意：当使用服务的短名称时（例如使用 <code>reviews</code>，而不是 <code>reviews.default.svc.cluster.local</code>），Istio 会根据规则所在的命名空间来处理这一名称，而非服务所在的命名空间。假设 <code>default</code> 命名空间的一条规则中包含了一个 <code>reivews</code> 的 <code>host</code> 引用，就会被视为 <code>reviews.default.svc.cluster.local</code>，而不会考虑 <code>reviews</code> 服务所在的命名空间。为了避免可能的错误配置，建议使用 FQDN 来进行服务引用。</p>
+<h2 id="Gateway"><a href="#Gateway" class="headerlink" title="Gateway"></a>Gateway</h2><p>Gateway 描述了一个负载均衡器，用于承载网格边缘的进入和发出连接。这一规范中描述了一系列开放端口，以及这些端口所使用的协议、负载均衡的 SNI 配置等内容。</p>
+<p>下面是一个网关资源的例子：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.istio.io/v1alpha3</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Gateway</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">my-gateway</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">istio:</span> <span class="string">ingressgateway</span></span><br><span class="line">  <span class="attr">servers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">port:</span></span><br><span class="line">      <span class="attr">number:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">HTTP</span></span><br><span class="line">    <span class="attr">hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">dev.example.com</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">test.example.com</span></span><br></pre></td></tr></table></figure>
+
+<p>上述网关资源设置了一个代理，作为一个负载均衡器，为入口暴露 80 端口。网关配置被应用于 Istio 入口网关代理，我们将其部署到 <code>istio-system</code> 命名空间，并设置了标签 <code>istio: ingressgateway</code>。通过网关资源，我们只能配置负载均衡器。<code>hosts</code> 字段作为一个过滤器，只有以 <code>dev.example.com</code> 和 <code>test.example.com</code> 为目的地的流量会被允许通过。</p>
+<p>为了控制和转发流量到集群内运行的实际 Kubernetes 服务，我们必须用特定的主机名（例如 <code>dev.example.com</code> 和 <code>test.example.com</code>）配置一个 <code>VirtualService</code>，然后将网关连接到它。</p>
+<p><img src="/images/vs_gw.png"></p>
+<p>如上图，每个 CR <code>Gateway</code> 可以绑定多个 CR <code>VirtualService</code> ：</p>
+<ul>
+<li>CR <code>VirtualService</code> 通过 <code>gateways</code> 字段中的值与 CR <code>Gateway</code> 绑定</li>
+<li>CR <code>Gateway</code> 通过 <code>hosts</code> 字段中的匹配的 <code>host</code> 值选择对应的 CR <code>VirtualService</code></li>
+</ul>
+<h2 id="Gateway-Port"><a href="#Gateway-Port" class="headerlink" title="Gateway Port"></a>Gateway Port</h2><p><code>gateway</code> 资源中的 <code>port</code> 是对应 <code>istio-system</code>命名空间下的访问地址<code>istio-ingressgateway</code>的端口，因为通过域名入口网关访问后，会经过 ipvs 转成 pod 地址，也就是 <code>istio-ingressgateway-69cd5bdb68-npggn</code>的地址，如果svc中对应的是 <code>80-&gt;8080</code> 那么进入该 pod 后的端口就是 <code>8080</code> 所以再经过 <code>http.8080</code> 的 <code>route-&gt;cluster-&gt;endpoint</code>，所以关键看 <code>listener</code> 的端口以及 <code>route</code> 中有没有该域名的配置。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># listener</span><br><span class="line">istioctl proxy-config listener -n istio-system istio-ingressgateway-69cd5bdb68-npggn</span><br><span class="line">istioctl proxy-config listener -n istio-system istio-ingressgateway-69cd5bdb68-npggn --port <span class="number">8080</span> -ojson</span><br><span class="line"># route</span><br><span class="line">istioctl proxy-config route -n istio-system istio-ingressgateway-69cd5bdb68-npggn</span><br><span class="line">istioctl proxy-config route -n istio-system istio-ingressgateway-69cd5bdb68-npggn --name http<span class="number">.8080</span> -ojson</span><br><span class="line"># cluster</span><br><span class="line">istioctl proxy-config clusters -n istio-system istio-ingressgateway-69cd5bdb68-npggn</span><br><span class="line">istioctl proxy-config clusters -n istio-system istio-ingressgateway-69cd5bdb68-npggn --fqdn httpbin.<span class="property">pang</span>.<span class="property">svc</span>.<span class="property">cluster</span>.<span class="property">local</span> -ojson</span><br><span class="line"># endpoint</span><br><span class="line">istioctl proxy-config endpoint -n istio-system istio-ingressgateway-69cd5bdb68-npggn</span><br><span class="line">istioctl proxy-config endpoint -n istio-system istio-ingressgateway-69cd5bdb68-npggn  --cluster <span class="string">&quot;outbound|8000||httpbin.pang.svc.cluster.local&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><a href="https://learncloudnative.com/blog/2022-08-01-istio-gateway">How to expose custom ports on Istio ingress gateway</a></li>
+</ul>
+<p>参考：</p>
+<ul>
+<li><a href="https://www.cnblogs.com/renshengdezheli/p/16838966.html">创建部署Gateway并使用网关暴露服务</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Istio/">Istio</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2023/08/30/VirtualService-%E5%92%8C-Gateway-%E4%B8%ADhosts-%E5%AD%97%E6%AE%B5%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8/" data-title="VirtualService 和 Gateway 中hosts 字段的配置使用 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2023/08/31/kubectl-krew-离线安装插件/" title="kubectl krew 离线安装插件">
+  <strong>上一篇：</strong><br/>
+  <span>
+  kubectl krew 离线安装插件</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2023/07/25/mount-bind-使用方法/"  title="mount --bind 使用方法">
+ <strong>下一篇：</strong><br/> 
+ <span>mount --bind 使用方法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2023/08/30/VirtualService-和-Gateway-中hosts-字段的配置使用/" data-title="VirtualService 和 Gateway 中hosts 字段的配置使用" data-url="https://luckymrwang.github.io/2023/08/30/VirtualService-%E5%92%8C-Gateway-%E4%B8%ADhosts-%E5%AD%97%E6%AE%B5%E7%9A%84%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#VirtualService"><span class="toc-number">1.</span> <span class="toc-text">VirtualService</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hosts"><span class="toc-number">1.1.</span> <span class="toc-text">hosts</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#host"><span class="toc-number">1.2.</span> <span class="toc-text">host</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway"><span class="toc-number">2.</span> <span class="toc-text">Gateway</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gateway-Port"><span class="toc-number">3.</span> <span class="toc-text">Gateway Port</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

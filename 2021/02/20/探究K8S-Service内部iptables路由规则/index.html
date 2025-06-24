@@ -1,0 +1,543 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>探究K8S Service内部iptables路由规则 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="前言在K8S集群内部，应用常使用Service互访，那么，了解Service技术优缺点将有利于应用规划与部署，鉴于此，本文将通过简单案例以探索Cluster-Ip类型Service服务的利弊。 为便于讲解，我们先创建如下应用及Service服务： 12# kubectl run --image&#x3D;nginx nginx-web-1 --image-pull-policy&#x3D;&#x27;IfNotPre">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探究K8S Service内部iptables路由规则">
+<meta property="og:url" content="https://luckymrwang.github.io/2021/02/20/%E6%8E%A2%E7%A9%B6K8S-Service%E5%86%85%E9%83%A8iptables%E8%B7%AF%E7%94%B1%E8%A7%84%E5%88%99/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="前言在K8S集群内部，应用常使用Service互访，那么，了解Service技术优缺点将有利于应用规划与部署，鉴于此，本文将通过简单案例以探索Cluster-Ip类型Service服务的利弊。 为便于讲解，我们先创建如下应用及Service服务： 12# kubectl run --image&#x3D;nginx nginx-web-1 --image-pull-policy&#x3D;&#x27;IfNotPre">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-20T02:37:20.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.213Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/02/20/探究K8S-Service内部iptables路由规则/" title="探究K8S Service内部iptables路由规则" itemprop="url">探究K8S Service内部iptables路由规则</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-02-20T02:37:20.000Z" itemprop="datePublished"> 发表于 2021-02-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Service%E6%8E%A2%E7%B4%A2"><span class="toc-number">2.</span> <span class="toc-text">Service探索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Service-Route%EF%BC%88%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">Service Route（服务路由）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Loadbalance%EF%BC%88%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">Loadbalance（负载均衡）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Session-Affinity%EF%BC%88%E4%BC%9A%E8%AF%9D%E4%BF%9D%E6%8C%81%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">Session Affinity（会话保持）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在K8S集群内部，应用常使用Service互访，那么，了解Service技术优缺点将有利于应用规划与部署，鉴于此，本文将通过简单案例以探索Cluster-Ip类型Service服务的利弊。</p>
+<p>为便于讲解，我们先创建如下应用及Service服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl run --image=nginx nginx-web-1 --image-pull-policy=&#x27;IfNotPresent&#x27;</span></span><br><span class="line"><span class="comment"># kubectl expose deployment nginx-web-1 --port=80 --target-port=80</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<h3 id="Service探索"><a href="#Service探索" class="headerlink" title="Service探索"></a>Service探索</h3><p>作者的K8S环境是1.9版本，其Service内部服务由Kube-Proxy1提供，且默认用iptables技术实现，故本文探索K8S集群Service技术，即研究iptables在K8S上的技术实现。</p>
+<h3 id="Service-Route（服务路由）"><a href="#Service-Route（服务路由）" class="headerlink" title="Service Route（服务路由）"></a>Service Route（服务路由）</h3><p>如下可知，通过nginx-web-1服务可实际访问到后端pod：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># nginx pod ip地址：</span></span><br><span class="line"><span class="comment"># kubectl describe pod nginx-web-1-fb8d45f5f-dcbtt | grep &quot;IP&quot;</span></span><br><span class="line">IP:             10.129.1.22</span><br><span class="line"></span><br><span class="line"><span class="comment"># Service服务，通过172.30.132.253:80则实际访问到10.129.1.22:80</span></span><br><span class="line"><span class="comment"># kubectl describe svc nginx-web-1 </span></span><br><span class="line">...</span><br><span class="line">Type:              ClusterIP</span><br><span class="line">IP:                172.30.132.253</span><br><span class="line">Port:              &lt;<span class="built_in">unset</span>&gt;  80/TCP</span><br><span class="line">TargetPort:        80/TCP</span><br><span class="line">Endpoints:         10.129.1.22:80</span><br><span class="line">Session Affinity:  None</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重置nginx web页面：</span></span><br><span class="line"><span class="comment"># kubectl exec -it nginx-web-1-fb8d45f5f-dcbtt -- \</span></span><br><span class="line">               sh -c <span class="string">&quot;echo hello&gt;/usr/share/nginx/html/index.html&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># curl 10.129.1.22</span></span><br><span class="line">hello</span><br><span class="line"><span class="comment"># curl 172.30.132.253</span></span><br><span class="line">hello</span><br></pre></td></tr></table></figure>
+
+<p>Service服务分配的CLUSTER-IP以及监听的端口均虚拟的，即在K8S集群节点上执行ip a与netstat -an命令均无法找到，其实际上，IP与Port是由iptables配置在每K8S节点上的。在节点上执行如下命令可找到此Service相关的iptables配置，简析如下：</p>
+<ul>
+<li>当通过Service服务IP：172.30.132.253:80访问时，匹配第3条规则链（KUBE-SERVICES）后，跳转到第4条子链（KUBE-SVC-…）上；</li>
+<li>第4条子链做简单注释后，继而跳转到第1、2规则链（KUBE-SEP-…）上；</li>
+<li>当源Pod通过Service访问自身时，匹配第1条规则，继而跳转到KUBE-MARK-MASQ链中；</li>
+<li>匹配到第2条规则，此时通过DNAT被重定向到后端Pod：108.29.1.22:80。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># iptables-save | grep nginx-web-1</span></span><br><span class="line">-A KUBE-SEP-UWNFTKZFYWNNNTK7 -s 10.129.1.22/32 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -j KUBE-MARK-MASQ</span><br><span class="line">-A KUBE-SEP-UWNFTKZFYWNNNTK7 -p tcp -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m tcp -j DNAT --to-destination 10.129.1.22:80</span><br><span class="line">-A KUBE-SERVICES -d 172.30.132.253/32 -p tcp -m comment \</span><br><span class="line">   --comment <span class="string">&quot;demo/nginx-web-1: cluster IP&quot;</span> -m tcp --dport 80 -j KUBE-SVC-SNP24T7IBBNZDJ76</span><br><span class="line">-A KUBE-SVC-SNP24T7IBBNZDJ76 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -j KUBE-SEP-UWNFTKZFYWNNNTK7</span><br></pre></td></tr></table></figure>
+
+<p>详细分析iptables规则，执行iptables-save命令可发现nat的PREROUTING与OUTPUT链中均有KUBE-SERVICES规则链，且处于第一顺位。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">*nat</span><br><span class="line">-A PREROUTING -m comment --comment <span class="string">&quot;kubernetes service portals&quot;</span> -j KUBE-SERVICES</span><br><span class="line">-A OUTPUT -m comment --comment <span class="string">&quot;kubernetes service portals&quot;</span> -j KUBE-SERVICES</span><br></pre></td></tr></table></figure>
+
+<p>当通过Service访问应用时，流量经由nat表中的PREROUTING规则链处理后，跳转到KUBE-SERVICES子链，而此链包含了对具体Service处理的规则。如下所示，访问172.30.132.253:80将被跳转到KUBE-SEP-…子规则链中。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-A KUBE-SERVICES -d 172.30.132.253/32 -p tcp -m comment \</span><br><span class="line">   --comment <span class="string">&quot;demo/nginx-web-1: cluster IP&quot;</span> -m tcp --dport 80 -j KUBE-SVC-SNP24T7IBBNZDJ76</span><br><span class="line">-A KUBE-SVC-SNP24T7IBBNZDJ76 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -j KUBE-SEP-UWNFTKZFYWNNNTK7</span><br></pre></td></tr></table></figure>
+
+<h3 id="Loadbalance（负载均衡）"><a href="#Loadbalance（负载均衡）" class="headerlink" title="Loadbalance（负载均衡）"></a>Loadbalance（负载均衡）</h3><p>执行如下命令将Deployment扩展为3个Pod后，继而再观察Service负载均衡方面的技术或问题。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl scale deploy/nginx-web-1 --replicas=3</span></span><br></pre></td></tr></table></figure>
+
+<p>再次dump防火墙规则，发现Service经由iptables的statistic模块，以random方式均衡的分发流量，也即负载均衡模式为轮训。</p>
+<ul>
+<li>存在3条DNAT与KUBE-MARK-MASQ规则，分别对应3个后端Pod实地址；</li>
+<li>KUBE-SERVICES链中存在3条子链，除最后一条KUBE-SVC-…子链外，其余子链使用模块statistic的random模式做流量分割或负载均衡：第1条KUBE-SVC-…应用33%流量，第2条KUBE-SVC-…规则应用剩余的50%流量，第3条KUBE-SVC-…规则应用最后的流量。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># iptables-save | grep nginx-web-1</span></span><br><span class="line">-A KUBE-SEP-BI762VOIAZZWU5S7 -s 10.129.1.27/32 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -j KUBE-MARK-MASQ</span><br><span class="line">-A KUBE-SEP-BI762VOIAZZWU5S7 -p tcp -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m tcp -j DNAT --to-destination 10.129.1.27:80</span><br><span class="line"></span><br><span class="line">-A KUBE-SEP-CDQIKEVSTA766BRK -s 10.129.1.28/32 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -j KUBE-MARK-MASQ</span><br><span class="line">-A KUBE-SEP-CDQIKEVSTA766BRK -p tcp -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m tcp -j DNAT --to-destination 10.129.1.28:80</span><br><span class="line"></span><br><span class="line">-A KUBE-SEP-W5HTO42ZVNHJQWBG -s 10.129.3.57/32 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -j KUBE-MARK-MASQ</span><br><span class="line">-A KUBE-SEP-W5HTO42ZVNHJQWBG -p tcp -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m tcp -j DNAT --to-destination 10.129.3.57:80</span><br><span class="line"></span><br><span class="line">-A KUBE-SERVICES -d 172.30.132.253/32 -p tcp -m comment \</span><br><span class="line">   --comment <span class="string">&quot;demo/nginx-web-1: cluster IP&quot;</span> -m tcp --dport 80 -j KUBE-SVC-SNP24T7IBBNZDJ76</span><br><span class="line"></span><br><span class="line">-A KUBE-SVC-SNP24T7IBBNZDJ76 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m statistic --mode random --probability 0.33332999982 -j KUBE-SEP-BI762VOIAZZWU5S7</span><br><span class="line">-A KUBE-SVC-SNP24T7IBBNZDJ76 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-CDQIKEVSTA766BRK</span><br><span class="line">-A KUBE-SVC-SNP24T7IBBNZDJ76 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -j KUBE-SEP-W5HTO42ZVNHJQWBG</span><br></pre></td></tr></table></figure>
+
+<h3 id="Session-Affinity（会话保持）"><a href="#Session-Affinity（会话保持）" class="headerlink" title="Session Affinity（会话保持）"></a>Session Affinity（会话保持）</h3><p>如下所示，调整Service服务，打开会话保持功能，并设置会话保持期限为3小时（PS：若不设置，则默认是3小时）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># kubectl edit svc nginx-web-1</span></span><br><span class="line">...</span><br><span class="line">  sessionAffinity: ClientIP</span><br><span class="line">  sessionAffinityConfig:</span><br><span class="line">    clientIP:</span><br><span class="line">      timeoutSeconds: 10800</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>继续观察iptables实现，发现在原有基础上，iptables规则中添加了recent模块，此模块被用于会话保持功能，故kube-proxy通过在iptables中结合statistic与recent模块，实现了Service的轮训负载均衡与会话保持功能。</p>
+<ul>
+<li><p>通过Service服务访问应用，封包进入KUBE-SERVICES规则链，并跳转到KUBE-SVC-…子链中；</p>
+</li>
+<li><p>在KUBE-SVC-SNP…子链中，recent位于statistic模块前，故而，有如下情况出现：</p>
+<ul>
+<li>当客户端第一次访问Service时，KUBE-SVC-…子链中的规则（-m recent –rcheck –seconds 10800 –reap …–rsource）池中未记录客户端地址，故封包匹配失败，从而封包被后续的statistic模块规则处理后，均衡分发到KUBE-SEP-…子链中，此链中使用recent模块的–set参数将客户源地址记录到规则池后，DNAT到实际后端实例上；</li>
+<li>KUBE-SVC-…子链中recent模块配置了源地址记录期限，若客户端3（–seconds 10800 –reap）小时内未访问服务，则recent规则池中的客户端记录将被移除，此时客户端再次访问Service就如同第一次访问Service一样；</li>
+<li>当客户端在3小时内再次访问Service时，匹配KUBE-SVC-…子链中的recent模块规则后，跳转到KUBE-SEP子链，其规则中recent模块–set参数将更新规则池中的Record TTL，而后DNAT到实际后端实例上；</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># iptables-save | grep nginx-web-1</span></span><br><span class="line">-A KUBE-SEP-BI762VOIAZZWU5S7 -s 10.129.1.27/32 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -j KUBE-MARK-MASQ</span><br><span class="line">-A KUBE-SEP-BI762VOIAZZWU5S7 -p tcp -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m recent --<span class="built_in">set</span> --name KUBE-SEP-BI762VOIAZZWU5S7 --mask 255.255.255.255 \</span><br><span class="line">   --rsource -m tcp -j DNAT --to-destination 10.129.1.27:80</span><br><span class="line"><span class="comment"># 省略2条类似的KUBE-SEP规则</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">-A KUBE-SERVICES -d 172.30.132.253/32 -p tcp -m comment \</span><br><span class="line">   --comment <span class="string">&quot;demo/nginx-web-1: cluster IP&quot;</span> -m tcp --dport 80 -j KUBE-SVC-SNP24T7IBBNZDJ76</span><br><span class="line"></span><br><span class="line">-A KUBE-SVC-SNP24T7IBBNZDJ76 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m recent --rcheck --seconds 10800 --reap --name KUBE-SEP-BI762VOIAZZWU5S7 \</span><br><span class="line">   --mask 255.255.255.255 --rsource -j KUBE-SEP-BI762VOIAZZWU5S7</span><br><span class="line"><span class="comment"># 省略2条类似的KUBE-SVC规则</span></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">-A KUBE-SVC-SNP24T7IBBNZDJ76 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m statistic --mode random --probability 0.33332999982 -j KUBE-SEP-BI762VOIAZZWU5S7</span><br><span class="line">-A KUBE-SVC-SNP24T7IBBNZDJ76 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -m statistic --mode random --probability 0.50000000000 -j KUBE-SEP-CDQIKEVSTA766BRK</span><br><span class="line">-A KUBE-SVC-SNP24T7IBBNZDJ76 -m comment --comment <span class="string">&quot;demo/nginx-web-1:&quot;</span> \</span><br><span class="line">   -j KUBE-SEP-W5HTO42ZVNHJQWBG</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>K8S中的Service服务可提供负载均衡及会话保持功能，其通过Linux内核netfilter模块来配置iptables实现，网络封包在内核中流转，且规则匹配很少，故效率非常高；而Service负载均衡分发比较薄弱，其通过statistic的random规则实现轮训分发，无法实现复杂的如最小链接分发方式，鉴于此，K8S 1.9后续版本调整了kube-proxy服务，其可通过ipvs实现Service负载均衡功能。</p>
+<p>​ </p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2021/02/20/%E6%8E%A2%E7%A9%B6K8S-Service%E5%86%85%E9%83%A8iptables%E8%B7%AF%E7%94%B1%E8%A7%84%E5%88%99/" data-title="探究K8S Service内部iptables路由规则 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2021/03/27/理解有状态应用控制器StatefulSet/" title="理解有状态应用控制器StatefulSet">
+  <strong>上一篇：</strong><br/>
+  <span>
+  理解有状态应用控制器StatefulSet</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2021/01/28/解决-Homebrew-下载更新极慢的问题/"  title="解决 Homebrew 下载更新极慢的问题">
+ <strong>下一篇：</strong><br/> 
+ <span>解决 Homebrew 下载更新极慢的问题
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2021/02/20/探究K8S-Service内部iptables路由规则/" data-title="探究K8S Service内部iptables路由规则" data-url="https://luckymrwang.github.io/2021/02/20/%E6%8E%A2%E7%A9%B6K8S-Service%E5%86%85%E9%83%A8iptables%E8%B7%AF%E7%94%B1%E8%A7%84%E5%88%99/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Service%E6%8E%A2%E7%B4%A2"><span class="toc-number">2.</span> <span class="toc-text">Service探索</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Service-Route%EF%BC%88%E6%9C%8D%E5%8A%A1%E8%B7%AF%E7%94%B1%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">Service Route（服务路由）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Loadbalance%EF%BC%88%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%89"><span class="toc-number">4.</span> <span class="toc-text">Loadbalance（负载均衡）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Session-Affinity%EF%BC%88%E4%BC%9A%E8%AF%9D%E4%BF%9D%E6%8C%81%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">Session Affinity（会话保持）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

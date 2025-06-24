@@ -1,0 +1,984 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="学习总结 思考感悟 知识管理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="https://luckymrwang.github.io/page/15/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="学习总结 思考感悟 知识管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="luckymrwang">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/11/Writing-Files/" title="Writing Files" itemprop="url">Writing Files</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-11T09:35:15.000Z" itemprop="datePublished"> 发表于 2016-11-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;bufio&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">check</span><span class="params">(e <span class="type">error</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> e != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(e)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	d1 := []<span class="type">byte</span>(<span class="string">&quot;hello\ngo\n&quot;</span>)</span><br><span class="line">	err := ioutil.WriteFile(<span class="string">&quot;/tmp/dat1&quot;</span>, d1, <span class="number">0644</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	f, err := os.Create(<span class="string">&quot;/tmp/dat2&quot;</span>)</span><br><span class="line">	check(err)</span><br><span class="line">	<span class="keyword">defer</span> f.Close()</span><br><span class="line"></span><br><span class="line">	d2 := []<span class="type">byte</span>&#123;<span class="number">115</span>, <span class="number">111</span>, <span class="number">109</span>, <span class="number">101</span>, <span class="number">10</span>&#125;</span><br><span class="line">	n2, err := f.Write(d2)</span><br><span class="line">	check(err)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;wrote %d bytes\n&quot;</span>, n2)</span><br><span class="line"></span><br><span class="line">	n3, err := f.WriteString(<span class="string">&quot;writes\n&quot;</span>)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;wrote %d bytes\n&quot;</span>, n3)</span><br><span class="line">	f.Sync()</span><br><span class="line">	w := bufio.NewWriter(f)</span><br><span class="line"></span><br><span class="line">	n4, err := w.WriteString(<span class="string">&quot;buffered\n&quot;</span>)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;wrote %d bytes\n&quot;</span>, n4)</span><br><span class="line">	w.Flush()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">	</span><br><span class="line">$ go run writing-files.go </span><br><span class="line">wrote 5 bytes</span><br><span class="line">wrote 7 bytes</span><br><span class="line">wrote 9 bytes</span><br><span class="line"></span><br><span class="line">$ cat /tmp/dat1</span><br><span class="line">hello</span><br><span class="line">go</span><br><span class="line">$ cat /tmp/dat2</span><br><span class="line">some</span><br><span class="line">writes</span><br><span class="line">buffered</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GoExample/">GoExample</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/11/Writing-Files/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/11/Writing-Files/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/11/String-Functions/" title="String Functions" itemprop="url">String Functions</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-11T09:29:58.000Z" itemprop="datePublished"> 发表于 2016-11-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> s <span class="string">&quot;strings&quot;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> p = fmt.Println</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	p(<span class="string">&quot;Contains:  &quot;</span>, s.Contains(<span class="string">&quot;test&quot;</span>, <span class="string">&quot;es&quot;</span>))</span><br><span class="line">	p(<span class="string">&quot;Count:     &quot;</span>, s.Count(<span class="string">&quot;test&quot;</span>, <span class="string">&quot;t&quot;</span>))</span><br><span class="line">	p(<span class="string">&quot;HasPrefix: &quot;</span>, s.HasPrefix(<span class="string">&quot;test&quot;</span>, <span class="string">&quot;te&quot;</span>))</span><br><span class="line">	p(<span class="string">&quot;HasSuffix: &quot;</span>, s.HasSuffix(<span class="string">&quot;test&quot;</span>, <span class="string">&quot;st&quot;</span>))</span><br><span class="line">	p(<span class="string">&quot;Index:     &quot;</span>, s.Index(<span class="string">&quot;test&quot;</span>, <span class="string">&quot;e&quot;</span>))</span><br><span class="line">	p(<span class="string">&quot;Join:      &quot;</span>, s.Join([]<span class="type">string</span>&#123;<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>&#125;, <span class="string">&quot;-&quot;</span>))</span><br><span class="line">	p(<span class="string">&quot;Repeat:    &quot;</span>, s.Repeat(<span class="string">&quot;a&quot;</span>, <span class="number">5</span>))</span><br><span class="line">	p(<span class="string">&quot;Replace:   &quot;</span>, s.Replace(<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;o&quot;</span>, <span class="string">&quot;0&quot;</span>, <span class="number">-1</span>))</span><br><span class="line">	p(<span class="string">&quot;Replace:   &quot;</span>, s.Replace(<span class="string">&quot;foo&quot;</span>, <span class="string">&quot;o&quot;</span>, <span class="string">&quot;0&quot;</span>, <span class="number">1</span>))</span><br><span class="line">	p(<span class="string">&quot;Split:     &quot;</span>, s.Split(<span class="string">&quot;a-b-c-d-e&quot;</span>, <span class="string">&quot;-&quot;</span>))</span><br><span class="line">	p(<span class="string">&quot;ToLower:   &quot;</span>, s.ToLower(<span class="string">&quot;TEST&quot;</span>))</span><br><span class="line">	p(<span class="string">&quot;ToUpper:   &quot;</span>, s.ToUpper(<span class="string">&quot;test&quot;</span>))</span><br><span class="line">	p()</span><br><span class="line">	p(<span class="string">&quot;Len: &quot;</span>, <span class="built_in">len</span>(<span class="string">&quot;hello&quot;</span>))</span><br><span class="line">	p(<span class="string">&quot;Char:&quot;</span>, <span class="string">&quot;hello&quot;</span>[<span class="number">1</span>])</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ go run string-functions.go</span><br><span class="line">Contains:   true</span><br><span class="line">Count:      2</span><br><span class="line">HasPrefix:  true</span><br><span class="line">HasSuffix:  true</span><br><span class="line">Index:      1</span><br><span class="line">Join:       a-b</span><br><span class="line">Repeat:     aaaaa</span><br><span class="line">Replace:    f00</span><br><span class="line">Replace:    f0o</span><br><span class="line">Split:      [a b c d e]</span><br><span class="line">toLower:    test</span><br><span class="line">ToUpper:    TEST</span><br><span class="line">Len:  5</span><br><span class="line">Char: 101</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/GoExample/">GoExample</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/11/String-Functions/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/11/String-Functions/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/03/轮询调度算法-Round-Robin-Scheduling/" title="轮询调度算法(Round-Robin Scheduling)" itemprop="url">轮询调度算法(Round-Robin Scheduling)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-03T02:45:05.000Z" itemprop="datePublished"> 发表于 2016-11-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>　　毫无疑问，随着互联网、移动网络接入成本的降低，互联网正在日益深入地走入我们的生活，越来越成为人们获取信息的高效平台，ICP行业也顺势呈现出强劲的成长趋势，成为互联网迅猛发展形势下最大的受益者，也直接促成了从web1.0到web2.0以及社区、博客、视频等一系列互联网时代的更迭和运营模式的变动。</p>
+<p>　　但是随着各站点访问量和信息交流量的迅猛增长，如何使用最小的资源成本，提高网络的效率，最优化用户体验，已经成为网络管理人员不得不面对的挑战。</p>
+<p>　　从技术上讲，就是ICP行业面临的网络资源有效利用问题，也就是如何进行对网络的访问分流，以便能够快速响应用户反应，即：负载均衡。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/11/03/%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Round-Robin-Scheduling/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/03/轮询调度算法-Round-Robin-Scheduling/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/03/轮询调度算法-Round-Robin-Scheduling/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/10/24/Golang通过http代理抓取页面代码/" title="Golang通过http代理抓取页面代码" itemprop="url">Golang通过http代理抓取页面代码</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-10-24T09:26:03.000Z" itemprop="datePublished"> 发表于 2016-10-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;net/url&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// http get by proxy</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetByProxy</span><span class="params">(url_addr, proxy_addr <span class="type">string</span>)</span></span> (*http.Response, <span class="type">error</span>) &#123;</span><br><span class="line">	request, _ := http.NewRequest(<span class="string">&quot;GET&quot;</span>, url_addr, <span class="literal">nil</span>)</span><br><span class="line">	proxy, err := url.Parse(proxy_addr)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	client := &amp;http.Client&#123;</span><br><span class="line">		Transport: &amp;http.Transport&#123;</span><br><span class="line">			Proxy: http.ProxyURL(proxy),</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> client.Do(request)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	proxy := <span class="string">&quot;http://58.252.56.149:9000/&quot;</span></span><br><span class="line">	url := <span class="string">&quot;http://www.baidu.com/&quot;</span></span><br><span class="line">	resp, _ := GetByProxy(url, proxy)</span><br><span class="line">	fmt.Println(resp)</span><br><span class="line">	<span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line">	body, _ := ioutil.ReadAll(resp.Body)</span><br><span class="line">	fmt.Println(<span class="type">string</span>(body))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>本文引自<a href="https://my.oschina.net/tonywang/blog/184628">这里</a></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/10/24/Golang通过http代理抓取页面代码/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/10/24/Golang通过http代理抓取页面代码/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/10/21/Go实现快速排序和冒泡排序/" title="Go实现快速排序和冒泡排序" itemprop="url">Go实现快速排序和冒泡排序</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-10-21T06:31:25.000Z" itemprop="datePublished"> 发表于 2016-10-21</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">quickSort</span><span class="params">(values []<span class="type">int</span>, left <span class="type">int</span>, right <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> left &lt; right &#123;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 设置基准值</span></span><br><span class="line">		temp := values[left]</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 设置哨兵</span></span><br><span class="line">		i, j := left, right</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			<span class="comment">// 从右向左找，找到第一个比基准值小的数</span></span><br><span class="line">			<span class="keyword">for</span> values[j] &gt;= temp &amp;&amp; i &lt; j &#123;</span><br><span class="line">				j--</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 从左向右找，找到第一个比基准值大的数</span></span><br><span class="line">			<span class="keyword">for</span> values[i] &lt;= temp &amp;&amp; i &lt; j &#123;</span><br><span class="line">				i++</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 如果哨兵相遇，则退出循环</span></span><br><span class="line">			<span class="keyword">if</span> i &gt;= j &#123;</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 交换左右两侧的值</span></span><br><span class="line">			values[i], values[j] = values[j], values[i]</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 将基准值移到哨兵相遇点</span></span><br><span class="line">		values[left] = values[i]</span><br><span class="line">		values[i] = temp</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 递归，左右两侧分别排序</span></span><br><span class="line">		quickSort(values, left, i<span class="number">-1</span>)</span><br><span class="line">		quickSort(values, i+<span class="number">1</span>, right)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">QuickSort</span><span class="params">(values []<span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	quickSort(values, <span class="number">0</span>, <span class="built_in">len</span>(values)<span class="number">-1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">BubbleSort</span><span class="params">(values []<span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">1</span>; i &lt; <span class="built_in">len</span>(values); i++ &#123;</span><br><span class="line">		<span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(values)-i; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> values[j] &gt; values[j+<span class="number">1</span>] &#123;</span><br><span class="line">				values[j], values[j+<span class="number">1</span>] = values[j+<span class="number">1</span>], values[j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">arr := []<span class="type">int</span>&#123;<span class="number">3</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">38</span>, <span class="number">93</span>, <span class="number">12</span>, <span class="number">222</span>, <span class="number">45</span>, <span class="number">93</span>, <span class="number">23</span>, <span class="number">84</span>, <span class="number">65</span>, <span class="number">2</span>&#125;</span><br><span class="line">	QuickSort(arr)</span><br><span class="line">	fmt.Println(arr)</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 结果</span></span><br><span class="line">	[<span class="number">2</span> <span class="number">3</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">12</span> <span class="number">23</span> <span class="number">38</span> <span class="number">45</span> <span class="number">65</span> <span class="number">84</span> <span class="number">93</span> <span class="number">93</span> <span class="number">222</span>]</span><br><span class="line"></span><br><span class="line">	arr2 := []<span class="type">int</span>&#123;<span class="number">3</span>, <span class="number">7</span>, <span class="number">9</span>, <span class="number">8</span>, <span class="number">38</span>, <span class="number">93</span>, <span class="number">12</span>, <span class="number">222</span>, <span class="number">45</span>, <span class="number">93</span>, <span class="number">23</span>, <span class="number">84</span>, <span class="number">65</span>, <span class="number">2</span>&#125;</span><br><span class="line">	BubbleSort(arr2)</span><br><span class="line">	fmt.Println(arr2)</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// 结果</span></span><br><span class="line">	[<span class="number">2</span> <span class="number">3</span> <span class="number">7</span> <span class="number">8</span> <span class="number">9</span> <span class="number">12</span> <span class="number">23</span> <span class="number">38</span> <span class="number">45</span> <span class="number">65</span> <span class="number">84</span> <span class="number">93</span> <span class="number">93</span> <span class="number">222</span>]</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/10/21/Go实现快速排序和冒泡排序/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/10/21/Go实现快速排序和冒泡排序/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/10/18/从kafka中查询用户日志优化/" title="从kafka中查询用户日志优化" itemprop="url">从kafka中查询用户日志优化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-10-18T09:04:37.000Z" itemprop="datePublished"> 发表于 2016-10-18</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>优化从<code>kafka</code>中取用户日志</p>
+<p>最初是根据开始时间，结束时间从<code>kafka</code>提供的api中取出<code>json</code>数据，然后挨个解析判断是否符合条件。</p>
+<p>由于数据量很大，这种方式会特别慢。</p>
+<h3 id="初步优化"><a href="#初步优化" class="headerlink" title="初步优化"></a>初步优化</h3><p>通过<code>kakfa</code>官方提供的命令行工具，取出用户日志，然后再利用系统<code>grep</code>命令筛选出符合条件的数据，此时数据为<code>json</code>流，之后将<code>json</code>流数据循环解析过滤出最终数据</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/10/18/%E4%BB%8Ekafka%E4%B8%AD%E6%9F%A5%E8%AF%A2%E7%94%A8%E6%88%B7%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a><a href="/tags/Kafka/">Kafka</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/10/18/从kafka中查询用户日志优化/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/10/18/从kafka中查询用户日志优化/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/09/29/Go读写锁RWMutex/" title="Go读写锁RWMutex" itemprop="url">Go读写锁RWMutex</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-29T02:19:22.000Z" itemprop="datePublished"> 发表于 2016-09-29</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>读写锁是针对于读写操作的互斥锁。</p>
+<p>基本遵循两大原则：</p>
+<p>1、可以随便读。多个gorouting同时读。</p>
+<p>2、写的时候，啥都不能干。不能读，也不能写。</p>
+<p>解释：</p>
+<p>在32位的操作系统中，针对int64类型值的读操作和写操作不可能只由一个CPU指令完成。如果一个写的操作刚执行完了第一个指令，时间片换给另一个读的协程，这就会读到一个错误的数据。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/09/29/Go%E8%AF%BB%E5%86%99%E9%94%81RWMutex/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/29/Go读写锁RWMutex/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/29/Go读写锁RWMutex/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/09/29/Go互斥锁Mutex/" title="Go互斥锁Mutex" itemprop="url">Go互斥锁Mutex</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-29T02:18:45.000Z" itemprop="datePublished"> 发表于 2016-09-29</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>go mutex是互斥锁，只有Lock和Unlock两个方法，在这两个方法之间的代码不能被多个goroutins同时调用到。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/09/29/Go%E4%BA%92%E6%96%A5%E9%94%81Mutex/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/29/Go互斥锁Mutex/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/29/Go互斥锁Mutex/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/09/28/Golang中container-heap包用法/" title="Golang中container/heap包用法" itemprop="url">Golang中container/heap包用法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-28T12:05:40.000Z" itemprop="datePublished"> 发表于 2016-09-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>heap包对任意实现了heap接口的类型提供堆操作。（小根）堆是具有“每个节点都是以其为根的子树中最小值”属性的树。树的最小元素在根部，为index 0.</p>
+<p>heap是常用的实现优先队列的方法。要创建一个优先队列，实现一个具有使用（负的）优先级作为比较的依据的Less方法的Heap接口，如此一来可用Push添加项目而用Pop取出队列最高优先级的项目。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Interface</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</span><br><span class="line">    sort.Interface</span><br><span class="line">    Push(x <span class="keyword">interface</span>&#123;&#125;) <span class="comment">// add x as element Len()</span></span><br><span class="line">    Pop() <span class="keyword">interface</span>&#123;&#125;   <span class="comment">// remove and return element Len() - 1.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/09/28/Golang%E4%B8%ADcontainer-heap%E5%8C%85%E7%94%A8%E6%B3%95/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/28/Golang中container-heap包用法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/28/Golang中container-heap包用法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/09/28/Golang中container:list包用法/" title="Golang中container/list包用户" itemprop="url">Golang中container/list包用户</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-28T09:39:29.000Z" itemprop="datePublished"> 发表于 2016-09-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>list是一个双向链表。该结构具有链表的所有功能。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/09/28/Golang%E4%B8%ADcontainer:list%E5%8C%85%E7%94%A8%E6%B3%95/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/28/Golang中container:list包用法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/28/Golang中container:list包用法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/14/">&lt;span&gt;&lt;&#x2F;span&gt;Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/16/">Next&lt;span&gt;&lt;&#x2F;span&gt;</a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>

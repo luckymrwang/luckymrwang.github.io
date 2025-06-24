@@ -1,0 +1,522 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>JSON.stringify() | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="概述JSON.stringify() 方法可以将任意的 JavaScript 值序列化成 JSON 字符串。 语法JSON.stringify(value[, replacer [, space]])  参数value将要序列化成 JSON 字符串的值。 replacer  可选如果该参数是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；如果该参数是一个数组，则只有包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JSON.stringify()">
+<meta property="og:url" content="https://luckymrwang.github.io/2015/12/24/JSON-stringify/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="概述JSON.stringify() 方法可以将任意的 JavaScript 值序列化成 JSON 字符串。 语法JSON.stringify(value[, replacer [, space]])  参数value将要序列化成 JSON 字符串的值。 replacer  可选如果该参数是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；如果该参数是一个数组，则只有包">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-12-24T12:36:05.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.194Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="JS">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/12/24/JSON-stringify/" title="JSON.stringify()" itemprop="url">JSON.stringify()</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-24T12:36:05.000Z" itemprop="datePublished"> 发表于 2015-12-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E6%95%B0"><span class="toc-number">3.</span> <span class="toc-text">参数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#value"><span class="toc-number">3.1.</span> <span class="toc-text">value</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#replacer-%E5%8F%AF%E9%80%89"><span class="toc-number">3.2.</span> <span class="toc-text">replacer  可选</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#space-%E5%8F%AF%E9%80%89"><span class="toc-number">3.3.</span> <span class="toc-text">space 可选</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%8F%E8%BF%B0"><span class="toc-number">4.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#space-%E5%8F%82%E6%95%B0"><span class="toc-number">5.</span> <span class="toc-text">space 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#toJSON-%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">toJSON 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-JSON-stringify-%E7%BB%93%E5%90%88-localStorage-%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">7.</span> <span class="toc-text">使用 JSON.stringify 结合 localStorage 的例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="toc-number">8.</span> <span class="toc-text">相关链接</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p><strong>JSON.stringify()</strong> 方法可以将任意的 JavaScript 值序列化成 JSON 字符串。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><pre><code>JSON.stringify(value[, replacer [, space]])
+</code></pre>
+<h3 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h3><h4 id="value"><a href="#value" class="headerlink" title="value"></a>value</h4><p>将要序列化成 JSON 字符串的值。</p>
+<h4 id="replacer-可选"><a href="#replacer-可选" class="headerlink" title="replacer  可选"></a>replacer  <code>可选</code></h4><p>如果该参数是一个函数，则在序列化过程中，被序列化的值的每个属性都会经过该函数的转换和处理；如果该参数是一个数组，则只有包含在这个数组中的属性名才会被序列化到最终的 JSON 字符串中。关于该参数更详细的解释和示例，请参考使用原生的 JSON 对象一文。</p>
+<h4 id="space-可选"><a href="#space-可选" class="headerlink" title="space 可选"></a>space <code>可选</code></h4><p>指定缩进用的空白字符串，用于美化输出（pretty-print）。</p>
+<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><p>关于序列化，有下面五点注意事项：</p>
+<ul>
+<li>非数组对象的属性不能保证以特定的顺序出现在序列化后的字符串中。</li>
+<li>布尔值、数字、字符串的包装对象在序列化过程中会自动转换成对应的原始值。</li>
+<li>undefined、任意的函数以及 symbol 值，在序列化过程中会被忽略（出现在非数组对象的属性值中时）或者被转换成 null（出现在数组中时）。</li>
+<li>所有以 symbol 为属性键的属性都会被完全忽略掉，即便 replacer 参数中强制指定包含了它们。</li>
+<li>不可枚举的属性会被忽略</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;&#125;);                        <span class="comment">// &#x27;&#123;&#125;&#x27;</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(<span class="literal">true</span>);                      <span class="comment">// &#x27;true&#x27;</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(<span class="string">&quot;foo&quot;</span>);                     <span class="comment">// &#x27;&quot;foo&quot;&#x27;</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>([<span class="number">1</span>, <span class="string">&quot;false&quot;</span>, <span class="literal">false</span>]);       <span class="comment">// &#x27;[1,&quot;false&quot;,false]&#x27;</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123; <span class="attr">x</span>: <span class="number">5</span> &#125;);                  <span class="comment">// &#x27;&#123;&quot;x&quot;:5&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;<span class="attr">x</span>: <span class="number">5</span>, <span class="attr">y</span>: <span class="number">6</span>&#125;);              </span><br><span class="line"><span class="comment">// &#x27;&#123;&quot;x&quot;:5,&quot;y&quot;:6&#125;&#x27; 或者 &#x27;&#123;&quot;y&quot;:6,&quot;x&quot;:5&#125;&#x27; 都可能</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>([<span class="keyword">new</span> <span class="title class_">Number</span>(<span class="number">1</span>), <span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;false&quot;</span>), <span class="keyword">new</span> <span class="title class_">Boolean</span>(<span class="literal">false</span>)]); </span><br><span class="line"><span class="comment">// &#x27;[1,&quot;false&quot;,false]&#x27;</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;<span class="attr">x</span>: <span class="literal">undefined</span>, <span class="attr">y</span>: <span class="title class_">Object</span>, <span class="attr">z</span>: <span class="title class_">Symbol</span>(<span class="string">&quot;&quot;</span>)&#125;); </span><br><span class="line"><span class="comment">// &#x27;&#123;&#125;&#x27;</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>([<span class="literal">undefined</span>, <span class="title class_">Object</span>, <span class="title class_">Symbol</span>(<span class="string">&quot;&quot;</span>)]);          </span><br><span class="line"><span class="comment">// &#x27;[null,null,null]&#x27; </span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;[<span class="title class_">Symbol</span>(<span class="string">&quot;foo&quot;</span>)]: <span class="string">&quot;foo&quot;</span>&#125;);                 </span><br><span class="line"><span class="comment">// &#x27;&#123;&#125;&#x27;</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;[<span class="title class_">Symbol</span>.<span class="title function_">for</span>(<span class="string">&quot;foo&quot;</span>)]: <span class="string">&quot;foo&quot;</span>&#125;, [<span class="title class_">Symbol</span>.<span class="title function_">for</span>(<span class="string">&quot;foo&quot;</span>)]);</span><br><span class="line"><span class="comment">// &#x27;&#123;&#125;&#x27;</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;[<span class="title class_">Symbol</span>.<span class="title function_">for</span>(<span class="string">&quot;foo&quot;</span>)]: <span class="string">&quot;foo&quot;</span>&#125;, <span class="keyword">function</span> (<span class="params">k, v</span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">typeof</span> k === <span class="string">&quot;symbol&quot;</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;a symbol&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// &#x27;&#123;&#125;&#x27;  </span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 不可枚举的属性默认会被忽略：</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>( <span class="title class_">Object</span>.<span class="title function_">create</span>(<span class="literal">null</span>, &#123; <span class="attr">x</span>: &#123; <span class="attr">value</span>: <span class="string">&#x27;x&#x27;</span>, <span class="attr">enumerable</span>: <span class="literal">false</span> &#125;, <span class="attr">y</span>: &#123; <span class="attr">value</span>: <span class="string">&#x27;y&#x27;</span>, <span class="attr">enumerable</span>: <span class="literal">true</span> &#125; &#125;) );</span><br><span class="line"><span class="comment">// &#x27;&#123;&quot;y&quot;:&quot;y&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="space-参数"><a href="#space-参数" class="headerlink" title="space 参数"></a>space 参数</h3><p>space 参数用来控制结果字符串里面的间距。如果是一个数字, 则在字符串化时每一级别会比上一级别缩进多这个数字值的空格（最多10个空格）；如果是一个字符串，则每一级别会比上一级别多缩进用该字符串（或该字符串的前十个字符）。</p>
+<pre><code>JSON.stringify(&#123; a: 2 &#125;, null, &quot; &quot;);   // &#39;&#123;\n &quot;a&quot;: 2\n&#125;&#39;
+</code></pre>
+<p>使用制表符（\t）来缩进：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123; <span class="attr">uno</span>: <span class="number">1</span>, dos : <span class="number">2</span> &#125;, <span class="literal">null</span>, <span class="string">&#x27;\t&#x27;</span>)</span><br><span class="line"><span class="comment">// &#x27;&#123;            \</span></span><br><span class="line"><span class="comment">//     &quot;uno&quot;: 1, \</span></span><br><span class="line"><span class="comment">//     &quot;dos&quot;: 2  \</span></span><br><span class="line"><span class="comment">// &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="toJSON-方法"><a href="#toJSON-方法" class="headerlink" title="toJSON 方法"></a>toJSON 方法</h3><p>如果一个被序列化的对象拥有 toJSON 方法，那么该 toJSON 方法就会覆盖该对象默认的序列化行为：不是那个对象被序列化，而是调用 toJSON 方法后的返回值会被序列化，例如：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123;</span><br><span class="line">  <span class="attr">foo</span>: <span class="string">&#x27;foo&#x27;</span>,</span><br><span class="line">  <span class="attr">toJSON</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;bar&#x27;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(obj);      <span class="comment">// &#x27;&quot;bar&quot;&#x27;</span></span><br><span class="line"><span class="title class_">JSON</span>.<span class="title function_">stringify</span>(&#123;<span class="attr">x</span>: obj&#125;); <span class="comment">// &#x27;&#123;&quot;x&quot;:&quot;bar&quot;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用-JSON-stringify-结合-localStorage-的例子"><a href="#使用-JSON-stringify-结合-localStorage-的例子" class="headerlink" title="使用 JSON.stringify 结合 localStorage 的例子"></a>使用 JSON.stringify 结合 localStorage 的例子</h3><p>一些时候，你想存储用户创建的一个对象，并且，即使在浏览器被关闭后仍能恢复该对象。下面的例子是 JSON.stringify 适用于这种情形的一个样板：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建一个示例数据</span></span><br><span class="line"><span class="keyword">var</span> session = &#123;</span><br><span class="line">    <span class="string">&#x27;screens&#x27;</span> : [],</span><br><span class="line">    <span class="string">&#x27;state&#x27;</span> : <span class="literal">true</span></span><br><span class="line">&#125;;</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenA&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">450</span>, <span class="string">&quot;height&quot;</span>:<span class="number">250</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenB&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">650</span>, <span class="string">&quot;height&quot;</span>:<span class="number">350</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenC&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">750</span>, <span class="string">&quot;height&quot;</span>:<span class="number">120</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenD&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">250</span>, <span class="string">&quot;height&quot;</span>:<span class="number">60</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenE&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">390</span>, <span class="string">&quot;height&quot;</span>:<span class="number">120</span>&#125;);</span><br><span class="line">session.<span class="property">screens</span>.<span class="title function_">push</span>(&#123;<span class="string">&quot;name&quot;</span>:<span class="string">&quot;screenF&quot;</span>, <span class="string">&quot;width&quot;</span>:<span class="number">1240</span>, <span class="string">&quot;height&quot;</span>:<span class="number">650</span>&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 JSON.stringify 转换为 JSON 字符串</span></span><br><span class="line"><span class="comment">// 然后使用 localStorage 保存在 session 名称里</span></span><br><span class="line"><span class="variable language_">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&#x27;session&#x27;</span>, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(session));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后是如何转换通过 JSON.stringify 生成的字符串，该字符串以 JSON 格式保存在 localStorage 里</span></span><br><span class="line"><span class="keyword">var</span> restoredSession = <span class="title class_">JSON</span>.<span class="title function_">parse</span>(<span class="variable language_">localStorage</span>.<span class="title function_">getItem</span>(<span class="string">&#x27;session&#x27;</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 现在 restoredSession 包含了保存在 localStorage 里的对象</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(restoredSession);</span><br></pre></td></tr></table></figure>
+
+<h3 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h3><ul>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Guide/Using_native_JSON">使用原生得JSON对象</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/JS/">JS</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2015/12/24/JSON-stringify/" data-title="JSON.stringify() | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/12/28/AngularJS学习笔记（环境配置）/" title="AngularJS学习笔记（环境配置）">
+  <strong>上一篇：</strong><br/>
+  <span>
+  AngularJS学习笔记（环境配置）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/12/24/JS获取url参数值的两种方式/"  title="JS获取url参数值的两种方式">
+ <strong>下一篇：</strong><br/> 
+ <span>JS获取url参数值的两种方式
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/12/24/JSON-stringify/" data-title="JSON.stringify()" data-url="https://luckymrwang.github.io/2015/12/24/JSON-stringify/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">语法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E6%95%B0"><span class="toc-number">3.</span> <span class="toc-text">参数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#value"><span class="toc-number">3.1.</span> <span class="toc-text">value</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#replacer-%E5%8F%AF%E9%80%89"><span class="toc-number">3.2.</span> <span class="toc-text">replacer  可选</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#space-%E5%8F%AF%E9%80%89"><span class="toc-number">3.3.</span> <span class="toc-text">space 可选</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8F%8F%E8%BF%B0"><span class="toc-number">4.</span> <span class="toc-text">描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#space-%E5%8F%82%E6%95%B0"><span class="toc-number">5.</span> <span class="toc-text">space 参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#toJSON-%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">toJSON 方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8-JSON-stringify-%E7%BB%93%E5%90%88-localStorage-%E7%9A%84%E4%BE%8B%E5%AD%90"><span class="toc-number">7.</span> <span class="toc-text">使用 JSON.stringify 结合 localStorage 的例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%93%BE%E6%8E%A5"><span class="toc-number">8.</span> <span class="toc-text">相关链接</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

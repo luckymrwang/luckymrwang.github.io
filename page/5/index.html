@@ -1,0 +1,997 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="学习总结 思考感悟 知识管理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="https://luckymrwang.github.io/page/5/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="学习总结 思考感悟 知识管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="luckymrwang">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/04/22/Tracing-iptables-on-CentOS/" title="Tracing iptables on CentOS" itemprop="url">Tracing iptables on CentOS</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-22T15:37:35.000Z" itemprop="datePublished"> 发表于 2022-04-22</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="前提条件"><a href="#前提条件" class="headerlink" title="前提条件"></a>前提条件</h2><ul>
+<li><code>iptables</code>已开启并激活</li>
+</ul>
+<h3 id="步骤-1-标记要跟踪的数据包"><a href="#步骤-1-标记要跟踪的数据包" class="headerlink" title="步骤 1: 标记要跟踪的数据包"></a>步骤 1: 标记要跟踪的数据包</h3><h4 id="DNS端口示例"><a href="#DNS端口示例" class="headerlink" title="DNS端口示例"></a>DNS端口示例</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable constant_">PORT</span>=<span class="number">53</span></span><br><span class="line">which sudo || alias sudo=<span class="string">&#x27;$@&#x27;</span></span><br><span class="line"></span><br><span class="line">sudo iptables -t raw -A <span class="variable constant_">OUTPUT</span>     -p udp --dport $PORT -j <span class="variable constant_">TRACE</span></span><br><span class="line">sudo iptables -t raw -A <span class="variable constant_">OUTPUT</span>     -p tcp --dport $PORT -j <span class="variable constant_">TRACE</span></span><br><span class="line">sudo iptables -t raw -A <span class="variable constant_">PREROUTING</span> -p udp --dport $PORT -j <span class="variable constant_">TRACE</span></span><br><span class="line">sudo iptables -t raw -A <span class="variable constant_">PREROUTING</span> -p tcp --dport $PORT -j <span class="variable constant_">TRACE</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/04/22/Tracing-iptables-on-CentOS/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/IPTABLES/">IPTABLES</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/04/22/Tracing-iptables-on-CentOS/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/22/Tracing-iptables-on-CentOS/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/04/20/Cilium安装与学习/" title="Cilium安装与学习" itemprop="url">Cilium安装与学习</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-20T11:29:27.000Z" itemprop="datePublished"> 发表于 2022-04-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h2><h4 id="BPF-CBPF-说明文档"><a href="#BPF-CBPF-说明文档" class="headerlink" title="BPF(CBPF) 说明文档"></a>BPF(CBPF) <a href="https://docs.cilium.io/en/latest/bpf/">说明文档</a></h4><p>BPF 的全称是 Berkeley Packet Filter, 即伯克利报文过滤器，它的设计思想来源于 1992 年的一篇论文“The BSD packet filter: A New architecture for user-level packet capture” （《BSD数据包过滤器：一种用于用户级数据包捕获的新体系结构》）。最初，BPF是在 BSD 内核实现的， 后来，由于其出色的设计思想，其他操作系统也将其引入, 包括 Linux。<code>tcpdump</code> 使用的libpcap是基于BPF的，在使用tcpdump或者libpcap时传入的“host 192.168.1.1”、“tcp and port 80”等是过滤表达式。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/04/20/Cilium%E5%AE%89%E8%A3%85%E4%B8%8E%E5%AD%A6%E4%B9%A0/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Cilium/">Cilium</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/04/20/Cilium安装与学习/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/20/Cilium安装与学习/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/04/19/iptables中-j选项与-g选项的区别/" title="iptables中-j选项与-g选项的区别" itemprop="url">iptables中-j选项与-g选项的区别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-19T06:05:06.000Z" itemprop="datePublished"> 发表于 2022-04-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="手册"><a href="#手册" class="headerlink" title="手册"></a>手册</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># man iptables</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">-j, --jump target</span><br><span class="line">              <span class="title class_">This</span>  specifies  the  target  <span class="keyword">of</span>  the  rule; i.<span class="property">e</span>., what to <span class="keyword">do</span> <span class="keyword">if</span> the packet matches it.  <span class="title class_">The</span> target can be a user-</span><br><span class="line">              defined <span class="title function_">chain</span> (other than the one <span class="variable language_">this</span> rule is <span class="keyword">in</span>), one <span class="keyword">of</span> the special builtin targets which decide  the  fate  <span class="keyword">of</span></span><br><span class="line">              the  packet  immediately,  or an <span class="title function_">extension</span> (see <span class="variable constant_">EXTENSIONS</span> below).  <span class="title class_">If</span> <span class="variable language_">this</span> option is omitted <span class="keyword">in</span> a <span class="title function_">rule</span> (and -g is</span><br><span class="line">              not used), then matching the rule will have no effect on the packet<span class="string">&#x27;s fate, but the counters on the rule  will  be</span></span><br><span class="line"><span class="string">              incremented.</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">-g, --goto chain</span></span><br><span class="line"><span class="string">              This specifies that the processing should continue in a user specified chain. Unlike the --jump option return will</span></span><br><span class="line"><span class="string">              not continue processing in this chain but instead in the chain that called us via --jump.</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/04/19/iptables%E4%B8%AD-j%E9%80%89%E9%A1%B9%E4%B8%8E-g%E9%80%89%E9%A1%B9%E7%9A%84%E5%8C%BA%E5%88%AB/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/04/19/iptables中-j选项与-g选项的区别/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/19/iptables中-j选项与-g选项的区别/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/04/06/使用Kubernetes-API/" title="使用Kubernetes API" itemprop="url">使用Kubernetes API</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-06T11:15:01.000Z" itemprop="datePublished"> 发表于 2022-04-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>本文将基于cURL命令简单演示如何以REST的方式使用Kubernetes API，方便您使用开发语言原生的HTTPS方式操作Kubernetes集群。演示包括创建和删除Pod，创建和修改Deployment。</p>
+<h2 id="获取集群访问凭证KubeConfig"><a href="#获取集群访问凭证KubeConfig" class="headerlink" title="获取集群访问凭证KubeConfig"></a>获取集群访问凭证KubeConfig</h2><ol>
+<li>登录容器服务管理控制台。</li>
+<li>在控制台左侧导航栏中，单击集群。</li>
+<li>在集群列表页面中，单击目标集群名称或者目标集群右侧操作列下的详情。</li>
+<li>单击连接信息页签，查看集群访问凭证（KubeConfig），将KubeConfig文件保存到本地。</li>
+<li>从KubeConfig文件中提取ca、key和apiserver信息，命令如下。</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span>  ./kubeconfig |grep client-certificate-data | awk -F <span class="string">&#x27; &#x27;</span> <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> |<span class="built_in">base64</span> -d &gt; ./client-cert.pem</span><br><span class="line"><span class="built_in">cat</span>  ./kubeconfig |grep client-key-data | awk -F <span class="string">&#x27; &#x27;</span> <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> |<span class="built_in">base64</span> -d &gt; ./client-key.pem</span><br><span class="line">APISERVER=`<span class="built_in">cat</span>  ./kubeconfig |grep server | awk -F <span class="string">&#x27; &#x27;</span> <span class="string">&#x27;&#123;print $2&#125;&#x27;</span>`</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/04/06/%E4%BD%BF%E7%94%A8Kubernetes-API/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/04/06/使用Kubernetes-API/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/06/使用Kubernetes-API/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/03/25/netstat-命令查看连接数/" title="netstat 命令查看连接数" itemprop="url">netstat 命令查看连接数</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-03-25T02:29:28.000Z" itemprop="datePublished"> 发表于 2022-03-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <blockquote>
+<p>显示所有活动的网络连接</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -na</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>查看同时连接到哪个服务器 IP 比较多，cc 攻击用。使用双网卡或多网卡可用</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -an|awk  <span class="string">&#x27;&#123;print $4&#125;&#x27;</span>|<span class="built_in">sort</span>|<span class="built_in">uniq</span> -c|<span class="built_in">sort</span> -nr|<span class="built_in">head</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/03/25/netstat-%E5%91%BD%E4%BB%A4%E6%9F%A5%E7%9C%8B%E8%BF%9E%E6%8E%A5%E6%95%B0/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/03/25/netstat-命令查看连接数/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/03/25/netstat-命令查看连接数/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/01/08/IDEA全版本通杀完美破解方案/" title="IDEA全版本通杀完美破解方案" itemprop="url">IDEA全版本通杀完美破解方案</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-01-08T09:08:04.000Z" itemprop="datePublished"> 发表于 2022-01-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h3><p>感谢zhile大神及其开发的ja-netfilter项目，本文主要基于ja-netfilter介绍两种我认为目前最好的破解方式</p>
+<h3 id="方法1：基于power插件（推荐）"><a href="#方法1：基于power插件（推荐）" class="headerlink" title="方法1：基于power插件（推荐）"></a>方法1：基于power插件（推荐）</h3><p>这个方法十分的简单粗暴并且快捷，激活之后就不需要找再辛苦去找注册码了，所以后续升级也都是没问题的，被zhile大神成为非对称加密的屠龙刀</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/01/08/IDEA%E5%85%A8%E7%89%88%E6%9C%AC%E9%80%9A%E6%9D%80%E5%AE%8C%E7%BE%8E%E7%A0%B4%E8%A7%A3%E6%96%B9%E6%A1%88/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/01/08/IDEA全版本通杀完美破解方案/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/01/08/IDEA全版本通杀完美破解方案/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/11/04/初探-IPTABLES-流動之路-以-Docker-為範例/" title="初探 IPTABLES 流動之路 - 以 Docker 為範例" itemprop="url">初探 IPTABLES 流動之路 - 以 Docker 為範例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-11-04T08:34:01.000Z" itemprop="datePublished"> 发表于 2021-11-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h3><p>本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables&#x2F;ebtables 的實際流向。<br>演講中主要針對三個方向進行探討，分別是</p>
+<ul>
+<li>Host to Container</li>
+<li>Container to Container</li>
+<li>Container to WAN</li>
+</ul>
+<p>每個方向都包含了雙向來回，譬如<br><code>Host to Container</code> 其實也包含了 <code>Container to Host</code><br><code>Container to WAN</code> 也包含了 <code>WAN to Containe</code><br>主要差別在於誰發起了連線，這中間差異不大 (<code>WAN to Container</code> 可能會有 DNAT)</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2021/11/04/%E5%88%9D%E6%8E%A2-IPTABLES-%E6%B5%81%E5%8B%95%E4%B9%8B%E8%B7%AF-%E4%BB%A5-Docker-%E7%82%BA%E7%AF%84%E4%BE%8B/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Iptables/">Iptables</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2021/11/04/初探-IPTABLES-流動之路-以-Docker-為範例/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/11/04/初探-IPTABLES-流動之路-以-Docker-為範例/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/10/25/Go-Http包解析：为什么需要response-Body-Close/" title="Go Http包解析：为什么需要response.Body.Close()" itemprop="url">Go Http包解析：为什么需要response.Body.Close()</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-10-25T03:09:41.000Z" itemprop="datePublished"> 发表于 2021-10-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>最近线上的一个项目遇到了内存泄露的问题，查了heap之后，发现 http包的 dialConn函数竟然占了内存使用的大头，这个有点懵逼了，后面在网上查询资料的时候无意间发现一句话</p>
+<blockquote>
+<p>10次内存泄露，有9次是goroutine泄露。</p>
+</blockquote>
+<p>结果发现，正是我认为的不可能的goroutine泄露导致了这次的内存泄露，而goroutine泄露的原因就是 没有调用 response.Body.Close()</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2021/10/25/Go-Http%E5%8C%85%E8%A7%A3%E6%9E%90%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81response-Body-Close/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2021/10/25/Go-Http包解析：为什么需要response-Body-Close/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/10/25/Go-Http包解析：为什么需要response-Body-Close/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/07/16/使用-dlv-GoLand-远程调试/" title="使用 dlv + GoLand 远程调试" itemprop="url">使用 dlv + GoLand 远程调试</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-07-16T02:04:08.000Z" itemprop="datePublished"> 发表于 2021-07-16</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在开发&#x2F;排查过程中, 偶尔会遇到一些仅在正式环境才能复现的BUG，但由于本地不能访问正式环境,，只能用有限的方式对问题进行Debug，例如添加日志等原始方法，效率过低，因此推荐借助IDE和Delve进行远程调试, 完成对BUG的快速排查与修复。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2021/07/16/%E4%BD%BF%E7%94%A8-dlv-GoLand-%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2021/07/16/使用-dlv-GoLand-远程调试/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/07/16/使用-dlv-GoLand-远程调试/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/04/25/CentOS7-部署K8S集群/" title="CentOS7 部署K8S集群" itemprop="url">CentOS7 部署K8S集群</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-04-25T11:34:16.000Z" itemprop="datePublished"> 发表于 2021-04-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>部署规划</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10.211</span><span class="number">.55</span><span class="number">.18</span>     k8s-node1</span><br><span class="line"><span class="number">10.211</span><span class="number">.55</span><span class="number">.19</span>     k8s-node2</span><br><span class="line"><span class="number">10.211</span><span class="number">.55</span><span class="number">.20</span>     k8s-node3</span><br></pre></td></tr></table></figure>
+
+<p>备注：第1步~第8步，所有的节点都要操作，第9、10步Master节点操作，第11步Node节点操作。 如果第9、10、11步操作失败，可以通过 kubeadm reset 命令来清理环境重新安装。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2021/04/25/CentOS7-%E9%83%A8%E7%BD%B2K8S%E9%9B%86%E7%BE%A4/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2021/04/25/CentOS7-部署K8S集群/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/04/25/CentOS7-部署K8S集群/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/4/">&lt;span&gt;&lt;&#x2F;span&gt;Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/6/">Next&lt;span&gt;&lt;&#x2F;span&gt;</a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>

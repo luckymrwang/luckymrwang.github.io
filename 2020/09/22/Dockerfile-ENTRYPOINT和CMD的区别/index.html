@@ -1,0 +1,557 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Dockerfile: ENTRYPOINT和CMD的区别 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="翻译Dockerfile: ENTRYPOINT vs CMD 在我们查阅Dockerfile的官方文档时, 有可能发现一些命令的功能重复(至少看起来干的事情差不多), 我已经在上文分析过ADD和COPY命令的区别(他们功能类似), 现在我们分析另外2个命令, 他们的功能也非常类似, 是CMD和ENTRYPOINT。尽管ENTRYPOINT和CMD都是在docker image里执行一条命令, 但">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dockerfile: ENTRYPOINT和CMD的区别">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/09/22/Dockerfile-ENTRYPOINT%E5%92%8CCMD%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="翻译Dockerfile: ENTRYPOINT vs CMD 在我们查阅Dockerfile的官方文档时, 有可能发现一些命令的功能重复(至少看起来干的事情差不多), 我已经在上文分析过ADD和COPY命令的区别(他们功能类似), 现在我们分析另外2个命令, 他们的功能也非常类似, 是CMD和ENTRYPOINT。尽管ENTRYPOINT和CMD都是在docker image里执行一条命令, 但">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/dockerfile.png">
+<meta property="article:published_time" content="2020-09-22T10:27:24.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.189Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/dockerfile.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/" title="Dockerfile: ENTRYPOINT和CMD的区别" itemprop="url">Dockerfile: ENTRYPOINT和CMD的区别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-09-22T10:27:24.000Z" itemprop="datePublished"> 发表于 2020-09-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ENTRYPOINT%E8%BF%98%E6%98%AFCMD"><span class="toc-number">1.</span> <span class="toc-text">ENTRYPOINT还是CMD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%86%E7%9B%96-Overrides"><span class="toc-number">2.</span> <span class="toc-text">覆盖(Overrides)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shell-vs-Exec"><span class="toc-number">3.</span> <span class="toc-text">Shell vs Exec</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ENTRYPOINT-%E5%92%8C-CMD%E7%BB%84%E5%90%88%E4%BD%BF%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">ENTRYPOINT 和 CMD组合使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B0%B8%E8%BF%9C%E4%BD%BF%E7%94%A8Exec%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">永远使用Exec表示法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li></ol>
+		
+		</div>
+		
+		<p>翻译<a href="https://link.zhihu.com/?target=https://www.ctl.io/developers/blog/post/dockerfile-entrypoint-vs-cmd/">Dockerfile: ENTRYPOINT vs CMD</a></p>
+<p>在我们查阅Dockerfile的官方文档时, 有可能发现一些命令的功能重复(至少看起来干的事情差不多), 我已经在上文分析过ADD和COPY命令的区别(他们功能类似), 现在我们分析另外2个命令, 他们的功能也非常类似, 是CMD和ENTRYPOINT。尽管ENTRYPOINT和CMD都是在docker image里执行一条命令, 但是他们有一些微妙的区别。在绝大多数情况下, 你只要在这2者之间选择一个调用就可以. 但他们有更高级的应用, CMD和ENTRYPOINT组合起来使用, 完成更加丰富的功能</p>
+<span id="more"></span>
+
+<h3 id="ENTRYPOINT还是CMD"><a href="#ENTRYPOINT还是CMD" class="headerlink" title="ENTRYPOINT还是CMD"></a>ENTRYPOINT还是CMD</h3><p>从根本上说, ENTRYPOINT和CMD都是让用户指定一个可执行程序, 这个可执行程序在container启动后自动启动. 实际上, 如果你想让自己制作的镜像自动运行程序(不需要在docker run后面添加命令行指定运行的命令), 你必须在Dockerfile里面, 使用ENTRYPOINT或者CMD命，比如执行运行一个没有调用ENTRYPOINT或者CMD的docker镜像, 一定返回错误</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker run alpine</span><br><span class="line">FATA[0000] Error response from daemon: No <span class="built_in">command</span> specified</span><br></pre></td></tr></table></figure>
+
+<p>大部分Linu发行版的基础镜像里面调用CMD命令, 指定容器启动后执行&#x2F;bin&#x2F;sh或&#x2F;bin&#x2F;bash. 这样镜像启动默认进入交互式的shell</p>
+<p><img src="/images/dockerfile.png" alt="dockerfile"></p>
+<p><em>译注: 3个不同的Linux镜像(ubuntu, busybox, debian)都在Dockerfile的最后调用 CMD ‘&#x2F;bin&#x2F;bash’</em></p>
+<p>启动Linux发行版的基础container后, 默认调用shell程序, 符合大多数人的习惯。但是, 作为开发者, 你希望在docker镜像启动后, 自动运行其他程序。所以, 你需要用CMD或者ENTRYPOINT命令显式地指定具体的命令</p>
+<h3 id="覆盖-Overrides"><a href="#覆盖-Overrides" class="headerlink" title="覆盖(Overrides)"></a>覆盖(Overrides)</h3><p>在写Dockerfile时, ENTRYPOINT或者CMD命令会自动覆盖之前的ENTRYPOINT或者CMD命令。在docker镜像运行时, 用户也可以在命令指定具体命令, 覆盖在Dockerfile里的命令。比如, 我们写了一个这样的Dockerfile:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:trusty</span><br><span class="line">CMD ping localhost </span><br></pre></td></tr></table></figure>
+
+<p>如果根据这个Dockerfile构建一个新image, 名字叫demo</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -t demo</span><br><span class="line">PING localhost (127.0.0.1) 56(84) bytes of data.</span><br><span class="line">64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 <span class="keyword">time</span>=0.051 ms</span><br><span class="line">64 bytes from localhost (127.0.0.1): icmp_seq=2 ttl=64 <span class="keyword">time</span>=0.038 ms</span><br><span class="line">^C</span><br><span class="line">--- localhost ping statistics ---</span><br><span class="line">2 packets transmitted, 2 received, 0% packet loss, <span class="keyword">time</span> 999ms</span><br><span class="line">rtt min/avg/max/mdev = 0.026/0.032/0.039/0.008 ms</span><br></pre></td></tr></table></figure>
+
+<p>可以看出ping命令在docker启动后自己执行, 但是我们可以在命令行启动docker镜像时, 执行其他命令行参数, 覆盖默认的CMD</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker run demo hostname</span><br><span class="line">6c1573c0d4c0</span><br></pre></td></tr></table></figure>
+
+<p>docker启动后, 并没有执行ping命令, 而是运行了hostname命令和CMD类似, 默认的ENTRYPOINT也在docker run时, 也可以被覆盖. 在运行时, 用–entrypoint覆盖默认的ENTRYPOINT</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker run --entrypoint hostname demo</span><br><span class="line">075a2fa95ab7 </span><br></pre></td></tr></table></figure>
+
+<p>因为CMD命令很容易被docker run命令的方式覆盖, 所以, 如果你希望你的docker镜像的功能足够灵活, 建议在Dockerfile里调用CMD命令. 比如, 你可能有一个通用的Ruby镜像, 这个镜像启动时默认执行irb (CMD irb)。如果你想利用这个Ruby镜像执行任何Ruby脚本, 只需要执行这句话:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run ruby ruby -e <span class="string">&#x27;puts &quot;Hello&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><em>译注: ruby -e ‘puts “Hello” 覆盖了 irb 命令</em></p>
+<p>相反, ENTRYPOINT的作用不同, 如果你希望你的docker镜像只执行一个具体程序, 不希望用户在执行docker run的时候随意覆盖默认程序. 建议用ENTRYPOINT。Docker在很多情况下被用来打包一个程序. 想象你有一个用python脚本实现的程序, 你需要发布这个python程序. 如果用docker打包了这个python程序, 你的最终用户就不需要安装python解释器和python的库依赖. 你可以把所有依赖工具打包进docker镜像里, 然后用ENTRYPOINT指向你的Python脚本本身. 当然你也可以用CMD命令指向Python脚本. 但是通常用ENTRYPOINT可以表明你的docker镜像只是用来执行这个python脚本,也不希望最终用户用这个docker镜像做其他操作。</p>
+<p>在后文会介绍如何组合使用ENTRYPOINT和CMD. 他们各自独特作用会表现得更加明显。</p>
+<h3 id="Shell-vs-Exec"><a href="#Shell-vs-Exec" class="headerlink" title="Shell vs Exec"></a>Shell vs Exec</h3><p>ENTRYPOINT和CMD指令支持2种不同的写法: shell表示法和exec表示法. 下面的例子使用了shell表示法:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CMD executable  param1 param2</span><br></pre></td></tr></table></figure>
+
+<p>当使用shell表示法时, 命令行程序作为sh程序的子程序运行, docker用&#x2F;bin&#x2F;sh -c的语法调用. 如果我们用docker ps命令查看运行的docker, 就可以看出实际运行的是&#x2F;bin&#x2F;sh -c命令</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ docker run -d demo</span><br><span class="line">15bfcddb11b5cde0e230246f45ba6eeb1e6f56edb38a91626ab9c478408cb615</span><br><span class="line"></span><br><span class="line">$ docker ps -l</span><br><span class="line">CONTAINER ID IMAGE COMMAND CREATED</span><br><span class="line">15bfcddb4312 demo:latest <span class="string">&quot;/bin/sh -c &#x27;ping localhost&#x27;&quot;</span> 2 seconds ago </span><br></pre></td></tr></table></figure>
+
+<p>我们再次运行demo镜像, 可以看出来实际运行的命令是&#x2F;bin&#x2F;sh -c ‘ping localhost’。虽然shell表示法看起来可以顺利工作, 但是它其实上有一些小问题存在. 如果我们用docker ps命令查看正在运行的命令, 会有下面的输出:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ docker <span class="built_in">exec</span> 15bfcddb ps -f</span><br><span class="line">UID PID PPID C STIME TTY TIME CMD</span><br><span class="line">root 1 0 0 20:14 ? 00:00:00 /bin/sh -c ping localhost</span><br><span class="line">root 9 1 0 20:14 ? 00:00:00 ping localhost</span><br><span class="line">root 49 0 0 20:15 ? 00:00:00 ps -f </span><br></pre></td></tr></table></figure>
+
+<p>PID为1的进程并不是在Dockerfile里面定义的ping命令, 而是&#x2F;bin&#x2F;sh命令. 如果从外部发送任何POSIX信号到docker容器, 由于&#x2F;bin&#x2F;sh命令不会转发消息给实际运行的ping命令, 则不能安全得关闭docker容器(参考更详细的文档:Gracefully Stopping Docker Containers)。译注: 在上面的ping的例子中, 如果用了shell形式的CMD, 用户按ctrl-c也不能停止ping命令, 因为ctrl-c的信号没有被转发给ping命令。除了上面的问题, 如果你想build一个超级小的docker镜像, 这个镜像甚至连shell程序都可以没有. shell的表示法没办法满足这个要求. 如果你的镜像里面没有&#x2F;bin&#x2F;sh, docker容器就不能运行。</p>
+<p>A better option is to use the exec form of the ENTRYPOINT&#x2F;CMD instructions which looks like this:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CMD [<span class="string">&quot;executable&quot;</span>,<span class="string">&quot;param1&quot;</span>,<span class="string">&quot;param2&quot;</span>] </span><br></pre></td></tr></table></figure>
+
+<p>CMD指令后面用了类似于JSON的语法表示要执行的命令. 这种用法告诉docker不需要调用&#x2F;bin&#x2F;sh执行命令。我们修改一下Dockerfile, 改用exec表示法:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:trusty</span><br><span class="line">CMD [<span class="string">&quot;/bin/ping&quot;</span>,<span class="string">&quot;localhost&quot;</span>] </span><br></pre></td></tr></table></figure>
+
+<p>重新build镜像, 用docker ps命令检查效果:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ docker build -t demo .</span><br><span class="line">[truncated]</span><br><span class="line"></span><br><span class="line">$ docker run -d demo</span><br><span class="line">90cd472887807467d699b55efaf2ee5c4c79eb74ed7849fc4d2dbfea31dce441</span><br><span class="line"></span><br><span class="line">$ docker ps -l</span><br><span class="line">CONTAINER ID IMAGE COMMAND CREATED</span><br><span class="line">90cd47288780 demo:latest <span class="string">&quot;/bin/ping localhost&quot;</span> 4 seconds ago </span><br></pre></td></tr></table></figure>
+
+<p>现在没有启动&#x2F;bin&#x2F;sh命令, 而是直接运行&#x2F;bin&#x2F;ping命令, ping命令的PID是1. 无论你用的是ENTRYPOINT还是CMD命令, 都强烈建议采用exec表示法。</p>
+<h3 id="ENTRYPOINT-和-CMD组合使用"><a href="#ENTRYPOINT-和-CMD组合使用" class="headerlink" title="ENTRYPOINT 和 CMD组合使用"></a>ENTRYPOINT 和 CMD组合使用</h3><p>之前只讨论了用ENTRYPOINT或者CMD之一指定image的默认运行程序, 但是在某种情况下, 组合ENTRYPOINT和CMD能发挥更大的作用。组合使用ENTRYPOINT和CMD, ENTRYPOINT指定默认的运行命令, CMD指定默认的运行参数. 例子如下:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM ubuntu:trusty</span><br><span class="line">ENTRYPOINT [<span class="string">&quot;/bin/ping&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;3&quot;</span>]</span><br><span class="line">CMD [<span class="string">&quot;localhost&quot;</span>] </span><br></pre></td></tr></table></figure>
+
+<p>根据上面的Dockerfile构建镜像, 不带任何参数运行docker run命令</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">$ docker build -t ping .</span><br><span class="line">[truncated]</span><br><span class="line"></span><br><span class="line">$ docker run ping</span><br><span class="line">PING localhost (127.0.0.1) 56(84) bytes of data.</span><br><span class="line">64 bytes from localhost (127.0.0.1): icmp_seq=1 ttl=64 <span class="keyword">time</span>=0.025 ms</span><br><span class="line">64 bytes from localhost (127.0.0.1): icmp_seq=2 ttl=64 <span class="keyword">time</span>=0.038 ms</span><br><span class="line">64 bytes from localhost (127.0.0.1): icmp_seq=3 ttl=64 <span class="keyword">time</span>=0.051 ms</span><br><span class="line"></span><br><span class="line">--- localhost ping statistics ---</span><br><span class="line">3 packets transmitted, 3 received, 0% packet loss, <span class="keyword">time</span> 1999ms</span><br><span class="line">rtt min/avg/max/mdev = 0.025/0.038/0.051/0.010 ms</span><br><span class="line"></span><br><span class="line">$ docker ps -l</span><br><span class="line">CONTAINER ID IMAGE COMMAND CREATED</span><br><span class="line">82df66a2a9f1 ping:latest <span class="string">&quot;/bin/ping -c 3 localhost&quot;</span> 6 seconds ago </span><br></pre></td></tr></table></figure>
+
+<p>上面执行的命令是ENTRYPOINT和CMD指令拼接而成. ENTRYPOINT和CMD同时存在时, docker把CMD的命令拼接到ENTRYPOINT命令之后, 拼接后的命令才是最终执行的命令. 但是由于上文说docker run命令行执行时, 可以覆盖CMD指令的值. 如果你希望这个docker镜像启动后不是ping localhost, 而是ping其他服务器,, 可以这样执行docker run:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ docker run ping docker.io</span><br><span class="line">PING docker.io (162.242.195.84) 56(84) bytes of data.</span><br><span class="line">64 bytes from 162.242.195.84: icmp_seq=1 ttl=61 <span class="keyword">time</span>=76.7 ms</span><br><span class="line">64 bytes from 162.242.195.84: icmp_seq=2 ttl=61 <span class="keyword">time</span>=81.5 ms</span><br><span class="line">64 bytes from 162.242.195.84: icmp_seq=3 ttl=61 <span class="keyword">time</span>=77.8 ms</span><br><span class="line"></span><br><span class="line">--- docker.io ping statistics ---</span><br><span class="line">3 packets transmitted, 3 received, 0% packet loss, <span class="keyword">time</span> 2003ms</span><br><span class="line">rtt min/avg/max/mdev = 76.722/78.695/81.533/2.057 ms</span><br><span class="line"></span><br><span class="line">$ docker ps -l --no-trunc</span><br><span class="line">CONTAINER ID IMAGE COMMAND CREATED</span><br><span class="line">0d739d5ea4e5 ping:latest <span class="string">&quot;/bin/ping -c 3 docker.io&quot;</span> 51 seconds ago</span><br></pre></td></tr></table></figure>
+
+<p>运行docker镜像, 感觉上和执行任何其他的程序没有区别 — 你指定要执行的程序(ping) 和 指定ping命令需要的参数。注意到参数-c 3, 这个参数表示ping请求只发送3次, 这个参数包括在ENTRYPOINT里面, 相当于硬编码docker镜像中。每次执行docker镜像都会带上这个参数, 并且也不能被CMD参数覆盖。</p>
+<h3 id="永远使用Exec表示法"><a href="#永远使用Exec表示法" class="headerlink" title="永远使用Exec表示法"></a>永远使用Exec表示法</h3><p>组合使用ENTRYPOINT和CMD命令式, 确保你一定用的是Exec表示法. 如果用其中一个用的是Shell表示法, 或者一个是Shell表示法, 另一个是Exec表示法, 你永远得不到你预期的效果。下表列出了如果把Shell表示法和Exec表示法混合, 最终得到的命令行, 可以看到如果有Shell表示法存在, 很难得到正确的效果:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ockerfile    Command</span><br><span class="line"></span><br><span class="line">ENTRYPOINT /bin/ping -c 3</span><br><span class="line">CMD localhost               /bin/sh -c <span class="string">&#x27;/bin/ping -c 3&#x27;</span> /bin/sh -c localhost</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ENTRYPOINT [<span class="string">&quot;/bin/ping&quot;</span>,<span class="string">&quot;-c&quot;</span>,<span class="string">&quot;3&quot;</span>]</span><br><span class="line">CMD localhost               /bin/ping -c 3 /bin/sh -c localhost</span><br><span class="line"></span><br><span class="line">ENTRYPOINT /bin/ping -c 3</span><br><span class="line">CMD [<span class="string">&quot;localhost&quot;</span>]<span class="string">&quot;          /bin/sh -c &#x27;/bin/ping -c 3&#x27; localhost</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">ENTRYPOINT [&quot;</span>/bin/ping<span class="string">&quot;,&quot;</span>-c<span class="string">&quot;,&quot;</span>3<span class="string">&quot;]</span></span><br><span class="line"><span class="string">CMD [&quot;</span>localhost<span class="string">&quot;]            /bin/ping -c 3 localhost</span></span><br></pre></td></tr></table></figure>
+
+<p>从上面看出, 只有ENTRYPOINT和CMD都用Exec表示法, 才能得到预期的效果。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>如果你想让你的docker image做真正的工作, 一定会在Dockerfile里用到ENTRYPOINT或是CMD。但是请注意, 这2个命令不是互斥的. 在很多情况下, 你可以组合ENTRYPOINT和CMD命令, 提升最终用户的体验。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Docker/">Docker</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2020/09/22/Dockerfile-ENTRYPOINT%E5%92%8CCMD%E7%9A%84%E5%8C%BA%E5%88%AB/" data-title="Dockerfile: ENTRYPOINT和CMD的区别 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/09/28/Go-挖坑指南-“cannot-take-the-address-of-XXX”-and-“cannot-call-pointer-method-on-XXX”/" title="Go 挖坑指南: “cannot take the address of XXX” and “cannot call pointer method on XXX”">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Go 挖坑指南: “cannot take the address of XXX” and “cannot call pointer method on XXX”</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/09/16/Go标准库flag包/"  title="Go标准库flag包">
+ <strong>下一篇：</strong><br/> 
+ <span>Go标准库flag包
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/" data-title="Dockerfile: ENTRYPOINT和CMD的区别" data-url="https://luckymrwang.github.io/2020/09/22/Dockerfile-ENTRYPOINT%E5%92%8CCMD%E7%9A%84%E5%8C%BA%E5%88%AB/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ENTRYPOINT%E8%BF%98%E6%98%AFCMD"><span class="toc-number">1.</span> <span class="toc-text">ENTRYPOINT还是CMD</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%86%E7%9B%96-Overrides"><span class="toc-number">2.</span> <span class="toc-text">覆盖(Overrides)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shell-vs-Exec"><span class="toc-number">3.</span> <span class="toc-text">Shell vs Exec</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ENTRYPOINT-%E5%92%8C-CMD%E7%BB%84%E5%90%88%E4%BD%BF%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">ENTRYPOINT 和 CMD组合使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B0%B8%E8%BF%9C%E4%BD%BF%E7%94%A8Exec%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">永远使用Exec表示法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E8%AE%BA"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

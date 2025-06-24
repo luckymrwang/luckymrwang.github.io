@@ -1,0 +1,541 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Viper——Golang配置库 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="前言viper viper 的功能 支持Yaml、Json、 TOML、HCL 等格式的配置 可以从文件、io、环境变量、command line中提取配置 支持自动转换的类型解析 可以远程从etcd中读取配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Viper——Golang配置库">
+<meta property="og:url" content="https://luckymrwang.github.io/2019/09/18/Viper%E2%80%94%E2%80%94Golang%E9%85%8D%E7%BD%AE%E5%BA%93/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="前言viper viper 的功能 支持Yaml、Json、 TOML、HCL 等格式的配置 可以从文件、io、环境变量、command line中提取配置 支持自动转换的类型解析 可以远程从etcd中读取配置">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-18T05:31:26.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.205Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/09/18/Viper——Golang配置库/" title="Viper——Golang配置库" itemprop="url">Viper——Golang配置库</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-09-18T05:31:26.000Z" itemprop="datePublished"> 发表于 2019-09-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#viper-%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number">2.</span> <span class="toc-text">viper 的功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="toc-number">3.</span> <span class="toc-text">示例代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96yaml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">读取yaml配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8EIO%E4%B8%AD%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE"><span class="toc-number">5.</span> <span class="toc-text">从IO中读取配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%AD%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE"><span class="toc-number">6.</span> <span class="toc-text">从环境变量中读取配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E4%BE%BF%E7%9A%84%E6%9B%BF%E6%8D%A2%E7%AC%A6"><span class="toc-number">7.</span> <span class="toc-text">方便的替换符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%AB%E5%90%8D%E5%8A%9F%E8%83%BD"><span class="toc-number">8.</span> <span class="toc-text">别名功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">9.</span> <span class="toc-text">序列化和反序列化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8Ecommand-Line%E4%B8%AD%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE"><span class="toc-number">10.</span> <span class="toc-text">从command Line中读取配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%91%E5%90%AC%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">11.</span> <span class="toc-text">监听配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%B7%E8%B4%9D%E5%AD%90%E5%88%86%E6%94%AF"><span class="toc-number">12.</span> <span class="toc-text">拷贝子分支</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E9%85%8D%E7%BD%AE%E9%A1%B9%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">13.</span> <span class="toc-text">获取配置项的方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">14.</span> <span class="toc-text">有趣的应用</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><a href="https://github.com/spf13/viper">viper</a></p>
+<h2 id="viper-的功能"><a href="#viper-的功能" class="headerlink" title="viper 的功能"></a>viper 的功能</h2><ol>
+<li>支持Yaml、Json、 TOML、HCL 等格式的配置</li>
+<li>可以从文件、io、环境变量、command line中提取配置</li>
+<li>支持自动转换的类型解析</li>
+<li>可以远程从etcd中读取配置</li>
+</ol>
+<span id="more"></span>
+<h2 id="示例代码"><a href="#示例代码" class="headerlink" title="示例代码"></a>示例代码</h2><p>定义一个类型：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> config <span class="keyword">struct</span> &#123;</span><br><span class="line">    v  *viper.Viper;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>用于测试的Yaml配置文件 config.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">TimeStamp:</span> <span class="string">&quot;2018-07-16 10:23:19&quot;</span></span><br><span class="line"><span class="attr">Author:</span> <span class="string">&quot;WZP&quot;</span></span><br><span class="line"><span class="attr">PassWd:</span> <span class="string">&quot;Hello&quot;</span></span><br><span class="line"><span class="attr">Information:</span></span><br><span class="line">   <span class="attr">Name:</span> <span class="string">&quot;Harry&quot;</span></span><br><span class="line">   <span class="attr">Age:</span> <span class="string">&quot;37&quot;</span></span><br><span class="line">   <span class="attr">Alise:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="string">&quot;Lion&quot;</span></span><br><span class="line">   <span class="bullet">-</span> <span class="string">&quot;NK&quot;</span></span><br><span class="line">   <span class="bullet">-</span> <span class="string">&quot;KaQS&quot;</span></span><br><span class="line">   <span class="attr">Image:</span> <span class="string">&quot;/path/header.rpg&quot;</span></span><br><span class="line">   <span class="attr">Public:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Favorite:</span></span><br><span class="line">  <span class="attr">Sport:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;swimming&quot;</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;football&quot;</span></span><br><span class="line">  <span class="attr">Music:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;zui xuan min zu feng&quot;</span></span><br><span class="line">  <span class="attr">LuckyNumber:</span> <span class="number">99</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="读取yaml配置文件"><a href="#读取yaml配置文件" class="headerlink" title="读取yaml配置文件"></a>读取yaml配置文件</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LoadConfigFromYaml</span> <span class="params">(c *config)</span></span> <span class="type">error</span>  &#123;</span><br><span class="line">    c.v = viper.New();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置配置文件的名字</span></span><br><span class="line">    c.v.SetConfigName(<span class="string">&quot;config&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//添加配置文件所在的路径,注意在Linux环境下%GOPATH要替换为$GOPATH</span></span><br><span class="line">    c.v.AddConfigPath(<span class="string">&quot;%GOPATH/src/&quot;</span>)</span><br><span class="line">    c.v.AddConfigPath(<span class="string">&quot;./&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">//设置配置文件类型</span></span><br><span class="line">    c.v.SetConfigType(<span class="string">&quot;yaml&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> err := c.v.ReadInConfig(); err != <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">return</span>  err;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    log.Printf(<span class="string">&quot;age: %s, name: %s \n&quot;</span>, c.v.Get(<span class="string">&quot;information.age&quot;</span>), c.v.Get(<span class="string">&quot;information.name&quot;</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em>注意：如果不用AddConfigPath去指定路径，它会在程序执行的目录去寻找config.yaml</em></p>
+<h2 id="从IO中读取配置"><a href="#从IO中读取配置" class="headerlink" title="从IO中读取配置"></a>从IO中读取配置</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//由IO读取配置</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadConfigFormIo</span><span class="params">(c *config)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    c.v = viper.New()</span><br><span class="line">    <span class="keyword">if</span> f, err := os.Open(<span class="string">&quot;config.yaml&quot;</span>); err != <span class="literal">nil</span>&#123;</span><br><span class="line">        log.Printf(<span class="string">&quot;filure: %s&quot;</span>, err.Error());</span><br><span class="line">        <span class="keyword">return</span> err;</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">        confLength, _ :=f.Seek(<span class="number">0</span>,<span class="number">2</span>);</span><br><span class="line">        <span class="comment">//注意，通常写c++的习惯害怕读取字符串的时候越界，都会多留出一个NULL在末尾，但是在这里不行，会报出如下错误：</span></span><br><span class="line">        <span class="comment">//While parsing config: yaml: control characters are not allowed</span></span><br><span class="line">        <span class="comment">//错误参考网址：https://stackoverflow.com/questions/33717799/go-yaml-control-characters-are-not-allowed-error</span></span><br><span class="line">        configData := <span class="built_in">make</span>([]<span class="type">byte</span>, confLength);</span><br><span class="line">        f.Seek(<span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">        f.Read(configData);</span><br><span class="line">        log.Printf(<span class="string">&quot;%s\n&quot;</span>, <span class="type">string</span>(configData))</span><br><span class="line"></span><br><span class="line">        c.v.SetConfigType(<span class="string">&quot;yaml&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> err := c.v.ReadConfig(bytes.NewBuffer(configData)); err != <span class="literal">nil</span>&#123;</span><br><span class="line">            log.Fatalf(err.Error());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    log.Printf(<span class="string">&quot;age: %s, name: %s \n&quot;</span>, c.v.Get(<span class="string">&quot;information.age&quot;</span>), c.v.Get(<span class="string">&quot;information.name&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码是把配置文件中的数据导入IO，然后再从IO中读取</p>
+<h2 id="从环境变量中读取配置"><a href="#从环境变量中读取配置" class="headerlink" title="从环境变量中读取配置"></a>从环境变量中读取配置</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//读取本地的环境变量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">EnvConfigPrefix</span><span class="params">(c *config)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    c.v = viper.New();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//BindEnv($1,$2)</span></span><br><span class="line">    <span class="comment">// 如果只传入一个参数，则会提取指定的环境变量$1，如果设置了前缀，则会自动补全 前缀_$1</span></span><br><span class="line">    <span class="comment">//如果传入两个参数则不会补全前缀，直接获取第二参数中传入的环境变量$2</span></span><br><span class="line">    os.Setenv(<span class="string">&quot;LOG_LEVEL&quot;</span>, <span class="string">&quot;INFO&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> <span class="literal">nil</span> == c.v.Get(<span class="string">&quot;LOG_LEVEL &quot;</span>) &#123;</span><br><span class="line">        log.Printf(<span class="string">&quot;LOG_LEVEL is nil&quot;</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ErrorNotMacth;</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//必须要绑定后才能获取</span></span><br><span class="line">    c.v.BindEnv(<span class="string">&quot;LOG_LEVEL&quot;</span>);</span><br><span class="line">    log.Printf(<span class="string">&quot;LOG_LEVEL is %s&quot;</span>, os.Getenv(<span class="string">&quot;log_level&quot;</span>));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//会获取所有的环境变量，同时如果过设置了前缀则会自动补全前缀名</span></span><br><span class="line">    c.v.AutomaticEnv();</span><br><span class="line">    <span class="comment">//环境变量前缀大小写不区分</span></span><br><span class="line">    os.Setenv(<span class="string">&quot;DEV_ADDONES&quot;</span>,<span class="string">&quot;none&quot;</span>);</span><br><span class="line">    log.Printf(<span class="string">&quot;DEV_ADDONES: %s&quot;</span>, c.v.Get(<span class="string">&quot;dev_addones&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">//SetEnvPrefix会设置一个环境变量的前缀名</span></span><br><span class="line">    c.v.SetEnvPrefix(<span class="string">&quot;DEV&quot;</span>);</span><br><span class="line"></span><br><span class="line">    os.Setenv(<span class="string">&quot;DEV_MODE&quot;</span>, <span class="string">&quot;true&quot;</span>);</span><br><span class="line">    <span class="comment">//此时会自动补全前缀，实际去获取的是DEV_DEV_MODE</span></span><br><span class="line">    <span class="keyword">if</span> <span class="literal">nil</span> ==  c.v.Get(<span class="string">&quot;dev_mode&quot;</span>)&#123;</span><br><span class="line">        log.Printf(<span class="string">&quot;DEV_MODE is nil&quot;</span>) ;</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> ErrorNotMacth;</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//此时我们直接指定了loglevel所对应的环境变量，则不会去补全前缀</span></span><br><span class="line">    c.v.BindEnv(<span class="string">&quot;loglevel&quot;</span>, <span class="string">&quot;LOG_LEVEL&quot;</span>);</span><br><span class="line">    log.Printf(<span class="string">&quot;LOG_LEVEL: %s&quot;</span>, c.v.Get(<span class="string">&quot;loglevel&quot;</span>)) ;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>SetEnvPrefix 和 AutomaticEnv、BindEnv搭配使用很方便，比如说我们把当前程序的环境变量都设置为xx_ ，这样方便我们管理，也避免和其他环境变量冲突，而在读取的时候又很方便的就可以读取。</p>
+<h2 id="方便的替换符"><a href="#方便的替换符" class="headerlink" title="方便的替换符"></a>方便的替换符</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">EnvCongiReplacer</span><span class="params">(c *config, setPerfix <span class="type">bool</span>)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    c.v = viper.New();</span><br><span class="line">    c.v.AutomaticEnv();</span><br><span class="line">    c.v.SetEnvKeyReplacer(strings.NewReplacer(<span class="string">&quot;.&quot;</span>,<span class="string">&quot;_&quot;</span>));</span><br><span class="line"></span><br><span class="line">    os.Setenv(<span class="string">&quot;API_VERSION&quot;</span>,<span class="string">&quot;v0.1.0&quot;</span>);</span><br><span class="line">    <span class="comment">//Replacer和prefix一起使用可能会冲突,比如我下面的例子</span></span><br><span class="line">    <span class="comment">//因为会自动补全前缀最终由获取API_VERSION变成API_API_VERSION</span></span><br><span class="line">    <span class="keyword">if</span> setPerfix&#123; c.v.SetEnvPrefix(<span class="string">&quot;api&quot;</span>);&#125;</span><br><span class="line">    <span class="keyword">if</span> s := c.v.Get(<span class="string">&quot;api.version&quot;</span>); s==<span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ErrorNoxExistKey</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        log.Printf(<span class="string">&quot;%s&quot;</span>, c.v.Get(<span class="string">&quot;api.version&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们有时候需要去替换key中的某些字符，来转化为对应的环境变脸，比如说例子中将’ . ‘替换为’_’ ，由获取api.version变成了api_version，但是有一点需要注意的，SetEnvPrefix和SetEnvKeyReplacer一起用的时候可能会混淆。</p>
+<h2 id="别名功能"><a href="#别名功能" class="headerlink" title="别名功能"></a>别名功能</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置重载 和别名</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetAndAliases</span><span class="params">(c *config)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    c.v = viper.New();</span><br><span class="line">    c.v.Set(<span class="string">&quot;Name&quot;</span>,<span class="string">&quot;wzp&quot;</span>);</span><br><span class="line">    c.v.RegisterAlias(<span class="string">&quot;id&quot;</span>,<span class="string">&quot;Name&quot;</span>);</span><br><span class="line">    c.v.Set(<span class="string">&quot;id&quot;</span>,<span class="string">&quot;Mr.Wang&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//我们可以发现当别名对应的值修改之后，原本的key也发生变化</span></span><br><span class="line">    log.Printf(<span class="string">&quot;id %s, name %s&quot;</span>,c.v.Get(<span class="string">&quot;id&quot;</span>),c.v.Get(<span class="string">&quot;name&quot;</span>) );</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以为key设置别名，当别名的值被重置后，原key对应的值也会发生变化。</p>
+<h2 id="序列化和反序列化"><a href="#序列化和反序列化" class="headerlink" title="序列化和反序列化"></a>序列化和反序列化</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> favorite <span class="keyword">struct</span> &#123;</span><br><span class="line">    Sports []<span class="type">string</span>;</span><br><span class="line">    Music []<span class="type">string</span>;</span><br><span class="line">    LuckyNumber <span class="type">int</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> information <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="type">string</span>;</span><br><span class="line">    Age  <span class="type">int</span>;</span><br><span class="line">    Alise []<span class="type">string</span>;</span><br><span class="line">    Image <span class="type">string</span>;</span><br><span class="line">    Public <span class="type">bool</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> YamlConfig <span class="keyword">struct</span> &#123;</span><br><span class="line">    TimeStamp <span class="type">string</span></span><br><span class="line">    Author <span class="type">string</span></span><br><span class="line">    PassWd <span class="type">string</span></span><br><span class="line">    Information information</span><br><span class="line">    Favorite favorite;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//将配置解析为Struct对象</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">UmshalStruct</span><span class="params">(c *config)</span></span> <span class="type">error</span>  &#123;</span><br><span class="line">    LoadConfigFromYaml(c);</span><br><span class="line">    <span class="keyword">var</span> cf YamlConfig</span><br><span class="line">    <span class="keyword">if</span> err := c.v.Unmarshal(&amp;cf); err != <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> err;</span><br><span class="line">    &#125;</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">YamlStringSettings</span><span class="params">(c *config)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    c.v = viper.New();</span><br><span class="line">    c.v.Set(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;wzp&quot;</span>);</span><br><span class="line">    c.v.Set(<span class="string">&quot;age&quot;</span>, <span class="number">18</span>);</span><br><span class="line">    c.v.Set(<span class="string">&quot;aliase&quot;</span>,[]<span class="type">string</span>&#123;<span class="string">&quot;one&quot;</span>,<span class="string">&quot;two&quot;</span>,<span class="string">&quot;three&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">    cf := c.v.AllSettings()</span><br><span class="line">    bs, err := yaml.Marshal(cf)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatalf(<span class="string">&quot;unable to marshal config to YAML: %v&quot;</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">string</span>(bs)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">JsonStringSettings</span><span class="params">(c *config)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    c.v = viper.New();</span><br><span class="line">    c.v.Set(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;wzp&quot;</span>);</span><br><span class="line">    c.v.Set(<span class="string">&quot;age&quot;</span>, <span class="number">18</span>);</span><br><span class="line">    c.v.Set(<span class="string">&quot;aliase&quot;</span>,[]<span class="type">string</span>&#123;<span class="string">&quot;one&quot;</span>,<span class="string">&quot;two&quot;</span>,<span class="string">&quot;three&quot;</span>&#125;)</span><br><span class="line"></span><br><span class="line">    cf := c.v.AllSettings()</span><br><span class="line">    bs, err := json.Marshal(cf)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatalf(<span class="string">&quot;unable to marshal config to YAML: %v&quot;</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">string</span>(bs)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>超级实惠的一个功能，直接把配置反序列化到一个结构体，爽歪歪有木有？也可以把设置直接序列化为我们想要的类型：yaml、json等等</p>
+<h2 id="从command-Line中读取配置"><a href="#从command-Line中读取配置" class="headerlink" title="从command Line中读取配置"></a>从command Line中读取配置</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>  &#123;</span><br><span class="line">    flag.String(<span class="string">&quot;mode&quot;</span>,<span class="string">&quot;RUN&quot;</span>,<span class="string">&quot;please input the mode: RUN or DEBUG&quot;</span>);</span><br><span class="line">    pflag.Int(<span class="string">&quot;port&quot;</span>,<span class="number">1080</span>,<span class="string">&quot;please input the listen port&quot;</span>);</span><br><span class="line">    pflag.String(<span class="string">&quot;ip&quot;</span>,<span class="string">&quot;127.0.0.1&quot;</span>,<span class="string">&quot;please input the bind ip&quot;</span>);</span><br><span class="line">    <span class="comment">//获取标准包的flag</span></span><br><span class="line">    pflag.CommandLine.AddGoFlagSet(flag.CommandLine);</span><br><span class="line">    pflag.Parse();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//BindFlag</span></span><br><span class="line">    <span class="comment">//在pflag.Init key后面使用</span></span><br><span class="line">    viper.BindPFlag(<span class="string">&quot;port&quot;</span>, pflag.Lookup(<span class="string">&quot;port&quot;</span>));</span><br><span class="line">    log.Printf(<span class="string">&quot;set port: %d&quot;</span>, viper.GetInt(<span class="string">&quot;port&quot;</span>));</span><br><span class="line"></span><br><span class="line">    viper.BindPFlags(pflag.CommandLine);</span><br><span class="line">    log.Printf(<span class="string">&quot;set ip: %s&quot;</span>, viper.GetString(<span class="string">&quot;ip&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以使用标准的flag也可以使用viper包中自带的pflag，作者建议使用pflag。</p>
+<h2 id="监听配置文件"><a href="#监听配置文件" class="headerlink" title="监听配置文件"></a>监听配置文件</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//监听配置文件的修改和变动</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WatchConfig</span><span class="params">(c *config)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err := LoadConfigFromYaml(c); err !=<span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> err;</span><br><span class="line">    &#125;</span><br><span class="line">    ctx, cancel := context.WithCancel(context.Background());</span><br><span class="line"></span><br><span class="line">    c.v.WatchConfig()</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//监听回调函数</span></span><br><span class="line">    watch := <span class="function"><span class="keyword">func</span><span class="params">(e fsnotify.Event)</span></span> &#123;</span><br><span class="line">        log.Printf(<span class="string">&quot;Config file is changed: %s \n&quot;</span>, e.String())</span><br><span class="line">        cancel();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    c.v.OnConfigChange(watch);</span><br><span class="line">    &lt;-ctx.Done();</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重点来了啊，这个可以说是非常非常实用的一个功能，以往我们修改配置文件要么重启服务，要么搞一个api去修改，Viper把这个功能帮我们实现了。只要配置文件被修改保存后，我们事先注册的watch函数就回被触发，只要我们在这里面添加更新操作就ok了。不过美中不足的是，它目前只监听配置文件。</p>
+<h2 id="拷贝子分支"><a href="#拷贝子分支" class="headerlink" title="拷贝子分支"></a>拷贝子分支</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestSubConfig</span><span class="params">(t *testing.T)</span></span>  &#123;</span><br><span class="line">    c := config&#123;&#125;;</span><br><span class="line">    LoadConfigFromYaml(&amp;c);</span><br><span class="line">    sc := c.v.Sub(<span class="string">&quot;information&quot;</span>);</span><br><span class="line">    sc.Set(<span class="string">&quot;age&quot;</span>, <span class="number">80</span>);</span><br><span class="line">    scs,_:=yaml.Marshal(sc.AllSettings())</span><br><span class="line">    t.Log(<span class="type">string</span>(scs));</span><br><span class="line">    t.Logf(<span class="string">&quot;age: %d&quot;</span>, c.v.GetInt(<span class="string">&quot;information.age&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>拷贝一个子分支最大的用途就是我们可以复制一份配置，这样在修改拷贝的时候原配置不会被修改，如果修改的配置出现了问题，我们可以方便的回滚。</p>
+<h2 id="获取配置项的方法"><a href="#获取配置项的方法" class="headerlink" title="获取配置项的方法"></a>获取配置项的方法</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//测试各种get类型</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestGetValues</span><span class="params">(t *testing.T)</span></span>  &#123;</span><br><span class="line">    c := &amp;config&#123;&#125;</span><br><span class="line">    <span class="keyword">if</span> err := LoadConfigFromYaml(c); err != <span class="literal">nil</span>&#123;</span><br><span class="line">        t.Fatalf(<span class="string">&quot;%s: %s&quot;</span>,t.Name(), err.Error());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> info := c.v.GetStringMap(<span class="string">&quot;information&quot;</span>); info != <span class="literal">nil</span>&#123;</span><br><span class="line">        t.Logf(<span class="string">&quot;%T&quot;</span>, info);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> aliases := c.v.GetStringSlice(<span class="string">&quot;information.aliases&quot;</span>); aliases != <span class="literal">nil</span>&#123;</span><br><span class="line">        <span class="keyword">for</span> _, a := <span class="keyword">range</span>  aliases&#123;</span><br><span class="line">            t.Logf(<span class="string">&quot;%s&quot;</span>,a);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    timeStamp := c.v.GetTime(<span class="string">&quot;timestamp&quot;</span>);</span><br><span class="line">    t.Logf(<span class="string">&quot;%s&quot;</span>, timeStamp.String());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> public := c.v.GetBool(<span class="string">&quot;information.public&quot;</span>); public&#123;</span><br><span class="line">        t.Logf(<span class="string">&quot;the information is public&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    age := c.v.GetInt(<span class="string">&quot;information.age&quot;</span>);</span><br><span class="line">    t.Logf(<span class="string">&quot;%s age  is %d&quot;</span>, c.v.GetString(<span class="string">&quot;information.name&quot;</span>), age);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们直接用Get获取的返回值都是interface{}类型，这样我们还要手动转化一下，可以直接指定类型去获取，方便快捷。</p>
+<p>除了以上所说的功能外，viper还有从etcd提取配置以及自定义flage的功能，这些大家感兴趣可以自己去了解一下。
+ </p>
+<h2 id="有趣的应用"><a href="#有趣的应用" class="headerlink" title="有趣的应用"></a>有趣的应用</h2><p>虽然Unmarshal Struct已经足够好用了，但有作者还是想开发一下新的玩法，比如说这个配置文件和当前的新版本不是很匹配，当然实际生产中我们是要讲究向下兼容的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> yamlConfig =  YamlConfig&#123;&#125;;</span><br><span class="line">ycType := reflect.TypeOf(yamlConfig);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i := <span class="number">0</span> ; i &lt; ycType.NumField();i++&#123;</span><br><span class="line">    name := ycType.Field(i).Name;</span><br><span class="line">    element := reflect.ValueOf(yamlConfig).Field(i).Interface();</span><br><span class="line">    <span class="keyword">if</span> err = config.UnmarshalKey(name, element); err != <span class="literal">nil</span>&#123;</span><br><span class="line">        logger.Errorf(<span class="string">&quot;Error reading configuration:&quot;</span>, err);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上代码所示，我们从最外围的结构体中找出子元素的名称和interface，然后分别解析，这样即使某一项缺失了我们也可以及时提醒用户，或者设置缺省配置。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2019/09/18/Viper%E2%80%94%E2%80%94Golang%E9%85%8D%E7%BD%AE%E5%BA%93/" data-title="Viper——Golang配置库 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/11/16/Golang-http-Post-用最小的内存发送大文件/" title="Golang http.Post 用最小的内存发送大文件">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Golang http.Post 用最小的内存发送大文件</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/08/27/Golang-跳转语句goto-break-continue的使用及区别/"  title="Golang 跳转语句goto,break,continue的使用及区别">
+ <strong>下一篇：</strong><br/> 
+ <span>Golang 跳转语句goto,break,continue的使用及区别
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2019/09/18/Viper——Golang配置库/" data-title="Viper——Golang配置库" data-url="https://luckymrwang.github.io/2019/09/18/Viper%E2%80%94%E2%80%94Golang%E9%85%8D%E7%BD%AE%E5%BA%93/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#viper-%E7%9A%84%E5%8A%9F%E8%83%BD"><span class="toc-number">2.</span> <span class="toc-text">viper 的功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="toc-number">3.</span> <span class="toc-text">示例代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BB%E5%8F%96yaml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">读取yaml配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8EIO%E4%B8%AD%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE"><span class="toc-number">5.</span> <span class="toc-text">从IO中读取配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%AD%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE"><span class="toc-number">6.</span> <span class="toc-text">从环境变量中读取配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B9%E4%BE%BF%E7%9A%84%E6%9B%BF%E6%8D%A2%E7%AC%A6"><span class="toc-number">7.</span> <span class="toc-text">方便的替换符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%AB%E5%90%8D%E5%8A%9F%E8%83%BD"><span class="toc-number">8.</span> <span class="toc-text">别名功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">9.</span> <span class="toc-text">序列化和反序列化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8Ecommand-Line%E4%B8%AD%E8%AF%BB%E5%8F%96%E9%85%8D%E7%BD%AE"><span class="toc-number">10.</span> <span class="toc-text">从command Line中读取配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%91%E5%90%AC%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">11.</span> <span class="toc-text">监听配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8B%B7%E8%B4%9D%E5%AD%90%E5%88%86%E6%94%AF"><span class="toc-number">12.</span> <span class="toc-text">拷贝子分支</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E9%85%8D%E7%BD%AE%E9%A1%B9%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">13.</span> <span class="toc-text">获取配置项的方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%89%E8%B6%A3%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">14.</span> <span class="toc-text">有趣的应用</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

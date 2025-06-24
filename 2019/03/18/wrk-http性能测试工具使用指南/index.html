@@ -1,0 +1,521 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>wrk - http性能测试工具使用指南 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="wrk  wrk is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such">
+<meta property="og:type" content="article">
+<meta property="og:title" content="wrk - http性能测试工具使用指南">
+<meta property="og:url" content="https://luckymrwang.github.io/2019/03/18/wrk-http%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="wrk  wrk is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-03-18T07:30:50.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.209Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="wrk">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/03/18/wrk-http性能测试工具使用指南/" title="wrk - http性能测试工具使用指南" itemprop="url">wrk - http性能测试工具使用指南</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-03-18T07:30:50.000Z" itemprop="datePublished"> 发表于 2019-03-18</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E6%9F%A5%E7%9C%8B"><span class="toc-number">3.</span> <span class="toc-text">版本查看</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E6%B5%8B"><span class="toc-number">4.</span> <span class="toc-text">压测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Post-%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95"><span class="toc-number">5.</span> <span class="toc-text">Post 接口测试</span></a></li></ol>
+		
+		</div>
+		
+		<p><a href="https://github.com/wg/wrk">wrk</a></p>
+<blockquote>
+<p>wrk is a modern HTTP benchmarking tool capable of generating significant load when run on a single multi-core CPU. It combines a multithreaded design with scalable event notification systems such as epoll and kqueue.</p>
+</blockquote>
+<blockquote>
+<p>wrk使用了epoll(linux)和kqueue(mac)</p>
+</blockquote>
+<span id="more"></span>
+
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install wrk</span><br></pre></td></tr></table></figure>
+
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>1.使用帮助：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">Usage</span>: wrk &lt;options&gt; &lt;url&gt;</span><br><span class="line">  <span class="title class_">Options</span>:</span><br><span class="line">    -c, --connections &lt;N&gt;  <span class="title class_">Connections</span> to keep open</span><br><span class="line">    -d, --duration    &lt;T&gt;  <span class="title class_">Duration</span> <span class="keyword">of</span> test</span><br><span class="line">    -t, --threads     &lt;N&gt;  <span class="title class_">Number</span> <span class="keyword">of</span> threads to use</span><br><span class="line"></span><br><span class="line">    -s, --script      &lt;S&gt;  <span class="title class_">Load</span> <span class="title class_">Lua</span> script file</span><br><span class="line">    -H, --header      &lt;H&gt;  <span class="title class_">Add</span> header to request</span><br><span class="line">        --latency          <span class="title class_">Print</span> latency statistics</span><br><span class="line">        --timeout     &lt;T&gt;  <span class="title class_">Socket</span>/request timeout</span><br><span class="line">    -v, --version          <span class="title class_">Print</span> version details</span><br><span class="line"></span><br><span class="line">  <span class="title class_">Numeric</span> <span class="variable language_">arguments</span> may include a <span class="variable constant_">SI</span> <span class="title function_">unit</span> (1k, 1M, 1G)</span><br><span class="line">  <span class="title class_">Time</span> <span class="variable language_">arguments</span> may include a time <span class="title function_">unit</span> (2s, 2m, 2h)</span><br></pre></td></tr></table></figure>
+
+<p>中文：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">使用方法: wrk &lt;选项&gt; &lt;被测<span class="variable constant_">HTTP</span>服务的<span class="variable constant_">URL</span>&gt;                            </span><br><span class="line">  <span class="title class_">Options</span>:                                            </span><br><span class="line">    -c, --connections &lt;N&gt;  跟服务器建立并保持的<span class="variable constant_">TCP</span>连接数量  </span><br><span class="line">    -d, --duration    &lt;T&gt;  压测时间           </span><br><span class="line">    -t, --threads     &lt;N&gt;  使用多少个线程进行压测   </span><br><span class="line">                                                      </span><br><span class="line">    -s, --script      &lt;S&gt;  指定<span class="title class_">Lua</span>脚本路径       </span><br><span class="line">    -H, --header      &lt;H&gt;  为每一个<span class="variable constant_">HTTP</span>请求添加<span class="variable constant_">HTTP</span>头      </span><br><span class="line">        --latency          在压测结束后，打印延迟统计信息   </span><br><span class="line">        --timeout     &lt;T&gt;  超时时间     </span><br><span class="line">    -v, --version          打印正在使用的wrk的详细版本信息</span><br><span class="line">                                                      </span><br><span class="line">  &lt;N&gt;代表数字参数，支持国际单位 (1k, 1M, 1G)</span><br><span class="line">  &lt;T&gt;代表时间参数，支持时间单位 (2s, 2m, 2h)</span><br></pre></td></tr></table></figure>
+
+<h3 id="版本查看"><a href="#版本查看" class="headerlink" title="版本查看"></a>版本查看</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">brew info wrk</span><br><span class="line"></span><br><span class="line"><span class="attr">wrk</span>: stable <span class="number">4.1</span><span class="number">.0</span> (bottled), <span class="variable constant_">HEAD</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="压测"><a href="#压测" class="headerlink" title="压测"></a>压测</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">wrk -t12 -c400 -d30s --latency <span class="attr">http</span>:<span class="comment">//www.baidu.com</span></span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line"><span class="title class_">Running</span> 30s test @ <span class="attr">http</span>:<span class="comment">//www.baidu.com（压测时间30s）</span></span><br><span class="line">  <span class="number">12</span> threads and <span class="number">400</span> connections（共<span class="number">12</span>个测试线程，<span class="number">400</span>个连接）</span><br><span class="line">  <span class="title class_">Thread</span> <span class="title class_">Stats</span>   <span class="title class_">Avg</span>      <span class="title class_">Stdev</span>     <span class="title class_">Max</span>   +/- <span class="title class_">Stdev</span></span><br><span class="line">              （平均值） （标准差）（最大值）（正负一个标准差所占比例）</span><br><span class="line">    <span class="title class_">Latency</span>   <span class="number">933.</span>14ms  <span class="number">415.</span>00ms   <span class="number">2.</span>00s    <span class="number">77.56</span>%</span><br><span class="line">    （延迟）</span><br><span class="line">    <span class="title class_">Req</span>/<span class="title class_">Sec</span>    <span class="number">24.77</span>     <span class="number">15.65</span>   <span class="number">121.00</span>     <span class="number">70.04</span>%</span><br><span class="line">    （处理中的请求数）</span><br><span class="line">  <span class="title class_">Latency</span> <span class="title class_">Distribution</span> （延迟分布）</span><br><span class="line">     <span class="number">50</span>%  <span class="number">711.</span>85ms</span><br><span class="line">     <span class="number">75</span>%    <span class="number">1.</span>24s</span><br><span class="line">     <span class="number">90</span>%    <span class="number">1.</span>56s</span><br><span class="line">     <span class="number">99</span>%    <span class="number">1.</span>90s （<span class="number">99</span>分位的延迟）</span><br><span class="line">  <span class="number">8181</span> requests <span class="keyword">in</span> <span class="number">30.</span>10s, <span class="number">121.</span>83MB read（<span class="number">30.10</span>秒内共处理完成了<span class="number">8181</span>个请求，读取了<span class="number">121.</span>83MB数据）</span><br><span class="line">  <span class="title class_">Socket</span> <span class="attr">errors</span>: connect <span class="number">0</span>, read <span class="number">0</span>, write <span class="number">0</span>, timeout <span class="number">1545</span></span><br><span class="line"><span class="title class_">Requests</span>/<span class="attr">sec</span>:    <span class="number">271.82</span> （平均每秒处理完成<span class="number">271.82</span>个请求）</span><br><span class="line"><span class="title class_">Transfer</span>/<span class="attr">sec</span>:    <span class="number">4.</span>05MB （平均每秒读取数据<span class="number">4.</span>05MB）</span><br></pre></td></tr></table></figure>
+
+<p>以上使用12个线程400个连接，对baidu首页进行了30秒的压测，并要求在压测结果中输出响应延迟信息。</p>
+<h3 id="Post-接口测试"><a href="#Post-接口测试" class="headerlink" title="Post 接口测试"></a>Post 接口测试</h3><p>首先需要准备一个lua文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wrk.<span class="property">method</span> = <span class="string">&quot;POST&quot;</span></span><br><span class="line">wrk.<span class="property">body</span>   = <span class="string">&quot;foo=bar&amp;baz=quux&quot;</span></span><br><span class="line">wrk.<span class="property">headers</span>[<span class="string">&quot;Content-Type&quot;</span>] = <span class="string">&quot;application/x-www-form-urlencoded&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><em>可参照<a href="https://github.com/wg/wrk/tree/master/scripts">github</a>上的示例</em></p>
+<p>如测试：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">wrk.<span class="property">method</span> = <span class="string">&quot;POST&quot;</span></span><br><span class="line">wrk.<span class="property">body</span>   = <span class="string">&#x27;&#123;&quot;act&quot;:&quot;v2/user/get&quot;,&quot;args&quot;:&#123;&quot;corp_id&quot;:&quot;5c0f3633eb30ea2416a&quot;,&quot;auth&quot;:&quot;WNwI1DePAf7ANU2hfDsOxUA4CsHxGee8J1hz0b0GdVpGhB/jrleUO1EqB76w+QMMFzMgV1ma1tycQx&quot;&#125;&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line">wrk -t4 -c2000 -d60s -T5s --script=post.<span class="property">lua</span> --latency <span class="attr">http</span>:<span class="comment">//xxx.com</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><em>这样就是模拟4个线程，2000个连接，在60s内，间隔5s 执行 post.lua 的请求</em></p>
+<p>本文引自<a href="https://www.jianshu.com/p/28b613a6590c">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/wrk/">wrk</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2019/03/18/wrk-http%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" data-title="wrk - http性能测试工具使用指南 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/04/06/知乎-API-v4-整理/" title="知乎 API v4 整理">
+  <strong>上一篇：</strong><br/>
+  <span>
+  知乎 API v4 整理</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/03/14/Specify-SSH-Port-for-Git/"  title="Specify SSH Port for Git">
+ <strong>下一篇：</strong><br/> 
+ <span>Specify SSH Port for Git
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2019/03/18/wrk-http性能测试工具使用指南/" data-title="wrk - http性能测试工具使用指南" data-url="https://luckymrwang.github.io/2019/03/18/wrk-http%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85"><span class="toc-number">1.</span> <span class="toc-text">安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">基本使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%89%88%E6%9C%AC%E6%9F%A5%E7%9C%8B"><span class="toc-number">3.</span> <span class="toc-text">版本查看</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%8B%E6%B5%8B"><span class="toc-number">4.</span> <span class="toc-text">压测</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Post-%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95"><span class="toc-number">5.</span> <span class="toc-text">Post 接口测试</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

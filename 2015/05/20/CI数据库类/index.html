@@ -1,0 +1,679 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>CI数据库类 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用 $DB1 &#x3D; $this-&gt;load-&gt;database(&#39;group_one&#39;, TRUE); $DB2 &#x3D; $this-&gt;load-&gt;database(&#39;group_two&#39;, TRUE);  通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CI数据库类">
+<meta property="og:url" content="https://luckymrwang.github.io/2015/05/20/CI%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B1%BB/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用 $DB1 &#x3D; $this-&gt;load-&gt;database(&#39;group_one&#39;, TRUE); $DB2 &#x3D; $this-&gt;load-&gt;database(&#39;group_two&#39;, TRUE);  通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-05-20T07:51:51.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.187Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="CI">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/05/20/CI数据库类/" title="CI数据库类" itemprop="url">CI数据库类</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-05-20T07:51:51.000Z" itemprop="datePublished"> 发表于 2015-05-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>今天在查看CI的用户指南数据库类时，提示连接多个数据库时要用</p>
+<pre><code>$DB1 = $this-&gt;load-&gt;database(&#39;group_one&#39;, TRUE);
+$DB2 = $this-&gt;load-&gt;database(&#39;group_two&#39;, TRUE);
+</code></pre>
+<p>通过设置函数的第二个参数为TRUE(boolean)来返回一个数据库对象。</p>
+<span id="more"></span>
+<p><em>当你使用这种方法，你将用对象名来执行操作命令而不是用户向导模式，也就是说，你将用以下方式执行数据库操作：</em></p>
+<pre><code>$DB1-&gt;query();
+$DB1-&gt;result();
+etc...
+</code></pre>
+<p>而不是：</p>
+<pre><code>$this-&gt;db-&gt;query();
+$this-&gt;db-&gt;result();
+etc...
+</code></pre>
+<p><em>译注：要连接多个数据库请先设置 config&#x2F;database.php 中的 $db[‘xxxxxx’][‘pconnect’] &#x3D; FALSE; 这是 mysql_pconnect() 造成的问题，和 CI 无关。</em></p>
+<p>我借用BI项目测试后返回一个对象，具体内容是这样的：</p>
+<pre><code>CI_DB_mysql_driver Object
+    (
+        [dbdriver] =&gt; mysql
+        [_escape_char] =&gt; `
+        [_like_escape_str] =&gt; 
+        [_like_escape_chr] =&gt; 
+        [delete_hack] =&gt; 1
+        [_count_string] =&gt; SELECT COUNT(*) AS 
+        [_random_keyword] =&gt;  RAND()
+        [use_set_names] =&gt; 
+        [ar_select] =&gt; Array
+            (
+            )
+
+        [ar_distinct] =&gt; 
+        [ar_from] =&gt; Array
+            (
+            )
+
+        [ar_join] =&gt; Array
+            (
+            )
+
+        [ar_where] =&gt; Array
+            (
+            )
+
+        [ar_like] =&gt; Array
+            (
+            )
+
+        [ar_groupby] =&gt; Array
+            (
+            )
+
+        [ar_having] =&gt; Array
+            (
+            )
+
+        [ar_keys] =&gt; Array
+            (
+            )
+
+        [ar_limit] =&gt; 
+        [ar_offset] =&gt; 
+        [ar_order] =&gt; 
+        [ar_orderby] =&gt; Array
+            (
+            )
+
+        [ar_set] =&gt; Array
+            (
+            )
+
+        [ar_wherein] =&gt; Array
+            (
+            )
+
+        [ar_aliased_tables] =&gt; Array
+            (
+            )
+
+        [ar_store_array] =&gt; Array
+            (
+            )
+
+        [ar_caching] =&gt; 
+        [ar_cache_exists] =&gt; Array
+            (
+            )
+
+        [ar_cache_select] =&gt; Array
+            (
+            )
+
+        [ar_cache_from] =&gt; Array
+            (
+            )
+
+        [ar_cache_join] =&gt; Array
+            (
+            )
+
+        [ar_cache_where] =&gt; Array
+            (
+            )
+
+        [ar_cache_like] =&gt; Array
+            (
+            )
+
+        [ar_cache_groupby] =&gt; Array
+            (
+            )
+
+        [ar_cache_having] =&gt; Array
+            (
+            )
+
+        [ar_cache_orderby] =&gt; Array
+            (
+            )
+
+        [ar_cache_set] =&gt; Array
+            (
+            )
+
+        [ar_no_escape] =&gt; Array
+            (
+            )
+
+        [ar_cache_no_escape] =&gt; Array
+            (
+            )
+
+        [username] =&gt; root
+        [password] =&gt; 
+        [hostname] =&gt; localhost
+        [database] =&gt; ga
+        [dbprefix] =&gt; 
+        [char_set] =&gt; utf8
+        [dbcollat] =&gt; utf8_general_ci
+        [autoinit] =&gt; 1
+        [swap_pre] =&gt; 
+        [port] =&gt; 
+        [pconnect] =&gt; 
+        [conn_id] =&gt; Resource id #112
+        [result_id] =&gt; Resource id #113
+        [db_debug] =&gt; 1
+        [benchmark] =&gt; 0.00244402885437
+        [query_count] =&gt; 1
+        [bind_marker] =&gt; ?
+        [save_queries] =&gt; 1
+        [queries] =&gt; Array
+            (
+                [0] =&gt; SELECT *
+					FROM (`apps`)
+					WHERE `appid` =  1009
+            )
+
+        [query_times] =&gt; Array
+            (
+                [0] =&gt; 0.00244402885437
+            )
+
+        [data_cache] =&gt; Array
+            (
+            )
+
+        [trans_enabled] =&gt; 1
+        [trans_strict] =&gt; 1
+        [_trans_depth] =&gt; 0
+        [_trans_status] =&gt; 1
+        [cache_on] =&gt; 
+        [cachedir] =&gt; 
+        [cache_autodel] =&gt; 
+        [CACHE] =&gt; 
+        [_protect_identifiers] =&gt; 1
+        [_reserved_identifiers] =&gt; Array
+            (
+                [0] =&gt; *
+            )
+
+        [stmt_id] =&gt; 
+        [curs_id] =&gt; 
+        [limit_used] =&gt; 
+        [stricton] =&gt; 
+    )
+</code></pre>
+<p>变量非常多，例如 <code>[queries]</code> 也会记录着查询过的语句，<code>[query_time]</code> 记录着相应语句查询所需要的时间等等。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CI/">CI</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2015/05/20/CI%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B1%BB/" data-title="CI数据库类 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/05/20/Rolling-cURL-PHP并发最佳实践/" title="Rolling cURL:PHP并发最佳实践">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Rolling cURL:PHP并发最佳实践</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/05/19/百万级别访问网站前期的技术准备/"  title="百万级别访问网站前期的技术准备">
+ <strong>下一篇：</strong><br/> 
+ <span>百万级别访问网站前期的技术准备
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/05/20/CI数据库类/" data-title="CI数据库类" data-url="https://luckymrwang.github.io/2015/05/20/CI%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B1%BB/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

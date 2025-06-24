@@ -1,0 +1,578 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>如何做到jQuery-free? | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="jQuery是现在最流行的JavaScript工具库。 据统计，目前全世界57.3%的网站使用它。也就是说，10个网站里面，有6个使用jQuery。如果只考察使用工具库的网站，这个比例就会上升到惊人的91.7%。 虽然jQuery如此受欢迎，但是它臃肿的体积也让人头痛不已。jQuery 2.0的原始大小为235KB，优化后为81KB；如果是支持IE6、7、8的jQuery 1.8.3，原始大小为2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何做到jQuery-free?">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/02/29/%E5%A6%82%E4%BD%95%E5%81%9A%E5%88%B0jQuery-free/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="jQuery是现在最流行的JavaScript工具库。 据统计，目前全世界57.3%的网站使用它。也就是说，10个网站里面，有6个使用jQuery。如果只考察使用工具库的网站，这个比例就会上升到惊人的91.7%。 虽然jQuery如此受欢迎，但是它臃肿的体积也让人头痛不已。jQuery 2.0的原始大小为235KB，优化后为81KB；如果是支持IE6、7、8的jQuery 1.8.3，原始大小为2">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-02-29T03:29:35.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.212Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="jQuery">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/02/29/如何做到jQuery-free/" title="如何做到jQuery-free?" itemprop="url">如何做到jQuery-free?</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-02-29T03:29:35.000Z" itemprop="datePublished"> 发表于 2016-02-29</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E5%8F%96DOM%E5%85%83%E7%B4%A0"><span class="toc-number">1.</span> <span class="toc-text">选取DOM元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM%E6%93%8D%E4%BD%9C"><span class="toc-number">2.</span> <span class="toc-text">DOM操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9A%84%E7%9B%91%E5%90%AC"><span class="toc-number">3.</span> <span class="toc-text">事件的监听</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9A%84%E8%A7%A6%E5%8F%91"><span class="toc-number">4.</span> <span class="toc-text">事件的触发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#document-ready"><span class="toc-number">5.</span> <span class="toc-text">document.ready</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#attr%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">attr方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#addClass%E6%96%B9%E6%B3%95"><span class="toc-number">7.</span> <span class="toc-text">addClass方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSS"><span class="toc-number">8.</span> <span class="toc-text">CSS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%82%A8%E5%AD%98"><span class="toc-number">9.</span> <span class="toc-text">数据储存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ajax"><span class="toc-number">10.</span> <span class="toc-text">Ajax</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E7%94%BB"><span class="toc-number">11.</span> <span class="toc-text">动画</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88"><span class="toc-number">12.</span> <span class="toc-text">替代方案</span></a></li></ol>
+		
+		</div>
+		
+		<p>jQuery是现在最流行的JavaScript工具库。</p>
+<p>据统计，目前全世界57.3%的网站使用它。也就是说，10个网站里面，有6个使用jQuery。如果只考察使用工具库的网站，这个比例就会上升到惊人的91.7%。</p>
+<p>虽然jQuery如此受欢迎，但是它臃肿的体积也让人头痛不已。jQuery 2.0的原始大小为235KB，优化后为81KB；如果是支持IE6、7、8的jQuery 1.8.3，原始大小为261KB，优化后为91KB。</p>
+<span id="more"></span>
+<p>这样的体积，即使是宽带环境，完全加载也需要1秒或更长，更不要说移动设备了。这意味着，如果你使用了jQuery，用户至少延迟1秒，才能看到网页效果。考虑到本质上，jQuery只是一个操作DOM的工具，我们不仅要问：如果只是为了几个网页特效，是否有必要动用这么大的库？</p>
+<p>2006年，jQuery诞生的时候，主要用于消除不同浏览器的差异（主要是IE6），为开发者提供一个简洁的统一接口。相比当时，如今的情况已经发生了很大的变化。IE的市场份额不断下降，以ECMAScript为基础的JavaScript标准语法，正得到越来越广泛的支持。开发者直接使用JavScript标准语法，就能同时在各大浏览器运行，不再需要通过jQuery获取兼容性。</p>
+<p>下面就探讨如何用JavaScript标准语法，取代jQuery的一些主要功能，做到jQuery-free。</p>
+<h3 id="选取DOM元素"><a href="#选取DOM元素" class="headerlink" title="选取DOM元素"></a>选取DOM元素</h3><p>jQuery的核心是通过各种选择器，选中DOM元素，可以用querySelectorAll方法模拟这个功能。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> $ = <span class="variable language_">document</span>.<span class="property">querySelectorAll</span>.<span class="title function_">bind</span>(<span class="variable language_">document</span>);</span><br></pre></td></tr></table></figure>
+
+<p>这里需要注意的是，querySelectorAll方法返回的是NodeList对象，它很像数组（有数字索引和length属性），但不是数组，不能使用pop、push等数组特有方法。如果有需要，可以考虑将Nodelist对象转为数组。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">myList = <span class="title class_">Array</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">slice</span>.<span class="title function_">call</span>(myNodeList);</span><br></pre></td></tr></table></figure>
+
+<h3 id="DOM操作"><a href="#DOM操作" class="headerlink" title="DOM操作"></a>DOM操作</h3><p>DOM本身就具有很丰富的操作方法，可以取代jQuery提供的操作方法。</p>
+<p>尾部追加DOM元素。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">　　<span class="comment">// jQuery写法</span></span><br><span class="line">　　$(parent).<span class="title function_">append</span>($(child));</span><br><span class="line">　　<span class="comment">// DOM写法</span></span><br><span class="line">　　parent.<span class="title function_">appendChild</span>(child)</span><br></pre></td></tr></table></figure>
+
+<p>头部插入DOM元素。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// jQuery写法</span></span><br><span class="line">　　$(parent).<span class="title function_">prepend</span>($(child));</span><br><span class="line">　　<span class="comment">// DOM写法</span></span><br><span class="line">　　parent.<span class="title function_">insertBefore</span>(child, parent.<span class="property">childNodes</span>[<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+
+<p>删除DOM元素。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">　　<span class="comment">// jQuery写法</span></span><br><span class="line">　　$(child).<span class="title function_">remove</span>()</span><br><span class="line">　　<span class="comment">// DOM写法</span></span><br><span class="line">　　child.<span class="property">parentNode</span>.<span class="title function_">removeChild</span>(child)</span><br></pre></td></tr></table></figure>
+
+<h3 id="事件的监听"><a href="#事件的监听" class="headerlink" title="事件的监听"></a>事件的监听</h3><p>jQuery的on方法，完全可以用addEventListener模拟。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Element.prototype.on = Element.prototype.addEventListener;</span><br></pre></td></tr></table></figure>
+
+<p>为了使用方便，可以在NodeList对象上也部署这个方法。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">　　<span class="title class_">NodeList</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">on</span> = <span class="keyword">function</span> (<span class="params">event, fn</span>) &#123;</span><br><span class="line">　　　　[][<span class="string">&#x27;forEach&#x27;</span>].<span class="title function_">call</span>(<span class="variable language_">this</span>, <span class="keyword">function</span> (<span class="params">el</span>) &#123;</span><br><span class="line">　　　　　　el.<span class="title function_">on</span>(event, fn);</span><br><span class="line">　　　　&#125;);</span><br><span class="line">　　　　<span class="keyword">return</span> <span class="variable language_">this</span>;</span><br><span class="line">　　&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="事件的触发"><a href="#事件的触发" class="headerlink" title="事件的触发"></a>事件的触发</h3><p>jQuery的trigger方法则需要单独部署，相对复杂一些。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">　　<span class="title class_">Element</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">trigger</span> = <span class="keyword">function</span> (<span class="params">type, data</span>) &#123;</span><br><span class="line">　　　　<span class="keyword">var</span> event = <span class="variable language_">document</span>.<span class="title function_">createEvent</span>(<span class="string">&#x27;HTMLEvents&#x27;</span>);</span><br><span class="line">　　　　event.<span class="title function_">initEvent</span>(type, <span class="literal">true</span>, <span class="literal">true</span>);</span><br><span class="line">　　　　event.<span class="property">data</span> = data || &#123;&#125;;</span><br><span class="line">　　　　event.<span class="property">eventName</span> = type;</span><br><span class="line">　　　　event.<span class="property">target</span> = <span class="variable language_">this</span>;</span><br><span class="line">　　　　<span class="variable language_">this</span>.<span class="title function_">dispatchEvent</span>(event);</span><br><span class="line">　　　　<span class="keyword">return</span> <span class="variable language_">this</span>;</span><br><span class="line">　　&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在NodeList对象上也部署这个方法。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">　　<span class="title class_">NodeList</span>.<span class="property"><span class="keyword">prototype</span></span>.<span class="property">trigger</span> = <span class="keyword">function</span> (<span class="params">event</span>) &#123;</span><br><span class="line">　　　　[][<span class="string">&#x27;forEach&#x27;</span>].<span class="title function_">call</span>(<span class="variable language_">this</span>, <span class="keyword">function</span> (<span class="params">el</span>) &#123;</span><br><span class="line">　　　　　　el[<span class="string">&#x27;trigger&#x27;</span>](event);</span><br><span class="line">　　　　&#125;);</span><br><span class="line">　　　　<span class="keyword">return</span> <span class="variable language_">this</span>;</span><br><span class="line">　　&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="document-ready"><a href="#document-ready" class="headerlink" title="document.ready"></a>document.ready</h3><p>目前的最佳实践，是将JavaScript脚本文件都放在页面底部加载。这样的话，其实document.ready方法（jQuery简写为<br>$(function)）已经不必要了，因为等到运行的时候，DOM对象已经生成了。</p>
+<h3 id="attr方法"><a href="#attr方法" class="headerlink" title="attr方法"></a>attr方法</h3><p>jQuery使用attr方法，读写网页元素的属性。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&quot;#picture&quot;</span>).<span class="title function_">attr</span>(<span class="string">&quot;src&quot;</span>, <span class="string">&quot;http://url/to/image&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>DOM元素允许直接读取属性值，写法要简洁许多。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&quot;#picture&quot;</span>).<span class="property">src</span> = <span class="string">&quot;http://url/to/image&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意，input元素的this.value返回的是输入框中的值，链接元素的this.href返回的是绝对URL。如果需要用到这两个网页元素的属性准确值，可以用this.getAttribute(‘value’)和this.getAttibute(‘href’)。</p>
+<h3 id="addClass方法"><a href="#addClass方法" class="headerlink" title="addClass方法"></a>addClass方法</h3><p>jQuery的addClass方法，用于为DOM元素添加一个class。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&#x27;body&#x27;</span>).<span class="title function_">addClass</span>(<span class="string">&#x27;hasJS&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>DOM元素本身有一个可读写的className属性，可以用来操作class。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">　　<span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">className</span> = <span class="string">&#x27;hasJS&#x27;</span>;</span><br><span class="line">　　<span class="comment">// or</span></span><br><span class="line">　　<span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">className</span> += <span class="string">&#x27; hasJS&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>HTML 5还提供一个classList对象，功能更强大（IE 9不支持）。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">　　<span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">classList</span>.<span class="title function_">add</span>(<span class="string">&#x27;hasJS&#x27;</span>);</span><br><span class="line">　　<span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">classList</span>.<span class="title function_">remove</span>(<span class="string">&#x27;hasJS&#x27;</span>);</span><br><span class="line">　　<span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">classList</span>.<span class="title function_">toggle</span>(<span class="string">&#x27;hasJS&#x27;</span>);</span><br><span class="line">　　<span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">classList</span>.<span class="title function_">contains</span>(<span class="string">&#x27;hasJS&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="CSS"><a href="#CSS" class="headerlink" title="CSS"></a>CSS</h3><p>jQuery的css方法，用来设置网页元素的样式。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(node).<span class="title function_">css</span>( <span class="string">&quot;color&quot;</span>, <span class="string">&quot;red&quot;</span> );</span><br></pre></td></tr></table></figure>
+
+<p>DOM元素有一个style属性，可以直接操作。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">　　element.<span class="property">style</span>.<span class="property">color</span> = <span class="string">&quot;red&quot;</span>;;</span><br><span class="line">　　<span class="comment">// or</span></span><br><span class="line">　　element.<span class="property">style</span>.<span class="property">cssText</span> += <span class="string">&#x27;color:red&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据储存"><a href="#数据储存" class="headerlink" title="数据储存"></a>数据储存</h3><p>jQuery对象可以储存数据。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">&quot;body&quot;</span>).<span class="title function_">data</span>(<span class="string">&quot;foo&quot;</span>, <span class="number">52</span>);</span><br></pre></td></tr></table></figure>
+
+<p>HTML 5有一个dataset对象，也有类似的功能（IE 10不支持），不过只能保存字符串。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">　　element.<span class="property">dataset</span>.<span class="property">user</span> = <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(user);</span><br><span class="line">　　element.<span class="property">dataset</span>.<span class="property">score</span> = score;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Ajax"><a href="#Ajax" class="headerlink" title="Ajax"></a>Ajax</h3><p>jQuery的Ajax方法，用于异步操作。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">　　$.<span class="title function_">ajax</span>(&#123;</span><br><span class="line">　　　　<span class="attr">type</span>: <span class="string">&quot;POST&quot;</span>,</span><br><span class="line">　　　　<span class="attr">url</span>: <span class="string">&quot;some.php&quot;</span>,</span><br><span class="line">　　　　<span class="attr">data</span>: &#123; <span class="attr">name</span>: <span class="string">&quot;John&quot;</span>, <span class="attr">location</span>: <span class="string">&quot;Boston&quot;</span> &#125;</span><br><span class="line">　　&#125;).<span class="title function_">done</span>(<span class="keyword">function</span>(<span class="params"> msg </span>) &#123;</span><br><span class="line">　　　　<span class="title function_">alert</span>( <span class="string">&quot;Data Saved: &quot;</span> + msg );</span><br><span class="line">　　&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>我们可以定义一个request函数，模拟Ajax方法。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">　　<span class="keyword">function</span> <span class="title function_">request</span>(<span class="params">type, url, opts, callback</span>) &#123;</span><br><span class="line">　　　　<span class="keyword">var</span> xhr = <span class="keyword">new</span> <span class="title class_">XMLHttpRequest</span>();</span><br><span class="line">　　　　<span class="keyword">if</span> (<span class="keyword">typeof</span> opts === <span class="string">&#x27;function&#x27;</span>) &#123;</span><br><span class="line">　　　　　　callback = opts;</span><br><span class="line">　　　　　　opts = <span class="literal">null</span>;</span><br><span class="line">　　　　&#125;</span><br><span class="line">　　　　xhr.<span class="title function_">open</span>(type, url);</span><br><span class="line">　　　　<span class="keyword">var</span> fd = <span class="keyword">new</span> <span class="title class_">FormData</span>();</span><br><span class="line">　　　　<span class="keyword">if</span> (type === <span class="string">&#x27;POST&#x27;</span> &amp;&amp; opts) &#123;</span><br><span class="line">　　　　　　<span class="keyword">for</span> (<span class="keyword">var</span> key <span class="keyword">in</span> opts) &#123;</span><br><span class="line">　　　　　　　　fd.<span class="title function_">append</span>(key, <span class="title class_">JSON</span>.<span class="title function_">stringify</span>(opts[key]));</span><br><span class="line">　　　　　　&#125;</span><br><span class="line">　　　　&#125;</span><br><span class="line">　　　　xhr.<span class="property">onload</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">　　　　　　<span class="title function_">callback</span>(<span class="title class_">JSON</span>.<span class="title function_">parse</span>(xhr.<span class="property">response</span>));</span><br><span class="line">　　　　&#125;;</span><br><span class="line">　　　　xhr.<span class="title function_">send</span>(opts ? fd : <span class="literal">null</span>);</span><br><span class="line">　　&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后，基于request函数，模拟jQuery的get和post方法。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">　　<span class="keyword">var</span> get = request.<span class="title function_">bind</span>(<span class="variable language_">this</span>, <span class="string">&#x27;GET&#x27;</span>);</span><br><span class="line">　　<span class="keyword">var</span> post = request.<span class="title function_">bind</span>(<span class="variable language_">this</span>, <span class="string">&#x27;POST&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h3><p>jQuery的animate方法，用于生成动画效果。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$foo.<span class="title function_">animate</span>(<span class="string">&#x27;slow&#x27;</span>, &#123; <span class="attr">x</span>: <span class="string">&#x27;+=10px&#x27;</span> &#125;)；</span><br></pre></td></tr></table></figure>
+
+<p>jQuery的动画效果，很大部分基于DOM。但是目前，CSS 3的动画远比DOM强大，所以可以把动画效果写进CSS，然后通过操作DOM元素的class，来展示动画。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">foo.<span class="property">classList</span>.<span class="title function_">add</span>(<span class="string">&#x27;animate&#x27;</span>)；</span><br></pre></td></tr></table></figure>
+
+<p>如果需要对动画使用回调函数，CSS 3也定义了相应的事件。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">　　el.<span class="title function_">addEventListener</span>(<span class="string">&quot;webkitTransitionEnd&quot;</span>, transitionEnded);</span><br><span class="line">　　el.<span class="title function_">addEventListener</span>(<span class="string">&quot;transitionend&quot;</span>, transitionEnded);</span><br></pre></td></tr></table></figure>
+
+<h3 id="替代方案"><a href="#替代方案" class="headerlink" title="替代方案"></a>替代方案</h3><p>由于jQuery体积过大，替代方案层出不穷。</p>
+<p>其中，最有名的是<a href="http://zeptojs.com/">zepto.js</a>。它的设计目标是以最小的体积，做到最大兼容jQuery的API。zepto.js 1.0版的原始大小是55KB，优化后是29KB，gzip压缩后为10KB。</p>
+<p>如果不求最大兼容，只希望模拟jQuery的基本功能，那么，<a href="https://github.com/remy/min.js">min.js</a>优化后只有200字节，而<a href="https://github.com/lelandrichardson/dolla">dolla</a>优化后是1.7KB。</p>
+<p>此外，jQuery本身采用模块设计，可以只选择使用自己需要的模块。具体做法参见它的github网站，或者使用专用的Web界面。</p>
+<p>本文引自<a href="http://www.ruanyifeng.com/blog/2013/05/jquery-free.html">阮一峰</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/jQuery/">jQuery</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/02/29/%E5%A6%82%E4%BD%95%E5%81%9A%E5%88%B0jQuery-free/" data-title="如何做到jQuery-free? | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/03/06/Go语言指针符号的-和/" title="Go语言指针符号的*和&amp;">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Go语言指针符号的*和&amp;</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/01/30/Provider-Value-Constant-Service-Factory-Decorator/"  title="Provider,Value,Constant,Service,Factory,Decorator">
+ <strong>下一篇：</strong><br/> 
+ <span>Provider,Value,Constant,Service,Factory,Decorator
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/02/29/如何做到jQuery-free/" data-title="如何做到jQuery-free?" data-url="https://luckymrwang.github.io/2016/02/29/%E5%A6%82%E4%BD%95%E5%81%9A%E5%88%B0jQuery-free/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%89%E5%8F%96DOM%E5%85%83%E7%B4%A0"><span class="toc-number">1.</span> <span class="toc-text">选取DOM元素</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM%E6%93%8D%E4%BD%9C"><span class="toc-number">2.</span> <span class="toc-text">DOM操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9A%84%E7%9B%91%E5%90%AC"><span class="toc-number">3.</span> <span class="toc-text">事件的监听</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8B%E4%BB%B6%E7%9A%84%E8%A7%A6%E5%8F%91"><span class="toc-number">4.</span> <span class="toc-text">事件的触发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#document-ready"><span class="toc-number">5.</span> <span class="toc-text">document.ready</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#attr%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">attr方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#addClass%E6%96%B9%E6%B3%95"><span class="toc-number">7.</span> <span class="toc-text">addClass方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CSS"><span class="toc-number">8.</span> <span class="toc-text">CSS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%82%A8%E5%AD%98"><span class="toc-number">9.</span> <span class="toc-text">数据储存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ajax"><span class="toc-number">10.</span> <span class="toc-text">Ajax</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A8%E7%94%BB"><span class="toc-number">11.</span> <span class="toc-text">动画</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88"><span class="toc-number">12.</span> <span class="toc-text">替代方案</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

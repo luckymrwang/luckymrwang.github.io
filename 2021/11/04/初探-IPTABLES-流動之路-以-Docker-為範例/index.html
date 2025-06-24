@@ -1,0 +1,635 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>初探 IPTABLES 流動之路 - 以 Docker 為範例 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Introduction本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables&#x2F;ebtables 的實際流向。演講中主要針對三個方向進行探討，分別是  Host to Container Container to Container Container to WAN  每個方向都包含了雙向來回，譬如Host to Contain">
+<meta property="og:type" content="article">
+<meta property="og:title" content="初探 IPTABLES 流動之路 - 以 Docker 為範例">
+<meta property="og:url" content="https://luckymrwang.github.io/2021/11/04/%E5%88%9D%E6%8E%A2-IPTABLES-%E6%B5%81%E5%8B%95%E4%B9%8B%E8%B7%AF-%E4%BB%A5-Docker-%E7%82%BA%E7%AF%84%E4%BE%8B/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Introduction本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables&#x2F;ebtables 的實際流向。演講中主要針對三個方向進行探討，分別是  Host to Container Container to Container Container to WAN  每個方向都包含了雙向來回，譬如Host to Contain">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables1.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables3.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables4.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables5.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables6.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables7.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables8.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables9.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables10.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables11.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables12.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables13.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables14.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables15.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables16.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables17.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables18.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables19.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables20.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/iptables21.png">
+<meta property="article:published_time" content="2021-11-04T08:34:01.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.211Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Iptables">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/iptables1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/11/04/初探-IPTABLES-流動之路-以-Docker-為範例/" title="初探 IPTABLES 流動之路 - 以 Docker 為範例" itemprop="url">初探 IPTABLES 流動之路 - 以 Docker 為範例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-11-04T08:34:01.000Z" itemprop="datePublished"> 发表于 2021-11-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">2.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Basic-Concept"><span class="toc-number">3.</span> <span class="toc-text">Basic Concept</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#User-Kernel"><span class="toc-number">4.</span> <span class="toc-text">User&#x2F;Kernel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%8F%E5%89%87%E7%B5%84%E6%88%90"><span class="toc-number">5.</span> <span class="toc-text">規則組成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%80%E5%AF%9F%E6%96%B9%E5%BC%8F"><span class="toc-number">6.</span> <span class="toc-text">觀察方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EBTABLES"><span class="toc-number">7.</span> <span class="toc-text">EBTABLES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chain"><span class="toc-number">8.</span> <span class="toc-text">Chain</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tables"><span class="toc-number">9.</span> <span class="toc-text">Tables</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Workflow"><span class="toc-number">10.</span> <span class="toc-text">Workflow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lab"><span class="toc-number">11.</span> <span class="toc-text">Lab</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Container-to-Container"><span class="toc-number">12.</span> <span class="toc-text">Container to Container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Host-to-Container"><span class="toc-number">13.</span> <span class="toc-text">Host to Container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPTABLES"><span class="toc-number">14.</span> <span class="toc-text">IPTABLES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chain-1"><span class="toc-number">15.</span> <span class="toc-text">Chain</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Table"><span class="toc-number">16.</span> <span class="toc-text">Table</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Workflow-1"><span class="toc-number">17.</span> <span class="toc-text">Workflow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lab-1"><span class="toc-number">18.</span> <span class="toc-text">Lab</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Contaienr-to-Container"><span class="toc-number">19.</span> <span class="toc-text">Contaienr to Container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Host-to-Container-1"><span class="toc-number">20.</span> <span class="toc-text">Host to Container</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Host-to-Contaienr"><span class="toc-number">20.1.</span> <span class="toc-text">Host to Contaienr</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Container-to-Host"><span class="toc-number">20.2.</span> <span class="toc-text">Container to Host</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Container-to-WAN"><span class="toc-number">21.</span> <span class="toc-text">Container to WAN</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Container-to-WAN-1"><span class="toc-number">21.1.</span> <span class="toc-text">Container to WAN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WAN-to-Container"><span class="toc-number">21.2.</span> <span class="toc-text">WAN to Container</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Summary"><span class="toc-number">22.</span> <span class="toc-text">Summary</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h3><p>本次演講主要是探討封包基於 Docker Container 的預設環境下，不同走向實際上對應到 iptables&#x2F;ebtables 的實際流向。<br>演講中主要針對三個方向進行探討，分別是</p>
+<ul>
+<li>Host to Container</li>
+<li>Container to Container</li>
+<li>Container to WAN</li>
+</ul>
+<p>每個方向都包含了雙向來回，譬如<br><code>Host to Container</code> 其實也包含了 <code>Container to Host</code><br><code>Container to WAN</code> 也包含了 <code>WAN to Containe</code><br>主要差別在於誰發起了連線，這中間差異不大 (<code>WAN to Container</code> 可能會有 DNAT)</p>
+<span id="more"></span>
+<p>下圖是這次演講最主要的圖片，接下來會透過實際觀察的方式，一步一步的建立起這張圖片</p>
+<p><img src="/images/iptables1.png"></p>
+<h3 id="Environment"><a href="#Environment" class="headerlink" title="Environment"></a>Environment</h3><p>本影片的測試環境可透過 Vagrant 的方式還原，相關資源都放在 <a href="https://github.com/hwchiu/network-study/tree/master/iptables/iptables_ebtables">network-study</a> 這個專案內，可以透過 vagrant up 的方式將整個環境建立起來</p>
+<p>當整個 OS 都準備完畢之後，接下來會採用下列的環境來啟動兩個 Container 並且使用預設的 Linux Bridge 模式。</p>
+<p><img src="/images/iptables2.png"></p>
+<p>接下來所有的操作都會基於這兩個 Container 的互動來觀察封包流向</p>
+<h3 id="Basic-Concept"><a href="#Basic-Concept" class="headerlink" title="Basic Concept"></a>Basic Concept</h3><p>不論是 iptables, ebtables 或是本文沒有提到的 arptables, 其架構都可以用下列這張圖片來解釋</p>
+<p><img src="/images/iptables3.png"></p>
+<h3 id="User-Kernel"><a href="#User-Kernel" class="headerlink" title="User&#x2F;Kernel"></a>User&#x2F;Kernel</h3><p>所有你可以直接在系統上操作的 iptables- 系列工具 (ebtables,arptables雷同)全部都是 User Space 的工具，其功能都是用來管理 規則, 但是規則真正運行被觸發的時機點都是在 Kernel 內。</p>
+<p>實際上， iptables 會透過 getsockopt&#x2F;setsockopt 等 IPC 方式與 Kernel 進行溝通，不論是讀取當前的規則，或是寫入新規則，這邊也有一個重要的概念就是 規則 本身不會被儲存，所以當機器重新開機的時候， kernel 內的規則就會全部消失，需要仰賴 userspace 的工具重新寫入規則到 kernel 內，</p>
+<p>上述的架構其實也會讓整個 iptables 的觀察與管理變得相對困難，因為大部分情況下我們都是使用 iptables-* 系列工具來進行觀察與管理，而實際上封包到底怎麼流動，被哪些規則給丟棄，被哪些規則給修改，一切都是在 kernel 內進行。<br>這意味者我們必須要相信 iptablse 與 kernel 的溝通是沒有問題的，不然單純依靠 userspace 的工具來觀察結果其實是會有一些不確定性。</p>
+<p>但是如果要觀察這一切的訊息都要去改 Kernel 來幫助除錯，這方面的工與精力也花費太大，所以一般情況下都還是基於 iptables 的規則來解讀封包與 iptables 之間的關係。</p>
+<h3 id="規則組成"><a href="#規則組成" class="headerlink" title="規則組成"></a>規則組成</h3><p>大抵上， iptables&#x2F;ebtables&#x2F;arptables 的規則組成是有一訂的規範，一個使用範例如下</p>
+<p><img src="/images/iptables4.png"></p>
+<p>這個規範中可以分成四個部分</p>
+<ul>
+<li>Chain: 最簡單的想法就是封包發生的時間點，譬如上述的 OUTPUT, INPUT</li>
+<li>Table: 一群相同規則的集合體，譬如 nat, filter, 該 table 內的規則都有類似的目的</li>
+<li>Match: 符合的條件，可以想成該規則要被觸發的條件，譬如上述的 ! -d 127.0.0.0&#x2F;8 -m addrtype –dst-tppe LOCAL, 這部分可以是 iptables 內建的基本條件，或是透過 -m 來動態載入的其他的 module</li>
+<li>Target: 當規則符合條件後，要做什麼事情，譬如上述的 -j DOCKER, –log-level debug<br>, 如同 Match 一樣，有內建的 Target 外也可以動態載入其他 module 來處理。</li>
+</ul>
+<p>所以今天如果要寫入一個 iptables規則，思路大概是<br>我想要撰寫一個規則，這個規則會在 什麼時間點 被觸發，什麼樣的封包 符合條件，最後要執行什麼動作.<br>而根據動作的類型再把這個規則放到對應的 Table 裡面。</p>
+<h3 id="觀察方式"><a href="#觀察方式" class="headerlink" title="觀察方式"></a>觀察方式</h3><p>有了上面的概念後，本文就會使用 LOG 概念的 Target 來觀察封包流向，整個規則的含義就是<br>在什麼時間點,針對我們想要觀察的流向封包,輸出相關資訊。<br>藉由這些資訊，我們可以組合出封包於 iptables&#x2F;ebtalbes&#x2F;arptables 內的流向<br>注意，這邊只能做到 iptables&#x2F;ebtables&#x2F;arptables 內的流向，其餘更細部的 network stack 處理則沒有辦法</p>
+<h3 id="EBTABLES"><a href="#EBTABLES" class="headerlink" title="EBTABLES"></a>EBTABLES</h3><p>EBTABLES 相對於 IPTABLES 來說比較陌生，主要是其運作的層次更低，基於 ethernet 來處理，一般使用情況下，大家都比較依賴 iptables，也是因為透過 IP 的描述方式會比使用 MAC Address 來得更佳容易記憶與管理。</p>
+<p>即管如此，ebtables 的存在還是不可忽視，也許某一天你的應用場景就會需要使用到 ebtables 來管理</p>
+<h3 id="Chain"><a href="#Chain" class="headerlink" title="Chain"></a>Chain</h3><p>EBTABLES 內總共有六條 Chain，也就是六個時機點</p>
+<p>1、INPUT:<br>根據 Forwarding table, 該封包要送到 Linux Bridge 前</p>
+<p>2、FORWARD:<br>根據 Forwarding table，該封包要被轉發到其他連接埠前 (不能是 Linux Bridge 本身，否則會走 INPUT)</p>
+<p>3、OUTPUT:<br>本地產生的封包，最後目的是 Linux Bridge 底下的連接埠，基本上與 FORWARD 非常相似，只是一個來源是其他人，一個是自己機器本身</p>
+<p>4、PRE-ROUTING:<br>我看過一些評論，跟我的想法滿類似的就是這邊準確的說應該是 PRE-FORWARDING, 因為這個層級我們不探討 IP，不會用 Routing 這個字，但是理論與實作本來就會有所差異，與 IPTABLES 共用相同的結構在實作上會比較簡單些。<br>這個時間點主要是用在剛剛從 Linux Bridge 相關連接埠收到封包後，還沒有透過 Forwarding table 決定目標前，這也是為什麼稱為 PRE- 的原因，主要都是用來修改封包內容<br>題外話：因為還沒有被 Forwarding Table 決定怎麼轉送，所以通常這時候都可以修改封包的目的地</p>
+<p>5、POST-ROUTING:<br>基本上跟 PRE-ROUTING 是雷同的，概念改成 封包要從網卡出去前 會觸發的時間點，也會用來修改封包</p>
+<p>題外話：因為還已經被 Forwarding Table 決定怎麼轉送，通常這時候不可以修改封包的目的地，但是可以修改封包的來源</p>
+<p>6、BROUTING:<br>這是一個 ebtalbes 獨有的點，非常少用，觸發時間點非常早，封包收到後就會先進入到這邊去處理<br>這個時間點能做的事情只有 封包要不要直接送到 Layer3 去處理 的判斷。</p>
+<p>以上就是 ebtalbe 的六個時機點，接下來看看有哪些 table 最後如何組合再一起</p>
+<h3 id="Tables"><a href="#Tables" class="headerlink" title="Tables"></a>Tables</h3><p>Table方面則是會有三個</p>
+<p>1、Filter<br>用來過濾封包，可以決定要不要丟棄或是通過</p>
+<p>2、NAT<br>針對 PRE-ROUTING&#x2F;POST-ROUTING 等時機點使用，去修改封包的 MAC Address</p>
+<p>3、Brout<br>這個是非常特別，就針對 BROUTING 這個 chain 去使用而已<br>每個 Table 都有自己搭配的 Chain, 所有的規則都定義於 Linux Kernel 內，初始化這些 Table 的時候就會去決定有哪些 Chain 可以與之匹配。</p>
+<h3 id="Workflow"><a href="#Workflow" class="headerlink" title="Workflow"></a>Workflow</h3><p>將上述的 Chain 與 Table 結合後會得到這張圖片</p>
+<p><img src="/images/iptables5.png"></p>
+<p>圖片中先忽略所有 iptables 的處理，專心觀察 ebtables 的架構，圖中的 Bridging Decision 也就是本文上述提的 Forwarding table, 用來決定方向。</p>
+<h3 id="Lab"><a href="#Lab" class="headerlink" title="Lab"></a>Lab</h3><p>接下來要透過實際操作來驗證上述的行為，會使用類似於下面用法的規則來顯示資訊</p>
+<p><img src="/images/iptables6.png"></p>
+<p>這樣當封包經過時就會將資訊吐出，可以透過 dmesg 來觀察</p>
+<p>完整規則如下</p>
+<p><img src="/images/iptables7.png"></p>
+<h3 id="Container-to-Container"><a href="#Container-to-Container" class="headerlink" title="Container to Container"></a>Container to Container</h3><p>Contaienr to Contaienr 的方式非常簡單，就直接讓兩個 Container 透過 ICMP request&#x2F;reply 來產生流量即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker exec netutils ping 172.18.0.2 -c1</span><br></pre></td></tr></table></figure>
+<p><img src="/images/iptables8.png"></p>
+<p>最後觀察 kernel log 會得到類似下列的輸出</p>
+<p><img src="/images/iptables9.png"></p>
+<p>將這些輸出結果與前面的流程圖合併後，可以得到下列的資訊</p>
+<p><img src="/images/iptables10.png"></p>
+<p>基本上 Container to Container 就只會經過這四個點</p>
+<h3 id="Host-to-Container"><a href="#Host-to-Container" class="headerlink" title="Host to Container"></a>Host to Container</h3><p>Host to Container 也是使用 ICMP Request&#x2F;Reply 來處理，不過是由 host 本身發起，所以概念如下</p>
+<p><img src="/images/iptables11.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ping 172.18.0.2 -c1</span><br></pre></td></tr></table></figure>
+
+<p>觀察 kernel log會得到類似下列輸出</p>
+<p><img src="/images/iptables12.png"></p>
+<p>整理後會得到類似這種走向</p>
+<p><img src="/images/iptables13.png"></p>
+<p>可以看到 Host to Contaienr 則會走 output 出去，而 Container to Host 最後則是在 Bridging Decision 決策後走 INPUT 上去。</p>
+<p>更多詳細的操作過程可以觀看影片，裡面有實際的 Demo 以及相關的操作。</p>
+<h3 id="IPTABLES"><a href="#IPTABLES" class="headerlink" title="IPTABLES"></a>IPTABLES</h3><p>IPTABLES 概念非常雷同，有四個 Table, 5個 Chain，此外還有 Conntrack(Connnection Track) 在輔佐幫忙。</p>
+<p>這邊我們專注於 IPTABLES 本身， Conntrack 的概念就不紀錄太多，影片中有一些段落再介紹其概念與影響。</p>
+<h3 id="Chain-1"><a href="#Chain-1" class="headerlink" title="Chain"></a>Chain</h3><ul>
+<li>INPUT</li>
+<li>FORWARD</li>
+<li>OUTPUT</li>
+<li>PREROUTING</li>
+<li>POSTROUTING</li>
+</ul>
+<p>這邊的概念跟 EBTALBE 完全一樣，只是 全部的 Forwarding Table 都要換成基於 IP 查詢的 Routing Table，並且沒有了 BROUTING 這個點。</p>
+<h3 id="Table"><a href="#Table" class="headerlink" title="Table"></a>Table</h3><p>除了原有了 Filter 以及 NAT 之外，多出了 RAW 以及 MANGLE 兩張 Table.</p>
+<p>1、RAW<br>RAW 這個 Table 本身被呼叫的順序就很早，基本是被 Conntrack 處理前會呼叫的 Table</p>
+<p>2、Mangel<br>這個可以用來進行一些修改封包的內容，譬如 mark 等之類的資訊<br>最常用的還是 filter 以及 NAT。</p>
+<h3 id="Workflow-1"><a href="#Workflow-1" class="headerlink" title="Workflow"></a>Workflow</h3><p>iptables 本身的流向簡化版本如下</p>
+<p><img src="/images/iptables14.png"></p>
+<p>概念跟 ebtables 非常像，這邊透過 Routing 來決定封包走向。</p>
+<p>由於前面有 ebtables 的經驗，我們先將兩者合併的圖片展示，接下來再透過觀察的方式驗證這張圖片中的封包流向</p>
+<p><img src="/images/iptables15.png"></p>
+<h3 id="Lab-1"><a href="#Lab-1" class="headerlink" title="Lab"></a>Lab</h3><p>觀察的方式跟 ebtable 一樣，透過 LOG 的方式來觀察封包，譬如</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t mangle -I PREROUTING -p tcp -d 172.18.0.0/16 -j LOG --log-prefix <span class="string">&#x27;/iptable/mangle-PREROUTE&#x27;</span> --log-level debug</span><br></pre></td></tr></table></figure>
+
+<p>完整的規則如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">insert</span></span>() &#123;</span><br><span class="line">    iptables -t raw -I PREROUTING -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/raw-PREROUTE&#x27;</span> --log-level debug</span><br><span class="line">    iptables -t mangle -I PREROUTING -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/mangle-PREROUTE&#x27;</span> --log-level debug</span><br><span class="line">    iptables -t nat -I PREROUTING -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/nat-PREROUTE&#x27;</span> --log-level debug</span><br><span class="line"></span><br><span class="line">    iptables -t mangle -I FORWARD -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/mangle-FORWARD&#x27;</span> --log-level debug</span><br><span class="line">    iptables -t filter -I FORWARD -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/filter-FORWARD&#x27;</span> --log-level debug</span><br><span class="line"></span><br><span class="line">    iptables -t mangle -I INPUT -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/mangle-INPUT&#x27;</span> --log-level debug</span><br><span class="line">    iptables -t filter -I INPUT -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/filter-INPUT&#x27;</span> --log-level debug</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    iptables -t raw -I OUTPUT -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/raw-OUTPUT&#x27;</span> --log-level debug</span><br><span class="line">    iptables -t mangle -I OUTPUT -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/mangle-OUTPUT&#x27;</span> --log-level debug</span><br><span class="line">    iptables -t nat -I OUTPUT -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/nat-OUTPUT&#x27;</span> --log-level debug</span><br><span class="line">    iptables -t filter -I OUTPUT -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/filter-OUTPUT&#x27;</span> --log-level debug</span><br><span class="line"></span><br><span class="line">    iptables -t mangle -I POSTROUTING -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/mangle-POSTROUTE&#x27;</span> --log-level debug</span><br><span class="line">    iptables -t nat -I POSTROUTING -p icmp -j LOG --log-prefix <span class="string">&#x27;iptable/nat-POSTROUTE&#x27;</span> --log-level debug</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p> ebtables 的規則也一併保留一起使用，就可以觀察 iptables+ebtables 的流向</p>
+<h3 id="Contaienr-to-Container"><a href="#Contaienr-to-Container" class="headerlink" title="Contaienr to Container"></a>Contaienr to Container</h3><p>指令如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker exec netutils ping 172.18.0.2 -c 1</span><br></pre></td></tr></table></figure>
+
+<p>下面兩張圖就是去回流向，這邊有兩個點要注意</p>
+<p><img src="/images/iptables16.png"></p>
+<p><img src="/images/iptables17.png"></p>
+<p>1、回來的封包不會進入到 NAT table, 主要是這些封包被 Conntion Track(Conntrack) 給處理過，接下來都不會進入 NAT 處理。</p>
+<p>2、ebtables 內會偷偷呼叫 iptables 來進行處理，這部分是個動態開關，可以透過<br>&#x2F;proc&#x2F;sys&#x2F;net&#x2F;bridge&#x2F;bridge-nf-call-iptables 來告訴 kernel 要不要偷偷呼叫 iptables。</p>
+<p>這樣的好處就是對於 Contaienr to Container 的封包流向，可以使用 iptables 來管理，不然就單純只能使用 ebtables 來使用。</p>
+<h3 id="Host-to-Container-1"><a href="#Host-to-Container-1" class="headerlink" title="Host to Container"></a>Host to Container</h3><p>執行指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping 172.18.0.2 -c 1</span><br></pre></td></tr></table></figure>
+
+<p>相關的 Log 請參閱影片結果，底下就紀錄最後結果</p>
+<h4 id="Host-to-Contaienr"><a href="#Host-to-Contaienr" class="headerlink" title="Host to Contaienr"></a>Host to Contaienr</h4><p><img src="/images/iptables18.png"></p>
+<h4 id="Container-to-Host"><a href="#Container-to-Host" class="headerlink" title="Container to Host"></a>Container to Host</h4><p><img src="/images/iptables19.png"></p>
+<h3 id="Container-to-WAN"><a href="#Container-to-WAN" class="headerlink" title="Container to WAN"></a>Container to WAN</h3><p>執行指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo docker exec netutils ping 8.8.8.8 -c 1</span><br></pre></td></tr></table></figure>
+
+<p>相關的 Log 請參閱影片結果，底下就紀錄最後結果</p>
+<h4 id="Container-to-WAN-1"><a href="#Container-to-WAN-1" class="headerlink" title="Container to WAN"></a>Container to WAN</h4><p><img src="/images/iptables20.png"></p>
+<h4 id="WAN-to-Container"><a href="#WAN-to-Container" class="headerlink" title="WAN to Container"></a>WAN to Container</h4><p><img src="/images/iptables21.png"></p>
+<h3 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h3><p>經過這次的觀察，大致上的結論是</p>
+<p>1、網路很難，除錯很麻煩<br>2、IPTABLES 很難，除錯很麻煩<br>3、Linux Kernel 很複雜，除錯很麻煩</p>
+<p>如果除錯這麼難，那網路出問題到底該怎麼辦</p>
+<p>1、網路基本概念的理解<br>2、Linux 網路運作的理解<br>3、TCPDUMP 等相關工具的使用<br>4、檢查 IPTABLES&#x2F;EBTABLES&#x2F;ARPTABLES 等規則<br>5、檢查 Routing Table&#x2F;ARP Tables&#x2F;Forwarding Tables 的紀錄<br>6、相關資訊加上經驗整合，最後歸納出一套封包的走向，並且去驗證</p>
+<p>本文引自<a href="https://www.hwchiu.com/iptables-1.html">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Iptables/">Iptables</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2021/11/04/%E5%88%9D%E6%8E%A2-IPTABLES-%E6%B5%81%E5%8B%95%E4%B9%8B%E8%B7%AF-%E4%BB%A5-Docker-%E7%82%BA%E7%AF%84%E4%BE%8B/" data-title="初探 IPTABLES 流動之路 - 以 Docker 為範例 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/01/08/IDEA全版本通杀完美破解方案/" title="IDEA全版本通杀完美破解方案">
+  <strong>上一篇：</strong><br/>
+  <span>
+  IDEA全版本通杀完美破解方案</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2021/10/25/Go-Http包解析：为什么需要response-Body-Close/"  title="Go Http包解析：为什么需要response.Body.Close()">
+ <strong>下一篇：</strong><br/> 
+ <span>Go Http包解析：为什么需要response.Body.Close()
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2021/11/04/初探-IPTABLES-流動之路-以-Docker-為範例/" data-title="初探 IPTABLES 流動之路 - 以 Docker 為範例" data-url="https://luckymrwang.github.io/2021/11/04/%E5%88%9D%E6%8E%A2-IPTABLES-%E6%B5%81%E5%8B%95%E4%B9%8B%E8%B7%AF-%E4%BB%A5-Docker-%E7%82%BA%E7%AF%84%E4%BE%8B/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Environment"><span class="toc-number">2.</span> <span class="toc-text">Environment</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Basic-Concept"><span class="toc-number">3.</span> <span class="toc-text">Basic Concept</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#User-Kernel"><span class="toc-number">4.</span> <span class="toc-text">User&#x2F;Kernel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A6%8F%E5%89%87%E7%B5%84%E6%88%90"><span class="toc-number">5.</span> <span class="toc-text">規則組成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%80%E5%AF%9F%E6%96%B9%E5%BC%8F"><span class="toc-number">6.</span> <span class="toc-text">觀察方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#EBTABLES"><span class="toc-number">7.</span> <span class="toc-text">EBTABLES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chain"><span class="toc-number">8.</span> <span class="toc-text">Chain</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tables"><span class="toc-number">9.</span> <span class="toc-text">Tables</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Workflow"><span class="toc-number">10.</span> <span class="toc-text">Workflow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lab"><span class="toc-number">11.</span> <span class="toc-text">Lab</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Container-to-Container"><span class="toc-number">12.</span> <span class="toc-text">Container to Container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Host-to-Container"><span class="toc-number">13.</span> <span class="toc-text">Host to Container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPTABLES"><span class="toc-number">14.</span> <span class="toc-text">IPTABLES</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chain-1"><span class="toc-number">15.</span> <span class="toc-text">Chain</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Table"><span class="toc-number">16.</span> <span class="toc-text">Table</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Workflow-1"><span class="toc-number">17.</span> <span class="toc-text">Workflow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Lab-1"><span class="toc-number">18.</span> <span class="toc-text">Lab</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Contaienr-to-Container"><span class="toc-number">19.</span> <span class="toc-text">Contaienr to Container</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Host-to-Container-1"><span class="toc-number">20.</span> <span class="toc-text">Host to Container</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Host-to-Contaienr"><span class="toc-number">20.1.</span> <span class="toc-text">Host to Contaienr</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Container-to-Host"><span class="toc-number">20.2.</span> <span class="toc-text">Container to Host</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Container-to-WAN"><span class="toc-number">21.</span> <span class="toc-text">Container to WAN</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Container-to-WAN-1"><span class="toc-number">21.1.</span> <span class="toc-text">Container to WAN</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WAN-to-Container"><span class="toc-number">21.2.</span> <span class="toc-text">WAN to Container</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Summary"><span class="toc-number">22.</span> <span class="toc-text">Summary</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,564 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go Zero Copy Transfer | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="平时写 http server 会接触到传输文件的问题。最简单的版本大概是这样子的： 12345678for &#123;	n, _ :&#x3D; file.Read(buf)	if n &gt; 0 &#123;		w.Write(buf[:n])	&#125; else &#123;		break	&#125;&#125;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go Zero Copy Transfer">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/10/19/Go-Zero-Copy-Transfer/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="平时写 http server 会接触到传输文件的问题。最简单的版本大概是这样子的： 12345678for &#123;	n, _ :&#x3D; file.Read(buf)	if n &gt; 0 &#123;		w.Write(buf[:n])	&#125; else &#123;		break	&#125;&#125;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/zerocopy1.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/zorecopy2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/zorecopy3.png">
+<meta property="article:published_time" content="2022-10-19T02:37:02.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.190Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/zerocopy1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/10/19/Go-Zero-Copy-Transfer/" title="Go Zero Copy Transfer" itemprop="url">Go Zero Copy Transfer</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-10-19T02:37:02.000Z" itemprop="datePublished"> 发表于 2022-10-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#sendfile"><span class="toc-number">1.</span> <span class="toc-text">sendfile()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#splice"><span class="toc-number">2.</span> <span class="toc-text">splice()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-Copy"><span class="toc-number">3.</span> <span class="toc-text">io.Copy()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95-sendfile"><span class="toc-number">4.</span> <span class="toc-text">测试 sendfile</span></a></li></ol>
+		
+		</div>
+		
+		<p>平时写 <code>http server</code> 会接触到传输文件的问题。最简单的版本大概是这样子的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> &#123;</span><br><span class="line">	n, _ := file.Read(buf)</span><br><span class="line">	<span class="keyword">if</span> n &gt; <span class="number">0</span> &#123;</span><br><span class="line">		w.Write(buf[:n])</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">break</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>对于一般的程序来说是没有问题的，但是如果需要频繁地传输大文件，那么这种办法效率不够高。因为这里不断地调用两个系统调用，<code>read()</code> 和 <code>write()</code>。对操作系统稍微熟悉的都会知道系统调用是在<strong>内核态</strong>执行而用户程序是跑在<strong>用户态</strong>。</p>
+<p>读取文件就会先从磁盘文件读到内核缓冲区然后再拷贝到用户空间缓冲区，写操作也要先写到内核缓冲区然后再发送。</p>
+<p><img src="/images/zerocopy1.png" alt="image"></p>
+<p>可以清楚看到这里一共触发了 4 次用户态和内核态的上下文切换，分别是 <code>read()/write()</code> 调用和返回时的切换，2 次 DMA 拷贝，2 次 CPU 拷贝，加起来一共 4 次拷贝操作。</p>
+<p>通过引入 DMA，我们已经把 Linux 的 I&#x2F;O 过程中的 CPU 拷贝次数从 4 次减少到了 2 次，但是 CPU 拷贝依然是代价很大的操作，对系统性能的影响还是很大，特别是那些频繁 I&#x2F;O 的场景，更是会因为 CPU 拷贝而损失掉很多性能，我们需要进一步优化，降低、甚至是完全避免 CPU 拷贝。</p>
+<p>系统调用 <code>sendfile()</code> 就是用来解决这个底性能问题的。文件可以直接送到 <code>socket</code> 上，不需要经过用户空间。</p>
+<p><img src="/images/zorecopy2.png" alt="image"></p>
+<p>使用 <code>sendfile()</code> 完成一次数据读写的流程如下：</p>
+<p>1、用户进程调用 sendfile() 从用户态陷入内核态；</p>
+<p>2、DMA 控制器将数据从硬盘拷贝到内核缓冲区；</p>
+<p>3、CPU 将内核缓冲区中的数据拷贝到套接字缓冲区；</p>
+<p>4、DMA 控制器将数据从套接字缓冲区拷贝到网卡完成数据传输；</p>
+<p>5、sendfile() 返回，上下文从内核态切换回用户态。</p>
+<h3 id="sendfile"><a href="#sendfile" class="headerlink" title="sendfile()"></a>sendfile()</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># <span class="keyword">include</span> <span class="string">&lt;sys/sendfile.h&gt;</span></span></span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">sendfile</span><span class="params">(<span class="type">int</span> out_fd, <span class="type">int</span> in_fd, <span class="type">off_t</span> *offset, <span class="type">size_t</span> count)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>in_fd</code> 是代表输入文件的文件描述符，<code>out_fd</code> 是代表输出文件的文件描述符。<code>out_id</code> 必须为 socket (linux 2.6.33 开始可以是任何文件)。 <code>in_fd</code> 指向的文件必须为可以进行 mmap() 操作的，通常为普通文件，不能是 Socket 类型。</p>
+<h3 id="splice"><a href="#splice" class="headerlink" title="splice()"></a>splice()</h3><p>Linux 在 2.6.17 版本引入了一个新的系统调用 <code>splice()</code>，它在功能上和 <code>sendfile()</code> 非常相似，但是能够实现在任意类型的两个文件描述符时之间传输数据；而在底层实现上，<code>splice()</code> 又比 <code>sendfile()</code> 少了一次 CPU 拷贝，也就是等同于 <code>sendfile() + DMA Scatter/Gather</code>，完全去除了数据传输过程中的 CPU 拷贝。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> _GNU_SOURCE         <span class="comment">/* See feature_test_macros(7) */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;fcntl.h&gt;</span></span></span><br><span class="line"><span class="type">ssize_t</span> <span class="title function_">splice</span><span class="params">(<span class="type">int</span> fd_in, <span class="type">loff_t</span> *off_in, <span class="type">int</span> fd_out,</span></span><br><span class="line"><span class="params">               <span class="type">loff_t</span> *off_out, <span class="type">size_t</span> len, <span class="type">unsigned</span> <span class="type">int</span> flags)</span>;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/zorecopy3.png" alt="image"></p>
+<p>使用 <code>splice()</code> 完成一次磁盘文件到网卡的读写过程如下：</p>
+<p>1、用户进程调用 pipe()，从用户态陷入内核态，创建匿名单向管道，pipe() 返回，上下文从内核态切换回用户态；</p>
+<p>2、用户进程调用 splice()，从用户态陷入内核态；</p>
+<p>3、DMA 控制器将数据从硬盘拷贝到内核缓冲区，从管道的写入端”拷贝”进管道，splice() 返回，上下文从内核态回到用户态；</p>
+<p>4、用户进程再次调用 splice()，从用户态陷入内核态；</p>
+<p>5、内核把数据从管道的读取端”拷贝”到套接字缓冲区，DMA 控制器将数据从套接字缓冲区拷贝到网卡；</p>
+<p>6、splice() 返回，上下文从内核态切换回用户态。</p>
+<h3 id="io-Copy"><a href="#io-Copy" class="headerlink" title="io.Copy()"></a>io.Copy()</h3><p>当我们需要响应请求并返回文件时，我们可以使用 <code>io.Copy()</code>，因为底层使用了上面提及的 <code>splice()</code> 和 <code>sendfile()</code> 系统调用。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Copy</span><span class="params">(dst Writer, src Reader)</span></span> (written <span class="type">int64</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> copyBuffer(dst, src, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CopyBuffer</span><span class="params">(dst Writer, src Reader, buf []<span class="type">byte</span>)</span></span> (written <span class="type">int64</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> buf != <span class="literal">nil</span> &amp;&amp; <span class="built_in">len</span>(buf) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">&quot;empty buffer in io.CopyBuffer&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> copyBuffer(dst, src, buf)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">copyBuffer</span><span class="params">(dst Writer, src Reader, buf []<span class="type">byte</span>)</span></span> (written <span class="type">int64</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="comment">// If the reader has a WriteTo method, use it to do the copy.</span></span><br><span class="line">	<span class="comment">// Avoids an allocation and a copy.</span></span><br><span class="line">	<span class="keyword">if</span> wt, ok := src.(WriterTo); ok &#123;</span><br><span class="line">		<span class="keyword">return</span> wt.WriteTo(dst)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Similarly, if the writer has a ReadFrom method, use it to do the copy.</span></span><br><span class="line">	<span class="keyword">if</span> rt, ok := dst.(ReaderFrom); ok &#123;</span><br><span class="line">		<span class="keyword">return</span> rt.ReadFrom(src)</span><br><span class="line">	&#125;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>上面的源码中可以看到，两个 <code>type assertion</code>。 现在关注一下第二个 <code>dst.(ReaderFrom)</code>。</p>
+<p>因为我们传参第一个是 <code>http.ResponseWriter</code>，所以实现这个接口的 <code>struct</code> 是下面这个。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A response represents the server side of an HTTP response.</span></span><br><span class="line"><span class="keyword">type</span> response <span class="keyword">struct</span> &#123;</span><br><span class="line">	conn             *conn</span><br><span class="line">	req              *Request <span class="comment">// request for this response</span></span><br><span class="line">	reqBody          io.ReadCloser</span><br><span class="line">	cancelCtx        context.CancelFunc <span class="comment">// when ServeHTTP exits</span></span><br><span class="line">	wroteHeader      <span class="type">bool</span>               <span class="comment">// reply header has been (logically) written</span></span><br><span class="line">	wroteContinue    <span class="type">bool</span>               <span class="comment">// 100 Continue response was written</span></span><br><span class="line">	wants10KeepAlive <span class="type">bool</span>               <span class="comment">// HTTP/1.0 w/ Connection &quot;keep-alive&quot;</span></span><br><span class="line">	wantsClose       <span class="type">bool</span>               <span class="comment">// HTTP request has Connection &quot;close&quot;</span></span><br><span class="line"></span><br><span class="line">	w  *bufio.Writer <span class="comment">// buffers output in chunks to chunkWriter</span></span><br><span class="line">	cw chunkWriter</span><br><span class="line"></span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>找到具体实现 <code>ReadFrom</code> 的地方</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ReadFrom is here to optimize copying from an *os.File regular file</span></span><br><span class="line"><span class="comment">// to a *net.TCPConn with sendfile.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(w *response)</span></span> ReadFrom(src io.Reader) (n <span class="type">int64</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="comment">// Our underlying w.conn.rwc is usually a *TCPConn (with its</span></span><br><span class="line">	<span class="comment">// own ReadFrom method). If not, or if our src isn&#x27;t a regular</span></span><br><span class="line">	<span class="comment">// file, just fall back to the normal copy method.</span></span><br><span class="line">	rf, ok := w.conn.rwc.(io.ReaderFrom)</span><br><span class="line">	regFile, err := srcIsRegularFile(src)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> !ok || !regFile &#123;</span><br><span class="line">		bufp := copyBufPool.Get().(*[]<span class="type">byte</span>)</span><br><span class="line">		<span class="keyword">defer</span> copyBufPool.Put(bufp)</span><br><span class="line">		<span class="keyword">return</span> io.CopyBuffer(writerOnly&#123;w&#125;, src, *bufp)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// sendfile path:</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> !w.wroteHeader &#123;</span><br><span class="line">		w.WriteHeader(StatusOK)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> w.needsSniff() &#123;</span><br><span class="line">		n0, err := io.Copy(writerOnly&#123;w&#125;, io.LimitReader(src, sniffLen))</span><br><span class="line">		n += n0</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> n, err</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	w.w.Flush()  <span class="comment">// get rid of any previous writes</span></span><br><span class="line">	w.cw.flush() <span class="comment">// make sure Header is written; flush data to rwc</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Now that cw has been flushed, its chunking field is guaranteed initialized.</span></span><br><span class="line">	<span class="keyword">if</span> !w.cw.chunking &amp;&amp; w.bodyAllowed() &#123;</span><br><span class="line">		n0, err := rf.ReadFrom(src)</span><br><span class="line">		n += n0</span><br><span class="line">		w.written += n0</span><br><span class="line">		<span class="keyword">return</span> n, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	n0, err := io.Copy(writerOnly&#123;w&#125;, src)</span><br><span class="line">	n += n0</span><br><span class="line">	<span class="keyword">return</span> n, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数开头有一段注释已经说明调用的底层是 <code>*TCPConn</code> 的 <code>ReadFrom</code>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ReadFrom implements the io.ReaderFrom ReadFrom method.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *TCPConn)</span></span> ReadFrom(r io.Reader) (<span class="type">int64</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> !c.ok() &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, syscall.EINVAL</span><br><span class="line">	&#125;</span><br><span class="line">	n, err := c.readFrom(r)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &amp;&amp; err != io.EOF &#123;</span><br><span class="line">		err = &amp;OpError&#123;Op: <span class="string">&quot;readfrom&quot;</span>, Net: c.fd.net, Source: c.fd.laddr, Addr: c.fd.raddr, Err: err&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> n, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>终于出现了 <code>splice()</code> 和 <code>sendFile()</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *TCPConn)</span></span> readFrom(r io.Reader) (<span class="type">int64</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> n, err, handled := splice(c.fd, r); handled &#123;</span><br><span class="line">		<span class="keyword">return</span> n, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> n, err, handled := sendFile(c.fd, r); handled &#123;</span><br><span class="line">		<span class="keyword">return</span> n, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> genericReadFrom(c, r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再底层的就是 <code>go</code> 对系统调用 <code>splice()</code> 和 <code>sendFile()</code> 的封装了。</p>
+<h3 id="测试-sendfile"><a href="#测试-sendfile" class="headerlink" title="测试 sendfile"></a>测试 <code>sendfile</code></h3><p>以 <a href="https://github.com/caddyserver/caddy">caddy</a> 项目为例，测试 <code>io.Copy()</code> 是否支持 <code>sendfile</code> 系统调用。</p>
+<ol>
+<li>构造两个文件，任何超过 512 字节的文件都应该在 http1 中使用 <code>sendfile</code>。</li>
+</ol>
+<p>用 <code>dd</code> 命令向文件中写指定大小的数据：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 512B</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero bs=512 count=1 &gt; nosendfile.html</span><br><span class="line"><span class="comment"># 513B</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero bs=513 count=1 &gt; sendfile.html</span><br><span class="line"><span class="comment"># 查看</span></span><br><span class="line"><span class="built_in">wc</span> -c *.html</span><br><span class="line"> 512 nosendfile.html</span><br><span class="line"> 513 sendfile.html</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>检测系统调用</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">strace -f -e sendfile ./caddy file-server --root . --listen 127.0.0.1:8080 --access-log</span><br><span class="line"></span><br><span class="line">strace: Process 137302 attached</span><br><span class="line">[...]</span><br><span class="line">2022/09/06 21:56:45.335 INFO    Caddy serving static files on 127.0.0.1:8080</span><br><span class="line">2022/09/06 21:56:50.505 INFO    http.log.access handled request &#123;<span class="string">&quot;request&quot;</span>: &#123;<span class="string">&quot;proto&quot;</span>: <span class="string">&quot;HTTP/1.1&quot;</span>, <span class="string">&quot;method&quot;</span>: <span class="string">&quot;GET&quot;</span>, <span class="string">&quot;uri&quot;</span>: <span class="string">&quot;/nosendfile.html&quot;</span>, <span class="string">&quot;size&quot;</span>: 512, <span class="string">&quot;status&quot;</span>: 200&#125;&#125;</span><br><span class="line">[pid 137301] sendfile(7, 8, NULL, 1)    = 1</span><br><span class="line">2022/09/06 21:57:00.281 INFO    http.log.access handled request &#123;<span class="string">&quot;request&quot;</span>: &#123;<span class="string">&quot;proto&quot;</span>: <span class="string">&quot;HTTP/1.1&quot;</span>, <span class="string">&quot;method&quot;</span>: <span class="string">&quot;GET&quot;</span>, <span class="string">&quot;uri&quot;</span>: <span class="string">&quot;/sendfile.html&quot;</span>, <span class="string">&quot;size&quot;</span>: 513, <span class="string">&quot;status&quot;</span>: 200&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl 127.0.0.1:8080/nosendfile.html</span><br><span class="line">curl 127.0.0.1:8080/sendfile.html</span><br></pre></td></tr></table></figure>
+
+<p>本文引用</p>
+<ul>
+<li><a href="https://delveshal.github.io/2018/08/31/zero-copy-transfer/">zero copy transfer</a></li>
+<li><a href="https://strikefreedom.top/linux-io-and-zero-copy">Linux I&#x2F;O 原理和 Zore-copy 技术全面揭秘</a></li>
+<li><a href="https://strikefreedom.top/archives/pipe-pool-for-splice-in-go">Go 语言中的零拷贝优化</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a><a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/10/19/Go-Zero-Copy-Transfer/" data-title="Go Zero Copy Transfer | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/10/21/网络性能调优/" title="网络性能调优">
+  <strong>上一篇：</strong><br/>
+  <span>
+  网络性能调优</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/10/09/BBR拥塞控制算法/"  title="BBR拥塞控制算法">
+ <strong>下一篇：</strong><br/> 
+ <span>BBR拥塞控制算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/10/19/Go-Zero-Copy-Transfer/" data-title="Go Zero Copy Transfer" data-url="https://luckymrwang.github.io/2022/10/19/Go-Zero-Copy-Transfer/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#sendfile"><span class="toc-number">1.</span> <span class="toc-text">sendfile()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#splice"><span class="toc-number">2.</span> <span class="toc-text">splice()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#io-Copy"><span class="toc-number">3.</span> <span class="toc-text">io.Copy()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95-sendfile"><span class="toc-number">4.</span> <span class="toc-text">测试 sendfile</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

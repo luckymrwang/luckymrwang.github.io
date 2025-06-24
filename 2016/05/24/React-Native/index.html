@@ -1,0 +1,596 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>React-Native | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="简介React Native使你能够在Javascript和React的基础上获得完全一致的开发体验，构建世界一流的原生APP。 React Native着力于提高多平台开发的开发效率 —— 仅需学习一次，编写任何平台。(Learn once, write anywhere) Facebook已经在多项产品中使用了React Native，并且将持续地投入建设React Native。 国内应用场">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React-Native">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/05/24/React-Native/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="简介React Native使你能够在Javascript和React的基础上获得完全一致的开发体验，构建世界一流的原生APP。 React Native着力于提高多平台开发的开发效率 —— 仅需学习一次，编写任何平台。(Learn once, write anywhere) Facebook已经在多项产品中使用了React Native，并且将持续地投入建设React Native。 国内应用场">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-05-24T03:10:17.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.198Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="React-Native">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/05/24/React-Native/" title="React-Native" itemprop="url">React-Native</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-05-24T03:10:17.000Z" itemprop="datePublished"> 发表于 2016-05-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%80%E8%A6%81%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">需要知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%9C%80%E6%B1%82"><span class="toc-number">3.</span> <span class="toc-text">环境需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%8F%91"><span class="toc-number">5.</span> <span class="toc-text">开发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E6%95%B0%E6%8D%AE"><span class="toc-number">6.</span> <span class="toc-text">模拟数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%95%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%94%B5%E5%BD%B1"><span class="toc-number">7.</span> <span class="toc-text">展现一个电影</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%A0%B7%E5%BC%8F"><span class="toc-number">8.</span> <span class="toc-text">添加样式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%89%E5%8F%96%E7%9C%9F%E6%AD%A3%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="toc-number">9.</span> <span class="toc-text">拉取真正的数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ListView"><span class="toc-number">10.</span> <span class="toc-text">ListView</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-number">11.</span> <span class="toc-text">最终的代码</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>React Native使你能够在Javascript和React的基础上获得完全一致的开发体验，构建世界一流的原生APP。</p>
+<p>React Native着力于提高多平台开发的开发效率 —— 仅需学习一次，编写任何平台。(Learn once, write anywhere)</p>
+<p>Facebook已经在多项产品中使用了React Native，并且将持续地投入建设React Native。</p>
+<p>国内应用场景代表：iPad天猫客户端</p>
+<span id="more"></span>
+<h3 id="需要知识"><a href="#需要知识" class="headerlink" title="需要知识"></a>需要知识</h3><ul>
+<li>html,css</li>
+<li>ES6</li>
+<li>react.js</li>
+<li>flex (布局)</li>
+</ul>
+<h3 id="环境需求"><a href="#环境需求" class="headerlink" title="环境需求"></a>环境需求</h3><ul>
+<li>Node.js 4.0或更高版本</li>
+</ul>
+<ul>
+<li><p>iOS开发环境：安装Xcode 7.0或者更高版本</p>
+</li>
+<li><p>Android开发环境：安装Android SDK</p>
+</li>
+</ul>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>在所有依赖的软件都已经安装完毕后，只需要输入两条命令就可以创建一个React Native工程。</p>
+<pre><code>npm install -g react-native-cli
+</code></pre>
+<p>react-native-cli是一个终端命令，它可以完成其余的设置工作。它可以通过npm安装。刚才这条命令会往你的终端安装一个叫做react-native的命令。这个安装过程你只需要进行一次。</p>
+<pre><code>react-native init FirstProject
+</code></pre>
+<p>这个命令会初始化一个工程、下载React Native的所有源代码和依赖包，最后在FirstProject&#x2F;iOS&#x2F;FirstProject.xcodeproj和FirstProject&#x2F;android&#x2F;app下分别创建一个新的XCode工程和一个gradle工程。</p>
+<h3 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h3><ul>
+<li><p>开发iOS版本，可以在XCode中打开刚刚创建的工程 <code>(AwesomePrjoect/iOS/FirstProject.xcodeproj)</code>，然后只要按下<code>⌘+R</code>就可以构建并运行。这个操作会同时打开一个用于实现动态代码加载的Node服务<code>（React Packager）</code>。所以当修改代码，只需要在模拟器中按下<code>⌘+R</code>，而无需重新在XCode中编译。</p>
+</li>
+<li><p>开发Android版本，先连接设备或启动模拟器，然后在 <code>FirstProject</code>目录下运行<code>react-native run-android</code>，就会构建工程并自动安装到模拟器或者设备，同时启动用于实现动态代码加载的Node服务。当修改代码之后，只需要打开摇一摇菜单(摇一下设备，或者按下设备的<code>Menu</code>键，或者在模拟器上按下<code>F2</code>或<code>Page Up</code>，<code>Genymotion</code>按下<code>⌘+M</code>)，然后在菜单中点击<code>“Reload JS”</code>。</p>
+</li>
+</ul>
+<p>在本向导中我会创建一个简单的Movies应用，它可以获取25个上映中的电影，然后把它们在一个ListView中显示。</p>
+<h3 id="模拟数据"><a href="#模拟数据" class="headerlink" title="模拟数据"></a>模拟数据</h3><p>注：React Native从0.18之后，新建项目默认已经采用了ES6语法，<a href="http://bbs.reactnative.cn/topic/15/react-react-native-%E7%9A%84es5-es6%E5%86%99%E6%B3%95%E5%AF%B9%E7%85%A7%E8%A1%A8">ES6与ES5的区别</a>，ES6语法<a href="http://es6.ruanyifeng.com/">阮一峰的书</a>。</p>
+<p>在真正从Rotten Tomatoes(一个国外的电影社区)抓取数据之前，先制造一些模拟数据来练练手。可以把下面代码放在index.ios.js和index.android.js中的import语句之后或者任意位置：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="variable constant_">MOCKED_MOVIES_DATA</span> = [</span><br><span class="line">  &#123;<span class="attr">title</span>: <span class="string">&#x27;标题&#x27;</span>, <span class="attr">year</span>: <span class="string">&#x27;2015&#x27;</span>, <span class="attr">posters</span>: &#123;<span class="attr">thumbnail</span>: <span class="string">&#x27;http://i.imgur.com/UePbdph.jpg&#x27;</span>&#125;&#125;,</span><br><span class="line">];</span><br></pre></td></tr></table></figure>
+<h3 id="展现一个电影"><a href="#展现一个电影" class="headerlink" title="展现一个电影"></a>展现一个电影</h3><p>接下来要展现一个电影，绘制它的标题、年份、以及缩略图。渲染缩略图需要用到Image组件，所以把Image添加到对React的import列表中。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; <span class="title class_">Component</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; </span><br><span class="line">  <span class="title class_">AppRegistry</span>,</span><br><span class="line">  <span class="title class_">Image</span>,</span><br><span class="line">  <span class="title class_">StyleSheet</span>,</span><br><span class="line">  <span class="title class_">Text</span>,</span><br><span class="line">  <span class="title class_">View</span>,</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后修改一下render函数，这样就可以把上面创建的模拟数据渲染出来。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> movie = <span class="variable constant_">MOCKED_MOVIES_DATA</span>[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">Text</span>&gt;</span>&#123;movie.title&#125;<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">Text</span>&gt;</span>&#123;movie.year&#125;<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">Image</span> <span class="attr">source</span>=<span class="string">&#123;&#123;uri:</span> <span class="attr">movie.posters.thumbnail</span>&#125;&#125; /&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>按下<code>⌘+R</code>或者<code>Reload JS</code>，现在你应该能看到文字<code>&quot;Title&quot;</code>和<code>&quot;2015&quot;</code>，但现在Image组件没渲染任何东西，这是因为还没有为图片指定想要渲染的宽和高。这通过样式来实现。当修改样式的时候，也应该清理掉不再使用的样式。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> styles = <span class="title class_">StyleSheet</span>.<span class="title function_">create</span>(&#123;</span><br><span class="line">  <span class="attr">container</span>: &#123;</span><br><span class="line">    <span class="attr">flex</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">justifyContent</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">    <span class="attr">alignItems</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">    <span class="attr">backgroundColor</span>: <span class="string">&#x27;#F5FCFF&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">thumbnail</span>: &#123;</span><br><span class="line">    <span class="attr">width</span>: <span class="number">53</span>,</span><br><span class="line">    <span class="attr">height</span>: <span class="number">81</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>然后把它应用到Image组件上：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="title class_">Image</span></span><br><span class="line">	source=&#123;&#123;<span class="attr">uri</span>: movie.<span class="property">posters</span>.<span class="property">thumbnail</span>&#125;&#125;</span><br><span class="line">	style=&#123;styles.<span class="property">thumbnail</span>&#125;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>按下<code>⌘+R</code>或者<code>Reload JS</code>，现在图片应该可以被渲染出来了。</p>
+<h3 id="添加样式"><a href="#添加样式" class="headerlink" title="添加样式"></a>添加样式</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">+---------------------------------+</span><br><span class="line">|+-------++----------------------+|</span><br><span class="line">||       ||        标题          ||</span><br><span class="line">|| 图片  ||                      ||</span><br><span class="line">||       ||        年份          ||</span><br><span class="line">|+-------++----------------------+|</span><br><span class="line">+---------------------------------+</span><br></pre></td></tr></table></figure>
+
+<p>所以需要增加一个container来实现一个水平布局内嵌套一个垂直布局。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> (</span><br><span class="line">  <span class="language-xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;<span class="name">Image</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">source</span>=<span class="string">&#123;&#123;uri:</span> <span class="attr">movie.posters.thumbnail</span>&#125;&#125;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">style</span>=<span class="string">&#123;styles.thumbnail&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">    /&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.rightContainer&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.title&#125;</span>&gt;</span>&#123;movie.title&#125;<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.year&#125;</span>&gt;</span>&#123;movie.year&#125;<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">    <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">  <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>和之前相比并没有太多变化，增加了一个container来包装文字，然后把它移到了Image的后面（因为它们最终在图片的右边）。样式修改：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">container</span>: &#123;</span><br><span class="line">    <span class="attr">flex</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">flexDirection</span>: <span class="string">&#x27;row&#x27;</span>,</span><br><span class="line">    <span class="attr">justifyContent</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">    <span class="attr">alignItems</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">    <span class="attr">backgroundColor</span>: <span class="string">&#x27;#F5FCFF&#x27;</span>,</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<p><em><code>flexDirection: &#39;row&#39;</code> 让主容器的成员从左到右横向布局，而非默认的从上到下纵向布局。</em> <a href="http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html?utm_source=tuicool">flex布局</a></p>
+<p>在style对象里增加另一个样式：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">rightContainer</span>: &#123;</span><br><span class="line">    <span class="attr">flex</span>: <span class="number">1</span>,</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure>
+
+<p><em>让rightContainer在父容器中占据Image之外剩下的全部空间</em></p>
+<p>给文字添加样式:</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">title</span>: &#123;</span><br><span class="line">  <span class="attr">fontSize</span>: <span class="number">20</span>,</span><br><span class="line">  <span class="attr">marginBottom</span>: <span class="number">8</span>,</span><br><span class="line">  <span class="attr">textAlign</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">&#125;,</span><br><span class="line"><span class="attr">year</span>: &#123;</span><br><span class="line">  <span class="attr">textAlign</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<p>再⌘+R或者Reload JS查看效果。</p>
+<h3 id="拉取真正的数据"><a href="#拉取真正的数据" class="headerlink" title="拉取真正的数据"></a>拉取真正的数据</h3><p><em>用一个样例来代替从Rotten Tomatoes的API拉取数据，这个样例数据放在React Native的Github库中。</em></p>
+<p>把下面的常量放到文件的最开头（通常在require下面）来创建请求数据所需的地址常量REQUEST_URL</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> <span class="variable constant_">REQUEST_URL</span> = <span class="string">&#x27;https://raw.githubusercontent.com/facebook/react-native/master/docs/MoviesExample.json&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>首先在应用中创建一个初始的null状态，这样可以通过this.state.movies &#x3D;&#x3D; null来判断数据是不是已经被抓取到了。</p>
+<p>在服务器响应返回的时候执行this.setState({movies: moviesData})来改变这个状态。把下面这段代码放到React类的render函数之前：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line">  <span class="variable language_">super</span>(props);</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">state</span> = &#123;</span><br><span class="line">    <span class="attr">movies</span>: <span class="literal">null</span>,  <span class="comment">//这里放自定义的state变量及初始值</span></span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>组件加载完毕之后，就可以向服务器请求数据。componentDidMount是React组件的一个生命周期方法，它会在组件刚加载完成的时候调用一次，以后不会再被调用。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">componentDidMount</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">this</span>.<span class="title function_">fetchData</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为组件添加fetchData函数。在Promise调用链结束后执行this.setState({movies:data})。在React的工作机制下，setState实际上会触发一次重新渲染的流程，此时render函数被触发，发现this.state.movies不再是null。在Promise调用链的最后调用了done() —— 这样可以抛出异常而不是简单忽略。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fetchData</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="title function_">fetch</span>(<span class="variable constant_">REQUEST_URL</span>)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function">(<span class="params">response</span>) =&gt;</span> response.<span class="title function_">json</span>())</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function">(<span class="params">responseData</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="title function_">setState</span>(&#123;</span><br><span class="line">        <span class="attr">movies</span>: responseData.<span class="property">movies</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_">done</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改render函数。在电影数据加载完毕之前，先渲染一个“加载中”的视图；而如果电影数据已经加载完毕了，则渲染第一个电影数据。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">   <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">movies</span>) &#123;</span><br><span class="line">     <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">renderLoadingView</span>();</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">var</span> movie = <span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">movies</span>[<span class="number">0</span>];</span><br><span class="line">   <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">renderMovie</span>(movie);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="title function_">renderLoadingView</span>(<span class="params"></span>) &#123;</span><br><span class="line">   <span class="keyword">return</span> (</span><br><span class="line">     <span class="language-xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">       <span class="tag">&lt;<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">         正在加载电影数据……</span></span><br><span class="line"><span class="language-xml">       <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">     <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">   );</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="title function_">renderMovie</span>(<span class="params">movie</span>) &#123;</span><br><span class="line">   <span class="keyword">return</span> (</span><br><span class="line">     <span class="language-xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">       <span class="tag">&lt;<span class="name">Image</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">         <span class="attr">source</span>=<span class="string">&#123;&#123;uri:</span> <span class="attr">movie.posters.thumbnail</span>&#125;&#125;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">         <span class="attr">style</span>=<span class="string">&#123;styles.thumbnail&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">       /&gt;</span></span></span><br><span class="line"><span class="language-xml">       <span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.rightContainer&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">         <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.title&#125;</span>&gt;</span>&#123;movie.title&#125;<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">         <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.year&#125;</span>&gt;</span>&#123;movie.year&#125;<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">       <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">     <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">   );</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>⌘+R或者Reload JS，首先看到“正在加载电影数据……”，然后在响应数据到达之后，看到第一个电影的信息。</p>
+<h3 id="ListView"><a href="#ListView" class="headerlink" title="ListView"></a>ListView</h3><p>让应用能够渲染所有的数据而不是仅仅第一部电影。用到的就是ListView组件。</p>
+<p><em>为什么建议把内容放到ListView里？比起直接渲染出所有的元素，或是放到一个ScrollView里有什么优势？这是因为尽管React很高效，渲染一个可能很大的元素列表还是会很慢。ListView会安排视图的渲染，只显示当前在屏幕上的那些元素。而那些已经渲染好了但移动到了屏幕之外的元素，则会从原生视图结构中移除（以提高性能）。</em></p>
+<p>首先要做的事情：在文件最开头，从React中引入ListView。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123; <span class="title class_">Component</span> &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123;</span><br><span class="line">  <span class="title class_">AppRegistry</span>,</span><br><span class="line">  <span class="title class_">Image</span>,</span><br><span class="line">  <span class="title class_">ListView</span>,</span><br><span class="line">  <span class="title class_">StyleSheet</span>,</span><br><span class="line">  <span class="title class_">Text</span>,</span><br><span class="line">  <span class="title class_">View</span></span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span>;</span><br></pre></td></tr></table></figure>
+<p>修改render函数。当有数据之后，渲染一个包含多个电影信息的ListView，而不仅仅是单个的电影。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">loaded</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">renderLoadingView</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="language-xml"><span class="tag">&lt;<span class="name">ListView</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">dataSource</span>=<span class="string">&#123;this.state.dataSource&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">renderRow</span>=<span class="string">&#123;this.renderMovie&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      <span class="attr">style</span>=<span class="string">&#123;styles.listView&#125;/</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>dataSource接口用来在ListView的整个更新过程中判断哪些数据行发生了变化。</p>
+<p>在constructor生成的初始状态中添加一个空白的dataSource。另外，现在要把数据存储在dataSource中，所以不再另外用this.state.movies来保存数据。可以在state里用一个布尔型的属性(this.state.loaded)来判断数据加载是否已经完成了。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line">  <span class="variable language_">super</span>(props);</span><br><span class="line">  <span class="variable language_">this</span>.<span class="property">state</span> = &#123;</span><br><span class="line">    <span class="attr">dataSource</span>: <span class="keyword">new</span> <span class="title class_">ListView</span>.<span class="title class_">DataSource</span>(&#123;</span><br><span class="line">      <span class="attr">rowHasChanged</span>: <span class="function">(<span class="params">row1, row2</span>) =&gt;</span> row1 !== row2,</span><br><span class="line">    &#125;),</span><br><span class="line">    <span class="attr">loaded</span>: <span class="literal">false</span>,</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同时也要修改fetchData方法来把数据更新到dataSource里：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">fetchData</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="title function_">fetch</span>(<span class="variable constant_">REQUEST_URL</span>)</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function">(<span class="params">response</span>) =&gt;</span> response.<span class="title function_">json</span>())</span><br><span class="line">    .<span class="title function_">then</span>(<span class="function">(<span class="params">responseData</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="title function_">setState</span>(&#123;</span><br><span class="line">        <span class="attr">dataSource</span>: <span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">dataSource</span>.<span class="title function_">cloneWithRows</span>(responseData.<span class="property">movies</span>),</span><br><span class="line">        <span class="attr">loaded</span>: <span class="literal">true</span>,</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">    .<span class="title function_">done</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后，再在styles对象里给ListView添加一些样式。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">listView</span>: &#123;</span><br><span class="line">  <span class="attr">paddingTop</span>: <span class="number">20</span>,</span><br><span class="line">  <span class="attr">backgroundColor</span>: <span class="string">&#x27;#F5FCFF&#x27;</span>,</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<p>⌘+R或者Reload JS查看最终效果。</p>
+<p>添加导航器，搜索，加载更多，等等。</p>
+<h3 id="最终的代码"><a href="#最终的代码" class="headerlink" title="最终的代码"></a>最终的代码</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Sample React Native App</span></span><br><span class="line"><span class="comment"> * https://github.com/facebook/react-native</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123;</span><br><span class="line">  <span class="title class_">Component</span>,</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> &#123;</span><br><span class="line">  <span class="title class_">AppRegistry</span>,</span><br><span class="line">  <span class="title class_">Image</span>,</span><br><span class="line">  <span class="title class_">ListView</span>,</span><br><span class="line">  <span class="title class_">StyleSheet</span>,</span><br><span class="line">  <span class="title class_">Text</span>,</span><br><span class="line">  <span class="title class_">View</span>,</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> <span class="variable constant_">API_KEY</span> = <span class="string">&#x27;7waqfqbprs7pajbz28mqf6vz&#x27;</span>;</span><br><span class="line"><span class="keyword">var</span> <span class="variable constant_">API_URL</span> = <span class="string">&#x27;http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json&#x27;</span>;</span><br><span class="line"><span class="keyword">var</span> <span class="variable constant_">PAGE_SIZE</span> = <span class="number">25</span>;</span><br><span class="line"><span class="keyword">var</span> <span class="variable constant_">PARAMS</span> = <span class="string">&#x27;?apikey=&#x27;</span> + <span class="variable constant_">API_KEY</span> + <span class="string">&#x27;&amp;page_limit=&#x27;</span> + <span class="variable constant_">PAGE_SIZE</span>;</span><br><span class="line"><span class="keyword">var</span> <span class="variable constant_">REQUEST_URL</span> = <span class="variable constant_">API_URL</span> + <span class="variable constant_">PARAMS</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">FirstProject</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Component</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line">    <span class="variable language_">super</span>(props);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">state</span> = &#123;</span><br><span class="line">      <span class="attr">dataSource</span>: <span class="keyword">new</span> <span class="title class_">ListView</span>.<span class="title class_">DataSource</span>(&#123;</span><br><span class="line">        <span class="attr">rowHasChanged</span>: <span class="function">(<span class="params">row1, row2</span>) =&gt;</span> row1 !== row2,</span><br><span class="line">      &#125;),</span><br><span class="line">      <span class="attr">loaded</span>: <span class="literal">false</span>,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">componentDidMount</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="title function_">fetchData</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">fetchData</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="title function_">fetch</span>(<span class="variable constant_">REQUEST_URL</span>)</span><br><span class="line">      .<span class="title function_">then</span>(<span class="function">(<span class="params">response</span>) =&gt;</span> response.<span class="title function_">json</span>())</span><br><span class="line">      .<span class="title function_">then</span>(<span class="function">(<span class="params">responseData</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="title function_">setState</span>(&#123;</span><br><span class="line">          <span class="attr">dataSource</span>: <span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">dataSource</span>.<span class="title function_">cloneWithRows</span>(responseData.<span class="property">movies</span>),</span><br><span class="line">          <span class="attr">loaded</span>: <span class="literal">true</span>,</span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;)</span><br><span class="line">      .<span class="title function_">done</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">loaded</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="title function_">renderLoadingView</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">ListView</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">dataSource</span>=<span class="string">&#123;this.state.dataSource&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">renderRow</span>=<span class="string">&#123;this.renderMovie&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        <span class="attr">style</span>=<span class="string">&#123;styles.listView&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">      /&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">renderLoadingView</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">          Loading movies...</span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">renderMovie</span>(<span class="params">movie</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="language-xml"><span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.container&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">Image</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">source</span>=<span class="string">&#123;&#123;uri:</span> <span class="attr">movie.posters.thumbnail</span>&#125;&#125;</span></span></span><br><span class="line"><span class="tag"><span class="language-xml">          <span class="attr">style</span>=<span class="string">&#123;styles.thumbnail&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="language-xml">        /&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;<span class="name">View</span> <span class="attr">style</span>=<span class="string">&#123;styles.rightContainer&#125;</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">          <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.title&#125;</span>&gt;</span>&#123;movie.title&#125;<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">          <span class="tag">&lt;<span class="name">Text</span> <span class="attr">style</span>=<span class="string">&#123;styles.year&#125;</span>&gt;</span>&#123;movie.year&#125;<span class="tag">&lt;/<span class="name">Text</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">        <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line"><span class="language-xml">      <span class="tag">&lt;/<span class="name">View</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> styles = <span class="title class_">StyleSheet</span>.<span class="title function_">create</span>(&#123;</span><br><span class="line">  <span class="attr">container</span>: &#123;</span><br><span class="line">    <span class="attr">flex</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">flexDirection</span>: <span class="string">&#x27;row&#x27;</span>,</span><br><span class="line">    <span class="attr">justifyContent</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">    <span class="attr">alignItems</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">    <span class="attr">backgroundColor</span>: <span class="string">&#x27;#F5FCFF&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">rightContainer</span>: &#123;</span><br><span class="line">    <span class="attr">flex</span>: <span class="number">1</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">title</span>: &#123;</span><br><span class="line">    <span class="attr">fontSize</span>: <span class="number">20</span>,</span><br><span class="line">    <span class="attr">marginBottom</span>: <span class="number">8</span>,</span><br><span class="line">    <span class="attr">textAlign</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">year</span>: &#123;</span><br><span class="line">    <span class="attr">textAlign</span>: <span class="string">&#x27;center&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">thumbnail</span>: &#123;</span><br><span class="line">    <span class="attr">width</span>: <span class="number">53</span>,</span><br><span class="line">    <span class="attr">height</span>: <span class="number">81</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">listView</span>: &#123;</span><br><span class="line">    <span class="attr">paddingTop</span>: <span class="number">20</span>,</span><br><span class="line">    <span class="attr">backgroundColor</span>: <span class="string">&#x27;#F5FCFF&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="title class_">AppRegistry</span>.<span class="title function_">registerComponent</span>(<span class="string">&#x27;FirstProject&#x27;</span>, <span class="function">() =&gt;</span> <span class="title class_">FirstProject</span>);</span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/React-Native/">React-Native</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/05/24/React-Native/" data-title="React-Native | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/05/25/进一步认识Golang中的并发/" title="进一步认识Golang中的并发">
+  <strong>上一篇：</strong><br/>
+  <span>
+  进一步认识Golang中的并发</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/05/12/学习Javascript闭包（Closure）/"  title="学习Javascript闭包（Closure）">
+ <strong>下一篇：</strong><br/> 
+ <span>学习Javascript闭包（Closure）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/05/24/React-Native/" data-title="React-Native" data-url="https://luckymrwang.github.io/2016/05/24/React-Native/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9C%80%E8%A6%81%E7%9F%A5%E8%AF%86"><span class="toc-number">2.</span> <span class="toc-text">需要知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E9%9C%80%E6%B1%82"><span class="toc-number">3.</span> <span class="toc-text">环境需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">4.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%80%E5%8F%91"><span class="toc-number">5.</span> <span class="toc-text">开发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E6%8B%9F%E6%95%B0%E6%8D%AE"><span class="toc-number">6.</span> <span class="toc-text">模拟数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B1%95%E7%8E%B0%E4%B8%80%E4%B8%AA%E7%94%B5%E5%BD%B1"><span class="toc-number">7.</span> <span class="toc-text">展现一个电影</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%A0%B7%E5%BC%8F"><span class="toc-number">8.</span> <span class="toc-text">添加样式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%89%E5%8F%96%E7%9C%9F%E6%AD%A3%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="toc-number">9.</span> <span class="toc-text">拉取真正的数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ListView"><span class="toc-number">10.</span> <span class="toc-text">ListView</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-number">11.</span> <span class="toc-text">最终的代码</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

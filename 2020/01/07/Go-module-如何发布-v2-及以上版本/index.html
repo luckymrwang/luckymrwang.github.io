@@ -1,0 +1,530 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go module 如何发布 v2 及以上版本 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="用上 Go module 之后，发布的版本都在 v1 上面，用了这么长时间遇到了升级 v2 版本的问题。记录一下   Go module 版本号 Go 项目如何升级 v2 incompatible v0.0.0-20190312205133-abcdefghijklm tag 删除了重建为什么没效果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go module 如何发布 v2 及以上版本">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/01/07/Go-module-%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83-v2-%E5%8F%8A%E4%BB%A5%E4%B8%8A%E7%89%88%E6%9C%AC/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="用上 Go module 之后，发布的版本都在 v1 上面，用了这么长时间遇到了升级 v2 版本的问题。记录一下   Go module 版本号 Go 项目如何升级 v2 incompatible v0.0.0-20190312205133-abcdefghijklm tag 删除了重建为什么没效果">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/gomod.png">
+<meta property="article:published_time" content="2020-01-07T08:52:05.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.190Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/gomod.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/01/07/Go-module-如何发布-v2-及以上版本/" title="Go module 如何发布 v2 及以上版本" itemprop="url">Go module 如何发布 v2 及以上版本</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-01-07T08:52:05.000Z" itemprop="datePublished"> 发表于 2020-01-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Go-module-%E7%89%88%E6%9C%AC%E5%8F%B7"><span class="toc-number">1.</span> <span class="toc-text">Go module 版本号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Go-%E9%A1%B9%E7%9B%AE%E5%A6%82%E4%BD%95%E5%8D%87%E7%BA%A7-v2"><span class="toc-number">2.</span> <span class="toc-text">Go 项目如何升级 v2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#incompatible"><span class="toc-number">3.</span> <span class="toc-text">incompatible</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#v0-0-0-20190312205133-abcdefghijklm"><span class="toc-number">4.</span> <span class="toc-text">v0.0.0-20190312205133-abcdefghijklm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tag-%E5%88%A0%E9%99%A4%E4%BA%86%E9%87%8D%E5%BB%BA%E4%B8%BA%E4%BB%80%E4%B9%88%E6%B2%A1%E6%95%88%E6%9E%9C%EF%BC%9F"><span class="toc-number">5.</span> <span class="toc-text">tag 删除了重建为什么没效果？</span></a></li></ol>
+		
+		</div>
+		
+		<p><img src="/images/gomod.png" alt="go mod"></p>
+<blockquote>
+<p>用上 Go module 之后，发布的版本都在 v1 上面，用了这么长时间遇到了升级 v2 版本的问题。记录一下</p>
+</blockquote>
+<ul>
+<li>Go module 版本号</li>
+<li>Go 项目如何升级 v2</li>
+<li>incompatible</li>
+<li>v0.0.0-20190312205133-abcdefghijklm</li>
+<li>tag 删除了重建为什么没效果</li>
+</ul>
+<span id="more"></span>
+<p>用上 go mod 之后，依赖包都是通过版本打 tag 的形式确定版本号。比如 <code> github.com/mnhkahn/gogogo v1.0.9</code>。每次都改动都是在累加低位的版本号，一直这么用也挺安逸的。突然有一天，我的一个底层包需要大改，导致和之前的版本彻底不兼容，这种情况下如何设置版本号，如何能让调用方成功接入？</p>
+<h3 id="Go-module-版本号"><a href="#Go-module-版本号" class="headerlink" title="Go module 版本号"></a>Go module 版本号</h3><p>先讲一下 Go 在用的版本号协议semver (Semantic Versioning)。它定义的版本号格式是：</p>
+<blockquote>
+<p>vMAJOR.MINOR.PATCH</p>
+</blockquote>
+<ul>
+<li>MAJOR 主版本号，如果有大的版本更新，导致 API 和之前版本不兼容。我们遇到的就是这个问题。</li>
+<li>MINOR 次版本号，当你做了向下兼容的新 feature。</li>
+<li>PATCH 修订版本号，当你做了向下兼容的修复 bug fix。</li>
+<li>v 所有版本号都是 v 开头。</li>
+</ul>
+<p>比如我们用的 Go 语言，目前是 1.12.0。它还是 Go 1，每次升级都保证是兼容的，12的版本号是新 feature，而最末尾的版本号是修复。说明当前的版本上了之后还没有修复过问题。</p>
+<p>我这次也是搞了一个不兼容的更新，所以需要升级到 v2.0.0。</p>
+<h3 id="Go-项目如何升级-v2"><a href="#Go-项目如何升级-v2" class="headerlink" title="Go 项目如何升级 v2"></a>Go 项目如何升级 v2</h3><p>假设你的项目已经支持 go module 了。</p>
+<ul>
+<li>修改 go.mod 第一行，在module那行最后加上&#x2F;v2。module github.com&#x2F;mnhkahn&#x2F;aaa&#x2F;v2。</li>
+<li>对于不兼容的改动（除了 v0 和 v1），都必须显示得修改 import 的路径。所以我们的引用需要改成 import “github.com&#x2F;mnhkahn&#x2F;aaa&#x2F;v2&#x2F;config”。在所有的地方都需要修改，包括自己的包内和调用方包</li>
+<li>底层包的更新有个小工具可以帮助快速实现mod。<br><code>GO111MODULE=on go get github.com/marwan-at-work/mod/cmd/mod mod upgrade。</code></li>
+<li>代码提交之后需要打新 tag，v2.0.0。</li>
+<li>调用方修改引用代码，需要加v2，和第二步提到的一样。</li>
+<li><code>go get github.com/mnhkahn/aaa/v2</code>。</li>
+</ul>
+<h3 id="incompatible"><a href="#incompatible" class="headerlink" title="incompatible"></a>incompatible</h3><p>有时候你能在 go.mod 文件中发现不兼容的标记，v3.2.1+incompatible，这是因为这个依赖包没有使用 go module，并且它通过 git 打了 tag。</p>
+<h3 id="v0-0-0-20190312205133-abcdefghijklm"><a href="#v0-0-0-20190312205133-abcdefghijklm" class="headerlink" title="v0.0.0-20190312205133-abcdefghijklm"></a>v0.0.0-20190312205133-abcdefghijklm</h3><p>对于没有打 tag 的仓库，go.mod 就会很丑陋，它的格式是<code>pseudo-version。它的含义是v0.0.0-yyyymmddhhmmss-abcdefabcdef</code>。</p>
+<h3 id="tag-删除了重建为什么没效果？"><a href="#tag-删除了重建为什么没效果？" class="headerlink" title="tag 删除了重建为什么没效果？"></a>tag 删除了重建为什么没效果？</h3><p>困扰了我很久的一个问题。有一个 tag v2.0.0 的代码有问题，我删除了这个 tag，新建了一个好的版本，但是go get依然报错，困扰了很久，一直以为是 v2 的版本号写错了。后来才发现是 go 有本地缓存，缓存在 $GOPATH&#x2F;pkg&#x2F;mod&#x2F;cache 下面，把里面的内容清掉，重新获取即可。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2020/01/07/Go-module-%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83-v2-%E5%8F%8A%E4%BB%A5%E4%B8%8A%E7%89%88%E6%9C%AC/" data-title="Go module 如何发布 v2 及以上版本 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/" title="扩展golang的sync mutex的trylock及islocked">
+  <strong>上一篇：</strong><br/>
+  <span>
+  扩展golang的sync mutex的trylock及islocked</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/11/22/Etcd-分布式锁/"  title="Etcd 分布式锁">
+ <strong>下一篇：</strong><br/> 
+ <span>Etcd 分布式锁
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2020/01/07/Go-module-如何发布-v2-及以上版本/" data-title="Go module 如何发布 v2 及以上版本" data-url="https://luckymrwang.github.io/2020/01/07/Go-module-%E5%A6%82%E4%BD%95%E5%8F%91%E5%B8%83-v2-%E5%8F%8A%E4%BB%A5%E4%B8%8A%E7%89%88%E6%9C%AC/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Go-module-%E7%89%88%E6%9C%AC%E5%8F%B7"><span class="toc-number">1.</span> <span class="toc-text">Go module 版本号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Go-%E9%A1%B9%E7%9B%AE%E5%A6%82%E4%BD%95%E5%8D%87%E7%BA%A7-v2"><span class="toc-number">2.</span> <span class="toc-text">Go 项目如何升级 v2</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#incompatible"><span class="toc-number">3.</span> <span class="toc-text">incompatible</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#v0-0-0-20190312205133-abcdefghijklm"><span class="toc-number">4.</span> <span class="toc-text">v0.0.0-20190312205133-abcdefghijklm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tag-%E5%88%A0%E9%99%A4%E4%BA%86%E9%87%8D%E5%BB%BA%E4%B8%BA%E4%BB%80%E4%B9%88%E6%B2%A1%E6%95%88%E6%9E%9C%EF%BC%9F"><span class="toc-number">5.</span> <span class="toc-text">tag 删除了重建为什么没效果？</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

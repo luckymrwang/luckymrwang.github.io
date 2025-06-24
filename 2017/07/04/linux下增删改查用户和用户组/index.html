@@ -1,0 +1,592 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Linux下增删改查用户和用户组 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="一、组操作 创建组  groupadd  test    增加一个test组  修改组  groupmod -n test2  test    将test组的名子改成test2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下增删改查用户和用户组">
+<meta property="og:url" content="https://luckymrwang.github.io/2017/07/04/linux%E4%B8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E7%94%A8%E6%88%B7%E5%92%8C%E7%94%A8%E6%88%B7%E7%BB%84/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="一、组操作 创建组  groupadd  test    增加一个test组  修改组  groupmod -n test2  test    将test组的名子改成test2">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-07-04T06:05:56.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.208Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/07/04/linux下增删改查用户和用户组/" title="Linux下增删改查用户和用户组" itemprop="url">Linux下增删改查用户和用户组</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-07-04T06:05:56.000Z" itemprop="datePublished"> 发表于 2017-07-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%BB%84%E6%93%8D%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">一、组操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%94%A8%E6%88%B7%E6%93%8D%E4%BD%9C"><span class="toc-number">2.</span> <span class="toc-text">二、用户操作</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="一、组操作"><a href="#一、组操作" class="headerlink" title="一、组操作"></a>一、组操作</h3><ul>
+<li><p>创建组</p>
+<blockquote>
+<p>groupadd  test</p>
+</blockquote>
+<p>  增加一个test组</p>
+</li>
+<li><p>修改组</p>
+<blockquote>
+<p>groupmod -n test2  test</p>
+</blockquote>
+<p>  将test组的名子改成test2</p>
+</li>
+</ul>
+<span id="more"></span>
+<ul>
+<li><p>删除组</p>
+<blockquote>
+<p>groupdel test2</p>
+</blockquote>
+<p>  删除 组test2</p>
+</li>
+<li><p>查看组</p>
+<blockquote>
+<p>查看当前登录用户所在的组 groups，查看apacheuser所在组groups apacheuser</p>
+</blockquote>
+<blockquote>
+<p>查看所有组 cat &#x2F;etc&#x2F;group</p>
+</blockquote>
+<p>  有的linux系统没有&#x2F;etc&#x2F;group文件的，这个时候看下面的这个方法</p>
+<blockquote>
+<p>cat &#x2F;etc&#x2F;passwd |awk -F [:] ‘{print $4}’ |sort|uniq | getent group |awk -F [:] ‘{print $1}’<br>  这里用到一个命令是getent,可以通过组ID来查找组信息,如果这个命令没有的话,那就很难查找,系统中所有的组了</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="二、用户操作"><a href="#二、用户操作" class="headerlink" title="二、用户操作"></a>二、用户操作</h3><ul>
+<li>增加用户</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[root@krlcgcms01 mytest]# useradd --help  </span><br><span class="line">Usage: useradd [options] LOGIN  </span><br><span class="line">  </span><br><span class="line">Options:  </span><br><span class="line"> -b, --base-dir BASE_DIR       设置基本路径作为用户的登录目录  </span><br><span class="line"> -c, --comment COMMENT         对用户的注释  </span><br><span class="line"> -d, --home-dir HOME_DIR       设置用户的登录目录  </span><br><span class="line"> -D, --defaults                改变设置  </span><br><span class="line"> -e, --expiredate EXPIRE_DATE  设置用户的有效期  </span><br><span class="line"> -f, --inactive INACTIVE       用户过期后，让密码无效  </span><br><span class="line"> -g, --gid GROUP               使用户只属于某个组  </span><br><span class="line"> -G, --groups GROUPS           使用户加入某个组  </span><br><span class="line"> -h, --help                    帮助  </span><br><span class="line"> -k, --skel SKEL_DIR           指定其他的skel目录  </span><br><span class="line"> -K, --key KEY=VALUE           覆盖 /etc/login.defs 配置文件  </span><br><span class="line"> -m, --create-home             自动创建登录目录  </span><br><span class="line"> -l,                           不把用户加入到lastlog文件中  </span><br><span class="line"> -M,                           不自动创建登录目录  </span><br><span class="line"> -r,                           建立系统账号  </span><br><span class="line"> -o, --non-unique              允许用户拥有相同的UID  </span><br><span class="line"> -p, --password PASSWORD       为新用户使用加密密码  </span><br><span class="line"> -s, --shell SHELL             登录时候的shell  </span><br><span class="line"> -u, --uid UID                 为新用户指定一个UID  </span><br><span class="line"> -Z, --selinux-user SEUSER     use a specific SEUSER for the SELinux user mapping</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>useradd test</p>
+</blockquote>
+<blockquote>
+<p>passwd test</p>
+</blockquote>
+<p>增加用户test，有一点要注意的，useradd增加一个用户后，不要忘了给他设置密码，不然不能登录的</p>
+<ul>
+<li><p>修改用户</p>
+<blockquote>
+<p>usermod -d &#x2F;home&#x2F;test -G test2 test</p>
+</blockquote>
+<p>  将test用户的登录目录改成&#x2F;home&#x2F;test，并加入test2组，注意这里是大G</p>
+<blockquote>
+<p>gpasswd -a test test2</p>
+</blockquote>
+<p>  将用户test加入到test2组</p>
+<blockquote>
+<p>gpasswd -d test test2</p>
+</blockquote>
+<p>  将用户test从test2组中移出</p>
+</li>
+<li><p>删除用户</p>
+<blockquote>
+<p>userdel test</p>
+</blockquote>
+<p>  将test用户删除</p>
+</li>
+<li><p>查看用户</p>
+<p>  查看当前登录用户</p>
+<blockquote>
+<p>who</p>
+</blockquote>
+<p>  查看自己的用户名</p>
+<blockquote>
+<p>whoami</p>
+</blockquote>
+<p>  查看单个用户信息</p>
+<blockquote>
+<p>finger apacheuser</p>
+</blockquote>
+<blockquote>
+<p>id apacheuser</p>
+</blockquote>
+<p>  查看用户登录记录</p>
+<blockquote>
+<p>last    &#x2F;&#x2F; 查看登录成功的用户记录</p>
+</blockquote>
+<blockquote>
+<p>lastb &#x2F;&#x2F; 查看登录不成功的用户记录</p>
+</blockquote>
+<p>  查看所有用户</p>
+<blockquote>
+<p>cut -d : -f 1 &#x2F;etc&#x2F;passwd</p>
+</blockquote>
+<blockquote>
+<p>cat &#x2F;etc&#x2F;passwd |awk -F : ‘{print $1}’</p>
+</blockquote>
+</li>
+</ul>
+<p>本文引自<a href="http://blog.51yip.com/linux/1137.html">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2017/07/04/linux%E4%B8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E7%94%A8%E6%88%B7%E5%92%8C%E7%94%A8%E6%88%B7%E7%BB%84/" data-title="Linux下增删改查用户和用户组 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/07/04/Golang之内存使用报告/" title="Golang之内存使用报告">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Golang之内存使用报告</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/07/04/CentOS安装ElasticSearch及其问题解决/"  title="CentOS安装ElasticSearch及其问题解决">
+ <strong>下一篇：</strong><br/> 
+ <span>CentOS安装ElasticSearch及其问题解决
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/07/04/linux下增删改查用户和用户组/" data-title="Linux下增删改查用户和用户组" data-url="https://luckymrwang.github.io/2017/07/04/linux%E4%B8%8B%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E7%94%A8%E6%88%B7%E5%92%8C%E7%94%A8%E6%88%B7%E7%BB%84/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E7%BB%84%E6%93%8D%E4%BD%9C"><span class="toc-number">1.</span> <span class="toc-text">一、组操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%94%A8%E6%88%B7%E6%93%8D%E4%BD%9C"><span class="toc-number">2.</span> <span class="toc-text">二、用户操作</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

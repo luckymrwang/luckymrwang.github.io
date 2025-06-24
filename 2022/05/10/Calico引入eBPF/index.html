@@ -1,0 +1,539 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Calico引入eBPF | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="前言Calico团队在3.13版本引入了eBPF，这个新的dataplane与传统的linux dataplane有哪些区别呢？  它可以扩展到更高的吞吐量。 每个GBit使用更少的CPU。 它具有对Kubernetes服务的本机支持（无需kube-proxy），该支持： 减少服务数据包的第一个数据包延迟。 一直保留到外部主机的外部客户端源IP地址。 支持DSR（直接服务器返回），以实现更高效的服">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Calico引入eBPF">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/05/10/Calico%E5%BC%95%E5%85%A5eBPF/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="前言Calico团队在3.13版本引入了eBPF，这个新的dataplane与传统的linux dataplane有哪些区别呢？  它可以扩展到更高的吞吐量。 每个GBit使用更少的CPU。 它具有对Kubernetes服务的本机支持（无需kube-proxy），该支持： 减少服务数据包的第一个数据包延迟。 一直保留到外部主机的外部客户端源IP地址。 支持DSR（直接服务器返回），以实现更高效的服">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/calico-ebpf1.png">
+<meta property="article:published_time" content="2022-05-10T08:17:55.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.187Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Calico">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/calico-ebpf1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/10/Calico引入eBPF/" title="Calico引入eBPF" itemprop="url">Calico引入eBPF</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-10T08:17:55.000Z" itemprop="datePublished"> 发表于 2022-05-10</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Calico团队在3.13版本引入了eBPF，这个新的dataplane与传统的linux dataplane有哪些区别呢？</p>
+<ul>
+<li>它可以扩展到更高的吞吐量。</li>
+<li>每个GBit使用更少的CPU。</li>
+<li>它具有对Kubernetes服务的本机支持（无需kube-proxy），该支持：<ul>
+<li>减少服务数据包的第一个数据包延迟。</li>
+<li>一直保留到外部主机的外部客户端源IP地址。</li>
+<li>支持DSR（直接服务器返回），以实现更高效的服务路由。</li>
+<li>与kube-proxy相比，使用更少的CPU来保持数据平面同步。</li>
+</ul>
+</li>
+</ul>
+<p>此外，社区对新dataplane进行了性能测试，在短连接延时、服务访问时间、cpu使用率等方面，性能都有明显提升，详见：<a href="https://www.tigera.io/blog/introducing-the-calico-ebpf-dataplane/">https://www.tigera.io/blog/introducing-the-calico-ebpf-dataplane/</a></p>
+<span id="more"></span>
+
+<p>本文主要目的是通过分析calico源码，弄明白eBPF是如何被引入到calico中的。</p>
+<p>Calico引入了多个<a href="https://projectcalico.docs.tigera.io/about/about-ebpf">eBPF hook</a>点，本文重点分析connect_time_loadbalancer，即上面讲到的第一条支持：“减少服务数据包的第一个数据包延迟”</p>
+<p>相关的工作是在Calico的felix项目中实现的</p>
+<h3 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h3><p>入口处：<code>felix/dataplane/linux/int_dataplane.go</code> 的 <code>NewIntDataplaneDriver()</code> 函数，进行dataplane的初始化</p>
+<p>首先会判断是否开启了BPF，如果是开启状态，则进行以下操作：</p>
+<p>1）注册 map manager，该manager的作用是负责管理ebpf的map（map用于userspace和kernel之间进行数据的共享）</p>
+<p>2）注册endpoint manager，该manager的作用是负责各种ep的管理，包括host、workload等</p>
+<p>3）创建各种map，比如nat的frontendMap、backendMap、routeMap、conntrackMap等</p>
+<p>4）开启kube-proxy，注意此kube-proxy并非kubernetes的kube-proxy，而是proxy的一个封装，负责和kubernetes通信，维护各种map中的信息</p>
+<p>5）若BPFConnTimeEnabled开启，则安装connect_time_loadbalancer，即加载相关的eBPF程序</p>
+<p>6）启动dataplane（这部分暂不涉及connect_time_loadbalancer，本文暂不分析）</p>
+<p>下面我们重点看第5）步代码是如何实现的</p>
+<p>代码分析（加载eBPF程序）</p>
+<p>入口 <code>bpf/nat/connecttime.go</code>的 <code>InstallConnectTimeLoadBalancer()</code> 函数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InstallConnectTimeLoadBalancer</span><span class="params">(frontendMap, backendMap, rtMap bpf.Map, cgroupv2 <span class="type">string</span>, logLevel <span class="type">string</span>)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    bpfMount, err := bpf.MaybeMountBPFfs()      <span class="comment">//挂载bpf路径，默认的挂载路径是：/sys/fs/bpf</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.WithError(err).Error(<span class="string">&quot;Failed to mount bpffs, unable to do connect-time load balancing&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cgroupPath, err := ensureCgroupPath(cgroupv2)     <span class="comment">//配置cgoupv2，位于/run/calico/cgroupv2/</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.Wrap(err, <span class="string">&quot;failed to set-up cgroupv2&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repin := <span class="literal">false</span>                                <span class="comment">//检查相关map</span></span><br><span class="line">    <span class="keyword">if</span> pm, ok := frontendMap.(*bpf.PinnedMap); ok &#123;</span><br><span class="line">        repin = pm.RepinningEnabled()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sendrecvMap := SendRecvMsgMap(&amp;bpf.MapContext&#123;</span><br><span class="line">        RepinningEnabled: repin,</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    err = sendrecvMap.EnsureExists()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.WithMessage(err, <span class="string">&quot;failed to create sendrecv BPF Map&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    maps := []bpf.Map&#123;frontendMap, backendMap, rtMap, sendrecvMap&#125;</span><br><span class="line">    err = installProgram(<span class="string">&quot;connect&quot;</span>, <span class="string">&quot;4&quot;</span>, bpfMount, cgroupPath,logLevel, maps...)      <span class="comment">//  安装calico_connect_v4 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    err = installProgram(<span class="string">&quot;sendmsg&quot;</span>, <span class="string">&quot;4&quot;</span>, bpfMount, cgroupPath, logLevel, maps...)      <span class="comment">//安装calico_sendmsg_v4 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    err = installProgram(<span class="string">&quot;recvmsg&quot;</span>, <span class="string">&quot;4&quot;</span>, bpfMount, cgroupPath, logLevel, maps...)       <span class="comment">//安装calico_recvmsg_v4 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    err = installProgram(<span class="string">&quot;sendmsg&quot;</span>, <span class="string">&quot;6&quot;</span>, bpfMount, cgroupPath, logLevel)             <span class="comment">//安装calico_sendmsg_v6 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    err = installProgram(<span class="string">&quot;recvmsg&quot;</span>, <span class="string">&quot;6&quot;</span>, bpfMount, cgroupPath, logLevel, sendrecvMap)      <span class="comment">// 安装calico_recvmsg_v4 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进入 <code>installProgram()</code> 函数，看如何加载程序</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">installProgram</span><span class="params">(name, ipver, bpfMount, cgroupPath, logLevel <span class="type">string</span>, maps ...bpf.Map)</span></span> <span class="type">error</span> &#123;</span><br><span class="line"> </span><br><span class="line">    progPinDir := path.Join(bpfMount, <span class="string">&quot;calico_connect4&quot;</span>)</span><br><span class="line">    _ = os.RemoveAll(progPinDir)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">var</span> filename <span class="type">string</span></span><br><span class="line">                                                                                    <span class="comment">//获取bpf程序所在的位置</span></span><br><span class="line">    <span class="keyword">if</span> ipver == <span class="string">&quot;6&quot;</span> &#123;</span><br><span class="line">        filename = path.Join(bpf.ObjectDir, ProgFileName(logLevel, <span class="number">6</span>))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        filename = path.Join(bpf.ObjectDir, ProgFileName(logLevel, <span class="number">4</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    args := []<span class="type">string</span>&#123;<span class="string">&quot;prog&quot;</span>, <span class="string">&quot;loadall&quot;</span>, filename, progPinDir, <span class="string">&quot;type&quot;</span>, <span class="string">&quot;cgroup/&quot;</span> + name + ipver&#125;</span><br><span class="line">    <span class="keyword">for</span> _, m := <span class="keyword">range</span> maps &#123;</span><br><span class="line">        args = <span class="built_in">append</span>(args, <span class="string">&quot;map&quot;</span>, <span class="string">&quot;name&quot;</span>, m.GetName(), <span class="string">&quot;pinned&quot;</span>, m.Path())</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    cmd := exec.Command(<span class="string">&quot;bpftool&quot;</span>, args...)                                    <span class="comment">//使用bpftool加载ebpf程序</span></span><br><span class="line">    log.WithField(<span class="string">&quot;args&quot;</span>, cmd.Args).Info(<span class="string">&quot;About to run bpftool&quot;</span>)</span><br><span class="line">    progName := <span class="string">&quot;calico_&quot;</span> + name + <span class="string">&quot;_v&quot;</span> + ipver</span><br><span class="line">    out, err := cmd.CombinedOutput()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        err = errors.Wrapf(err, <span class="string">&quot;failed to load program %s&quot;</span>, progName)</span><br><span class="line">        <span class="keyword">goto</span> out</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">   <span class="comment">//使用bpftool将ebpf程序attach到相应的挂载点。此处的挂载点是socket hook，由于关cgroup关联，因此对于calico这个cgroup下的所有程序，执行socket api时都会经过这个bpf程序</span></span><br><span class="line">    cmd = exec.Command(<span class="string">&quot;bpftool&quot;</span>, <span class="string">&quot;cgroup&quot;</span>, <span class="string">&quot;attach&quot;</span>, cgroupPath,        </span><br><span class="line">        name+ipver, <span class="string">&quot;pinned&quot;</span>, path.Join(progPinDir, progName))</span><br><span class="line">    log.WithField(<span class="string">&quot;args&quot;</span>, cmd.Args).Info(<span class="string">&quot;About to run bpftool&quot;</span>)</span><br><span class="line">    out, err = cmd.CombinedOutput()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        err = errors.Wrapf(err, <span class="string">&quot;failed to attach program %s&quot;</span>, progName)</span><br><span class="line">        <span class="keyword">goto</span> out</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.WithError(err).WithField(<span class="string">&quot;output&quot;</span>, <span class="type">string</span>(out)).Error(<span class="string">&quot;Failed install cgroup program.&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下图是加载<code>attach bpf</code>程序后，用户进程调用<code>socket api</code>时的路径。在建立<code>connect</code>、<code>recvmsg</code>、<code>sendmsg</code>时都会经过这个程序进行处理。而这个ebpf程序所做的工作就是：判断是否要访问的是k8s service，如果是的话，直接将请求转发到后端的pod上，这样就不在需要做nat了，节省了所有的nat开销。即实现了：“减少服务数据包的第一个数据包延迟”</p>
+<p><img src="/images/calico-ebpf1.png" alt="image"></p>
+<p>接下来看看bpf程序是如何实现的，共实现三个<code>section bpf-gpl/connect_balancer.c</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">__attribute__((section(<span class="string">&quot;calico_connect_v4&quot;</span>)))            <span class="comment">//section 1：在建立connection时，做nat转发，将请求转发至后端的pod</span></span><br><span class="line"><span class="type">int</span> cali_ctlb_v4(<span class="keyword">struct</span> bpf_sock_addr *ctx)</span><br><span class="line">&#123;</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;calico_connect_v4\n&quot;</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* do not process anything non-TCP or non-UDP, but do not block it, will be</span></span><br><span class="line"><span class="comment">     * dealt with somewhere else.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> (ctx-&gt;<span class="keyword">type</span> != SOCK_STREAM &amp;&amp; ctx-&gt;<span class="keyword">type</span> != SOCK_DGRAM) &#123;</span><br><span class="line">        CALI_INFO(<span class="string">&quot;unexpected sock type %d\n&quot;</span>, ctx-&gt;<span class="keyword">type</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    uint8_t ip_proto;</span><br><span class="line">    <span class="keyword">switch</span> (ctx-&gt;<span class="keyword">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> SOCK_STREAM:</span><br><span class="line">        CALI_DEBUG(<span class="string">&quot;SOCK_STREAM -&gt; assuming TCP\n&quot;</span>);</span><br><span class="line">        ip_proto = IPPROTO_TCP;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> SOCK_DGRAM:</span><br><span class="line">        CALI_DEBUG(<span class="string">&quot;SOCK_DGRAM -&gt; assuming UDP\n&quot;</span>);</span><br><span class="line">        ip_proto = IPPROTO_UDP;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        CALI_DEBUG(<span class="string">&quot;Unknown socket type: %d\n&quot;</span>, (<span class="type">int</span>)ctx-&gt;<span class="keyword">type</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    do_nat_common(ctx, ip_proto);</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">__attribute__((section(<span class="string">&quot;calico_sendmsg_v4&quot;</span>)))          <span class="comment">//section2 ： sendmsg只处理udp相关的发包操作，tcp忽略，因为tcp为面向连接的传输</span></span><br><span class="line"><span class="type">int</span> cali_ctlb_sendmsg_v4(<span class="keyword">struct</span> bpf_sock_addr *ctx)</span><br><span class="line">&#123;</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;sendmsg_v4 %x:%d\n&quot;</span>,</span><br><span class="line">            be32_to_host(ctx-&gt;user_ip4), be32_to_host(ctx-&gt;user_port)&gt;&gt;<span class="number">16</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (ctx-&gt;<span class="keyword">type</span> != SOCK_DGRAM) &#123;</span><br><span class="line">        CALI_INFO(<span class="string">&quot;unexpected sock type %d\n&quot;</span>, ctx-&gt;<span class="keyword">type</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    do_nat_common(ctx, IPPROTO_UDP);</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">__attribute__((section(<span class="string">&quot;calico_recvmsg_v4&quot;</span>)))         <span class="comment">// section3： recvmsg也只处理udp相关的收包操作，tcp忽略。因为tcp为面向连接的传输</span></span><br><span class="line"><span class="type">int</span> cali_ctlb_recvmsg_v4(<span class="keyword">struct</span> bpf_sock_addr *ctx)</span><br><span class="line">&#123;</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;recvmsg_v4 %x:%d\n&quot;</span>, be32_to_host(ctx-&gt;user_ip4), ctx_port_to_host(ctx-&gt;user_port));</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (ctx-&gt;<span class="keyword">type</span> != SOCK_DGRAM) &#123;</span><br><span class="line">        CALI_INFO(<span class="string">&quot;unexpected sock type %d\n&quot;</span>, ctx-&gt;<span class="keyword">type</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    uint64_t cookie = bpf_get_socket_cookie(ctx);</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;Lookup: ip=%x port=%d(BE) cookie=%x&quot;</span>,ctx-&gt;user_ip4, ctx-&gt;user_port, cookie);</span><br><span class="line">    <span class="keyword">struct</span> sendrecv4_key key = &#123;</span><br><span class="line">        .ip = ctx-&gt;user_ip4,</span><br><span class="line">        .port   = ctx-&gt;user_port,</span><br><span class="line">        .cookie = cookie,</span><br><span class="line">    &#125;;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">struct</span> sendrecv4_val *revnat = cali_v4_srmsg_lookup_elem(&amp;key);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (revnat == NULL) &#123;</span><br><span class="line">        CALI_DEBUG(<span class="string">&quot;revnat miss for %x:%d\n&quot;</span>,</span><br><span class="line">                be32_to_host(ctx-&gt;user_ip4), ctx_port_to_host(ctx-&gt;user_port));</span><br><span class="line">        <span class="comment">/* we are past policy and the packet was allowed. Either the</span></span><br><span class="line"><span class="comment">         * mapping does not exist anymore and if the app cares, it</span></span><br><span class="line"><span class="comment">         * should check the addresses. It is more likely a packet sent</span></span><br><span class="line"><span class="comment">         * to server from outside and no mapping is expected.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    ctx-&gt;user_ip4 = revnat-&gt;ip;</span><br><span class="line">    ctx-&gt;user_port = revnat-&gt;port;</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;recvmsg_v4 rev nat to %x:%d\n&quot;</span>,</span><br><span class="line">            be32_to_host(ctx-&gt;user_ip4), ctx_port_to_host(ctx-&gt;user_port));</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际的nat操作是<code>do_nat_common()</code>来做的</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">static CALI_BPF_INLINE void do_nat_common(<span class="keyword">struct</span> bpf_sock_addr *ctx, uint8_t proto)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/* We do not know what the source address is yet, we only know that it</span></span><br><span class="line"><span class="comment">     * is the localhost, so we might just use 0.0.0.0. That would not</span></span><br><span class="line"><span class="comment">     * conflict with traffic from elsewhere.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * XXX it means that all workloads that use the cgroup hook have the</span></span><br><span class="line"><span class="comment">     * XXX same affinity, which (a) is sub-optimal and (b) leaks info between</span></span><br><span class="line"><span class="comment">     * XXX workloads.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    nat_lookup_result res = NAT_LOOKUP_ALLOW;</span><br><span class="line">    uint16_t dport_he = (uint16_t)(be32_to_host(ctx-&gt;user_port)&gt;&gt;<span class="number">16</span>);</span><br><span class="line">    <span class="keyword">struct</span> calico_nat_dest *nat_dest;</span><br><span class="line">    nat_dest = calico_v4_nat_lookup(<span class="number">0</span>, ctx-&gt;user_ip4, proto, dport_he, &amp;res);        <span class="comment">//从map中查找k8s service相关的信息</span></span><br><span class="line">    <span class="keyword">if</span> (!nat_dest) &#123;</span><br><span class="line">        CALI_INFO(<span class="string">&quot;NAT miss.\n&quot;</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    uint32_t dport_be = host_to_ctx_port(nat_dest-&gt;port);</span><br><span class="line"> </span><br><span class="line">     </span><br><span class="line">    ctx-&gt;user_ip4 = nat_dest-&gt;addr;            <span class="comment">//修改socket地址的目的地址为后端pod</span></span><br><span class="line">    ctx-&gt;user_port = dport_be;</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li>有关 eBPF 数据平面的更多信息和性能指标，请参阅<a href="https://www.projectcalico.org/introducing-the-calico-ebpf-dataplane/">公告博客文章</a>。</li>
+<li>如果您想在 Kubernetes 集群中尝试 eBPF 模式，请遵循<a href="https://projectcalico.docs.tigera.io/maintenance/ebpf/enabling-bpf">启用 eBPF 数据平面</a>指南。</li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Calico/">Calico</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/05/10/Calico%E5%BC%95%E5%85%A5eBPF/" data-title="Calico引入eBPF | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/05/11/TCP源码分析-三次握手之-Connect-过程/" title="TCP源码分析 - 三次握手之 Connect 过程">
+  <strong>上一篇：</strong><br/>
+  <span>
+  TCP源码分析 - 三次握手之 Connect 过程</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/05/08/Golang内存分配源码解析/"  title="Golang内存分配源码解析">
+ <strong>下一篇：</strong><br/> 
+ <span>Golang内存分配源码解析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/05/10/Calico引入eBPF/" data-title="Calico引入eBPF" data-url="https://luckymrwang.github.io/2022/05/10/Calico%E5%BC%95%E5%85%A5eBPF/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">工作流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">3.</span> <span class="toc-text">参考</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

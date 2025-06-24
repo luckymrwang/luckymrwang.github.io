@@ -1,0 +1,1145 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>容器 Security Context (安全上下文) | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="用来限制容器对宿主节点的可访问范围，以避免容器非法操作宿主节点的系统级别的内容，使得节点的系统或者节点上其他容器组受到影响。 Kubernetes 提供了三种配置 Security Context 的方法：  Container-level Security Context：仅应用到指定的容器 Pod-level Security Context：应用到 Pod 内所有容器以及 Volume Po">
+<meta property="og:type" content="article">
+<meta property="og:title" content="容器 Security Context (安全上下文)">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/12/04/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="用来限制容器对宿主节点的可访问范围，以避免容器非法操作宿主节点的系统级别的内容，使得节点的系统或者节点上其他容器组受到影响。 Kubernetes 提供了三种配置 Security Context 的方法：  Container-level Security Context：仅应用到指定的容器 Pod-level Security Context：应用到 Pod 内所有容器以及 Volume Po">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/999D5D68-2277-4422-9DE2-67C8A271CDC1%202.png">
+<meta property="og:image" content="https://luckymrwang.github.io/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/EA9499DA-BEF4-40BD-B1C4-EDB5F6F26F4E%202.png">
+<meta property="og:image" content="https://luckymrwang.github.io/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/02D34D7D-9910-4014-A7C2-4A8760E68240%202.png">
+<meta property="og:image" content="https://luckymrwang.github.io/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/28F716FC-4DF2-49F0-AE08-F25375E2D964.png">
+<meta property="og:image" content="https://luckymrwang.github.io/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/CB34CAFD-2CB6-432E-8512-E796071E644E.png">
+<meta property="og:image" content="https://luckymrwang.github.io/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/A93CD144-C683-48AB-99DC-4DC4F4012015.png">
+<meta property="og:image" content="https://luckymrwang.github.io/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/E5F1DA0F-F850-42E7-9C59-6390895923DC.png">
+<meta property="og:image" content="https://luckymrwang.github.io/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/B48414E4-B416-4F33-A562-E7F29E88A76A.png">
+<meta property="article:published_time" content="2020-12-04T15:08:51.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.199Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Kubernetes">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/999D5D68-2277-4422-9DE2-67C8A271CDC1%202.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/04/Security Context (安全上下文)/" title="容器 Security Context (安全上下文)" itemprop="url">容器 Security Context (安全上下文)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-04T15:08:51.000Z" itemprop="datePublished"> 发表于 2020-12-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-level-Security-Context"><span class="toc-number">1.</span> <span class="toc-text">Container-level Security Context</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#privileged"><span class="toc-number">1.1.</span> <span class="toc-text">privileged</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#runAsUser-runAsGroup"><span class="toc-number">1.2.</span> <span class="toc-text">runAsUser &amp; runAsGroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#runAsNonRoot"><span class="toc-number">1.3.</span> <span class="toc-text">runAsNonRoot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#readOnlyRootFilesystem"><span class="toc-number">1.4.</span> <span class="toc-text">readOnlyRootFilesystem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#allowPrivilegeEscalation"><span class="toc-number">1.5.</span> <span class="toc-text">allowPrivilegeEscalation</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4"><span class="toc-number">1.5.1.</span> <span class="toc-text">默认</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%97%ADallowPrivilegeEscalation"><span class="toc-number">1.5.2.</span> <span class="toc-text">关闭allowPrivilegeEscalation</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux-Capabilities"><span class="toc-number">1.6.</span> <span class="toc-text">Linux Capabilities</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Capabilities"><span class="toc-number">1.7.</span> <span class="toc-text">如何使用 Capabilities</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84-capabilities"><span class="toc-number">1.7.1.</span> <span class="toc-text">线程的 capabilities</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Permitted"><span class="toc-number">1.7.1.1.</span> <span class="toc-text">Permitted</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Effective"><span class="toc-number">1.7.1.2.</span> <span class="toc-text">Effective</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Inheritable"><span class="toc-number">1.7.1.3.</span> <span class="toc-text">Inheritable</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Bounding"><span class="toc-number">1.7.1.4.</span> <span class="toc-text">Bounding</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Ambient"><span class="toc-number">1.7.1.5.</span> <span class="toc-text">Ambient</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%9A%84-capabilities"><span class="toc-number">1.7.1.6.</span> <span class="toc-text">文件的 capabilities</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Docker-Container-Capabilities"><span class="toc-number">1.8.</span> <span class="toc-text">Docker Container Capabilities</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#LinuxCapability%E5%B8%B8%E9%87%8F"><span class="toc-number">1.8.1.</span> <span class="toc-text">LinuxCapability常量</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Docker-%E8%83%8C%E5%90%8E%E7%9A%84%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86-%E2%80%94%E2%80%94-Libcontainer"><span class="toc-number">1.8.1.1.</span> <span class="toc-text">Docker 背后的容器管理 —— Libcontainer</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E7%9A%84%E9%BB%98%E8%AE%A4%E6%9D%83%E9%99%90"><span class="toc-number">1.8.1.2.</span> <span class="toc-text">容器的默认权限</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kubernetes-%E4%B8%AD%E4%B8%BA%E5%AE%B9%E5%99%A8%E8%AE%BE%E7%BD%AE-Linux-Capabilities"><span class="toc-number">1.9.</span> <span class="toc-text">Kubernetes 中为容器设置 Linux Capabilities</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SELinux"><span class="toc-number">1.10.</span> <span class="toc-text">SELinux</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SELinux-%E7%9A%84%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.10.1.</span> <span class="toc-text">SELinux 的三种模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SELinux%E7%9A%84%E5%90%AF%E5%8A%A8%E5%92%8C%E5%85%B3%E9%97%AD"><span class="toc-number">1.10.2.</span> <span class="toc-text">SELinux的启动和关闭</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Security-Context"><span class="toc-number">1.10.3.</span> <span class="toc-text">Security Context</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#K8s%E4%B8%AD%E9%85%8D%E7%BD%AE-SELinux"><span class="toc-number">1.10.4.</span> <span class="toc-text">K8s中配置 SELinux</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pod-level-Security-Context"><span class="toc-number">2.</span> <span class="toc-text">Pod-level Security Context</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%AD%98%E5%82%A8%E5%8D%B7"><span class="toc-number">2.1.</span> <span class="toc-text">关于存储卷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod-Security-Policies"><span class="toc-number">2.2.</span> <span class="toc-text">Pod Security Policies</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>用来限制容器对宿主节点的可访问范围，以避免容器非法操作宿主节点的系统级别的内容，使得节点的系统或者节点上其他容器组受到影响。</p>
+<p>Kubernetes 提供了三种配置 Security Context 的方法：</p>
+<ul>
+<li>Container-level Security Context：仅应用到指定的容器</li>
+<li>Pod-level Security Context：应用到 Pod 内所有容器以及 Volume</li>
+<li>Pod Security Policies（PSP）：应用到集群内部所有 Pod 以及 Volume</li>
+</ul>
+<span id="more"></span>
+<h2 id="Container-level-Security-Context"><a href="#Container-level-Security-Context" class="headerlink" title="Container-level Security Context"></a>Container-level Security Context</h2><p>容器的定义中包含 securityContext 字段。通过指定该字段，可以为容器设定安全相关的配置。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">security-context-demo</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">runAsUser:</span> <span class="number">2000</span></span><br><span class="line">      <span class="attr">allowPrivilegeEscalation:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="privileged"><a href="#privileged" class="headerlink" title="privileged"></a>privileged</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">security-context-demo-no-privileged</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">	  <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br></pre></td></tr></table></figure>
+
+<p>创建该 Pod，并开始 Shell 进入容器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl exec -it security-context-demo -- sh</span><br></pre></td></tr></table></figure>
+
+<p>查看所有设备</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># ls /dev</span><br><span class="line">core             full             null             pts              shm              stdin            termination-log  urandom</span><br><span class="line">fd               mqueue           ptmx             random           stderr           stdout           tty              zero</span><br></pre></td></tr></table></figure>
+
+<p>修改 hostname</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># hostname</span><br><span class="line">security-context-demo</span><br><span class="line"># sysctl kernel.hostname=test</span><br><span class="line">sysctl: error setting key &#x27;kernel.hostname&#x27;: Read-only file system</span><br></pre></td></tr></table></figure>
+
+<p>添加 privileged </p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">security-context-demo-privileged</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">        <span class="attr">privileged:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>创建该 Pod，并开始 Shell 进入容器，查看所有设备<br><img src="/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/999D5D68-2277-4422-9DE2-67C8A271CDC1%202.png"></p>
+<p>修改 hostname</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># hostname</span><br><span class="line">security-context-demo-privileged</span><br><span class="line"># sysctl kernel.hostname=test</span><br><span class="line">kernel.hostname = test</span><br><span class="line"># hostname</span><br><span class="line">test</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段类型</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>privileged</td>
+<td>boolean</td>
+<td>以 privileged 模式运行容器。容器则被授权访问宿主上所有设备，此时容器中的进程本质上等价于宿主节点上的 root 用户。默认值为 false</td>
+</tr>
+<tr>
+<td>用户 <br> runAsUser</td>
+<td>integer</td>
+<td>执行容器 entrypoint 进程的 UID。默认为镜像元数据中定义的用户（dockerfile 中通过 USER 指令指定）。<em>也可以在Pod的SecurityContext中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准</em></td>
+</tr>
+<tr>
+<td>用户组 <br> runAsGroup</td>
+<td>integer</td>
+<td>执行容器 entrypoint 进程的 GID。默认为 docker 引擎的 GID 。<em>也可以在Pod的SecurityContext中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准</em></td>
+</tr>
+<tr>
+<td>非Root <br> runAsNonRoot</td>
+<td>boolean</td>
+<td>如果为 true，则 kubernetes 在运行容器之前将执行检查，以确保容器进程不是以 root 用户（UID为0）运行，否则将不能启动容器；如果此字段不设置或者为 false，则不执行此检查。<em>也可以在Pod的SecurityContext中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准</em></td>
+</tr>
+<tr>
+<td>文件系统root只读 <br> readOnlyRootFilesystem</td>
+<td>boolean</td>
+<td>该容器的文件系统根路径是否为只读。默认为 false</td>
+</tr>
+<tr>
+<td>允许扩大特权 <br> allowPrivilegeEscalation</td>
+<td>boolean</td>
+<td>该字段控制了进程是否可以获取比父进程更多的特权。直接作用是为容器进程设置 no_new_privs标记。当如下情况发生时，该字段始终为 true</td>
+</tr>
+<tr>
+<td>capabilities</td>
+<td>add: array <br> drop: array</td>
+<td>为容器进程 add&#x2F;drop Linux capabilities。默认使用容器引擎的设定</td>
+</tr>
+<tr>
+<td>seLinuxOptions</td>
+<td></td>
+<td>此字段设定的 SELinux 上下文将被应用到容器。如果不指定，容器引擎将为容器分配一个随机的 SELinux 上下文。<em>也可以在Pod的SecurityContext中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准</em></td>
+</tr>
+</tbody></table>
+<h3 id="runAsUser-runAsGroup"><a href="#runAsUser-runAsGroup" class="headerlink" title="runAsUser &amp; runAsGroup"></a>runAsUser &amp; runAsGroup</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">security-context-demo-privileged</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">runAsUser:</span> <span class="number">1000</span></span><br><span class="line">    	<span class="attr">runAsGroup:</span> <span class="number">2000</span></span><br></pre></td></tr></table></figure>
+
+<p>在配置文件中，runAsUser 字段指定容器内的进程都使用用户 ID 1000 来运行。runAsGroup 字段指定所有容器中的进程都以主组 ID 2000 来运行。 如果忽略此字段，则容器的主组 ID 将是 root（0）。 当 runAsGroup 被设置时，所有创建的文件也会划归用户 1000 和组 2000。</p>
+<p>执行命令进入容器的命令行界面，并在命令行界面中查看所有的进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/ $ ps</span><br><span class="line">PID   USER     TIME  COMMAND</span><br><span class="line">    1 1000      0:00 sleep 1h</span><br><span class="line">    7 1000      0:00 sh</span><br><span class="line">   12 1000      0:00 ps</span><br><span class="line">/ $ id</span><br><span class="line">uid=1000 gid=2000</span><br></pre></td></tr></table></figure>
+
+<p>宿主机查看进程，容器内的一个进程对应于宿主机器上的一个进程<br><img src="/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/EA9499DA-BEF4-40BD-B1C4-EDB5F6F26F4E%202.png"></p>
+<p>在宿主机上的进程<code>31523</code>的<code>uid</code>是 1000，<code>gid</code>是 2000</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># ps --pid 31523 -O uid,uname,gid,group,ppid</span><br><span class="line">  PID   UID USER       GID GROUP     PPID S TTY          TIME COMMAND</span><br><span class="line">31523  1000 test      2000 2000     31475 S ?        00:00:00 sleep 1h</span><br></pre></td></tr></table></figure>
+
+<p>查看该进程的父进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># ps --pid 31475 -O uid,uname,gid,group,ppid</span><br><span class="line">  PID   UID USER       GID GROUP     PPID S TTY          TIME COMMAND</span><br><span class="line">31475     0 root         0 root     14021 S ?        00:00:00 containerd-shim -namespace moby -workdir /var/lib/containerd/io.containerd.runtime.v1.linux/moby/9801cd6ed9d86325d26723da6e9702359a3f50baa6c3d10ebd50315344122e2</span><br></pre></td></tr></table></figure>
+
+<h3 id="runAsNonRoot"><a href="#runAsNonRoot" class="headerlink" title="runAsNonRoot"></a>runAsNonRoot</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">security-context-demo-nonroot-root</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">runAsNonRoot:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>执行命令以创建 Pod，并验证是否运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># kubectl get pod</span><br><span class="line">NAME                                 READY   STATUS                       RESTARTS   AGE</span><br><span class="line">security-context-demo-nonroot-root   0/1     CreateContainerConfigError   0          3s</span><br></pre></td></tr></table></figure>
+
+<p>查看详情</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># kubectl describe pod security-context-demo-nonroot-root</span><br></pre></td></tr></table></figure>
+<p><img src="/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/02D34D7D-9910-4014-A7C2-4A8760E68240%202.png"></p>
+<p>指定非root用户</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">security-context-demo-nonroot-user</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">runAsUser:</span> <span class="number">1000</span></span><br><span class="line">      <span class="attr">runAsNonRoot:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>执行命令以创建 Pod，并验证是否运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># kubectl apply -f security-demo-nonroot-user.yaml</span><br><span class="line">pod/security-context-demo-nonroot-user create</span><br><span class="line"></span><br><span class="line"># kubectl get pod</span><br><span class="line">NAME                                 READY   STATUS    RESTARTS   AGE</span><br><span class="line">security-context-demo-nonroot-user   1/1     Running   0          4s</span><br></pre></td></tr></table></figure>
+
+<h3 id="readOnlyRootFilesystem"><a href="#readOnlyRootFilesystem" class="headerlink" title="readOnlyRootFilesystem"></a>readOnlyRootFilesystem</h3><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">security-context-demo-readonly</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">readOnlyRootFilesystem:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>执行命令以创建 Pod，并执行命令进入容器的命令行界面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># whoami</span><br><span class="line">root</span><br><span class="line"># id</span><br><span class="line">uid=0(root) gid=0(root) groups=10(wheel)</span><br><span class="line"></span><br><span class="line"># mkdir a</span><br><span class="line">mkdir: can&#x27;t create directory &#x27;a&#x27;: Read-only file system</span><br><span class="line"># touch a.txt</span><br><span class="line">touch: a.txt: Read-only file system</span><br></pre></td></tr></table></figure>
+
+<h3 id="allowPrivilegeEscalation"><a href="#allowPrivilegeEscalation" class="headerlink" title="allowPrivilegeEscalation"></a>allowPrivilegeEscalation</h3><p>一般情况下，execve() 系统调用能够赋予新启动的进程其父进程没有的权限，最常见的例子就是通过 setuid 和 setgid 来设置程序进程的 uid 和 gid 以及文件的访问权限。可以直接通过 fork 来提升进程的权限。<br>为了解决这个问题，Linux 内核从 3.5 版本开始，引入了 no_new_privs 属性（实际上就是一个 bit，可以开启和关闭），提供给进程一种能够在 execve() 调用整个阶段都能持续有效且安全的方法。<br>s<br>开启了 no_new_privs 之后，execve 函数可以确保所有操作都必须调用 execve() 判断并赋予权限后才能被执行。这就确保了线程及子线程都无法获得额外的权限，因为无法执行 setuid 和 setgid，也不能设置文件的权限。<br>一旦当前线程的 no_new_privs 被置位后，不论通过 fork，clone 或 execve 生成的子线程都无法将该位清零。</p>
+<blockquote>
+<p>ruid(real user ID):<br>ruid可以理解为哪个用户执行了这个程序或者文件, ruid就是谁.<br>euid(effective user ID):<br>当进程执行时间, 操作系统会对euid进行识别, 以此来判断到底用什么权限来执行这个进程.<br>也就是说操作系统实际是通过判断进程的euid而不是ruid来给予其权限，只是在大多数情况下, euid和ruid是相等的setuid是类unix系统提供的一个标志位， 其实际意义是set一个process的euid为这个可执行文件或程序的拥有者(比如root)的uid， 也就是说当setuid位被设置之后， 当文件或程序(统称为executable)被执行时, 操作系统会赋予文件所有者的权限, 因为其euid是文件所有者的uid</p>
+</blockquote>
+<h4 id="默认"><a href="#默认" class="headerlink" title="默认"></a>默认</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">security-context-demo-nonroot-user-privs-default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox:ping</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">runAsUser:</span> <span class="number">1000</span></span><br><span class="line">      <span class="attr">runAsNonRoot:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>执行命令以创建 Pod，并执行命令进入容器的命令行界面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># ls -l /bin/ping</span><br><span class="line">-rwsr-xr-x    1 root     root       1145088 Oct 12 23:47 /bin/ping</span><br><span class="line"></span><br><span class="line"># ping 127.0.0.1</span><br><span class="line">PING 127.0.0.1 (127.0.0.1): 56 data bytes</span><br><span class="line">64 bytes from 127.0.0.1: seq=0 ttl=64 time=0.099 ms</span><br><span class="line">64 bytes from 127.0.0.1: seq=1 ttl=64 time=0.048 ms</span><br></pre></td></tr></table></figure>
+
+<h4 id="关闭allowPrivilegeEscalation"><a href="#关闭allowPrivilegeEscalation" class="headerlink" title="关闭allowPrivilegeEscalation"></a>关闭allowPrivilegeEscalation</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">security-context-demo-nonroot-user-privs-false</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">busybox:ping</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">runAsUser:</span> <span class="number">1000</span></span><br><span class="line">      <span class="attr">runAsNonRoot:</span> <span class="literal">true</span></span><br><span class="line">      <span class="attr">allowPrivilegeEscalation:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p>执行命令以创建 Pod，并执行命令进入容器的命令行界面</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># ls -l /bin/ping</span><br><span class="line">-rwsr-xr-x    1 root     root       1145088 Oct 12 23:47 /bin/ping</span><br><span class="line"># ping 127.0.0.1</span><br><span class="line">PING 127.0.0.1 (127.0.0.1): 56 data bytes</span><br><span class="line">ping: permission denied (are you root?)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Linux-Capabilities"><a href="#Linux-Capabilities" class="headerlink" title="Linux Capabilities"></a><strong>Linux Capabilities</strong></h3><p>在 Linux 2.2 版本之前，当内核对进程进行权限验证的时候，Linux 将进程划分为两类：特权进程（UID&#x3D;0，也就是超级用户）和非特权进程（UID!&#x3D;0），特权进程拥有所有的内核权限，而非特权进程则根据进程凭证（effective UID, effective GID，supplementary group 等）进行权限检查。</p>
+<p>比如以常用的 passwd 命令为例，修改用户密码需要具有 root 权限，而普通用户是没有这个权限的。但是实际上普通用户又可以修改自己的密码。在 Linux 的权限控制机制中，有一类比较特殊的权限设置，比如 SUID(Set User ID on execution)，允许用户以可执行文件的 owner 的权限来运行可执行文件。因为程序文件 &#x2F;bin&#x2F;passwd 被设置了 SUID 标识，所以普通用户在执行 passwd 命令时，进程是以 passwd 的所有者，也就是 root 用户的身份运行，从而就可以修改密码了。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ll /etc/shadow</span></span><br><span class="line">----------. 1 root root 708 11月 15 09:50 /etc/shadow</span><br><span class="line"><span class="comment"># ll /bin/passwd</span></span><br><span class="line">-rwsr-xr-x. 1 root root 27832 6月  10 2014 /bin/passwd</span><br><span class="line"><span class="comment"># su test</span></span><br><span class="line">$ <span class="built_in">whoami</span></span><br><span class="line"><span class="built_in">test</span></span><br><span class="line">$ passwd</span><br></pre></td></tr></table></figure>
+
+<p>但是使用 SUID 却带来了新的安全隐患，当我们运行设置了 SUID 的命令时，通常只是需要很小一部分的特权，但是 SUID 却给了它 root 具有的全部权限，一旦 被设置了 SUID 的命令出现漏洞，就很容易被利用了。<br>为此 Linux 引入了 Capabilities 机制来对 root 权限进行了更加细粒度的控制，实现按需进行授权，这样就大大减小了系统的安全隐患。</p>
+<h3 id="如何使用-Capabilities"><a href="#如何使用-Capabilities" class="headerlink" title="如何使用 Capabilities"></a>如何使用 Capabilities</h3><p>可以通过 <code>getcap</code> 和 <code>setcap</code> 两条命令来分别查看和设置程序文件的 <code>capabilities</code>属性。比如当前用户是test，使用 getcap 命令查看 ping 命令目前具有的 capabilities：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ll /bin/ping</span><br><span class="line">-rwxr-xr-x. 1 root root 66176 8月   4 2017 /bin/ping</span><br><span class="line">$ getcap /bin/ping</span><br><span class="line">/bin/ping = cap_net_admin,cap_net_raw+p</span><br></pre></td></tr></table></figure>
+
+<p>可以看到具有 <code>cap_net_admin</code> 这个属性，所以现在可以执行 ping 命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ ping baidu.com</span><br><span class="line">PING baidu.com (220.181.38.148) 56(84) bytes of data.</span><br><span class="line">64 bytes from 220.181.38.148 (220.181.38.148): icmp_seq=1 ttl=128 time=34.2 ms</span><br><span class="line">64 bytes from 220.181.38.148 (220.181.38.148): icmp_seq=2 ttl=128 time=42.5 ms</span><br></pre></td></tr></table></figure>
+
+<p>但是如果把命令的 capabilities 属性移除掉：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo setcap cap_net_admin,cap_net_raw-p /bin/ping</span><br><span class="line">$ getcap /bin/ping</span><br><span class="line">/bin/ping =</span><br></pre></td></tr></table></figure>
+
+<p>这个时候再执行 ping 命令可以已经没有权限了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ ping baidu.com</span><br><span class="line">ping: socket: 不允许的操作</span><br></pre></td></tr></table></figure>
+
+<p>因为 <code>ping</code> 命令在执行时需要访问网络，所需的 <code>capabilities </code>为 <code>cap_net_admin</code> 和  <code>cap_net_raw</code>，所以可以通过 setcap 命令可来添加它们：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ sudo setcap cap_net_admin,cap_net_raw+p /bin/ping</span><br><span class="line">$ getcap /bin/ping</span><br><span class="line">/bin/ping = cap_net_admin,cap_net_raw+p</span><br><span class="line">$ ping baidu.com</span><br><span class="line">PING baidu.com (220.181.38.148) 56(84) bytes of data.</span><br><span class="line">64 bytes from 220.181.38.148 (220.181.38.148): icmp_seq=1 ttl=128 time=26.9 ms</span><br><span class="line">64 bytes from 220.181.38.148 (220.181.38.148): icmp_seq=2 ttl=128 time=35.3 ms</span><br></pre></td></tr></table></figure>
+
+<p>命令中的 p 表示 Permitted 集合，+ 号表示把指定的capabilities 添加到这些集合中，- 号表示从集合中移除。</p>
+<h4 id="线程的-capabilities"><a href="#线程的-capabilities" class="headerlink" title="线程的 capabilities"></a>线程的 capabilities</h4><p>每一个线程，具有 5 个 capabilities 集合，每一个集合使用 64 位掩码来表示，显示为 16 进制格式。这 5 个 capabilities 集合分别是：</p>
+<ul>
+<li>Permitted</li>
+<li>Effective</li>
+<li>Inheritable</li>
+<li>Bounding</li>
+<li>Ambient</li>
+</ul>
+<p>每个集合中都包含零个或多个 capabilities。这5个集合的具体含义如下</p>
+<h5 id="Permitted"><a href="#Permitted" class="headerlink" title="Permitted"></a>Permitted</h5><p>定义了线程能够使用的 capabilities 的上限。它并不使能线程的 capabilities，而是作为一个规定。也就是说，线程可以通过系统调用 capset() 来从 Effective 或 Inheritable 集合中添加或删除 capability，前提是添加或删除的 capability 必须包含在 Permitted 集合中（其中 Bounding 集合也会有影响，具体参考下文）。 如果某个线程想向 Inheritable 集合中添加或删除 capability，首先它的 Effective 集合中得包含 CAP_SETPCAP 这个 capabiliy。</p>
+<h5 id="Effective"><a href="#Effective" class="headerlink" title="Effective"></a>Effective</h5><p>内核检查线程是否可以进行特权操作时，检查的对象便是 Effective 集合。如之前所说，Permitted 集合定义了上限，线程可以删除 Effective 集合中的某 capability，随后在需要时，再从 Permitted 集合中恢复该 capability，以此达到临时禁用 capability 的功能。</p>
+<h5 id="Inheritable"><a href="#Inheritable" class="headerlink" title="Inheritable"></a>Inheritable</h5><p>当执行exec() 系统调用时，能够被新的可执行文件继承的 capabilities，被包含在 Inheritable 集合中。这里需要说明一下，包含在该集合中的 capabilities 并不会自动继承给新的可执行文件，即不会添加到新线程的 Effective 集合中，它只会影响新线程的 Permitted 集合。</p>
+<h5 id="Bounding"><a href="#Bounding" class="headerlink" title="Bounding"></a>Bounding</h5><p>Bounding 集合是 Inheritable 集合的超集，如果某个 capability 不在 Bounding 集合中，即使它在 Permitted 集合中，该线程也不能将该 capability 添加到它的 Inheritable 集合中。</p>
+<p>Bounding 集合的 capabilities 在执行 fork() 系统调用时会传递给子进程的 Bounding 集合，并且在执行 execve 系统调用后保持不变。</p>
+<ul>
+<li>当线程运行时，不能向 Bounding 集合中添加 capabilities。</li>
+<li>一旦某个 capability 被从 Bounding 集合中删除，便不能再添加回来。</li>
+<li>将某个 capability 从 Bounding 集合中删除后，如果之前 Inherited 集合包含该 capability，将继续保留。但如果后续从 Inheritable 集合中删除了该 capability，便不能再添加回来。</li>
+</ul>
+<h5 id="Ambient"><a href="#Ambient" class="headerlink" title="Ambient"></a>Ambient</h5><p>Linux 4.3 内核新增了一个 capabilities 集合叫 Ambient ，用来弥补 Inheritable 的不足。Ambient 具有如下特性：</p>
+<ul>
+<li>Permitted 和 Inheritable 未设置的 capabilities，Ambient 也不能设置。</li>
+<li>当 Permitted 和 Inheritable 关闭某权限（比如 CAP_SYS_BOOT）后，Ambient 也随之关闭对应权限。这样就确保了降低权限后子进程也会降低权限。</li>
+<li>非特权用户如果在 Permitted 集合中有一个 capability，那么可以添加到 Ambient 集合中，这样它的子进程便可以在 Ambient、Permitted 和 Effective 集合中获取这个 capability。</li>
+</ul>
+<p>Ambient 的好处显而易见，举个例子，如果你将 CAP_NET_ADMIN 添加到当前进程的 Ambient 集合中，它便可以通过 fork() 和 execve() 调用 shell 脚本来执行网络管理任务，因为 CAP_NET_ADMIN 会自动继承下去。</p>
+<h5 id="文件的-capabilities"><a href="#文件的-capabilities" class="headerlink" title="文件的 capabilities"></a>文件的 capabilities</h5><p>文件的 capabilities 被保存在文件的扩展属性中。如果想修改这些属性，需要具有 CAP_SETFCAP 的 capability。文件与线程的 capabilities 共同决定了通过 execve() 运行该文件后的线程的 capabilities。</p>
+<p>文件的 capabilities 功能，需要文件系统的支持。如果文件系统使用了 nouuid 选项进行挂载，那么文件的 capabilities 将会被忽略。</p>
+<p>类似于线程的 capabilities，文件的 capabilities 包含了 3 个集合：</p>
+<ul>
+<li>Permitted</li>
+<li>Inheritable</li>
+<li>Effective</li>
+</ul>
+<p>这3个集合的具体含义如下：</p>
+<p><strong>Permitted</strong><br>这个集合中包含的 capabilities，在文件被执行时，会与线程的 Bounding 集合计算交集，然后添加到线程的 Permitted 集合中。</p>
+<p><strong>Inheritable</strong><br>这个集合与线程的 Inheritable 集合的交集，会被添加到执行完 execve() 后的线程的 Permitted 集合中。</p>
+<p><strong>Effective</strong><br>这不是一个集合，仅仅是一个标志位。如果设置开启，那么在执行完 execve() 后，线程 Permitted 集合中的 capabilities 会自动添加到它的 Effective 集合中。对于一些旧的可执行文件，由于其不会调用 capabilities 相关函数设置自身的 Effective 集合，所以可以将可执行文件的 Effective bit 开启，从而可以将 Permitted 集合中的 capabilities 自动添加到 Effective 集合中。</p>
+<p>下面通过具体的计算公式，来说明执行 execve() 后 capabilities 是如何被确定的。</p>
+<p>用 P 代表执行 execve() 前线程的 capabilities，P’ 代表执行 execve() 后线程的 capabilities，F 代表可执行文件的 capabilities。那么：</p>
+<blockquote>
+<p>P’(ambient) &#x3D; (file is privileged) ? 0 : P(ambient)<br>P’(permitted) &#x3D; (P(inheritable) &amp; F(inheritable)) |<br>                  (F(permitted) &amp; P(bounding))) | P’(ambient)<br>P’(effective)   &#x3D; F(effective) ? P’(permitted) : P’(ambient)<br>P’(inheritable) &#x3D; P(inheritable) [i.e., unchanged]<br>P’(bounding) &#x3D; P(bounding) [i.e., unchanged]</p>
+</blockquote>
+<ul>
+<li>如果用户是 root 用户，那么执行 execve() 后线程的 Ambient 集合是空集；如果是普通用户，那么执行 execve() 后线程的 Ambient 集合将会继承执行 execve() 前线程的 Ambient 集合。</li>
+<li>执行 execve() 前线程的 Inheritable 集合与可执行文件的 Inheritable 集合取交集，会被添加到执行 execve() 后线程的 Permitted 集合；可执行文件的 capability bounding 集合与可执行文件的 Permitted 集合取交集，也会被添加到执行 execve() 后线程的 Permitted 集合；同时执行 execve() 后线程的 Ambient 集合中的 capabilities 会被自动添加到该线程的 Permitted 集合中。</li>
+<li>如果可执行文件开启了 Effective 标志位，那么在执行完 execve() 后，线程 Permitted 集合中的 capabilities 会自动添加到它的 Effective 集合中。</li>
+<li>执行 execve() 前线程的 Inheritable 集合会继承给执行 execve() 后线程的 Inheritable 集合。</li>
+</ul>
+<p>可以通过下面的命名来查看当前进程的 capabilities 信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># cat /proc/30472/status</span><br><span class="line">CapInh:	00000000a80425fb</span><br><span class="line">CapPrm:	00000000a80425fb</span><br><span class="line">CapEff:	00000000a80425fb</span><br><span class="line">CapBnd:	00000000a80425fb</span><br><span class="line">CapAmb:	0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>可以使用 capsh 命令把它们转义为可读的格式，这样基本可以看出进程具有的 capabilities 了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># capsh --decode=00000000a80425fb</span><br><span class="line">0x00000000a80425fb=cap_chown,cap_dac_override,cap_fowner,cap_fsetid,cap_kill,cap_setgid,cap_setuid,cap_setpcap,cap_net_bind_service,cap_net_raw,cap_sys_chroot,cap_mknod,cap_audit_write,cap_setfcap</span><br></pre></td></tr></table></figure>
+
+<h3 id="Docker-Container-Capabilities"><a href="#Docker-Container-Capabilities" class="headerlink" title="Docker Container Capabilities"></a>Docker Container Capabilities</h3><p>Docker 容器本质上就是一个进程，所以理论上容器就会和进程一样会有一些默认的开放权限，默认情况下 Docker 会删除必须的 capabilities 之外的所有 capabilities，因为在容器中经常会以 root 用户来运行，使用 capabilities 后，容器中使用的 root 用户权限就比平时在宿主机上使用的 root 用户权限要少很多了，这样即使出现了安全漏洞，也很难破坏或者获取宿主机的 root 权限。<br>不过在运行容器的时候可以通过指定 —privileded 参数来开启容器的超级权限。<br>但是如果确实需要一些特殊的权限，可以通过 —cap-add 和 —cap-drop 这两个参数来动态调整，可以最大限度地保证容器的使用安全。</p>
+<h4 id="LinuxCapability常量"><a href="#LinuxCapability常量" class="headerlink" title="LinuxCapability常量"></a>LinuxCapability常量</h4><p>Linux Capabilities 常量格式为 CAP_XXX。然而，在容器定义中添加或删除 Linux Capabilities 时，必须去除常量的前缀 CAP_。例如：向容器中添加 CAP_SYS_TIME 时，只需要填写 SYS_TIME。<br>下面是从  <a href="http://man7.org/linux/man-pages/man7/capabilities.7.html">capabilities man page</a>  中摘取的 Capabilites 列表：</p>
+<table>
+<thead>
+<tr>
+<th>Docker Capability</th>
+<th>Linux Capability</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CHOWN</td>
+<td>CAP_CHOWN</td>
+<td>修改文件所有者的权限</td>
+</tr>
+<tr>
+<td>DAC_OVERRIDE</td>
+<td>CAP_DAC_OVERRIDE</td>
+<td>忽略文件的 DAC 访问限制</td>
+</tr>
+<tr>
+<td>KILL</td>
+<td>CAP_KILL</td>
+<td>允许对不属于自己的进程发送信号</td>
+</tr>
+<tr>
+<td>SYS_CHROOT</td>
+<td>CAP_SYS_CHROOT</td>
+<td>允许使用 chroot() 系统调用</td>
+</tr>
+<tr>
+<td>NET_BIND_SERVICE</td>
+<td>CAP_NET_BIND_SERVICE</td>
+<td>允许绑定到小于 1024 的端口</td>
+</tr>
+<tr>
+<td>SETUID</td>
+<td>CAP_SETUID</td>
+<td>允许改变进程的 UID</td>
+</tr>
+<tr>
+<td>SETGID</td>
+<td>CAP_SETGID</td>
+<td>允许改变进程的 GID</td>
+</tr>
+<tr>
+<td>FSETID</td>
+<td>CAP_FSETID</td>
+<td>允许设置文件的 setuid 位</td>
+</tr>
+<tr>
+<td>FOWNER</td>
+<td>CAP_FOWNER</td>
+<td>忽略文件属主 ID 必须和进程用户 ID 相匹配的限制</td>
+</tr>
+<tr>
+<td>SETFCAP</td>
+<td>CAP_SETFCAP</td>
+<td>允许为文件设置任意的 capabilities</td>
+</tr>
+<tr>
+<td>SETPCAP</td>
+<td>CAP_SETPCAP</td>
+<td>允许向其它进程转移能力以及删除其它进程的任意能力(只限init进程)</td>
+</tr>
+<tr>
+<td>NET_RAW</td>
+<td>CAP_NET_RAW</td>
+<td>允许使用原始套接字</td>
+</tr>
+<tr>
+<td>MKNOD</td>
+<td>CAP_MKNOD</td>
+<td>允许使用 mknod() 系统调用</td>
+</tr>
+<tr>
+<td>AUDIT_WRITE</td>
+<td>CAP_AUDIT_WRITE</td>
+<td>将记录写入内核审计日志</td>
+</tr>
+<tr>
+<td>-</td>
+<td>-</td>
+<td></td>
+</tr>
+<tr>
+<td>NET_ADMIN</td>
+<td>CAP_NET_ADMIN</td>
+<td>允许执行网络管理任务</td>
+</tr>
+<tr>
+<td>AUDIT_CONTROL</td>
+<td>CAP_AUDIT_CONTROL</td>
+<td>启用和禁用内核审计；改变审计过滤规则；检索审计状态和过滤规则</td>
+</tr>
+<tr>
+<td>AUDIT_READ</td>
+<td>CAP_AUDIT_READ</td>
+<td>允许通过 multicast netlink 套接字读取审计日志</td>
+</tr>
+<tr>
+<td>BLOCK_SUSPEND</td>
+<td>CAP_BLOCK_SUSPEND</td>
+<td>使用可以阻止系统挂起的特性</td>
+</tr>
+<tr>
+<td>DAC_READ_SEARCH</td>
+<td>CAP_DAC_READ_SEARCH</td>
+<td>忽略文件读及目录搜索的 DAC 访问限制</td>
+</tr>
+<tr>
+<td>IPC_LOCK</td>
+<td>CAP_IPC_LOCK</td>
+<td>允许锁定共享内存片段</td>
+</tr>
+<tr>
+<td>IPC_OWNER</td>
+<td>CAP_IPC_OWNER</td>
+<td>忽略 IPC 所有权检查</td>
+</tr>
+<tr>
+<td>LEASE</td>
+<td>CAP_LEASE</td>
+<td>允许修改文件锁的 FL_LEASE 标志</td>
+</tr>
+<tr>
+<td>LINUX_IMMUTABLE</td>
+<td>CAP_LINUX_IMMUTABLE</td>
+<td>允许修改文件的 IMMUTABLE 和 APPEND 属性标志</td>
+</tr>
+<tr>
+<td>MAC_ADMIN</td>
+<td>CAP_MAC_ADMIN</td>
+<td>允许 MAC 配置或状态更改</td>
+</tr>
+<tr>
+<td>MAC_OVERRIDE</td>
+<td>CAP_MAC_OVERRIDE</td>
+<td>覆盖 MAC(Mandatory Access Control)</td>
+</tr>
+<tr>
+<td>NET_BROADCAST</td>
+<td>CAP_NET_BROADCAST</td>
+<td>允许网络广播和多播访问</td>
+</tr>
+<tr>
+<td>SYS_ADMIN</td>
+<td>CAP_SYS_ADMIN</td>
+<td>允许执行系统管理任务，如加载或卸载文件系统、设置磁盘配额等</td>
+</tr>
+<tr>
+<td>SYS_BOOT</td>
+<td>CAP_SYS_BOOT</td>
+<td>允许重新启动系统</td>
+</tr>
+<tr>
+<td>SYS_MODULE</td>
+<td>CAP_SYS_MODULE</td>
+<td>允许插入和删除内核模块</td>
+</tr>
+<tr>
+<td>SYS_NICE</td>
+<td>CAP_SYS_NICE</td>
+<td>允许提升优先级及设置其他进程的优先级</td>
+</tr>
+<tr>
+<td>SYS_PACCT</td>
+<td>CAP_SYS_PACCT</td>
+<td>允许执行进程的 BSD 式审计</td>
+</tr>
+<tr>
+<td>SYS_PTRACE</td>
+<td>CAP_SYS_PTRACE</td>
+<td>允许跟踪任何进程</td>
+</tr>
+<tr>
+<td>SYS_RAWIO</td>
+<td>CAP_SYS_RAWIO</td>
+<td>允许直接访问 &#x2F;devport、&#x2F;dev&#x2F;mem、&#x2F;dev&#x2F;kmem 及原始块设备</td>
+</tr>
+<tr>
+<td>SYS_RESOURCE</td>
+<td>CAP_SYS_RESOURCE</td>
+<td>忽略资源限制</td>
+</tr>
+<tr>
+<td>SYS_TIME</td>
+<td>CAP_SYS_TIME</td>
+<td>允许改变系统时钟</td>
+</tr>
+<tr>
+<td>SYS_TTY_CONFIG</td>
+<td>CAP_SYS_TTY_CONFIG</td>
+<td>允许配置 TTY 设备</td>
+</tr>
+<tr>
+<td>SYSLOG</td>
+<td>CAP_SYSLOG</td>
+<td>允许使用 syslog() 系统调用</td>
+</tr>
+<tr>
+<td>WAKE_ALARM</td>
+<td>CAP_WAKE_ALARM</td>
+<td>允许触发一些能唤醒系统的东西(比如 CLOCK_BOOTTIME_ALARM 计时器)</td>
+</tr>
+</tbody></table>
+<ol>
+<li>启动一个容器，设置文件所有者和文件关联组</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># docker container run --rm -it alpine chown nobody /</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>drop 掉所有 capabilities，只增加 CAP_CHOWN capability</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># docker container run --rm -it --cap-drop ALL --cap-add CHOWN alpine chown nobody /</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>drop 掉  CAP_CHOWN capability</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># docker container run --rm -it --cap-drop CHOWN alpine chown nobody /</span><br><span class="line">chown: /: Operation not permitted</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>给一个非 root 用户 nobody 创建一个容器并增加  CAP_CHOWN capability</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker container run --rm -it --cap-add chown -u nobody alpine chown nobody /</span><br><span class="line">chown: /: Operation not permitted</span><br></pre></td></tr></table></figure>
+<p>docker当前只支持root用户级别 add 和 drop capalibities ，非root用户不支持</p>
+<h5 id="Docker-背后的容器管理-——-Libcontainer"><a href="#Docker-背后的容器管理-——-Libcontainer" class="headerlink" title="Docker 背后的容器管理 —— Libcontainer"></a>Docker 背后的容器管理 —— Libcontainer</h5><p><a href="https://github.com/opencontainers/runc/tree/master/libcontainer">Libcontainer</a> 是Docker中用于容器管理的包，它基于Go语言实现，通过管理namespaces、cgroups、capabilities以及文件系统来进行容器控制。</p>
+<p>在Docker中，对容器管理的模块为execdriver，目前Docker支持的容器管理方式有两种，一种就是最初支持的LXC方式，另一种称为native，即使用Libcontainer 进行容器管理。Docker Deamon 启动过程中就会对 execdriver进行初始化，会根据驱动的名称选择使用的容器管理方式。虽然在execdriver中只有LXC和native两种选择，但是native（即Libcontainer）通过接口的方式定义了一系列容器管理的操作，包括处理容器的创建（Factory）、容器生命周期管理（Container）、进程生命周期管理（Process）等一系列接口。</p>
+<h5 id="容器的默认权限"><a href="#容器的默认权限" class="headerlink" title="容器的默认权限"></a>容器的默认权限</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// New returns the docker default configuration for libcontainer</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">()</span></span> libcontainer.Config &#123;</span><br><span class="line">	container := &amp;libcontainer.Config&#123;</span><br><span class="line">		Capabilities: []<span class="type">string</span>&#123;</span><br><span class="line">			“CHOWN”,</span><br><span class="line">			“DAC_OVERRIDE”,</span><br><span class="line">			“FSETID”,</span><br><span class="line">			“FOWNER”,</span><br><span class="line">			“MKNOD”,</span><br><span class="line">			“NET_RAW”,</span><br><span class="line">			“SETGID”,</span><br><span class="line">			“SETUID”,</span><br><span class="line">			“SETFCAP”,</span><br><span class="line">			“SETPCAP”,</span><br><span class="line">			“NET_BIND_SERVICE”,</span><br><span class="line">			“SYS_CHROOT”,</span><br><span class="line">			“KILL”,</span><br><span class="line">			“AUDIT_WRITE”,</span><br><span class="line">		&#125;,</span><br><span class="line">		Namespaces: <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">bool</span>&#123;</span><br><span class="line">			“NEWNS”:  <span class="literal">true</span>,</span><br><span class="line">			“NEWUTS”: <span class="literal">true</span>,</span><br><span class="line">			“NEWIPC”: <span class="literal">true</span>,</span><br><span class="line">			“NEWPID”: <span class="literal">true</span>,</span><br><span class="line">			“NEWNET”: <span class="literal">true</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">		Cgroups: &amp;cgroups.Cgroup&#123;</span><br><span class="line">			Parent:          “docker”,</span><br><span class="line">			AllowAllDevices: <span class="literal">false</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">		MountConfig: &amp;libcontainer.MountConfig&#123;&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> apparmor.IsEnabled() &#123;</span><br><span class="line">		container.AppArmorProfile = “docker-<span class="keyword">default</span>”</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> container</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Kubernetes-中为容器设置-Linux-Capabilities"><a href="#Kubernetes-中为容器设置-Linux-Capabilities" class="headerlink" title="Kubernetes 中为容器设置 Linux Capabilities"></a>Kubernetes 中为容器设置 Linux Capabilities</h3><p>在容器定义的 securityContext 中添加 capabilities 字段，可以向容器添加或删除 Linux Capability。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">securityContext:</span></span><br><span class="line">  <span class="attr">capabilities:</span></span><br><span class="line">    <span class="attr">drop:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">KILL</span></span><br><span class="line">    <span class="attr">add:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">NET_BIND_SERVICE</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;log&quot;</span></span><br><span class="line">    <span class="string">&quot;net/http&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handler</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">    fmt.Fprintf(w, <span class="string">&quot;Successfully serving on port 80\n&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    http.HandleFunc(<span class="string">&quot;/&quot;</span>, handler)</span><br><span class="line">    log.Fatal(http.ListenAndServe(<span class="string">&quot;:80&quot;</span>, <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>制作Dockfile</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> alpine:latest</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> <span class="built_in">mkdir</span> /app</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> server /app/</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="language-bash"> /app</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="language-bash"> [<span class="string">&quot;./server&quot;</span>]</span></span><br></pre></td></tr></table></figure>
+
+<p>构建镜像</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t alpine:server .</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">server</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">run:</span> <span class="string">my-server</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">alpine:server</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p>执行命令以创建 Pod，并验证是否运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># kubectl apply -f server.yaml</span><br><span class="line">pod/server created</span><br><span class="line"></span><br><span class="line"># kubectl expose pod/server</span><br><span class="line">service/server exposed</span><br><span class="line"></span><br><span class="line"># kubectl get svc</span><br><span class="line">NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE</span><br><span class="line">kubernetes   ClusterIP   10.96.0.1        &lt;none&gt;        443/TCP   9d</span><br><span class="line">server       ClusterIP   10.100.208.118   &lt;none&gt;        80/TCP    6s</span><br><span class="line"></span><br><span class="line"># curl 10.100.208.118</span><br><span class="line">Successfully serving on port 80</span><br></pre></td></tr></table></figure>
+
+<p>修改 capacbilities ，去掉 CAP_NET_BIND_SERVICE</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">net-bind-service</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">run:</span> <span class="string">my-server</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">alpine:server</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">capabilities:</span></span><br><span class="line">        <span class="attr">drop:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">NET_BIND_SERVICE</span></span><br></pre></td></tr></table></figure>
+
+<p>执行命令以创建 Pod，并验证是否运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># kubectl apply -f net-bind-service.yaml</span><br><span class="line"></span><br><span class="line"># kubectl get pod </span><br><span class="line">NAME                               READY   STATUS             RESTARTS   AGE</span><br><span class="line">net-bind-service                   0/1     CrashLoopBackOff   5          5m24s</span><br><span class="line"></span><br><span class="line"># kubectl logs net-bind-service</span><br><span class="line">2020/11/17 07:40:22 listen tcp :80: bind: permission denied</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">drop-chown</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">alpine:latest</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">capabilities:</span></span><br><span class="line">        <span class="attr">drop:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">CHOWN</span></span><br></pre></td></tr></table></figure>
+
+<p><em>docker container run —rm -it —cap-drop CHOWN alpine chown nobody &#x2F;</em>*</p>
+<p>给非 root 用户添加 capabilities</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">add-chown</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">sec-ctx-demo</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">alpine:latest</span></span><br><span class="line">    <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">    <span class="attr">command:</span> [ <span class="string">&quot;sh&quot;</span>, <span class="string">&quot;-c&quot;</span>, <span class="string">&quot;sleep 1h&quot;</span> ]</span><br><span class="line">    <span class="attr">securityContext:</span></span><br><span class="line">      <span class="attr">runAsUser:</span> <span class="number">1000</span></span><br><span class="line">      <span class="attr">capabilities:</span></span><br><span class="line">        <span class="attr">drop:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">ALL</span></span><br><span class="line">        <span class="attr">add:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">CHOWN</span></span><br></pre></td></tr></table></figure>
+
+<p>执行命令以创建 Pod，并验证是否运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># kubectl apply -f add-chown.yaml</span><br><span class="line">pod/add-chown created</span><br><span class="line"></span><br><span class="line"># kubectl exec -it add-chown -- chown nobody /home</span><br><span class="line">chown: /home: Operation not permitted</span><br></pre></td></tr></table></figure>
+
+<p>在 Kubernetes 中通过 <code>sercurityContext.capabilities</code>进行配置容器的Capabilities，当然最终还是通过 Docker 的<code>libcontainer</code>去借助 <code>Linux kernel capabilities</code> 实现的权限管理。</p>
+<h3 id="SELinux"><a href="#SELinux" class="headerlink" title="SELinux"></a>SELinux</h3><blockquote>
+<p>SELinux 是由美国国家安全局 (NSA) 开发的，由内核实现的MAC ( Mandatory Access Control，强制访问控制)，可以说SELinux就是一个MAC系统。  </p>
+</blockquote>
+<ul>
+<li>传统的文件权限与帐号关系：自主式存取控制, DAC<blockquote>
+<p>系统的帐号主要分为系统管理员 (root) 与一般用户，而这两种身份能否使用系统上面的文件资源则与 rwx 的权限配置有关。 但是各种权限配置对 root 是无效的。因此，当某个程序想要对文件进行存取时， 系统就会根据该程序的拥有者&#x2F;群组，并比对文件的权限，若通过权限检查，就可以存取该文件了。这种存取文件系统的方式被称为『自主式存取控制 (Discretionary Access Control, DAC)』，基本上，就是依据程序的拥有者与文件资源的 rwx 权限来决定有无存取的能力。</p>
+</blockquote>
+</li>
+</ul>
+<p>不过这种 DAC 的存取控制有几个困扰，那就是：<br>	- root 具有最高的权限：如果某个程序被非法取得， 且该程序属於 root 的权限，那么这个程序就可以在系统上进行任何资源的存取！<br>	- 使用者可以取得程序来变更文件资源的存取权限：如果将某个目录的权限配置为 777 ，由於对任何人的权限会变成 rwx ，因此该目录就会被任何人所任意存取！</p>
+<ul>
+<li>以政策守则订定特定程序读取特定文件：强制访问控制, MAC<blockquote>
+<p>可以针对特定的程序与特定的文件资源来进行权限的控管！ 也就是说，即使是 root ，那么在使用不同的程序时，所能取得的权限并不一定是 root ， 而得要看当时该程序的配置而定。针对控制的『主体』变成了『程序』而不是使用者。 此外，这个主体程序也不能任意使用系统文件资源，因为每个文件资源也有针对该主体程序配置可取用的权限！ 这样，控制项目就细很多，但整个系统程序那么多、文件那么多，一项一项控制会很麻烦，所以 SELinux 也提供一些默认的政策 (Policy) ，并在该政策内提供多个守则 (rule) ，让你可以选择是否激活该控制守则。<br>比如 httpd 这个程序， 默认情况下， httpd 仅能在 &#x2F;var&#x2F;www&#x2F; 这个目录底下存取文件，如果 httpd 这个程序想要到其他目录去存取数据时， 除了守则配置要开放外，目标目录也得要配置成 httpd 可读取的模式 (type) 才行，限制非常多， 所以，即使不小心 httpd 被 cracker 取得了控制权，他也无权浏览 &#x2F;etc&#x2F;shadow 等重要的配置。</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="SELinux-的三种模式"><a href="#SELinux-的三种模式" class="headerlink" title="SELinux 的三种模式"></a>SELinux 的三种模式</h4><ul>
+<li>Enforcing :  SELinux策略被强制执行，根据SELinux策略来拒绝或者是通过操作。</li>
+<li>Permissive:  SELinux策略并不会执行，原本在Enforcing式下应该被拒绝的操作，在该模式下只会触发安全事件日志记录，而不会拒绝此操作的执行。</li>
+<li>Disabled:  SELinux被关闭，SELinux不会执行任何策略</li>
+</ul>
+<h4 id="SELinux的启动和关闭"><a href="#SELinux的启动和关闭" class="headerlink" title="SELinux的启动和关闭"></a>SELinux的启动和关闭</h4><p>查看当前模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># getenforce</span><br><span class="line">Enforcing</span><br></pre></td></tr></table></figure>
+
+<p>修改模式配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># cat /etc/selinux/config</span><br><span class="line"># This file controls the state of SELinux on the system.</span><br><span class="line"># SELINUX= can take one of these three values:</span><br><span class="line">#     enforcing - SELinux security policy is enforced.</span><br><span class="line">#     permissive - SELinux prints warnings instead of enforcing.</span><br><span class="line">#     disabled - No SELinux policy is loaded.</span><br><span class="line">SELINUX=enforcing</span><br><span class="line"># SELINUXTYPE= can take one of three values:</span><br><span class="line">#     targeted - Targeted processes are protected,</span><br><span class="line">#     minimum - Modification of targeted policy. Only selected processes are protected. </span><br><span class="line">#     mls - Multi Level Security protection.</span><br><span class="line">SELINUXTYPE=targeted</span><br></pre></td></tr></table></figure>
+
+<p>如果改变了政策则需要重新启动：如果由 enforcing 或 permissive 改成 disabled ，或由 disabled 改成其他两个，那也必须要重新启动。这是因为 SELinux 是整合到核心里面去的， 只可以在 SELinux 运行下切换成为强制 (enforcing) 或宽容 (permissive) 模式，不能够直接关闭 SELinux 。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># setenforce [0|1]</span><br><span class="line">选项与参数：</span><br><span class="line">0 ：转成 permissive 宽容模式；</span><br><span class="line">1 ：转成 Enforcing 强制模式</span><br><span class="line"></span><br><span class="line"># setenforce 0</span><br><span class="line"># getenforce</span><br><span class="line">Permissive</span><br><span class="line"># setenforce 1</span><br><span class="line"># getenforce</span><br><span class="line">Enforcing</span><br></pre></td></tr></table></figure>
+
+<h4 id="Security-Context"><a href="#Security-Context" class="headerlink" title="Security Context"></a>Security Context</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># ll -Z</span><br><span class="line">-rw-------. root root system_u:object_r:admin_home_t:s0 anaconda-ks.cfg</span><br><span class="line">drwxr-xr-x. root root unconfined_u:object_r:admin_home_t:s0 security-demos</span><br></pre></td></tr></table></figure>
+
+<p>SELinux为每一个进程设置一个标签，称为进程的域，为文件设置标签，称为类型。每一标签由User、 Role、Type和Level这4部分组成。</p>
+<ul>
+<li>User: SELinux用户是由权限构成的集合，而非Linux用户。系统在登录的时候会为Linux用户匹配一个SELinux用户，通过semanage login -l 可以看到Linux用户和SELinux用户的映射。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># semanage login -l</span><br><span class="line"></span><br><span class="line">登录名                  SELinux 用户           MLS/MCS 范围           服务</span><br><span class="line"></span><br><span class="line">__default__          unconfined_u         s0-s0:c0.c1023       *</span><br><span class="line">root                 unconfined_u         s0-s0:c0.c1023       *</span><br><span class="line">system_u             system_u             s0-s0:c0.c1023       *</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>Role:角色是一些类型的组合，是用户和类型的过渡。一个用户可以有多个角色。一个角色可以使用不同类型。<br>通过这个栏位，可以知道这个数据是属于程序、文件资源还是代表使用者。一般的角色有：</p>
+<ul>
+<li>object_r：代表的是文件或目录等文件资源；</li>
+<li>system_r：代表的就是程序，不过，一般使用者也会被指定成为 system_r</li>
+</ul>
+</li>
+<li><p>Type: Type是SELinux访问控制的基础，描述进程所能访问的资源类型。常见文件资源的类型有blk_file, che_file, dir, fd, fifo_file, fie, filesystem, lnk_file和sock_file等，它们分别用于标识块文件、字符文件、目录、文件描述符文件、fifo文件、文件系统、链接和套接字文件等。容器文件一般表示为svirt_sandbox_file_t或者svirt_lxc_file_t。常见域有很多，不同类型的容器的需求不一样，容器域一般使用svirt_lxc_net_t来标示其域，也可以自己为容器定义域。</p>
+</li>
+<li><p>Level:定义更加具体的权限，可以有两种选择，一种是MLS(多层级安全)，另外一种是MCS(多级分类安全)。</p>
+</li>
+</ul>
+<h4 id="K8s中配置-SELinux"><a href="#K8s中配置-SELinux" class="headerlink" title="K8s中配置 SELinux"></a>K8s中配置 SELinux</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">seLinuxOptions:</span></span><br><span class="line">  <span class="attr">user:</span> <span class="string">system_u</span></span><br><span class="line">  <span class="attr">role:</span> <span class="string">system_r</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">container_t</span></span><br><span class="line">  <span class="attr">level:</span> <span class="string">s0:c829,c861</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Pod-level-Security-Context"><a href="#Pod-level-Security-Context" class="headerlink" title="Pod-level Security Context"></a>Pod-level Security Context</h2><p>在 Pod 的定义中增加 securityContext 字段。通过该字段指定的内容将对该 Pod 中所有的容器生效，并且还会影响Volume（包括 fsGroup 和 selinuxOptions ）</p>
+<p>1、示例<br>￼<br><img src="/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/28F716FC-4DF2-49F0-AE08-F25375E2D964.png"></p>
+<p>在上面的例子中：</p>
+<pre><code>- spec.securityContext.runAsUser 字段指定了该 Pod 中所有容器的进程都以 UserID 1000 的身份运行，spec.securityContext.runAsGroup 字段指定了该 Pod 中所有容器的进程都以 GroupID 3000 的身份运行
+	- 如果该字段被省略，容器进程的GroupID为 root(0)
+	- 容器中创建的文件，其所有者为 userID 1000，groupID 3000
+- spec.securityContext.fsGroup 字段指定了该 Pod 的 fsGroup 为 2000
+	- 数据卷 （本例中，对应挂载点 /data/demo 的数据卷为 sec-ctx-demo） 的所有者以及在该数据卷下创建的任何文件，其 GroupID 为 2000
+</code></pre>
+<p>2、创建 Pod 并进入容器执行 ps aux 查看所有进程，所有的进程都以 user 1000 的身份运行（由 runAsUser 指定），输出结果如下所示：<br><img src="/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/CB34CAFD-2CB6-432E-8512-E796071E644E.png"></p>
+<p>3、执行 cd &#x2F;data 切换到目录 &#x2F;data，并查看目录中的文件列表 ls -l</p>
+<p>&#x2F;data&#x2F;demo 目录的 groupID 为 2000（由 fsGroup 指定），输出结果如下所示：<br><img src="/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/A93CD144-C683-48AB-99DC-4DC4F4012015.png"></p>
+<p>4、在命令行界面中，切换到目录 &#x2F;data&#x2F;demo，并创建一个文件 echo hello &gt; testfile</p>
+<p>testfile 的 groupID 为 2000 （由 FSGroup 指定），输出结果如下所示：<br><img src="/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/E5F1DA0F-F850-42E7-9C59-6390895923DC.png"></p>
+<p>5、在命令行界面中执行 id 命令，输出结果如下所示：<br><img src="/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/B48414E4-B416-4F33-A562-E7F29E88A76A.png"></p>
+<p>gid 为 3000，与 runAsGroup 字段所指定的一致<br>如果 runAsGroup 字段被省略，则 gid 取值为 0（即 root），此时容器中的进程将可以操作 root Group 的文件<br>可以设置的安全策略类型如下：</p>
+<table>
+<thead>
+<tr>
+<th>控制字段</th>
+<th>字段名称</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>非Root <br> runAsNonRoot</td>
+<td>如果为 true，则 kubernetes 在运行容器之前将执行检查，以确保容器进程不是以 root 用户（UID为0）运行，否则将不能启动容器；如果此字段不设置或者为 false，则不执行此检查。该字段也可以在容器的 securityContext 中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。</td>
+</tr>
+<tr>
+<td>用户 <br> runAsUser</td>
+<td>执行容器 entrypoint 进程的 UID。默认为镜像元数据中定义的用户（dockerfile 中通过 USER 指令指定）。该字段也可以在容器的 securityContext 中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。</td>
+</tr>
+<tr>
+<td>用户组 <br> runAsGroup</td>
+<td>执行容器 entrypoint 进程的 GID。默认为 docker 引擎的 GID。该字段也可以在容器的 securityContext 中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。</td>
+</tr>
+<tr>
+<td>fsGroup</td>
+<td>一个特殊的补充用户组，将被应用到 Pod 中所有容器。某些类型的数据卷允许 kubelet 修改数据卷的 ownership：<br>1. 修改后的 GID 取值来自于 fsGroup <br>2. setgid 标记位被设为 1（此时，数据卷中新创建的文件 owner 为 fsGroup）<br>3. permission 标记将与 rw-rw—- 执行或运算 <br>如果该字段不设置，kubelete 将不会修改数据卷的 ownership 和 permission</td>
+</tr>
+<tr>
+<td>补充用户组supplementalGroups</td>
+<td>该列表中的用户组将被作为容器的主 GID 的补充，添加到 Pod 中容器的 enrtypoint 进程。可以不设置。</td>
+</tr>
+<tr>
+<td>seLinuxOptions</td>
+<td>此字段设定的 SELinux 上下文将被应用到 Pod 中所有容器。如果不指定，容器引擎将为每个容器分配一个随机的 SELinux 上下文。该字段也可以在容器的 securityContext 中设定，如果 Pod 和容器的 securityContext 中都设定了这个字段，则对该容器来说以容器中的设置为准。</td>
+</tr>
+<tr>
+<td>sysctls</td>
+<td>该列表中的所有 sysctl 将被应用到 Pod 中的容器。如果定义了容器引擎不支持的 sysctl，Pod 启动将会失败</td>
+</tr>
+</tbody></table>
+<h3 id="关于存储卷"><a href="#关于存储卷" class="headerlink" title="关于存储卷"></a>关于存储卷</h3><p>Pod 的 securityContext 作用于 Pod 中所有的容器，同时对 Pod 的数据卷也同样生效。具体来说，fsGroup 和 seLinuxOptions 将被按照如下方式应用到 Pod 中的数据卷：</p>
+<pre><code>- fsGroup：对于支持 ownership 管理的数据卷，通过 fsGroup 指定的 GID 将被设置为该数据卷的 owner，并且可被 fsGroup 写入。更多细节请参考 Ownership Management design document
+- seLinuxOptions：对于支持 SELinux 标签的数据卷，将按照 seLinuxOptions 的设定重新打标签，以使 Pod 可以访问数据卷内容。通常只需要设置 seLinuxOptions 中 level 这一部分内容。该设定为 Pod 中所有容器及数据卷设置 Multi-Category Security (MCS) 标签。
+</code></pre>
+<h3 id="Pod-Security-Policies"><a href="#Pod-Security-Policies" class="headerlink" title="Pod Security Policies"></a>Pod Security Policies</h3><p>Pod Security Policies（PSP）是集群级的 Pod 安全策略，自动为集群内的 Pod 和 Volume 设置Security Context。<br>使用 PSP 需要在 kube-apiserver 服务的启动参数 –enable-admission-plugins 中进行设置：</p>
+<p>–enable-admission-plugins&#x3D;PodSecurityPolicy</p>
+<p>在开启 PodSecurityPolicy 准入控制器后， Kubernetes 默认不允许创建任何 Pod，需要创建 PodSecurityPolicy 策略和相应的 RBAC 授权策略（Authorizing Policies），Pod 才能创建成功。</p>
+<p>PodSecurityPolicy 对象定义了一组条件，指示 Pod 必须按系统所能接受的顺序运行。 它们允许管理员控制如下方面：</p>
+<table>
+<thead>
+<tr>
+<th>控制字段</th>
+<th>字段名称</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>已授权容器的运行</td>
+<td>privileged</td>
+</tr>
+<tr>
+<td>为容器添加默认的一组能力</td>
+<td>defaultAddCapabilities</td>
+</tr>
+<tr>
+<td>为容器去掉某些能力</td>
+<td>requiredDropCapabilities</td>
+</tr>
+<tr>
+<td>容器能够请求添加某些能力</td>
+<td>allowedCapabilities</td>
+</tr>
+<tr>
+<td>控制卷类型的使用</td>
+<td>volumes</td>
+</tr>
+<tr>
+<td>主机网络的使用</td>
+<td>hostNetwork</td>
+</tr>
+<tr>
+<td>主机端口的使用</td>
+<td>hostPorts</td>
+</tr>
+<tr>
+<td>主机</td>
+<td>PID namespace 的使用	hostPID</td>
+</tr>
+<tr>
+<td>主机</td>
+<td>IPC namespace 的使用	hostIPC</td>
+</tr>
+<tr>
+<td>主机路径的使用</td>
+<td>allowedHostPaths</td>
+</tr>
+<tr>
+<td>容器的</td>
+<td>SELinux 上下文	seLinux</td>
+</tr>
+<tr>
+<td>用户</td>
+<td>ID	runAsUser</td>
+</tr>
+<tr>
+<td>配置允许的补充组</td>
+<td>supplementalGroups</td>
+</tr>
+<tr>
+<td>分配拥有</td>
+<td>Pod 数据卷的 FSGroup	fsGroup</td>
+</tr>
+<tr>
+<td>必须使用一个只读的</td>
+<td>root 文件系统	readOnlyRootFilesystem</td>
+</tr>
+</tbody></table>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a><a href="/tags/Docker/">Docker</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2020/12/04/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/" data-title="容器 Security Context (安全上下文) | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/12/04/Golang-连接池的几种实现案例/" title="Golang 连接池的几种实现案例">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Golang 连接池的几种实现案例</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/11/10/使用go的io-Pipe优雅的优化中间缓存/"  title="使用go的io.Pipe优雅的优化中间缓存">
+ <strong>下一篇：</strong><br/> 
+ <span>使用go的io.Pipe优雅的优化中间缓存
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2020/12/04/Security Context (安全上下文)/" data-title="容器 Security Context (安全上下文)" data-url="https://luckymrwang.github.io/2020/12/04/Security%20Context%20(%E5%AE%89%E5%85%A8%E4%B8%8A%E4%B8%8B%E6%96%87)/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Container-level-Security-Context"><span class="toc-number">1.</span> <span class="toc-text">Container-level Security Context</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#privileged"><span class="toc-number">1.1.</span> <span class="toc-text">privileged</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#runAsUser-runAsGroup"><span class="toc-number">1.2.</span> <span class="toc-text">runAsUser &amp; runAsGroup</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#runAsNonRoot"><span class="toc-number">1.3.</span> <span class="toc-text">runAsNonRoot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#readOnlyRootFilesystem"><span class="toc-number">1.4.</span> <span class="toc-text">readOnlyRootFilesystem</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#allowPrivilegeEscalation"><span class="toc-number">1.5.</span> <span class="toc-text">allowPrivilegeEscalation</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4"><span class="toc-number">1.5.1.</span> <span class="toc-text">默认</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%97%ADallowPrivilegeEscalation"><span class="toc-number">1.5.2.</span> <span class="toc-text">关闭allowPrivilegeEscalation</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Linux-Capabilities"><span class="toc-number">1.6.</span> <span class="toc-text">Linux Capabilities</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-Capabilities"><span class="toc-number">1.7.</span> <span class="toc-text">如何使用 Capabilities</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BA%BF%E7%A8%8B%E7%9A%84-capabilities"><span class="toc-number">1.7.1.</span> <span class="toc-text">线程的 capabilities</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Permitted"><span class="toc-number">1.7.1.1.</span> <span class="toc-text">Permitted</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Effective"><span class="toc-number">1.7.1.2.</span> <span class="toc-text">Effective</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Inheritable"><span class="toc-number">1.7.1.3.</span> <span class="toc-text">Inheritable</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Bounding"><span class="toc-number">1.7.1.4.</span> <span class="toc-text">Bounding</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Ambient"><span class="toc-number">1.7.1.5.</span> <span class="toc-text">Ambient</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%9A%84-capabilities"><span class="toc-number">1.7.1.6.</span> <span class="toc-text">文件的 capabilities</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Docker-Container-Capabilities"><span class="toc-number">1.8.</span> <span class="toc-text">Docker Container Capabilities</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#LinuxCapability%E5%B8%B8%E9%87%8F"><span class="toc-number">1.8.1.</span> <span class="toc-text">LinuxCapability常量</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Docker-%E8%83%8C%E5%90%8E%E7%9A%84%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86-%E2%80%94%E2%80%94-Libcontainer"><span class="toc-number">1.8.1.1.</span> <span class="toc-text">Docker 背后的容器管理 —— Libcontainer</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AE%B9%E5%99%A8%E7%9A%84%E9%BB%98%E8%AE%A4%E6%9D%83%E9%99%90"><span class="toc-number">1.8.1.2.</span> <span class="toc-text">容器的默认权限</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kubernetes-%E4%B8%AD%E4%B8%BA%E5%AE%B9%E5%99%A8%E8%AE%BE%E7%BD%AE-Linux-Capabilities"><span class="toc-number">1.9.</span> <span class="toc-text">Kubernetes 中为容器设置 Linux Capabilities</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SELinux"><span class="toc-number">1.10.</span> <span class="toc-text">SELinux</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SELinux-%E7%9A%84%E4%B8%89%E7%A7%8D%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.10.1.</span> <span class="toc-text">SELinux 的三种模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SELinux%E7%9A%84%E5%90%AF%E5%8A%A8%E5%92%8C%E5%85%B3%E9%97%AD"><span class="toc-number">1.10.2.</span> <span class="toc-text">SELinux的启动和关闭</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Security-Context"><span class="toc-number">1.10.3.</span> <span class="toc-text">Security Context</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#K8s%E4%B8%AD%E9%85%8D%E7%BD%AE-SELinux"><span class="toc-number">1.10.4.</span> <span class="toc-text">K8s中配置 SELinux</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Pod-level-Security-Context"><span class="toc-number">2.</span> <span class="toc-text">Pod-level Security Context</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E5%AD%98%E5%82%A8%E5%8D%B7"><span class="toc-number">2.1.</span> <span class="toc-text">关于存储卷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pod-Security-Policies"><span class="toc-number">2.2.</span> <span class="toc-text">Pod Security Policies</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

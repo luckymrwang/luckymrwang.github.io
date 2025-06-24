@@ -1,0 +1,574 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Golang 连接池的几种实现案例 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="因为 TCP 的三只握手等等原因，建立一个连接是一件成本比较高的行为。所以在一个需要多次与特定实体交互的程序中，就需要维持一个连接池，里面有可以复用的连接可供重复使用。 而维持一个连接池，最基本的要求就是要做到：thread safe（线程安全），尤其是在 Golang 这种特性是 goroutine 的语言中。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang 连接池的几种实现案例">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/12/04/Golang-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%A1%88%E4%BE%8B/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="因为 TCP 的三只握手等等原因，建立一个连接是一件成本比较高的行为。所以在一个需要多次与特定实体交互的程序中，就需要维持一个连接池，里面有可以复用的连接可供重复使用。 而维持一个连接池，最基本的要求就是要做到：thread safe（线程安全），尤其是在 Golang 这种特性是 goroutine 的语言中。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-04T15:08:51.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.191Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/04/Golang-连接池的几种实现案例/" title="Golang 连接池的几种实现案例" itemprop="url">Golang 连接池的几种实现案例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-04T15:08:51.000Z" itemprop="datePublished"> 发表于 2020-12-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="toc-number">1.</span> <span class="toc-text">实现简单的连接池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">2.</span> <span class="toc-text">获取连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="toc-number">3.</span> <span class="toc-text">关闭连接池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8A%E6%94%BE%E8%BF%9E%E6%8E%A5"><span class="toc-number">4.</span> <span class="toc-text">释放连接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Golang%E6%A0%87%E5%87%86%E5%BA%93%E7%9A%84Sql%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="toc-number"></span> <span class="toc-text">Golang标准库的Sql连接池</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5-1"><span class="toc-number">1.</span> <span class="toc-text">获取连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8A%E6%94%BE%E8%BF%9E%E6%8E%A5-1"><span class="toc-number">2.</span> <span class="toc-text">释放连接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redis-Golang%E5%AE%9E%E7%8E%B0%E7%9A%84Redis%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number"></span> <span class="toc-text">redis Golang实现的Redis客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E8%BF%9E%E6%8E%A5%E6%B1%A0%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.</span> <span class="toc-text">新建连接池连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5-2"><span class="toc-number">2.</span> <span class="toc-text">获取连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.</span> <span class="toc-text">新建连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%92%E8%BF%98%E8%BF%9E%E6%8E%A5"><span class="toc-number">4.</span> <span class="toc-text">归还连接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number"></span> <span class="toc-text">总结</span></a>
+		
+		</div>
+		
+		<p>因为 TCP 的三只握手等等原因，建立一个连接是一件成本比较高的行为。所以在一个需要多次与特定实体交互的程序中，就需要维持一个连接池，里面有可以复用的连接可供重复使用。</p>
+<p>而维持一个连接池，最基本的要求就是要做到：thread safe（线程安全），尤其是在 Golang 这种特性是 goroutine 的语言中。</p>
+<span id="more"></span>
+
+<h3 id="实现简单的连接池"><a href="#实现简单的连接池" class="headerlink" title="实现简单的连接池"></a>实现简单的连接池</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Pool <span class="keyword">struct</span> &#123;</span><br><span class="line">	m sync.Mutex <span class="comment">// 保证多个goroutine访问时候，closed的线程安全</span></span><br><span class="line">	res <span class="keyword">chan</span> io.Closer <span class="comment">//连接存储的chan</span></span><br><span class="line">	factory <span class="function"><span class="keyword">func</span><span class="params">()</span></span> (io.Closer,<span class="type">error</span>) <span class="comment">//新建连接的工厂方法</span></span><br><span class="line">	closed <span class="type">bool</span> <span class="comment">//连接池关闭标志</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个简单的连接池，我们利用chan来存储池里的连接。而新建结构体的方法也比较简单：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(fn <span class="keyword">func</span>()</span></span> (io.Closer, <span class="type">error</span>), size <span class="type">uint</span>) (*Pool, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> size &lt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">&quot;size的值太小了。&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> &amp;Pool&#123;</span><br><span class="line">		factory: fn,</span><br><span class="line">		res:     <span class="built_in">make</span>(<span class="keyword">chan</span> io.Closer, size),</span><br><span class="line">	&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>只需要提供对应的工厂函数和连接池的大小就可以了。</p>
+<h3 id="获取连接"><a href="#获取连接" class="headerlink" title="获取连接"></a>获取连接</h3><p>那么我们要怎么从中获取资源呢？因为我们内部存储连接的结构是chan，所以只需要简单的select就可以保证线程安全：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//从资源池里获取一个资源</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span></span> Acquire() (io.Closer,<span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> r,ok := &lt;-p.res:</span><br><span class="line">		log.Println(<span class="string">&quot;Acquire:共享资源&quot;</span>)</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span>,ErrPoolClosed</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> r,<span class="literal">nil</span></span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		log.Println(<span class="string">&quot;Acquire:新生成资源&quot;</span>)</span><br><span class="line">		<span class="keyword">return</span> p.factory()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们先从连接池的res这个chan里面获取，如果没有的话我们就利用我们早已经准备好的工厂函数进行构造连接。同时我们在从res获取连接的时候利用ok先确定了这个连接池是否已经关闭。如果已经关闭的话我们就返回早已经准备好的连接已关闭错误。</p>
+<h3 id="关闭连接池"><a href="#关闭连接池" class="headerlink" title="关闭连接池"></a>关闭连接池</h3><p>那么既然提到关闭连接池，我们是怎么样关闭连接池的呢？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//关闭资源池，释放资源</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span></span> Close() &#123;</span><br><span class="line">	p.m.Lock()</span><br><span class="line">	<span class="keyword">defer</span> p.m.Unlock()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> p.closed &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	p.closed = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//关闭通道，不让写入了</span></span><br><span class="line">	<span class="built_in">close</span>(p.res)</span><br><span class="line"></span><br><span class="line">	<span class="comment">//关闭通道里的资源</span></span><br><span class="line">	<span class="keyword">for</span> r:=<span class="keyword">range</span> p.res &#123;</span><br><span class="line">		r.Close()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这边我们需要先进行p.m.Lock()上锁操作，这么做是因为我们需要对结构体里面的closed进行读写。需要先把这个标志位设定后，关闭res这个chan，使得Acquire方法无法再获取新的连接。我们再对res这个chan里面的连接进行Close操作。</p>
+<h3 id="释放连接"><a href="#释放连接" class="headerlink" title="释放连接"></a>释放连接</h3><p>释放连接首先得有个前提，就是连接池还没有关闭。如果连接池已经关闭再往res里面送连接的话就好触发panic。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span></span> Release(r io.Closer)&#123;</span><br><span class="line">	<span class="comment">//保证该操作和Close方法的操作是安全的</span></span><br><span class="line">	p.m.Lock()</span><br><span class="line">	<span class="keyword">defer</span> p.m.Unlock()</span><br><span class="line"></span><br><span class="line">	<span class="comment">//资源池都关闭了，就省这一个没有释放的资源了，释放即可</span></span><br><span class="line">	<span class="keyword">if</span> p.closed &#123;</span><br><span class="line">		r.Close()</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> p.res &lt;- r:</span><br><span class="line">		log.Println(<span class="string">&quot;资源释放到池子里了&quot;</span>)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		log.Println(<span class="string">&quot;资源池满了，释放这个资源吧&quot;</span>)</span><br><span class="line">		r.Close()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上就是一个简单且线程安全的连接池实现方式了。我们可以看到的是，现在连接池虽然已经实现了，但是还有几个小缺点:</p>
+<blockquote>
+<p>1、我们对连接最大的数量没有限制，如果线程池空的话都我们默认就直接新建一个连接返回了。一旦并发量高的话将会不断新建连接，很容易（尤其是MySQL）造成<code>too many connections</code>的报错发生。<br>2、既然我们需要保证最大可获取连接数量，那么我们就不希望数量定的太死。希望空闲的时候可以维护一定的空闲连接数量idleNum，但是又希望我们能限制最大可获取连接数量maxNum。<br>3、第一种情况是并发过多的情况，那么如果并发量过少呢？现在我们在新建一个连接并且归还后，我们很长一段时间不再使用这个连接。那么这个连接很有可能在几个小时甚至更长时间之前就已经建立的了。长时间闲置的连接我们并没有办法保证它的可用性。便有可能我们下次获取的连接是已经失效的连接。</p>
+</blockquote>
+<p>那么我们可以从已经成熟使用的MySQL连接池库和Redis连接池库中看看，它们是怎么解决这些问题的。</p>
+<h2 id="Golang标准库的Sql连接池"><a href="#Golang标准库的Sql连接池" class="headerlink" title="Golang标准库的Sql连接池"></a>Golang标准库的Sql连接池</h2><p>Golang的连接池实现在标准库database&#x2F;sql&#x2F;sql.go下。当我们运行：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db, err := sql.Open(<span class="string">&quot;mysql&quot;</span>, <span class="string">&quot;xxxx&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>的时候，就会打开一个连接池。我们可以看看返回的db的结构体：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> DB <span class="keyword">struct</span> &#123;</span><br><span class="line">	waitDuration <span class="type">int64</span> <span class="comment">// Total time waited for new connections.</span></span><br><span class="line">	mu           sync.Mutex <span class="comment">// protects following fields</span></span><br><span class="line">	freeConn     []*driverConn</span><br><span class="line">	connRequests <span class="keyword">map</span>[<span class="type">uint64</span>]<span class="keyword">chan</span> connRequest</span><br><span class="line">	nextRequest  <span class="type">uint64</span> <span class="comment">// Next key to use in connRequests.</span></span><br><span class="line">	numOpen      <span class="type">int</span>    <span class="comment">// number of opened and pending open connections</span></span><br><span class="line">	<span class="comment">// Used to signal the need for new connections</span></span><br><span class="line">	<span class="comment">// a goroutine running connectionOpener() reads on this chan and</span></span><br><span class="line">	<span class="comment">// maybeOpenNewConnections sends on the chan (one send per needed connection)</span></span><br><span class="line">	<span class="comment">// It is closed during db.Close(). The close tells the connectionOpener</span></span><br><span class="line">	<span class="comment">// goroutine to exit.</span></span><br><span class="line">	openerCh          <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	closed            <span class="type">bool</span></span><br><span class="line">	maxIdle           <span class="type">int</span>                    <span class="comment">// zero means defaultMaxIdleConns; negative means 0</span></span><br><span class="line">	maxOpen           <span class="type">int</span>                    <span class="comment">// &lt;= 0 means unlimited</span></span><br><span class="line">	maxLifetime       time.Duration          <span class="comment">// maximum amount of time a connection may be reused</span></span><br><span class="line">	cleanerCh         <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">	waitCount         <span class="type">int64</span> <span class="comment">// Total number of connections waited for.</span></span><br><span class="line">	maxIdleClosed     <span class="type">int64</span> <span class="comment">// Total number of connections closed due to idle.</span></span><br><span class="line">	maxLifetimeClosed <span class="type">int64</span> <span class="comment">// Total number of connections closed due to max free limit.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面省去了一些暂时不需要关注的field。我们可以看的，DB这个连接池内部存储连接的结构freeConn，并不是我们之前使用的chan，而是 <code>[]driverConn</code>，一个连接切片。同时我们还可以看到，里面有maxIdle等相关变量来控制空闲连接数量。值得注意的是，DB的初始化函数Open函数并没有新建数据库连接。而新建连接在哪个函数呢？我们可以在Query方法一路往回找，我们可以看到这个函数：<code>func (db *DB) conn(ctx context.Context, strategy connReuseStrategy) (*driverConn, error)</code>。而我们从连接池获取连接的方法，就从这里开始：</p>
+<h3 id="获取连接-1"><a href="#获取连接-1" class="headerlink" title="获取连接"></a>获取连接</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// conn returns a newly-opened or cached *driverConn.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *DB)</span></span> conn(ctx context.Context, strategy connReuseStrategy) (*driverConn, <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="comment">// 先判断db是否已经关闭。</span></span><br><span class="line">	db.mu.Lock()</span><br><span class="line">	<span class="keyword">if</span> db.closed &#123;</span><br><span class="line">		db.mu.Unlock()</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errDBClosed</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 注意检测context是否已经被超时等原因被取消。</span></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">	<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">		db.mu.Unlock()</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, ctx.Err()</span><br><span class="line">	&#125;</span><br><span class="line">	lifetime := db.maxLifetime</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 这边如果在freeConn这个切片有空闲连接的话，就left pop一个出列。注意的是，这边因为是切片操作，所以需要前面需要加锁且获取后进行解锁操作。同时判断返回的连接是否已经过期。</span></span><br><span class="line">	numFree := <span class="built_in">len</span>(db.freeConn)</span><br><span class="line">	<span class="keyword">if</span> strategy == cachedOrNewConn &amp;&amp; numFree &gt; <span class="number">0</span> &#123;</span><br><span class="line">		conn := db.freeConn[<span class="number">0</span>]</span><br><span class="line">		<span class="built_in">copy</span>(db.freeConn, db.freeConn[<span class="number">1</span>:])</span><br><span class="line">		db.freeConn = db.freeConn[:numFree<span class="number">-1</span>]</span><br><span class="line">		conn.inUse = <span class="literal">true</span></span><br><span class="line">		db.mu.Unlock()</span><br><span class="line">		<span class="keyword">if</span> conn.expired(lifetime) &#123;</span><br><span class="line">			conn.Close()</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span>, driver.ErrBadConn</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// Lock around reading lastErr to ensure the session resetter finished.</span></span><br><span class="line">		conn.Lock()</span><br><span class="line">		err := conn.lastErr</span><br><span class="line">		conn.Unlock()</span><br><span class="line">		<span class="keyword">if</span> err == driver.ErrBadConn &#123;</span><br><span class="line">			conn.Close()</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span>, driver.ErrBadConn</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> conn, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 这边就是等候获取连接的重点了。当空闲的连接为空的时候，这边将会新建一个request（的等待连接 的请求）并且开始等待</span></span><br><span class="line">	<span class="keyword">if</span> db.maxOpen &gt; <span class="number">0</span> &amp;&amp; db.numOpen &gt;= db.maxOpen &#123;</span><br><span class="line">		<span class="comment">// 下面的动作相当于往connRequests这个map插入自己的号码牌。</span></span><br><span class="line">		<span class="comment">// 插入号码牌之后这边就不需要阻塞等待继续往下走逻辑。</span></span><br><span class="line">		req := <span class="built_in">make</span>(<span class="keyword">chan</span> connRequest, <span class="number">1</span>)</span><br><span class="line">		reqKey := db.nextRequestKeyLocked()</span><br><span class="line">		db.connRequests[reqKey] = req</span><br><span class="line">		db.waitCount++</span><br><span class="line">		db.mu.Unlock()</span><br><span class="line"></span><br><span class="line">		waitStart := time.Now()</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Timeout the connection request with the context.</span></span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">			<span class="comment">// context取消操作的时候，记得从connRequests这个map取走自己的号码牌。</span></span><br><span class="line">			db.mu.Lock()</span><br><span class="line">			<span class="built_in">delete</span>(db.connRequests, reqKey)</span><br><span class="line">			db.mu.Unlock()</span><br><span class="line"></span><br><span class="line">			atomic.AddInt64(&amp;db.waitDuration, <span class="type">int64</span>(time.Since(waitStart)))</span><br><span class="line"></span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">case</span> ret, ok := &lt;-req:</span><br><span class="line">                <span class="comment">// 这边值得注意了，因为现在已经被context取消了。但是刚刚放了自己的号码牌进去排队里面。意思是说不定已经发了连接了，所以得注意归还！</span></span><br><span class="line">				<span class="keyword">if</span> ok &amp;&amp; ret.conn != <span class="literal">nil</span> &#123;</span><br><span class="line">					db.putConn(ret.conn, ret.err, <span class="literal">false</span>)</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span>, ctx.Err()</span><br><span class="line">		<span class="keyword">case</span> ret, ok := &lt;-req:</span><br><span class="line">            <span class="comment">// 下面是已经获得连接后的操作了。检测一下获得连接的状况。因为有可能已经过期了等等。</span></span><br><span class="line">			atomic.AddInt64(&amp;db.waitDuration, <span class="type">int64</span>(time.Since(waitStart)))</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> !ok &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span>, errDBClosed</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> ret.err == <span class="literal">nil</span> &amp;&amp; ret.conn.expired(lifetime) &#123;</span><br><span class="line">				ret.conn.Close()</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span>, driver.ErrBadConn</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> ret.conn == <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span>, ret.err</span><br><span class="line">			&#125;</span><br><span class="line">			ret.conn.Lock()</span><br><span class="line">			err := ret.conn.lastErr</span><br><span class="line">			ret.conn.Unlock()</span><br><span class="line">			<span class="keyword">if</span> err == driver.ErrBadConn &#123;</span><br><span class="line">				ret.conn.Close()</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span>, driver.ErrBadConn</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> ret.conn, ret.err</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 下面就是如果上面说的限制情况不存在，可以创建先连接时候，要做的创建连接操作了。</span></span><br><span class="line">	db.numOpen++ <span class="comment">// optimistically</span></span><br><span class="line">	db.mu.Unlock()</span><br><span class="line">	ci, err := db.connector.Connect(ctx)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		db.mu.Lock()</span><br><span class="line">		db.numOpen-- <span class="comment">// correct for earlier optimism</span></span><br><span class="line">		db.maybeOpenNewConnections()</span><br><span class="line">		db.mu.Unlock()</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	db.mu.Lock()</span><br><span class="line">	dc := &amp;driverConn&#123;</span><br><span class="line">		db:        db,</span><br><span class="line">		createdAt: nowFunc(),</span><br><span class="line">		ci:        ci,</span><br><span class="line">		inUse:     <span class="literal">true</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	db.addDepLocked(dc, dc)</span><br><span class="line">	db.mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> dc, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单来说，DB结构体除了用的是slice来存储连接，还加了一个类似排队机制的connRequests来解决获取等待连接的过程。同时在判断连接健康性都有很好的兼顾。那么既然有了排队机制，归还连接的时候是怎么做的呢？</p>
+<h3 id="释放连接-1"><a href="#释放连接-1" class="headerlink" title="释放连接"></a>释放连接</h3><p>我们可以直接找到<code>func (db *DB) putConnDBLocked(dc *driverConn, err error) bool</code>这个方法。就像注释说的，这个方法主要的目的是：</p>
+<blockquote>
+<p>Satisfy a connRequest or put the driverConn in the idle pool and return true or return false.</p>
+</blockquote>
+<p>我们主要来看看里面重点那几行：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">	<span class="comment">// 如果已经超过最大打开数量了，就不需要在回归pool了</span></span><br><span class="line">	<span class="keyword">if</span> db.maxOpen &gt; <span class="number">0</span> &amp;&amp; db.numOpen &gt; db.maxOpen &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 这边是重点了，基本来说就是从connRequest这个map里面随机抽一个在排队等着的请求。取出来后发给他。就不用归还池子了。</span></span><br><span class="line">	<span class="keyword">if</span> c := <span class="built_in">len</span>(db.connRequests); c &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">var</span> req <span class="keyword">chan</span> connRequest</span><br><span class="line">		<span class="keyword">var</span> reqKey <span class="type">uint64</span></span><br><span class="line">		<span class="keyword">for</span> reqKey, req = <span class="keyword">range</span> db.connRequests &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">delete</span>(db.connRequests, reqKey) <span class="comment">// 删除这个在排队的请求。</span></span><br><span class="line">		<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">			dc.inUse = <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">        <span class="comment">// 把连接给这个正在排队的连接。</span></span><br><span class="line">		req &lt;- connRequest&#123;</span><br><span class="line">			conn: dc,</span><br><span class="line">			err:  err,</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> err == <span class="literal">nil</span> &amp;&amp; !db.closed &#123;</span><br><span class="line">        <span class="comment">// 既然没人排队，就看看到了最大连接数目没有。没到就归还给freeConn。</span></span><br><span class="line">		<span class="keyword">if</span> db.maxIdleConnsLocked() &gt; <span class="built_in">len</span>(db.freeConn) &#123;</span><br><span class="line">			db.freeConn = <span class="built_in">append</span>(db.freeConn, dc)</span><br><span class="line">			db.startCleanerLocked()</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">		db.maxIdleClosed++</span><br><span class="line">	&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到，当归还连接时候，如果有在排队轮候的请求就不归还给池子直接发给在轮候的人了。</p>
+<blockquote>
+<p>现在基本就解决前面说的小问题了。不会出现连接太多导致无法控制too many connections的情况。也很好了维持了连接池的最小数量。同时也做了相关对于连接健康性的检查操作。<br>值得注意的是，作为标准库的代码，相关注释和代码都非常完美，真的可以看的神清气爽。</p>
+</blockquote>
+<h2 id="redis-Golang实现的Redis客户端"><a href="#redis-Golang实现的Redis客户端" class="headerlink" title="redis Golang实现的Redis客户端"></a><a href="https://github.com/go-redis/redis">redis</a> Golang实现的Redis客户端</h2><p>这个Golang实现的Redis客户端，是怎么实现连接池的。这边的思路非常奇妙，还是能学习到不少好思路。当然了，由于代码注释比较少，啃起来第一下还是有点迷糊的。相关代码地址在 <a href="https://github.com/go-redis/redis/blob/master/internal/pool/pool.go">https://github.com/go-redis/redis/blob/master/internal/pool/pool.go</a> 可以看到。</p>
+<p>而它的连接池结构如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ConnPool <span class="keyword">struct</span> &#123;</span><br><span class="line">	...</span><br><span class="line">	queue <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	connsMu      sync.Mutex</span><br><span class="line">	conns        []*Conn</span><br><span class="line">	idleConns    []*Conn</span><br><span class="line">	poolSize     <span class="type">int</span></span><br><span class="line">	idleConnsLen <span class="type">int</span></span><br><span class="line"></span><br><span class="line">	stats Stats</span><br><span class="line"></span><br><span class="line">	_closed  <span class="type">uint32</span> <span class="comment">// atomic</span></span><br><span class="line">	closedCh <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到里面存储连接的结构还是slice。但是我们可以重点看看<code>queue</code>，<code>conns</code>，<code>idleConns</code>这几个变量，后面会提及到。但是值得注意的是！我们可以看到，这里有两个<code>[]Conn</code>结构：<code>conns</code>、<code>idleConns</code>，那么问题来了：</p>
+<p>到底连接存在哪里？</p>
+<h3 id="新建连接池连接"><a href="#新建连接池连接" class="headerlink" title="新建连接池连接"></a>新建连接池连接</h3><p>我们先从新建连接池连接开始看：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewConnPool</span><span class="params">(opt *Options)</span></span> *ConnPool &#123;</span><br><span class="line">	....</span><br><span class="line">	p.checkMinIdleConns()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> opt.IdleTimeout &gt; <span class="number">0</span> &amp;&amp; opt.IdleCheckFrequency &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">go</span> p.reaper(opt.IdleCheckFrequency)</span><br><span class="line">	&#125;</span><br><span class="line">	....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>初始化连接池的函数有个和前面两个不同的地方。</p>
+<p>1、<code>checkMinIdleConns</code>方法，在连接池初始化的时候就会往连接池填满空闲的连接。<br>2、<code>go p.reaper(opt.IdleCheckFrequency)</code>则会在初始化连接池的时候就会起一个go程，周期性的淘汰连接池里面要被淘汰的连接。</p>
+<h3 id="获取连接-2"><a href="#获取连接-2" class="headerlink" title="获取连接"></a>获取连接</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *ConnPool)</span></span> Get(ctx context.Context) (*Conn, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> p.closed() &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, ErrClosed</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">//这边和前面sql获取连接函数的流程先不同。sql是先看看连接池有没有空闲连接，有的话先获取不到再排队。这边是直接先排队获取令牌，排队函数后面会分析。</span></span><br><span class="line">	err := p.waitTurn(ctx)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//前面没出error的话，就已经排队轮候到了。接下来就是获取的流程。</span></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		p.connsMu.Lock()</span><br><span class="line">        <span class="comment">//从空闲连接里面先获取一个空闲连接。</span></span><br><span class="line">		cn := p.popIdle()</span><br><span class="line">		p.connsMu.Unlock()</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> cn == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="comment">// 没有空闲连接时候直接跳出循环。</span></span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 判断是否已经过时，是的话close掉了然后继续取出。</span></span><br><span class="line">		<span class="keyword">if</span> p.isStaleConn(cn) &#123;</span><br><span class="line">			_ = p.CloseConn(cn)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		atomic.AddUint32(&amp;p.stats.Hits, <span class="number">1</span>)</span><br><span class="line">		<span class="keyword">return</span> cn, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	atomic.AddUint32(&amp;p.stats.Misses, <span class="number">1</span>)</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 如果没有空闲连接的话，这边就直接新建连接了。</span></span><br><span class="line">	newcn, err := p.newConn(ctx, <span class="literal">true</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="comment">// 归还令牌。</span></span><br><span class="line">		p.freeTurn()</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> newcn, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以试着回答开头那个问题：连接到底存在哪里？答案是从<code>cn := p.popIdle()</code>这句话可以看出，获取连接这个动作，是从idleConns里面获取的，而里面的函数也证明了这一点。但是，真的是这样的嘛？我们后面再看看。</p>
+<p>同时我的理解是：</p>
+<p>1、sql的排队意味着我对连接池申请连接后，把自己的编号告诉连接池。连接那边一看到有空闲了，就叫我的号。我答应了一声，然后连接池就直接给个连接给我。我如果不归还，连接池就一直不叫下一个号。<br>2、redis这边的意思是，我去和连接池申请的不是连接而是令牌。我就一直排队等着，连接池给我令牌了，我才去仓库里面找空闲连接或者自己新建一个连接。用完了连接除了归还连接外，还得归还令牌。当然了，如果我自己新建连接出错了，我哪怕拿不到连接回家，我也得把令牌给回连接池，不然连接池的令牌数少了，最大连接数也会变小。</p>
+<p>而：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *ConnPool)</span></span> freeTurn() &#123;</span><br><span class="line">	&lt;-p.queue</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *ConnPool)</span></span> waitTurn(ctx context.Context) <span class="type">error</span> &#123;</span><br><span class="line">...</span><br><span class="line">	<span class="keyword">case</span> p.queue &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就是在靠queue这个chan来维持令牌数量。</p>
+<p>那么conns的作用是什么呢？我们可以来看看新建连接这个函数：</p>
+<h3 id="新建连接"><a href="#新建连接" class="headerlink" title="新建连接"></a>新建连接</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *ConnPool)</span></span> newConn(ctx context.Context, pooled <span class="type">bool</span>) (*Conn, <span class="type">error</span>) &#123;</span><br><span class="line">	cn, err := p.dialConn(ctx, pooled)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	p.connsMu.Lock()</span><br><span class="line">	p.conns = <span class="built_in">append</span>(p.conns, cn)</span><br><span class="line">	<span class="keyword">if</span> pooled &#123;</span><br><span class="line">		<span class="comment">// 如果连接池满了，会在后面移除。</span></span><br><span class="line">		<span class="keyword">if</span> p.poolSize &gt;= p.opt.PoolSize &#123;</span><br><span class="line">			cn.pooled = <span class="literal">false</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			p.poolSize++</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	p.connsMu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> cn, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基本逻辑出来了。就是如果新建连接的话，我并不会直接放在idleConns里面，而是先放conns里面。同时先看池子满了没有。满的话后面归还的时候会标记，后面会删除。那么这个后面会删除，指的是什么时候呢？那就是下面说的归还连接的时候了。</p>
+<h3 id="归还连接"><a href="#归还连接" class="headerlink" title="归还连接"></a>归还连接</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *ConnPool)</span></span> Put(cn *Conn) &#123;</span><br><span class="line">	<span class="keyword">if</span> cn.rd.Buffered() &gt; <span class="number">0</span> &#123;</span><br><span class="line">		internal.Logger.Printf(<span class="string">&quot;Conn has unread data&quot;</span>)</span><br><span class="line">		p.Remove(cn, BadConnError&#123;&#125;)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//这就是我们刚刚说的后面了，前面标记过不要入池的，这边就删除了。当然了，里面也会进行freeTurn操作。</span></span><br><span class="line">	<span class="keyword">if</span> !cn.pooled &#123;</span><br><span class="line">        <span class="comment">// 这个方法就是前面的标志位，判断里面可以知道，前面标志不要池化的，这里会将它删除。</span></span><br><span class="line">		p.Remove(cn, <span class="literal">nil</span>)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	p.connsMu.Lock()</span><br><span class="line">	p.idleConns = <span class="built_in">append</span>(p.idleConns, cn)</span><br><span class="line">	p.idleConnsLen++</span><br><span class="line">	p.connsMu.Unlock()</span><br><span class="line">    <span class="comment">//我们可以看到很明显的这个归还号码牌的动作。</span></span><br><span class="line">	p.freeTurn()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>答案就是，所有的连接其实是存放在conns这个切片里面。如果这个连接是空闲等待的状态的话，那就在idleConns里面加一个自己的指针！</p>
+<p>其实归还的过程，就是检查一下我打算还的这个连接，是不是超售的产物，如果是就没必要池化了，直接删除就可以了。不是的话，就是把连接自身（一个指针）在idleConns也append一下。</p>
+<p>等等，上面的逻辑似乎有点不对？我们来理一下获取连接流程：</p>
+<p>1、先waitTurn，拿到令牌。而令牌数量是根据pool里面的queue决定的。<br>2、拿到令牌了，去库房idleConns里面拿空闲的连接。没有的话就自己newConn一个，并且把他记录到conns里面。<br>3、用完了，就调用put归还：也就是从conns添加这个连接的指针到idleConns。归还的时候就检查在newConn时候是不是已经做了超卖标记了。是的话就不转移到idleConns。</p>
+<p>我当时疑惑了好久，既然始终都需要获得令牌才能得到连接，令牌数量是定的。为什么还会超卖呢？翻了一下源码，我的答案是：</p>
+<p>虽然Get方法获取连接是newConn这个私用方法，受到令牌管制导致不会出现超卖。但是这个方法接受传参：pooled bool。所以我猜是担心其他人调用这个方法时候，不管三七二十一就传了true，导致poolSize越来越大。</p>
+<blockquote>
+<p>总的来说，redis这个连接池的连接数控制，还是在queue这个我称为令牌的chan进行操作。</p>
+</blockquote>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上面可以看到，连接池的最基本的保证，就是获取连接时候的线程安全。但是在实现诸多额外特性时候却又从不同角度来实现。还是非常有意思的。但是不管存储结构是用chan还是还是slice，都可以很好的实现这一点。如果像sql或者redis那样用slice来存储连接，就得维护一个结构来表示排队等候的效果。</p>
+<p>本文引自<a href="https://juejin.cn/post/6844904077386596366">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2020/12/04/Golang-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%A1%88%E4%BE%8B/" data-title="Golang 连接池的几种实现案例 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/12/09/Go性能分析/" title="Go性能分析">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Go性能分析</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/12/04/Security Context (安全上下文)/"  title="容器 Security Context (安全上下文)">
+ <strong>下一篇：</strong><br/> 
+ <span>容器 Security Context (安全上下文)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2020/12/04/Golang-连接池的几种实现案例/" data-title="Golang 连接池的几种实现案例" data-url="https://luckymrwang.github.io/2020/12/04/Golang-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%A1%88%E4%BE%8B/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="toc-number">1.</span> <span class="toc-text">实现简单的连接池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5"><span class="toc-number">2.</span> <span class="toc-text">获取连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="toc-number">3.</span> <span class="toc-text">关闭连接池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8A%E6%94%BE%E8%BF%9E%E6%8E%A5"><span class="toc-number">4.</span> <span class="toc-text">释放连接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Golang%E6%A0%87%E5%87%86%E5%BA%93%E7%9A%84Sql%E8%BF%9E%E6%8E%A5%E6%B1%A0"><span class="toc-number"></span> <span class="toc-text">Golang标准库的Sql连接池</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5-1"><span class="toc-number">1.</span> <span class="toc-text">获取连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8A%E6%94%BE%E8%BF%9E%E6%8E%A5-1"><span class="toc-number">2.</span> <span class="toc-text">释放连接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#redis-Golang%E5%AE%9E%E7%8E%B0%E7%9A%84Redis%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number"></span> <span class="toc-text">redis Golang实现的Redis客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E8%BF%9E%E6%8E%A5%E6%B1%A0%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.</span> <span class="toc-text">新建连接池连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E8%BF%9E%E6%8E%A5-2"><span class="toc-number">2.</span> <span class="toc-text">获取连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.</span> <span class="toc-text">新建连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%92%E8%BF%98%E8%BF%9E%E6%8E%A5"><span class="toc-number">4.</span> <span class="toc-text">归还连接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number"></span> <span class="toc-text">总结</span></a>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

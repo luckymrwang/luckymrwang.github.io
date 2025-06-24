@@ -1,0 +1,1007 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="学习总结 思考感悟 知识管理">
+<meta property="og:type" content="website">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="https://luckymrwang.github.io/page/3/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="学习总结 思考感悟 知识管理">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="luckymrwang">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main">
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/08/22/bcc-ebpf-安装及示例/" title="bcc/ebpf 安装及示例" itemprop="url">bcc/ebpf 安装及示例</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-08-22T08:44:55.000Z" itemprop="datePublished"> 发表于 2022-08-22</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>eBPF 程序使用 C 语言的一个子集（restricted C）编写，然后通过 LLVM 编译成字节码注入到 内核执行。bcc是 eBPF 的一个外围工具集，使得 “编 写 BPF 代码-编译成字节码-注入内核-获取结果-展示” 整个过程更加便捷。</p>
+<p>下面我们将搭建一个基础环境，通过几个例子展示如何编写 bcc&#x2F;eBPF 程序，感受它们的强大功能。</p>
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>环境需要以下几方面满足要求：内核、docker、bcc。</p>
+<h4 id="内核版本"><a href="#内核版本" class="headerlink" title="内核版本"></a>内核版本</h4><p>eBPF 需要较新的 Linux kernel 支持。 因此首先要确保你的内核版本足够新，至少要在 4.1 以上，最好在 4.10 以上：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">uname</span> -r</span><br><span class="line">4.10.13-1.el7.elrepo.x86_64</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/08/22/bcc-ebpf-%E5%AE%89%E8%A3%85%E5%8F%8A%E7%A4%BA%E4%BE%8B/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eBPF/">eBPF</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/08/22/bcc-ebpf-安装及示例/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/08/22/bcc-ebpf-安装及示例/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/08/19/搭建-eBPF-开发环境/" title="搭建 eBPF 开发环境" itemprop="url">搭建 eBPF 开发环境</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-08-19T13:45:28.000Z" itemprop="datePublished"> 发表于 2022-08-19</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>虽然 Linux 内核很早就已经支持了 eBPF，但很多新特性都是在 4.x 版本中逐步增加的。所以，想要稳定运行 eBPF 程序，内核至少需要 4.9 或者更新的版本。而在开发和学习 eBPF 时，为了体验和掌握最新的 eBPF 特性，我推荐使用更新的 5.x 内核。</p>
+<p>作为 eBPF 最重大的改进之一，一次编译到处执行（简称 CO-RE）解决了内核数据结构在不同版本差异导致的兼容性问题。不过，在使用 CO-RE 之前，内核需要开启 <code>CONFIG_DEBUG_INFO_BTF=y</code> 和 <code>CONFIG_DEBUG_INFO=y</code> 这两个编译选项。为了避免你在首次学习 eBPF 时就去重新编译内核，我推荐使用已经默认开启这些编译选项的发行版，作为你的开发环境，比如：</p>
+<ul>
+<li>Ubuntu 20.10+</li>
+<li>Fedora 31+</li>
+<li>RHEL 8.2+</li>
+<li>Debian 11+</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/08/19/%E6%90%AD%E5%BB%BA-eBPF-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eBPF/">eBPF</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/08/19/搭建-eBPF-开发环境/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/08/19/搭建-eBPF-开发环境/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/08/13/Cilium-eBPF-搭建与使用/" title="Cilium eBPF 搭建与使用" itemprop="url">Cilium eBPF 搭建与使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-08-13T08:14:00.000Z" itemprop="datePublished"> 发表于 2022-08-13</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>目前使用 Go 开发 eBPF 程序可以使用的框架有 <a href="https://github.com/iovisor/gobpf">IOVisor-gobpf</a>、<a href="https://github.com/dropbox/goebpf">Dropbox-goebpf</a>和 <a href="https://github.com/cilium/ebpf">Cilium-ebpf</a>等，考虑到 Cilium 的社区活跃度和未来的发展，使用 Cilium 的 ebpf 是一个比较不错的选择。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/08/13/Cilium-eBPF-%E6%90%AD%E5%BB%BA%E4%B8%8E%E4%BD%BF%E7%94%A8/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eBPF/">eBPF</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/08/13/Cilium-eBPF-搭建与使用/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/08/13/Cilium-eBPF-搭建与使用/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/" title="SmartNIC — TSO、GSO、LRO、GRO 技术" itemprop="url">SmartNIC — TSO、GSO、LRO、GRO 技术</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-07-27T11:54:08.000Z" itemprop="datePublished"> 发表于 2022-07-27</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="TSO-TCP-Segmentation-Offload"><a href="#TSO-TCP-Segmentation-Offload" class="headerlink" title="TSO(TCP Segmentation Offload)"></a>TSO(TCP Segmentation Offload)</h3><p>TSO(TCP Segmentation Offload): 是一种利用网卡对大数据包进行分片，从而减小CPU负荷的一种技术。</p>
+<ul>
+<li>TSO off 和 GSO off：</li>
+</ul>
+<p><img src="/images/tso1.png" alt="images"></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/07/27/SmartNIC-%E2%80%94-TSO%E3%80%81GSO%E3%80%81LRO%E3%80%81GRO-%E6%8A%80%E6%9C%AF/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/07/27/SmartNIC-—-TSO、GSO、LRO、GRO-技术/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/07/25/理解wireshark中的length字段含义/" title="理解wireshark中的length字段含义" itemprop="url">理解wireshark中的length字段含义</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-07-25T14:33:33.000Z" itemprop="datePublished"> 发表于 2022-07-25</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>主要介绍wireshark中的length计算方法，主要涉及MTU、MSS、常见协议头大小。</p>
+<h3 id="length含义"><a href="#length含义" class="headerlink" title="length含义"></a>length含义</h3><p>Wireshark is showing you the length of the Ethernet frame that is handed to it, which may or may not include the FCS.</p>
+<p>wireshark显示的长度为以太网帧的长度，不包括FCS(Frame check sequence)[帧校验序列]</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/07/25/%E7%90%86%E8%A7%A3wireshark%E4%B8%AD%E7%9A%84length%E5%AD%97%E6%AE%B5%E5%90%AB%E4%B9%89/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/wireshark/">wireshark</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/07/25/理解wireshark中的length字段含义/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/07/25/理解wireshark中的length字段含义/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/07/16/net-ipv4-ip-local-port-range的影响范围/" title="net.ipv4.ip_local_port_range的影响范围" itemprop="url">net.ipv4.ip_local_port_range的影响范围</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-07-15T23:59:42.000Z" itemprop="datePublished"> 发表于 2022-07-16</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>网上关于 net.ipv4.ip_local_port_range 的值的效果众说纷纭（下面所说的连接都假定使用的是相同的协议(都是 TCP 或 UDP)）:</p>
+<ul>
+<li>大部分文章都说这个值决定了客户端的一个 ip 可用的端口数量，即一个 ip 最多只能创建 60K 多一点的连接（1025-65535），如果要突破这个限制需要客户端机器绑定多个 ip。</li>
+<li>还有部分文章说的是这个值决定的是 socket 四元组中的本地端口数量，即一个 ip 对同一个目标 ip+port 最多可以创建 60K 多一点连接，只要目标 ip 或端口不一样就可以使用相同的本地端口，不一定需要多个客户端 ip 就可以突破端口数量限制。</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/07/16/net-ipv4-ip-local-port-range%E7%9A%84%E5%BD%B1%E5%93%8D%E8%8C%83%E5%9B%B4/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/07/16/net-ipv4-ip-local-port-range的影响范围/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/07/16/net-ipv4-ip-local-port-range的影响范围/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/06/20/设备收发包之netif-receive-skb/" title="设备收发包之netif_receive_skb" itemprop="url">设备收发包之netif_receive_skb</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-06-20T15:04:18.000Z" itemprop="datePublished"> 发表于 2022-06-20</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在设备驱动收包之后，会通过netif_receive_skb将收取的包，按照注册的协议回调，传递到上层进行处理；</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/06/20/%E8%AE%BE%E5%A4%87%E6%94%B6%E5%8F%91%E5%8C%85%E4%B9%8Bnetif-receive-skb/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/06/20/设备收发包之netif-receive-skb/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/06/20/设备收发包之netif-receive-skb/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/31/netfilter内核态与用户态通信之sockopt/" title="netfilter内核态与用户态通信之sockopt" itemprop="url">netfilter内核态与用户态通信之sockopt</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-31T11:12:51.000Z" itemprop="datePublished"> 发表于 2022-05-31</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>用户态与内核态交互通信的方法不止一种，sockopt是比较方便的一个，写法也简单.</p>
+<p>缺点就是使用 copy_from_user()&#x2F;copy_to_user()完成内核和用户的通信， 效率其实不高， 多用在传递控制 选项 信息，不适合做大量的数据传输。</p>
+<p>用户态函数：</p>
+<ul>
+<li>发送：int setsockopt ( int sockfd, int proto, int cmd, void *data, int datelen);</li>
+<li>接收：int getsockopt(int sockfd, int proto, int cmd, void *data, int datalen)<ul>
+<li>第一个参数是socket描述符；</li>
+<li>第二个参数proto是sock协议，IP RAW的就用SOL_SOCKET&#x2F;SOL_IP等，TCP&#x2F;UDP socket的可用SOL_SOCKET&#x2F;SOL_IP&#x2F;SOL_TCP&#x2F;SOL_UDP等，即高层的socket是都可以使用低层socket的命令字 的，IPPROTO_IP；</li>
+<li>第三个参数cmd是操作命令字，由自己定义；</li>
+<li>第四个参数是数据缓冲区起始位置指针，set操作时是将缓冲区数据写入内核，get的时候是将内核中的数 据读入该缓冲区；</li>
+<li>第五个参数数据长度</li>
+</ul>
+</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/31/netfilter%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8E%E7%94%A8%E6%88%B7%E6%80%81%E9%80%9A%E4%BF%A1%E4%B9%8Bsockopt/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Socket/">Socket</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/31/netfilter内核态与用户态通信之sockopt/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/31/netfilter内核态与用户态通信之sockopt/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/24/Go-mod-同一个module的多版本问题/" title="Go mod 同一个module的多版本问题" itemprop="url">Go mod 同一个module的多版本问题</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-24T01:46:31.000Z" itemprop="datePublished"> 发表于 2022-05-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>首先，注意区分使用Go mod后，module和package的概念</p>
+<ul>
+<li>module是go mod的引入单位，go.mod文件里引入的是module：</li>
+</ul>
+<p><img src="/images/gomod1.awebp" alt="image"></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/24/Go-mod-%E5%90%8C%E4%B8%80%E4%B8%AAmodule%E7%9A%84%E5%A4%9A%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Golang/">Golang</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/24/Go-mod-同一个module的多版本问题/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/24/Go-mod-同一个module的多版本问题/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/23/使用-Docker-Desktop进行-BPF-开发/" title="使用 Docker Desktop进行 BPF 开发" itemprop="url">使用 Docker Desktop进行 BPF 开发</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-23T07:36:20.000Z" itemprop="datePublished"> 发表于 2022-05-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Docker Desktop 是 Windows 和 Mac 上最为流行 Docker 开发环境，是否有办法在Docker Desktop中，利用容器来使用eBPF呢？本文参考了部分 <a href="https://github.com/singe/ebpf-docker-for-mac?spm=a2c6h.12873639.article-detail.4.3e805798KLBkfr">https://github.com/singe/ebpf-docker-for-mac</a> 相关实现，来帮助大家尝试一下。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/23/%E4%BD%BF%E7%94%A8-Docker-Desktop%E8%BF%9B%E8%A1%8C-BPF-%E5%BC%80%E5%8F%91/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/eBPF/">eBPF</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/23/使用-Docker-Desktop进行-BPF-开发/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/23/使用-Docker-Desktop进行-BPF-开发/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+
+  <nav id="page-nav" class="clearfix">
+    <a class="extend prev" rel="prev" href="/page/2/">&lt;span&gt;&lt;&#x2F;span&gt;Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/4/">Next&lt;span&gt;&lt;&#x2F;span&gt;</a>
+  </nav>
+
+</div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+ </html>

@@ -1,0 +1,707 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Kubernetes 网络策略 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="目前许多组织都在采用Kubernetes来运行他们的应用程序。以至于有些人将Kubernetes称为新的数据中心操作系统。因此，组织开始将Kubernetes(通常缩写为k8s)视为关键任务平台，它需要包括网络安全在内的成熟业务流程。 负责保护这个新平台的网络安全团队可能发现它出奇的不同。例如，默认的Kubernetes策略是允许任何连接。 本文提供了一些关于Kubernetes网络策略工作原理的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes 网络策略">
+<meta property="og:url" content="https://luckymrwang.github.io/2021/04/03/Kubernetes-%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="目前许多组织都在采用Kubernetes来运行他们的应用程序。以至于有些人将Kubernetes称为新的数据中心操作系统。因此，组织开始将Kubernetes(通常缩写为k8s)视为关键任务平台，它需要包括网络安全在内的成熟业务流程。 负责保护这个新平台的网络安全团队可能发现它出奇的不同。例如，默认的Kubernetes策略是允许任何连接。 本文提供了一些关于Kubernetes网络策略工作原理的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/netpol.jpg">
+<meta property="og:image" content="https://luckymrwang.github.io/images/netpol2.jpg">
+<meta property="article:published_time" content="2021-04-03T01:54:31.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.195Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/netpol.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/04/03/Kubernetes-网络策略/" title="Kubernetes 网络策略" itemprop="url">Kubernetes 网络策略</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-04-03T01:54:31.000Z" itemprop="datePublished"> 发表于 2021-04-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Kubernetes%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5"><span class="toc-number">1.</span> <span class="toc-text">Kubernetes网络策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5%E6%8E%A7%E5%88%B6Pod%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="toc-number">2.</span> <span class="toc-text">网络策略控制Pod的通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5%E5%AE%9A%E4%B9%89"><span class="toc-number">3.</span> <span class="toc-text">网络策略定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E7%AD%96%E7%95%A5%E6%98%AF%E5%85%81%E8%AE%B8"><span class="toc-number">4.</span> <span class="toc-text">默认策略是允许</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4"><span class="toc-number">5.</span> <span class="toc-text">命名空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%96%E7%95%A5%E5%91%BD%E5%90%8D%E7%BA%A6%E5%AE%9A"><span class="toc-number">6.</span> <span class="toc-text">策略命名约定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E7%AD%BE"><span class="toc-number">7.</span> <span class="toc-text">标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BA%90%E5%92%8C%E7%BB%88%E7%82%B9"><span class="toc-number">8.</span> <span class="toc-text">源和终点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Egress%E5%92%8CDNS"><span class="toc-number">9.</span> <span class="toc-text">Egress和DNS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8C%B9%E9%85%8D%E5%92%8C%E8%A7%84%E5%88%99%E9%A1%BA%E5%BA%8F"><span class="toc-number">10.</span> <span class="toc-text">第一个匹配和规则顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cleanup%E8%A7%84%E5%88%99-%E6%8B%92%E7%BB%9D"><span class="toc-number">11.</span> <span class="toc-text">Cleanup规则(拒绝)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Any-Any-Any-Allow"><span class="toc-number">12.</span> <span class="toc-text">Any-Any-Any-Allow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E5%90%88%E5%A4%9A%E4%B8%AA%E7%AD%96%E7%95%A5"><span class="toc-number">13.</span> <span class="toc-text">组合多个策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87namespace%E5%92%8Cpod%E8%81%94%E5%90%88%E8%BF%87%E6%BB%A4"><span class="toc-number">14.</span> <span class="toc-text">通过namespace和pod联合过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AA%E6%A0%87%E7%AD%BE%E9%80%9A%E8%BF%87%E9%80%BB%E8%BE%91%E4%B8%8E%E7%BB%84%E5%90%88"><span class="toc-number">15.</span> <span class="toc-text">多个标签通过逻辑与组合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90%E7%BD%91%E5%92%8CIP%E5%9C%B0%E5%9D%80-ipBlock"><span class="toc-number">16.</span> <span class="toc-text">子网和IP地址(ipBlock)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E5%92%8C%E5%8D%8F%E8%AE%AE"><span class="toc-number">17.</span> <span class="toc-text">端口和协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ingress"><span class="toc-number">18.</span> <span class="toc-text">Ingress</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hostNetwork%E9%99%B7%E9%98%B1"><span class="toc-number">19.</span> <span class="toc-text">hostNetwork陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%97%A5%E5%BF%97"><span class="toc-number">20.</span> <span class="toc-text">流量日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%96%E7%95%A5%E9%AA%8C%E8%AF%81"><span class="toc-number">21.</span> <span class="toc-text">策略验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C"><span class="toc-number">22.</span> <span class="toc-text">执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E7%8A%B6%E6%80%81%E8%BF%98%E6%98%AF%E6%97%A0%E7%8A%B6%E6%80%81"><span class="toc-number">23.</span> <span class="toc-text">有状态还是无状态?</span></a></li></ol>
+		
+		</div>
+		
+		<p>目前许多组织都在采用Kubernetes来运行他们的应用程序。以至于有些人将Kubernetes称为新的数据中心操作系统。因此，组织开始将Kubernetes(通常缩写为k8s)视为关键任务平台，它需要包括网络安全在内的成熟业务流程。</p>
+<p>负责保护这个新平台的网络安全团队可能发现它出奇的不同。例如，默认的Kubernetes策略是允许任何连接。</p>
+<p>本文提供了一些关于Kubernetes网络策略工作原理的简介，它们如何与传统防火墙策略进行比较以及一些可以帮助你保护Kubernetes应用程序的陷阱和最佳实践。</p>
+<span id="more"></span>
+<h3 id="Kubernetes网络策略"><a href="#Kubernetes网络策略" class="headerlink" title="Kubernetes网络策略"></a>Kubernetes网络策略</h3><p>Kubernetes提供了一种称为网络策略的机制，可用于对部署在平台上的应用程序实施第3层分隔。网络策略缺乏现代防火墙的高级功能，如第7层控制和威胁检测，但是它们确实提供了基本的网络安全，这是一个很好的起点。</p>
+<h3 id="网络策略控制Pod的通信"><a href="#网络策略控制Pod的通信" class="headerlink" title="网络策略控制Pod的通信"></a>网络策略控制Pod的通信</h3><p>Kubernetes的工作负载在pod中运行，pod由一个或多个部署在一起的容器组成。Kubernetes为每个pod分配一个IP地址，这个地址可以从其他所有pod路由，甚至可以跨底层服务器。Kubernets网络策略指定pod组的访问权限，类似于云服务中的安全组用于控制对虚拟机实例的访问。</p>
+<p>编写网络策略</p>
+<p>与其他Kubernetes资源一样，网络策略可以使用一种称为YAML的语言定义。下面是一个简单的例子，它允许从负载均衡到postgres的访问。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.postgres</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">balance</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>为了编写你自己的网络策略，你需要对yaml有基本的了解。Yaml基于缩进(使用的是空格，而不是tab)。缩进项属于其上方最接近的缩进项。连字符(破折号)开始一个新的列表项。所有其他项都是映射条目。你可以在网上找到大量关于yaml的信息。</p>
+<p>编写完策略的YAML文件后，使用kubectl创建策略：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create -f policy.yaml</span><br></pre></td></tr></table></figure>
+
+<h3 id="网络策略定义"><a href="#网络策略定义" class="headerlink" title="网络策略定义"></a>网络策略定义</h3><p>网络策略定义由四个元素组成：</p>
+<ul>
+<li><p>podSelector：将受此策略约束的pod(策略目标)。必填</p>
+</li>
+<li><p>policyType：指定哪些类型的策略包含在这个策略中，ingress或egress。该项是可选的，但建议总是明确的指定它。可选</p>
+</li>
+<li><p>ingress：允许传入目标pod的流量。可选</p>
+</li>
+<li><p>egress：允许从目标pod传出的流量。可选</p>
+</li>
+</ul>
+<p>下面这个例子是从Kubernetes官网上改编的(将“role”改为了“app”)，它指定了四个元素：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-network-policy</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">db</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span> </span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">172.17</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span> </span><br><span class="line">        <span class="attr">except:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="number">172.17</span><span class="number">.1</span><span class="number">.0</span><span class="string">/24</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">project:</span> <span class="string">myproject</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">role:</span> <span class="string">frontend</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">      <span class="attr">port:</span> <span class="number">6379</span> </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span> </span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">      <span class="attr">port:</span> <span class="number">5978</span> </span><br></pre></td></tr></table></figure>
+
+<p>注意，你不必包含所有四个元素。podSelector是必填的，其余三个是可选的。</p>
+<p>如果你忽略了policyType，则推断如下：</p>
+<ul>
+<li>策略总是被认为指定了一个ingress定义。如果你没有明确的定义它，它将被视为“不允许流量“。</li>
+<li>egress将由是否存在egress元素诱导。<br>为了避免错误，建议总是显式的指定policyType。</li>
+</ul>
+<p>如果没有提供ingress或egress的定义，并且根据上面的逻辑假定它们存在，策略将认为它们是“不允许流量”。</p>
+<h3 id="默认策略是允许"><a href="#默认策略是允许" class="headerlink" title="默认策略是允许"></a>默认策略是允许</h3><p>当没有定义任何策略时，Kubernetes允许所有通信。所有pod都可以相互自由通信。从安全角度来看，这听起来可能有悖常理，但请记住，Kubernetes是由希望应用程序进行通信的开发人员设计的。网络策略是作为后来的增强功能添加的。</p>
+<h3 id="命名空间"><a href="#命名空间" class="headerlink" title="命名空间"></a>命名空间</h3><p>命名空间是Kubernetes的多租户机制，旨在将命名空间环境相互隔离，但是，命名空间的通信在默认情况下仍然是被允许的。</p>
+<p>与大多数Kubernetes实体一样，网络策略也位于特定的命名空间中。元数据头部告诉Kubernetes策略属于哪个命名空间：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-network-policy</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">my-namespace</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line"><span class="string">...</span> </span><br></pre></td></tr></table></figure>
+
+<p>如果你没有明确指定元数据的命名空间，它将应用于kubectl提供的命名空间(默认是namespace&#x3D;default)。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -n my-namespace -f namespace.yaml </span><br></pre></td></tr></table></figure>
+
+<p>建议显式指定命名空间，除非你正在编写的策略要统一应用在多个命名空间中。</p>
+<p>策略中的podSelector元素将从策略所属的命名空间中选择pod(它不能从另一个命名空间选择pod)。</p>
+<p>ingress和egress元素中的podSelector也会选择相同命名空间中的pod,除非你将它们和namespaceSelector一起使用。</p>
+<h3 id="策略命名约定"><a href="#策略命名约定" class="headerlink" title="策略命名约定"></a>策略命名约定</h3><p>策略的名称在命名空间中是唯一的。一个命名空间中不能有两个同名的策略，但是不同的命名空间可以有同名的策略。当你想要在多个命名空间重复应用某个策略时，这非常方便。</p>
+<p>我喜欢的策略命名方法之一是将命名空间与pod组合起来，例如：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.postgres</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">admin</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<h3 id="标签"><a href="#标签" class="headerlink" title="标签"></a>标签</h3><p>Kubernetes对象，如pod和namespace，可以附加用户自定义标签。Kubernetes网络策略依赖于标签来选择它们应用于的pod：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">podSelector:</span> </span><br><span class="line">  <span class="attr">matchLabels:</span> </span><br><span class="line">    <span class="attr">role:</span> <span class="string">db</span> </span><br></pre></td></tr></table></figure>
+
+<p>或者它们应用于的命名空间。下面的例子中选择匹配标签的命名空间中的所有pod：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">namespaceSelector:</span> </span><br><span class="line">  <span class="attr">matchLabels:</span> </span><br><span class="line">    <span class="attr">project:</span> <span class="string">myproject</span> </span><br></pre></td></tr></table></figure>
+
+<p>需要注意的一点是：如果你使用namespaceSelector，请确保所选择的命名空间确实具有所使用的标签。请记住，像default和kube-system这样的内置命名空间没有现成的标签。你可以像这样给命名空间添加一个标签：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label namespace default namespace=default </span><br></pre></td></tr></table></figure>
+
+<p>元数据中的namespace是命名空间的实际名称，而不是标签：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-network-policy</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line"><span class="string">...</span> </span><br></pre></td></tr></table></figure>
+
+<h3 id="源和终点"><a href="#源和终点" class="headerlink" title="源和终点"></a>源和终点</h3><p>防火墙策略由具有源和终点的规则组成。Kubernetes网络策略是为目标(应用策略的一组pod)定义的，然后为目标指定传入或传出流量。再次使用相同的例子，你可以看到策略目标——默认命名空间中所有具有标签为“db:app”的pod:</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-network-policy</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">db</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span> </span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">172.17</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span> </span><br><span class="line">        <span class="attr">except:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="number">172.17</span><span class="number">.1</span><span class="number">.0</span><span class="string">/24</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">project:</span> <span class="string">myproject</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">role:</span> <span class="string">frontend</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">      <span class="attr">port:</span> <span class="number">6379</span> </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span> </span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">      <span class="attr">port:</span> <span class="number">5978</span> </span><br></pre></td></tr></table></figure>
+
+<p>该策略中的ingress项允许到目标pod的传入流量。因此，ingress被解释为“源”，目标被解释为各自的“终点”。同样，egress被解释为“终点”，目标是各自的“源”。</p>
+<h3 id="Egress和DNS"><a href="#Egress和DNS" class="headerlink" title="Egress和DNS"></a>Egress和DNS</h3><p>当执行egress时，必须小心不要阻止DNS，Kubernetes使用DNS将service的名称解释为其IP地址。否则，这个策略将不起作用，因为你没有允许balance执行DNS查找：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.balance</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">balance</span> </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br></pre></td></tr></table></figure>
+
+<p>要解决它，你必须允许访问DNS服务：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.balance</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">balance</span> </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">UDP</span> </span><br><span class="line">      <span class="attr">port:</span> <span class="number">53</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br></pre></td></tr></table></figure>
+
+<p>“to”元素为空，它隐式选择了所有命名空间中的所有pod，从而允许balance通过Kubernetes的DNS服务执行DNS查找，DNS服务通常位于kube-system命名空间中。</p>
+<p>虽然这是有效的，但它过于宽松和不安全——它允许在集群外部进行DNS查找。</p>
+<p>你可以分阶段锁定它：</p>
+<p>1.通过添加一个namespaceSelector只允许在集群内进行DNS查找：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.balance</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">balance</span> </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span> &#123;&#125; </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">UDP</span> </span><br><span class="line">      <span class="attr">port:</span> <span class="number">53</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br></pre></td></tr></table></figure>
+
+<p>2.只允许DNS在kube-system命名空间中</p>
+<p>为此，你需要为kube-system命名空间添加一个标签：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl label namespace kube-system namespace=kube-system </span><br></pre></td></tr></table></figure>
+
+<p>然后用namespaceSelector在策略中指定它：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.balance</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">balance</span> </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">namespace:</span> <span class="string">kube-system</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">UDP</span> </span><br><span class="line">      <span class="attr">port:</span> <span class="number">53</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br></pre></td></tr></table></figure>
+
+<p>3.偏执狂可能想更进一步，将DNS限制为kube-system命名空间中特定的DNS服务。请参考下面的“通过命名空间和pod过滤”章节。</p>
+<p>另一种选择是在命名空间级别允许DNS，这样就不需要为每个服务指定它了：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.dns</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125; </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span> &#123;&#125; </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">UDP</span> </span><br><span class="line">      <span class="attr">port:</span> <span class="number">53</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br></pre></td></tr></table></figure>
+
+<p>空的podSelector选择该命名空间中的所有pod。</p>
+<h3 id="第一个匹配和规则顺序"><a href="#第一个匹配和规则顺序" class="headerlink" title="第一个匹配和规则顺序"></a>第一个匹配和规则顺序</h3><p>防火墙管理员知道对数据包采取的操作(允许或拒绝)由与其匹配的第一个规则决定。但是在Kubernetes中，策略的顺序并不重要。默认的行为是，当没有定义策略时，允许所有通信，因此所有pod之间可以彼此通信。一旦定义了策略，每个至少被一个策略选择的pod，将根据选择它的策略的并集(逻辑或)进行隔离：</p>
+<p><img src="/images/netpol.jpg" alt="netpol"></p>
+<p>没有被任何策略选中的pod继续保持开放。你可以通过定义cleanup规则来改变这个行为。</p>
+<h3 id="Cleanup规则-拒绝"><a href="#Cleanup规则-拒绝" class="headerlink" title="Cleanup规则(拒绝)"></a>Cleanup规则(拒绝)</h3><p>防火墙策略通常通过any-any-any-deny规则来丢弃所有非显式允许的流量。Kubernetes没有拒绝操作，但是你可以使用一个常规的规则来实现相同的效果，该策略指定policyTypes&#x3D;Ingress，但是省略了实际ingress的定义，这被解释为“不允许进入”。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">deny-all</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125; </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>该策略选择命名空间中的所有pod作为源，未定义ingress——这意味着不允许流量进入。</p>
+<p>类似的，你可以拒绝来自一个命名空间的所有出站流量：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">deny-all-egress</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125; </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br></pre></td></tr></table></figure>
+
+<p>请记住，任何其他允许访问命名空间中pod的策略都将优先于此拒绝策略——相当于防火墙中将允许策略添加到拒绝策略之上。</p>
+<h3 id="Any-Any-Any-Allow"><a href="#Any-Any-Any-Allow" class="headerlink" title="Any-Any-Any-Allow"></a>Any-Any-Any-Allow</h3><p>通过使用一个空的ingress元素修改上面的deny-all策略，可以创建一个allow-all策略：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">allow-all</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125; </span><br><span class="line">  <span class="attr">ingress:</span>  </span><br><span class="line">  <span class="bullet">-</span> &#123;&#125; </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>这允许所有命名空间中的所有pod(和IP)到默认命名空间中的任何pod的通信。这是默认行为，因此通常不需要这么做。但是，为了查找问题，暂时覆盖所有其他规则可能很有用。</p>
+<p>你可以缩小此范围，仅允许访问默认命名空间中的一组特定的pod：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">allow-all-to-balance</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">balance</span> </span><br><span class="line">  <span class="attr">ingress:</span>  </span><br><span class="line">  <span class="bullet">-</span> &#123;&#125; </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>下面的策略允许任何入站和出站流量(包括访问集群外的任何IP)：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">allow-all</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125; </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> &#123;&#125; </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> &#123;&#125; </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br></pre></td></tr></table></figure>
+
+<h3 id="组合多个策略"><a href="#组合多个策略" class="headerlink" title="组合多个策略"></a>组合多个策略</h3><p>策略在三个级别上使用逻辑或进行组合。每个pod根据应用于它的所有策略的并集决定是否允许通信。</p>
+<p>1.在“from”和“to”项中，你可以定义三种类型的项，他们通过“或”进行组合：</p>
+<ul>
+<li>namespaceSelector——选择一整个命名空间</li>
+<li>podSelector——选择pod</li>
+<li>ipBlock——选择一个子网</li>
+</ul>
+<p>你可以在from&#x2F;to下定义任意数量的项(即使是相同类型也可以定义多条)，它们将通过逻辑或组合在一起：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.postgres</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">indexer</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">admin</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>2.在一个策略中，ingress策略可以有多个“from”项，它们通过逻辑或组合在一起。同样，egress策略可以有多个“to”项，它们也通过逻辑或组合在一起：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.postgres</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">indexer</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">admin</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>3.多个策略也通过逻辑或组合在一起。</p>
+<p>但是当组合策略时，这里有一些限制:Kubernetes只能组合policyType(ingress或egress)不同的策略，多个策略都指定ingress(或egress)将会互相覆盖。</p>
+<p>命名空间之间的通信</p>
+<p>默认情况下，命名空间间的通信是允许的。你可以使用deny-all策略来改变它，以阻止从或者到该命名空间的通信。</p>
+<p>如果你阻止了对某个命名空间的访问，可以使用namespaceSelector允许来自一个特定的命名空间的访问。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">database.postgres</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">database</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>这允许default命名空间中的所有pod访问database命名空间中的postgres pod。但是，如果只想允许default命名空间中特定的pod访问postgres该怎么办呢?</p>
+<h3 id="通过namespace和pod联合过滤"><a href="#通过namespace和pod联合过滤" class="headerlink" title="通过namespace和pod联合过滤"></a>通过namespace和pod联合过滤</h3><p>Kubernetes 1.11及以上允许你将namespaceSelector和podSelector通过逻辑与组合在一起：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">database.postgres</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">database</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line">      <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">admin</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>为什么这被解释为“与”，而不是“或”呢?</p>
+<p>请注意，podSelector不是以破折号开头的，在yaml中这意味着，podSelector与前面的namespaceSelector属于同一个列表项，因此它们通过逻辑与进行组合。如果你在podSelector前面添加一个破折号，将创建一个新的列表项，这将与前面的namespaceSelector通过逻辑或组合。要在所有命名空间中选择具有特定标签的pod，可以指定一个空的namespaceSelector：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">database.postgres</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">database</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span> &#123;&#125; </span><br><span class="line">      <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">admin</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<h3 id="多个标签通过逻辑与组合"><a href="#多个标签通过逻辑与组合" class="headerlink" title="多个标签通过逻辑与组合"></a>多个标签通过逻辑与组合</h3><p>具有多个对象(主机、网络、组…)的防火墙规则被解释为逻辑或。例如，如果数据包的源匹配HOST_1或HOST_2，则应用此规则：</p>
+<p><img src="/images/netpol2.jpg" alt="netpol"></p>
+<p>与之相反的是，在Kubernetes中，podSelector和namespaceSelector中的多个标签通过逻辑与进行组合。例如，这将选择同时具有标签role&#x3D;db和version&#x3D;v2的pod：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">podSelector:</span> </span><br><span class="line">  <span class="attr">matchLabels:</span> </span><br><span class="line">    <span class="attr">role:</span> <span class="string">db</span> </span><br><span class="line">    <span class="attr">version:</span> <span class="string">v2</span> </span><br></pre></td></tr></table></figure>
+
+<p>相同的逻辑适用所有类型的选择器：策略目标的选择器、pod的选择器、命名空间的选择器。</p>
+<h3 id="子网和IP地址-ipBlock"><a href="#子网和IP地址-ipBlock" class="headerlink" title="子网和IP地址(ipBlock)"></a>子网和IP地址(ipBlock)</h3><p>防火墙使用vlan、ip和子网来分割网络。在Kubernetes中，pod的IP是自动分配的，并且可能经常变动，因此网络策略使用标签来选择pod和命名空间。子网(ipBlock)用于ingress或egress连接(南北向)。例如，下面这个策略允许default命名空间中的所有pod访问谷歌的DNS服务：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">egress-dns</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125; </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span> </span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span><span class="string">/32</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">UDP</span> </span><br><span class="line">      <span class="attr">port:</span> <span class="number">53</span> </span><br></pre></td></tr></table></figure>
+
+<p>本例中空的podSelector表示“选择该命名空间中的所有pod”。该策略只允许访问8.8.8.8，这意味着它拒绝访问其他任何IP。因此，实际上，你已经阻止了对Kubernetes内部DNS服务的访问。如果你仍然想允许它，需要显式的指定它。</p>
+<p>通常ipBlock和podSelector是互斥的，因为通常你在ipBlock中不使用内部pod IP。如果你使用内部pod IP指定ipBlock，它实际上将允许与具有这些ip的pod进行通信。但是在实践中并不知道该用哪些IP，这就是为什么不应该用IP来选择pod。</p>
+<p>下面这个策略中包含所有IP，并允许访问所有其它pod：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">egress-any</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125; </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span> </span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span> </span><br></pre></td></tr></table></figure>
+
+<p>你可以通过排除内部IP来只允许访问外部IP。例如，如果pod的子网是10.16.0.0&#x2F;14：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">egress-any</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> &#123;&#125; </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Egress</span> </span><br><span class="line">  <span class="attr">egress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">to:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span> </span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/0</span> </span><br><span class="line">        <span class="attr">except:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="number">10.16</span><span class="number">.0</span><span class="number">.0</span><span class="string">/14</span> </span><br></pre></td></tr></table></figure>
+
+<h3 id="端口和协议"><a href="#端口和协议" class="headerlink" title="端口和协议"></a>端口和协议</h3><p>pod通常只监听一个端口，这意味着你可以简单的在策略中省略端口，默认允许任何端口。但是最好将策略设置为受限的，显式的指定端口：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.postgres</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">indexer</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">admin</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">      <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">443</span> </span><br><span class="line">        <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">      <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span> </span><br><span class="line">        <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>请注意，端口应用于它们所在的“to”或“from”子句中的所有项。如果你想为不同的项指定不同的端口，你可以将ingress或egress拆分为多个“to”或“from”，每个都有自己的端口：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.postgres</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">indexer</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">     <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">443</span> </span><br><span class="line">       <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">app:</span> <span class="string">admin</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">     <span class="bullet">-</span> <span class="attr">port:</span> <span class="number">80</span> </span><br><span class="line">       <span class="attr">protocol:</span> <span class="string">TCP</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">postgres</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br></pre></td></tr></table></figure>
+
+<p>端口的默认行为：</p>
+<ul>
+<li>如果完全省略端口，则表示所有端口和所有协议</li>
+<li>如果省略协议，则默认为TCP</li>
+<li>如果省略端口，则默认为所有端口</li>
+</ul>
+<p>最佳实践：不要依赖默认行为，显式的指明。</p>
+<p>注意你必须使用pod的端口，而不是service的端口。</p>
+<p>策略是为pod定义的还是为service定义的?</p>
+<p>当一个pod访问Kubernetes中另一个pod时，它通常要通过service，service是一个虚拟的负载均衡器，它将流量转发到实现该服务的pod上。你可能会以为网络策略是控制对service的访问的，但事实并非如此。Kubernetes网络策略是应用于pod的端口，而非service的端口。</p>
+<p>例如，如果一个service监听80端口，但是它将流量转发到监听8080端口的pod上，你需要在网络策略中指定8080端口。</p>
+<p>这种设计不是最优的，因为当有人更改服务的内部工作方式时(如pod正在监听的端口)，你需要更新网络策略。</p>
+<p>显然，有一种解决方案可以解决这个问题，即使用命名端口，而不是硬编码的数字端口：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">default.allow-hello</span> </span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">podSelector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">hello</span> </span><br><span class="line">  <span class="attr">policyTypes:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">Ingress</span> </span><br><span class="line">  <span class="attr">ingress:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">from:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span> </span><br><span class="line">        <span class="attr">matchLabels:</span> </span><br><span class="line">          <span class="attr">run:</span> <span class="string">curl</span> </span><br><span class="line">    <span class="attr">ports:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">port:</span> <span class="string">my-http</span> </span><br></pre></td></tr></table></figure>
+
+<p>你需要在pod的定义中指定这个端口的名字：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">extensions/v1beta1</span> </span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span> </span><br><span class="line"><span class="attr">metadata:</span> </span><br><span class="line">  <span class="attr">labels:</span> </span><br><span class="line">    <span class="attr">app:</span> <span class="string">hello</span> </span><br><span class="line">  <span class="attr">name:</span> <span class="string">hello</span> </span><br><span class="line"><span class="attr">spec:</span> </span><br><span class="line">  <span class="attr">selector:</span> </span><br><span class="line">    <span class="attr">matchLabels:</span> </span><br><span class="line">      <span class="attr">app:</span> <span class="string">hello</span> </span><br><span class="line">  <span class="attr">template:</span> </span><br><span class="line">    <span class="attr">metadata:</span> </span><br><span class="line">      <span class="attr">labels:</span> </span><br><span class="line">        <span class="attr">app:</span> <span class="string">hello</span> </span><br><span class="line">    <span class="attr">spec:</span> </span><br><span class="line">      <span class="attr">containers:</span> </span><br><span class="line">      <span class="bullet">-</span> <span class="attr">image:</span> <span class="string">gcr.io/hello-minikube-zero-install/hello-node</span> </span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">Always</span> </span><br><span class="line">        <span class="attr">name:</span> <span class="string">hello-node</span> </span><br><span class="line">        <span class="attr">ports:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">8080</span> </span><br><span class="line">          <span class="attr">name:</span> <span class="string">my-http</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就将网络策略和pod解耦了。</p>
+<h3 id="Ingress"><a href="#Ingress" class="headerlink" title="Ingress"></a>Ingress</h3><p>术语“ingress”在Kubernetes中有两种含义：</p>
+<ul>
+<li>Ingress网络策略允许你控制其他pod或外部IP对pod的访问</li>
+<li>Kubergess的ingress是一种配置外部负载均衡器路由流量到集群内部的方式<br>你可以编写一个k8s网络策略限制来自Kubernetes ingress的访问，但在大多数情况下这不是很有用，因为它只控制负载均衡器的内部IP。为了控制可以访问集群的外部子网，你需要在外部实施点(如负载均衡本身或负载均衡前面的防火墙)配置访问控制。</li>
+</ul>
+<p>需要同时定义ingress和egress么?</p>
+<p>简单的回答是肯定的——为了允许pod A访问pod B，你需要允许pod A通过egress策略创建出站连接，并允许pod B通过ingress策略接受入站连接。</p>
+<p>然而，实际上，你可能对两个方向中的一个使用默认的允许策略。</p>
+<p>如果源pod被一个或多个egress策略选中，则将根据策略联合对其进行限制，在这种情况下你需要明确允许它连接到目标pod。如果pod不被任何策略选中，则它默认允许所有的出站流量。</p>
+<p>同样，被一个或多个ingress策略选中的目标pod，也会受到策略的联合限制，在这种情况下你必须明确允许它接受来自源pod的流量。如果pod没有被任何策略选中，则它默认允许所有入站流量。</p>
+<h3 id="hostNetwork陷阱"><a href="#hostNetwork陷阱" class="headerlink" title="hostNetwork陷阱"></a>hostNetwork陷阱</h3><p>Kubernetes通常在自己的隔离网络中运行pod，然而，你可以指定Kubernetes在主机上运行pod：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostNetwork: true </span><br></pre></td></tr></table></figure>
+
+<p>这样会完全绕开网路策略，pod像主机上运行的其他任何进程一样进行通信。</p>
+<h3 id="流量日志"><a href="#流量日志" class="headerlink" title="流量日志"></a>流量日志</h3><p>Kubernetes网络策略不能生成流量日志。这很难知道策略是不是像预期一样工作。这也是安全分析方面的主要限制。</p>
+<p>控制到外部服务的流量</p>
+<p>Kubernetes网络策略不允许你为egress指定完全限定的域名(DNS)。当试图控制到无固定IP的外部站点(如aws.com)的流量时，这是一个限制。</p>
+<h3 id="策略验证"><a href="#策略验证" class="headerlink" title="策略验证"></a>策略验证</h3><p>防火墙将警告甚至拒绝接受无效的策略。Kubernetes也做了一些验证。当使用kubectl定义网络策略时，Kubernetes可能会告诉你策略无效并且拒绝接受。在其它情况下，Kubernetes将接受策略并修改它缺失的细节，你可以通过以下命令查看它：</p>
+<p>kubernetes get networkpolicy  -o yaml</p>
+<p>请注意，Kubernetes的验证不是无懈可击的，它可能允许策略中出现某些类型的错误。</p>
+<h3 id="执行"><a href="#执行" class="headerlink" title="执行"></a>执行</h3><p>Kubernetes本身并不执行网络策略，它只是一个API网关，它将执行的艰巨工作传递给一个称为容器网络接口(CNI)的底层系统。在没有合适CNI的Kubernetes集群中定义策略就像在没有安装防火墙的服务器上定义防火墙规则一样。你必须确保拥有具有安全功能的CNI，或者，对于托管的Kubernetes平台，你需要显式的启用将为你安装CNI的网络策略。</p>
+<p>请注意，如果CNI不支持，你定义了一个网络策略，Kubernetes不会向你告警。</p>
+<h3 id="有状态还是无状态"><a href="#有状态还是无状态" class="headerlink" title="有状态还是无状态?"></a>有状态还是无状态?</h3><p>目前所有的Kubernetes CNI都是有状态的，这使得pod能在它发起的TCP连接上接收应答，而不必为应答打开高端口。我不知道有没有Kubernetes标准保证状态性。</p>
+<p>高级安全策略管理</p>
+<p>以下是一些针对Kubernetes实施更高级的网络策略的方法：</p>
+<ul>
+<li>服务网格设计模式使用sidecar在服务级别提供更高级的遥测和流量控制。有关示例，请参考Istio。</li>
+<li>一些CNI提供商已经将他们的工具扩展到了Kubernetes网络策略之外。</li>
+<li>Tufin Orca——用于实现Kubernetes网络策略的可视化和自动化。</li>
+</ul>
+<p>总结</p>
+<p>Kubernetes网络策略为集群划分提供了一种很好的方法，但是它们不直观并且有许多注意的地方。我相信，由于这种复杂性，一定有许多集群在他们的策略中存在“bug”。可能的解决方案是自动化策略定义或其他分割方法。同时，希望本文对澄清和解决你可能遇到的问题有所帮助。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2021/04/03/Kubernetes-%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5/" data-title="Kubernetes 网络策略 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2021/04/06/cert-pem和key-pem文件生成/" title="cert.pem和key.pem文件生成">
+  <strong>上一篇：</strong><br/>
+  <span>
+  cert.pem和key.pem文件生成</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2021/03/27/理解有状态应用控制器StatefulSet/"  title="理解有状态应用控制器StatefulSet">
+ <strong>下一篇：</strong><br/> 
+ <span>理解有状态应用控制器StatefulSet
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2021/04/03/Kubernetes-网络策略/" data-title="Kubernetes 网络策略" data-url="https://luckymrwang.github.io/2021/04/03/Kubernetes-%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Kubernetes%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5"><span class="toc-number">1.</span> <span class="toc-text">Kubernetes网络策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5%E6%8E%A7%E5%88%B6Pod%E7%9A%84%E9%80%9A%E4%BF%A1"><span class="toc-number">2.</span> <span class="toc-text">网络策略控制Pod的通信</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5%E5%AE%9A%E4%B9%89"><span class="toc-number">3.</span> <span class="toc-text">网络策略定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%BB%98%E8%AE%A4%E7%AD%96%E7%95%A5%E6%98%AF%E5%85%81%E8%AE%B8"><span class="toc-number">4.</span> <span class="toc-text">默认策略是允许</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4"><span class="toc-number">5.</span> <span class="toc-text">命名空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%96%E7%95%A5%E5%91%BD%E5%90%8D%E7%BA%A6%E5%AE%9A"><span class="toc-number">6.</span> <span class="toc-text">策略命名约定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%87%E7%AD%BE"><span class="toc-number">7.</span> <span class="toc-text">标签</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BA%90%E5%92%8C%E7%BB%88%E7%82%B9"><span class="toc-number">8.</span> <span class="toc-text">源和终点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Egress%E5%92%8CDNS"><span class="toc-number">9.</span> <span class="toc-text">Egress和DNS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8C%B9%E9%85%8D%E5%92%8C%E8%A7%84%E5%88%99%E9%A1%BA%E5%BA%8F"><span class="toc-number">10.</span> <span class="toc-text">第一个匹配和规则顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cleanup%E8%A7%84%E5%88%99-%E6%8B%92%E7%BB%9D"><span class="toc-number">11.</span> <span class="toc-text">Cleanup规则(拒绝)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Any-Any-Any-Allow"><span class="toc-number">12.</span> <span class="toc-text">Any-Any-Any-Allow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%84%E5%90%88%E5%A4%9A%E4%B8%AA%E7%AD%96%E7%95%A5"><span class="toc-number">13.</span> <span class="toc-text">组合多个策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87namespace%E5%92%8Cpod%E8%81%94%E5%90%88%E8%BF%87%E6%BB%A4"><span class="toc-number">14.</span> <span class="toc-text">通过namespace和pod联合过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E4%B8%AA%E6%A0%87%E7%AD%BE%E9%80%9A%E8%BF%87%E9%80%BB%E8%BE%91%E4%B8%8E%E7%BB%84%E5%90%88"><span class="toc-number">15.</span> <span class="toc-text">多个标签通过逻辑与组合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AD%90%E7%BD%91%E5%92%8CIP%E5%9C%B0%E5%9D%80-ipBlock"><span class="toc-number">16.</span> <span class="toc-text">子网和IP地址(ipBlock)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E5%92%8C%E5%8D%8F%E8%AE%AE"><span class="toc-number">17.</span> <span class="toc-text">端口和协议</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ingress"><span class="toc-number">18.</span> <span class="toc-text">Ingress</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hostNetwork%E9%99%B7%E9%98%B1"><span class="toc-number">19.</span> <span class="toc-text">hostNetwork陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%81%E9%87%8F%E6%97%A5%E5%BF%97"><span class="toc-number">20.</span> <span class="toc-text">流量日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AD%96%E7%95%A5%E9%AA%8C%E8%AF%81"><span class="toc-number">21.</span> <span class="toc-text">策略验证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C"><span class="toc-number">22.</span> <span class="toc-text">执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%89%E7%8A%B6%E6%80%81%E8%BF%98%E6%98%AF%E6%97%A0%E7%8A%B6%E6%80%81"><span class="toc-number">23.</span> <span class="toc-text">有状态还是无状态?</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

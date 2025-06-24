@@ -1,0 +1,591 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Nginx SSL 性能优化 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="影响HTTPS速度的主要原因：密钥交换算法常见的密钥交换算法有 RSA，ECDHE，DH，DHE 等算法。它们的特性如下： RSA：算法实现简单，诞生于 1977 年，历史悠久，经过了长时间的破解测试，安全性高。缺点就是需要比较大的素数（目前常用的是 2048 位）来保证安全强度，很消耗 CPU 运算资源。RSA 是目前唯一一个既能用于密钥交换又能用于证书签名的算法。  DH：diffie-hel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Nginx SSL 性能优化">
+<meta property="og:url" content="https://luckymrwang.github.io/2015/10/09/Nginx-SSL-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="影响HTTPS速度的主要原因：密钥交换算法常见的密钥交换算法有 RSA，ECDHE，DH，DHE 等算法。它们的特性如下： RSA：算法实现简单，诞生于 1977 年，历史悠久，经过了长时间的破解测试，安全性高。缺点就是需要比较大的素数（目前常用的是 2048 位）来保证安全强度，很消耗 CPU 运算资源。RSA 是目前唯一一个既能用于密钥交换又能用于证书签名的算法。  DH：diffie-hel">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-10-09T07:18:03.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.196Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Nginx">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/10/09/Nginx-SSL-性能优化/" title="Nginx SSL 性能优化" itemprop="url">Nginx SSL 性能优化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-09T07:18:03.000Z" itemprop="datePublished"> 发表于 2015-10-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%B1%E5%93%8DHTTPS%E9%80%9F%E5%BA%A6%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8E%9F%E5%9B%A0%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">影响HTTPS速度的主要原因：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">密钥交换算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%85%E5%8A%A9%E5%8A%A0%E9%80%9F%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">辅助加速：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%90%AF%E7%94%A8SPDY"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. 启用SPDY</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-HSTS"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. HSTS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-Session-cache"><span class="toc-number">1.2.3.</span> <span class="toc-text">3. Session cache</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%EF%BC%88%E5%85%A8%E9%83%A8%E4%BC%98%E5%8C%96%E5%8F%82%E6%95%B0%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">总结：（全部优化参数）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">参数详解：</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h3 id="影响HTTPS速度的主要原因："><a href="#影响HTTPS速度的主要原因：" class="headerlink" title="影响HTTPS速度的主要原因："></a>影响HTTPS速度的主要原因：</h3><h4 id="密钥交换算法"><a href="#密钥交换算法" class="headerlink" title="密钥交换算法"></a>密钥交换算法</h4><p>常见的密钥交换算法有 <code>RSA</code>，<code>ECDHE</code>，<code>DH</code>，<code>DHE</code> 等算法。它们的特性如下：</p>
+<pre><code>RSA：算法实现简单，诞生于 1977 年，历史悠久，经过了长时间的破解测试，安全性高。缺点就是需要比较大的素数（目前常用的是 2048 位）来保证安全强度，很消耗 CPU 运算资源。RSA 是目前唯一一个既能用于密钥交换又能用于证书签名的算法。
+
+DH：diffie-hellman 密钥交换算法，诞生时间比较早（1977 年），但是 1999 年才公开。缺点是比较消耗 CPU 性能。
+
+ECDHE：使用椭圆曲线（ECC）的 DH 算法，优点是能用较小的素数（256 位）实现 RSA 相同的安全等级。缺点是算法实现复杂，用于密钥交换的历史不长，没有经过长时间的安全攻击测试。
+
+ECDH：不支持 PFS，安全性低，同时无法实现 false start。
+
+DHE：不支持 ECC。非常消耗 CPU 资源 。
+</code></pre>
+<span id="more"></span>
+<p>建议优先支持 RSA 和 ECDH_RSA 密钥交换算法。原因是：</p>
+<p>1，  ECDHE 支持 ECC 加速，计算速度更快。支持 PFS，更加安全。支持 false start，用户访问速度更快。</p>
+<p>2，  目前还有至少 20% 以上的客户端不支持 ECDHE，我们推荐使用 RSA 而不是 DH 或者 DHE，因为 DH 系列算法非常消耗 CPU（相当于要做两次 RSA 计算）。</p>
+<p>更改其配置如下（参照 Nginx Performance Tuning for SSL（ <a href="http://dojo.techsamurais.com/?p=1384">http://dojo.techsamurais.com/?p=1384</a> ）：</p>
+<pre><code>ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+ssl_ciphers ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4:HIGH:!MD5:!aNULL:!eNULL:!NULL:!DH:!EDH:!AESGCM;
+ssl_prefer_server_ciphers on;
+ssl_session_cache shared:SSL:10m;
+ssl_session_timeout 10m;
+</code></pre>
+<p>或者</p>
+<pre><code>ssl_ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-RC4-SHA:!ECDHE-RSA-RC4-SHA:ECDH-ECDSA-RC4-SHA:ECDH-RSA-RC4-SHA:ECDHE-RSA-AES256-SHA:!RC4-SHA:HIGH:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!CBC:!EDH:!kEDH:!PSK:!SRP:!kECDH;
+</code></pre>
+<p><em>（禁用了RC4，sha1，MD5等算法）</em></p>
+<h4 id="辅助加速："><a href="#辅助加速：" class="headerlink" title="辅助加速："></a>辅助加速：</h4><h5 id="1-启用SPDY"><a href="#1-启用SPDY" class="headerlink" title="1. 启用SPDY"></a>1. 启用SPDY</h5><p>SPDY 是 Google 推出的优化 HTTP 传输效率的协议（ <a href="https://www.chromium.org/spdy">https://www.chromium.org/spdy</a> ）, 它基本上沿用了 HTTP 协议的语义, 但是通过使用帧控制实现了多个特性，显著提升了 HTTP 协议的传输效率。<br>SPDY 最大的特性就是多路复用，能将多个 HTTP 请求在同一个连接上一起发出去，不像目前的 HTTP 协议一样，只能串行地逐个发送请求。<br>可以 在编译Nginx带上参数 –with-http_spdy_module 支持SPDY协议，然后可在配置中启用： </p>
+<pre><code>listen 443 ssl spdy;
+</code></pre>
+<p><em>检测是否使用SPDY的网址（ <a href="https://spdycheck.org/">https://spdycheck.org/</a> ）</em></p>
+<h5 id="2-HSTS"><a href="#2-HSTS" class="headerlink" title="2. HSTS"></a>2. HSTS</h5><p>HSTS(HTTP Strict Transport Security)。服务端返回一个 HSTS 的 http header，浏览器获取到 HSTS 头部之后，在一段时间内，不管用户输入 <a href="http://www.baidu.com/">www.baidu.com</a> 还是 <a href="http://www.baidu.com/">http://www.baidu.com</a> ，都会默认将请求内部跳转成 <a href="https://www.baidu.com;/">https://www.baidu.com；</a><br>将下述行添加到你的 HTTPS 配置的 server 块中：</p>
+<pre><code>add_header Strict-Transport-Security &quot;max-age=31536000&quot;;
+</code></pre>
+<h5 id="3-Session-cache"><a href="#3-Session-cache" class="headerlink" title="3. Session cache"></a>3. Session cache</h5><p>Session cache 的原理是使用 client hello 中的 session id 查询服务端的 session cache, 如果服务端有对应的缓存，则直接使用已有的 session 信息提前完成握手，称为简化握手。</p>
+<p>Session cache 有两个缺点：</p>
+<p>1，    需要消耗服务端内存来存储 session 内容。</p>
+<p>2，    目前的开源软件包括 nginx,apache 只支持单机多进程间共享缓存，不支持多机间分布式缓存，对于百度或者其他大型互联网公司而言，单机 session cache 几乎没有作用。<br>Session cache 也有一个非常大的优点：session id 是 TLS 协议的标准字段，市面上的浏览器全部都支持 session cache。</p>
+<p>ssl_session_cache    shared:SSL:20m;<br>ssl_session_timeout  20m;<br>参照Nginx的官方文档1MB内存大约可以存储4000个session，按例配置20M大约可以存储80000。根据需求合理设置</p>
+<ol start="4">
+<li>Ocsp stapling<br>Ocsp 全称在线证书状态检查协议 (rfc6960)，用来向 CA 站点查询证书状态，比如是否撤销。通常情况下，浏览器使用 OCSP 协议发起查询请求，CA 返回证书状态内容，然后浏览器接受证书是否可信的状态。 将证书保存下来，浏览器请求时候直接通过自己的服务器发送回去，防止验证服务器出问题，还能加快访问速度。</li>
+</ol>
+<p>查看OSCP验证服务器地址：</p>
+<pre><code>openssl x509 -in 1_test.qupeiyin.net_bundle.crt  -text
+</code></pre>
+<p>在输出的文字中找到  OCSP - URI: ，后面的 URL 就是 OSCP 的验证服务器地址。<br>如图：</p>
+<p>  请求OSCP证书</p>
+<pre><code>openssl ocsp -noverify \             
+-issuer /certificate-path/trustchain.crt \             
+-cert /certificate-path/trustchain.crt \             
+-url http://ocsp1.wosign.com/ca6/server1
+</code></pre>
+<p>不出意外会收到如下的结果</p>
+<pre><code> trustchain.crt: good        
+     This Update: Oct 18 17:59:10 2014 GMT        
+     Next Update: Oct 18 23:59:10 2014 GMT
+</code></pre>
+<p>如果出现 403 错误，那就需要在 Header 请求头加上域名参数 -header “HOST” “ocsp2.globalsign.com” ，没问题后就可以直接保存下来证书文件，完整的命令如下：</p>
+<pre><code>openssl
+ocsp -noverify  -issuer 1_root_bundle.crt
+-cert 1_root_bundle.crt -url http://ocsp1.wosign.com/ca6/server1  -header &quot;HOST&quot;
+&quot;ocsp1.wosign.com&quot; -text -respout ./stapling_file.ocsp
+</code></pre>
+<p>将保存下来的 stapling_file.ocsp 证书添加到 nginx 的配置中，如下，Nginx 中配置变成了这样子：</p>
+<pre><code>ssl_stapling on;
+ssl_stapling_verify on;
+ssl_stapling_file /stapling_file.ocsp;
+ssl_trusted_certificate /certificate-path/trustchain.crt;
+</code></pre>
+<p>这样子重启 Nginx 后就会生效，可以使用下面的命令测试生效结果：</p>
+<pre><code>echo QUIT | openssl s_client -connect blog.alphatr.com:443 -status 2&gt; /dev/null | grep -A 17 &#39;OCSP response:&#39; | grep -B 17 &#39;Next Update&#39;
+</code></pre>
+<p>看到 OCSP Response Status: successful 这样的字样就是成功了。<br>ocsp证书有效期很短，大概不到一个月，所以过段时间要更新ocsp证书，不然还是会验证失败。需要用脚本定时更新OCSP证书。</p>
+<h3 id="总结：（全部优化参数）"><a href="#总结：（全部优化参数）" class="headerlink" title="总结：（全部优化参数）"></a>总结：（全部优化参数）</h3><pre><code>ssl on;
+ssl_certificate /data/www/ssl/ssl.crt;
+ssl_certificate_key /data/www/ssl/ssl.key;
+ssl_trusted_certificate /data/www/ssl/trustchain.crt;
+ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+ssl_ciphers ECDHE-RSA-AES256-SHA384:AES256-SHA256:RC4:HIGH:!MD5:!aNULL:!eNULL:!NULL:!DH:!EDH:!AESGCM;
+ssl_prefer_server_ciphers on;
+ssl_stapling on;
+ssl_stapling_verify on;
+ssl_session_cache shared:SSL:10m;
+ssl_session_timeout 10m;
+add_header Strict-Transport-Security &quot;max-age=31536000&quot;;
+resolver 223.5.5.5 223.6.6.6 valid=300s;
+resolver_timeout 10s;
+
+error_page 497 https://$host$request_uri;
+</code></pre>
+<h4 id="参数详解："><a href="#参数详解：" class="headerlink" title="参数详解："></a>参数详解：</h4><pre><code>ssl on  开启SSL
+ssl_certificate  对应单张证书
+ssl_certificate_key  对应私钥
+ssl_trusted_certificate  对应信任链(即Startcom SSL或者Positive SSL中需要附加到单张证书后面的那两张证书，可以独立出来)
+ssl_protocols  支持的SSL协议标准（nginx默认参数为：ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;）
+ssl_ciphers  （nginx默认参数为：ssl_ciphers HIGH:!aNULL:!MD5;）
+
+ssl_prefer_server_ciphers On; #指定服务器密码算法在优先于客户端密码算法时，使用SSLv3和TLS协议。
+
+error_page 497 https://$host$request_uri;  通过497错误将http转跳到https
+</code></pre>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Nginx/">Nginx</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2015/10/09/Nginx-SSL-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" data-title="Nginx SSL 性能优化 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/10/13/PHP错误异常处理详解/" title="PHP错误异常处理详解">
+  <strong>上一篇：</strong><br/>
+  <span>
+  PHP错误异常处理详解</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/10/07/使用SourceTree-Push-出现-POST-git-receive-pack-chunked-的解决方法/"  title="使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法">
+ <strong>下一篇：</strong><br/> 
+ <span>使用SourceTree Push 出现 POST git-receive-pack (chunked) 的解决方法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/10/09/Nginx-SSL-性能优化/" data-title="Nginx SSL 性能优化" data-url="https://luckymrwang.github.io/2015/10/09/Nginx-SSL-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BD%B1%E5%93%8DHTTPS%E9%80%9F%E5%BA%A6%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8E%9F%E5%9B%A0%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">影响HTTPS速度的主要原因：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">密钥交换算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%85%E5%8A%A9%E5%8A%A0%E9%80%9F%EF%BC%9A"><span class="toc-number">1.2.</span> <span class="toc-text">辅助加速：</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-%E5%90%AF%E7%94%A8SPDY"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. 启用SPDY</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-HSTS"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. HSTS</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-Session-cache"><span class="toc-number">1.2.3.</span> <span class="toc-text">3. Session cache</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%EF%BC%88%E5%85%A8%E9%83%A8%E4%BC%98%E5%8C%96%E5%8F%82%E6%95%B0%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">总结：（全部优化参数）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3%EF%BC%9A"><span class="toc-number">2.1.</span> <span class="toc-text">参数详解：</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

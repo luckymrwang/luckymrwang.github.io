@@ -1,0 +1,519 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iptables中-j选项与-g选项的区别 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="手册1234567891011121314# man iptables ... -j, --jump target              This  specifies  the  target  of  the  rule; i.e., what to do if the packet matches it.  The target can be a user-              d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iptables中-j选项与-g选项的区别">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/04/19/iptables%E4%B8%AD-j%E9%80%89%E9%A1%B9%E4%B8%8E-g%E9%80%89%E9%A1%B9%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="手册1234567891011121314# man iptables ... -j, --jump target              This  specifies  the  target  of  the  rule; i.e., what to do if the packet matches it.  The target can be a user-              d">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-04-19T06:05:06.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.208Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/04/19/iptables中-j选项与-g选项的区别/" title="iptables中-j选项与-g选项的区别" itemprop="url">iptables中-j选项与-g选项的区别</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-19T06:05:06.000Z" itemprop="datePublished"> 发表于 2022-04-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%86%8C"><span class="toc-number">1.</span> <span class="toc-text">手册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">3.</span> <span class="toc-text">计数器</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="手册"><a href="#手册" class="headerlink" title="手册"></a>手册</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># man iptables</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">-j, --jump target</span><br><span class="line">              <span class="title class_">This</span>  specifies  the  target  <span class="keyword">of</span>  the  rule; i.<span class="property">e</span>., what to <span class="keyword">do</span> <span class="keyword">if</span> the packet matches it.  <span class="title class_">The</span> target can be a user-</span><br><span class="line">              defined <span class="title function_">chain</span> (other than the one <span class="variable language_">this</span> rule is <span class="keyword">in</span>), one <span class="keyword">of</span> the special builtin targets which decide  the  fate  <span class="keyword">of</span></span><br><span class="line">              the  packet  immediately,  or an <span class="title function_">extension</span> (see <span class="variable constant_">EXTENSIONS</span> below).  <span class="title class_">If</span> <span class="variable language_">this</span> option is omitted <span class="keyword">in</span> a <span class="title function_">rule</span> (and -g is</span><br><span class="line">              not used), then matching the rule will have no effect on the packet<span class="string">&#x27;s fate, but the counters on the rule  will  be</span></span><br><span class="line"><span class="string">              incremented.</span></span><br><span class="line"><span class="string"> </span></span><br><span class="line"><span class="string">-g, --goto chain</span></span><br><span class="line"><span class="string">              This specifies that the processing should continue in a user specified chain. Unlike the --jump option return will</span></span><br><span class="line"><span class="string">              not continue processing in this chain but instead in the chain that called us via --jump.</span></span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<ul>
+<li><p><code>-j</code> 选项指定规则的目标</p>
+<p>  目标可以是用户自定义链；内建目标；或扩展</p>
+</li>
+<li><p><code>-g</code> 选项将规则重定向到一个用户自定义链中</p>
+<p>  与 <code>-j</code> 选项不同，从自定义链中返回时，是返回到调用 <code>-g</code> 选项上层的那一个 <code>-j</code> 链中</p>
+</li>
+</ul>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><p>使用iptables -S命令查看Fedora18中默认的防火墙配置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">-A <span class="variable constant_">INPUT</span> -m conntrack --ctstate <span class="variable constant_">RELATED</span>,<span class="variable constant_">ESTABLISHED</span> -j <span class="variable constant_">ACCEPT</span></span><br><span class="line">-A <span class="variable constant_">INPUT</span> -i lo -j <span class="variable constant_">ACCEPT</span></span><br><span class="line">-A <span class="variable constant_">INPUT</span> -j INPUT_direct</span><br><span class="line">-A <span class="variable constant_">INPUT</span> -j <span class="variable constant_">INPUT_ZONES</span></span><br><span class="line">-A <span class="variable constant_">INPUT</span> -p icmp -j <span class="variable constant_">ACCEPT</span></span><br><span class="line">-A <span class="variable constant_">INPUT</span> -j <span class="variable constant_">REJECT</span> --reject-<span class="keyword">with</span> icmp-host-prohibited</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">-A <span class="variable constant_">INPUT_ZONES</span> -i p5p1 -g IN_ZONE_public</span><br><span class="line">-A <span class="variable constant_">INPUT_ZONES</span> -g IN_ZONE_public</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line">-A IN_ZONE_public -j IN_ZONE_public_deny</span><br><span class="line">-A IN_ZONE_public -j IN_ZONE_public_allow</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-g</code> 选项</li>
+</ul>
+<p>当报文由规则 <code>-A INPUT_ZONES -i p5p1 -g IN_ZONE_public</code> 将接口 <code>p5p1</code> 报文重定向到 <code>IN_ZONE_public</code> 时</p>
+<p>从 <code>IN_ZONE_public</code> 返回后</p>
+<p>不会继续进入其下一条规则 <code>-A INPUT_ZONES -g IN_ZONE_public</code></p>
+<p>而是直接返回到上层的 <code>-A INPUT -j INPUT_ZONES</code></p>
+<p>然后继续规则 <code>-A INPUT -p icmp -j ACCEPT</code></p>
+<h2 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h2><p>使用 <code>iptables -L -v</code> 查看报文计数器</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"># iptables -L -v</span><br><span class="line"><span class="title class_">Chain</span> <span class="title function_">INPUT</span> (policy <span class="variable constant_">ACCEPT</span> <span class="number">0</span> packets, <span class="number">0</span> bytes)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line"> <span class="number">2447</span>  173K <span class="variable constant_">ACCEPT</span>     all  --  any    any     anywhere             anywhere             ctstate <span class="variable constant_">RELATED</span>,<span class="variable constant_">ESTABLISHED</span></span><br><span class="line">    <span class="number">1</span>    <span class="number">80</span> <span class="variable constant_">ACCEPT</span>     all  --  lo     any     anywhere             anywhere            </span><br><span class="line">  <span class="number">404</span> <span class="number">82313</span> INPUT_direct  all  --  any    any     anywhere             anywhere            </span><br><span class="line">  <span class="number">404</span> <span class="number">82313</span> <span class="variable constant_">INPUT_ZONES</span>  all  --  any    any     anywhere             anywhere            </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> <span class="variable constant_">ACCEPT</span>     icmp --  any    any     anywhere             anywhere            </span><br><span class="line">  <span class="number">375</span> <span class="number">78428</span> <span class="variable constant_">REJECT</span>     all  --  any    any     anywhere             anywhere             reject-<span class="keyword">with</span> icmp-host-prohibited</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line"><span class="title class_">Chain</span> <span class="title function_">INPUT_ZONES</span> (<span class="number">1</span> references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">  <span class="number">375</span> <span class="number">78428</span> IN_ZONE_public  all  --  p5p1   any     anywhere             anywhere            [goto] </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> IN_ZONE_public  all  --  +      any     anywhere             anywhere            [goto]</span><br><span class="line"> </span><br><span class="line">...</span><br><span class="line"> </span><br><span class="line"><span class="title class_">Chain</span> <span class="title function_">IN_ZONE_public</span> (<span class="number">2</span> references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">  <span class="number">375</span> <span class="number">78428</span> IN_ZONE_public_deny  all  --  any    any     anywhere             anywhere            </span><br><span class="line">  <span class="number">375</span> <span class="number">78428</span> IN_ZONE_public_allow  all  --  any    any     anywhere             anywhere            </span><br><span class="line"><span class="title class_">Chain</span> <span class="title function_">IN_ZONE_public_allow</span> (<span class="number">1</span> references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination         </span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> <span class="variable constant_">ACCEPT</span>     tcp  --  any    any     anywhere             anywhere             tcp <span class="attr">dpt</span>:ssh ctstate <span class="variable constant_">NEW</span></span><br><span class="line">    <span class="number">0</span>     <span class="number">0</span> <span class="variable constant_">ACCEPT</span>     udp  --  any    any     anywhere             <span class="number">224.0</span><span class="number">.0</span><span class="number">.251</span>          udp <span class="attr">dpt</span>:mdns ctstate <span class="variable constant_">NEW</span></span><br><span class="line"><span class="title class_">Chain</span> <span class="title function_">IN_ZONE_public_deny</span> (<span class="number">1</span> references)</span><br><span class="line"> pkts bytes target     prot opt <span class="keyword">in</span>     out     source               destination </span><br></pre></td></tr></table></figure>
+
+<p>从计数器可以看出链 <code>INPUT_ZONES</code> 中走了第一个 <code>goto</code> 的不会进入第二个 <code>goto</code></p>
+<p>而链 <code>IN_ZONE_public</code> 中第一个 <code>deny</code> 没有处理</p>
+<p>其计数器与 <code>allow</code> 的相同</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/04/19/iptables%E4%B8%AD-j%E9%80%89%E9%A1%B9%E4%B8%8E-g%E9%80%89%E9%A1%B9%E7%9A%84%E5%8C%BA%E5%88%AB/" data-title="iptables中-j选项与-g选项的区别 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/04/20/Cilium安装与学习/" title="Cilium安装与学习">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Cilium安装与学习</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/04/06/使用Kubernetes-API/"  title="使用Kubernetes API">
+ <strong>下一篇：</strong><br/> 
+ <span>使用Kubernetes API
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/04/19/iptables中-j选项与-g选项的区别/" data-title="iptables中-j选项与-g选项的区别" data-url="https://luckymrwang.github.io/2022/04/19/iptables%E4%B8%AD-j%E9%80%89%E9%A1%B9%E4%B8%8E-g%E9%80%89%E9%A1%B9%E7%9A%84%E5%8C%BA%E5%88%AB/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%86%8C"><span class="toc-number">1.</span> <span class="toc-text">手册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">2.</span> <span class="toc-text">示例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-number">3.</span> <span class="toc-text">计数器</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

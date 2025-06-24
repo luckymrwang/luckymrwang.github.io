@@ -1,0 +1,589 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>PHP错误异常处理详解 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="异常处理（又称为错误处理）功能提供了处理程序运行时出现的错误或异常情况的方法。 异常处理通常是防止未知错误产生所采取的处理措施。异常处理的好处是你不用再绞尽脑汁去考虑各种错误，这为处理某一类错误提供了一个很有效的方法，使编程效率大大提高。当异常被触发时，通常会发生：  当前代码状态被保存 代码执行被切换到预定义的异常处理器函数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP错误异常处理详解">
+<meta property="og:url" content="https://luckymrwang.github.io/2015/10/13/PHP%E9%94%99%E8%AF%AF%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="异常处理（又称为错误处理）功能提供了处理程序运行时出现的错误或异常情况的方法。 异常处理通常是防止未知错误产生所采取的处理措施。异常处理的好处是你不用再绞尽脑汁去考虑各种错误，这为处理某一类错误提供了一个很有效的方法，使编程效率大大提高。当异常被触发时，通常会发生：  当前代码状态被保存 代码执行被切换到预定义的异常处理器函数">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-10-13T09:40:57.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.198Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="PHP">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/10/13/PHP错误异常处理详解/" title="PHP错误异常处理详解" itemprop="url">PHP错误异常处理详解</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-10-13T09:40:57.000Z" itemprop="datePublished"> 发表于 2015-10-13</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">异常的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Try-throw-%E5%92%8C-catch"><span class="toc-number">2.</span> <span class="toc-text">Try, throw 和 catch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A9%E5%B1%95-PHP-%E5%86%85%E7%BD%AE%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%B1%BB"><span class="toc-number">3.</span> <span class="toc-text">扩展 PHP 内置的异常处理类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">嵌套异常处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%A1%B6%E5%B1%82%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%99%A8-%EF%BC%88Top-Level-Exception-Handler%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">设置顶层异常处理器 （Top Level Exception Handler）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E7%9A%84%E8%A7%84%E5%88%99"><span class="toc-number">6.</span> <span class="toc-text">异常的规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">PHP错误处理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#set-error-handler"><span class="toc-number">7.1.</span> <span class="toc-text">set_error_handler</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#set-exception-handler"><span class="toc-number">7.2.</span> <span class="toc-text">set_exception_handler</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#register-shutdown-function"><span class="toc-number">7.3.</span> <span class="toc-text">register_shutdown_function</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E8%A6%81%E8%AF%B4%E6%98%8E%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%EF%BC%9A"><span class="toc-number">8.</span> <span class="toc-text">简要说明错误处理：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8C%87%E5%AE%9A%E7%9A%84%E6%96%87%E4%BB%B6%E8%AE%B0%E5%BD%95%E9%94%99%E8%AF%AF%E6%8A%A5%E5%91%8A%E6%97%A5%E5%BF%97"><span class="toc-number">8.1.</span> <span class="toc-text">使用指定的文件记录错误报告日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E8%AE%B0%E5%BD%95%E5%88%B0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%97%A5%E5%BF%97%E9%87%8C"><span class="toc-number">8.2.</span> <span class="toc-text">错误信息记录到操作系统的日志里</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>异常处理（又称为错误处理）功能提供了处理程序运行时出现的错误或异常情况的方法。</p>
+<p>异常处理通常是防止未知错误产生所采取的处理措施。异常处理的好处是你不用再绞尽脑汁去考虑各种错误，这为处理某一类错误提供了一个很有效的方法，使编程效率大大提高。当异常被触发时，通常会发生：</p>
+<ul>
+<li>当前代码状态被保存</li>
+<li>代码执行被切换到预定义的异常处理器函数</li>
+</ul>
+<span id="more"></span>
+<p>根据情况，处理器也许会从保存的代码状态重新开始执行代码，终止脚本执行，或从代码中另外的位置继续执行脚本</p>
+<p>PHP 5 提供了一种新的面向对象的错误处理方法。可以使用检测（try）、抛出（throw）和捕获（catch）异常。即使用try检测有没有抛出（throw）异常，若有异常抛出（throw），使用catch捕获异常。</p>
+<p>一个 try 至少要有一个与之对应的 catch。定义多个 catch 可以捕获不同的对象。PHP 会按这些 catch 被定义的顺序执行，直到完成最后一个为止。而在这些 catch 内，又可以抛出新的异常。</p>
+<h3 id="异常的使用"><a href="#异常的使用" class="headerlink" title="异常的使用"></a>异常的使用</h3><p>当一个异常被抛出时，其后的代码将不会继续执行，PHP 会尝试查找匹配的 “catch” 代码块。如果一个异常没有被捕获，而且又没用使用 <a href="http://php.net/manual/zh/function.set-exception-handler.php">set_exception_handler()</a> 作相应的处理的话，那么 PHP 将会产生一个严重的错误，并且输出未能捕获异常(Uncaught Exception … )的提示信息。</p>
+<p>抛出异常，但不去捕获它：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line">	<span class="title function_ invoke__">ini_set</span>(<span class="string">&#x27;display_errors&#x27;</span>, <span class="string">&#x27;On&#x27;</span>);  </span><br><span class="line">	<span class="title function_ invoke__">error_reporting</span>(E_ALL &amp; ~ E_WARNING);  </span><br><span class="line">	<span class="variable">$error</span> = <span class="string">&#x27;Always throw this error&#x27;</span>;  </span><br><span class="line">	<span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="variable">$error</span>);  </span><br><span class="line">	<span class="comment">// 继续执行  </span></span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&#x27;Hello World&#x27;</span>;  </span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
+<p>上面的代码会获得类似这样的一个致命错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Fatal error: Uncaught exception &#x27;Exception&#x27; with message &#x27;Always throw this error&#x27; in E:\sngrep\index.php on line 5  </span><br><span class="line">Exception: Always throw this error in E:\sngrep\index.php on line 5  </span><br><span class="line">Call Stack:  </span><br><span class="line">    0.0005     330680   1. &#123;main&#125;() E:\sngrep\index.php:0</span><br></pre></td></tr></table></figure>
+
+<h3 id="Try-throw-和-catch"><a href="#Try-throw-和-catch" class="headerlink" title="Try, throw 和 catch"></a>Try, throw 和 catch</h3><p>要避免上面这个致命错误，可以使用try catch捕获掉。<br>处理处理程序应当包括：</p>
+<p>Try - 使用异常的函数应该位于 “try” 代码块内。如果没有触发异常，则代码将照常继续执行。但是如果异常被触发，会抛出一个异常。<br>       Throw - 这里规定如何触发异常。每一个 “throw” 必须对应至少一个 “catch”<br>       Catch - “catch” 代码块会捕获异常，并创建一个包含异常信息的对象<br>       抛出异常并捕获掉，可以继续执行后面的代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="variable">$error</span> = <span class="string">&#x27;Always throw this error&#x27;</span>;  </span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="variable">$error</span>);  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 从这里开始，tra 代码块内的代码将不会被执行  </span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Never executed&#x27;</span>;  </span><br><span class="line">  </span><br><span class="line">&#125; <span class="keyword">catch</span> (<span class="built_in">Exception</span> <span class="variable">$e</span>) &#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Caught exception: &#x27;</span>,  <span class="variable">$e</span>-&gt;<span class="title function_ invoke__">getMessage</span>(),<span class="string">&#x27;&lt;br&gt;&#x27;</span>;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// 继续执行  </span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;Hello World&#x27;</span>;  </span><br><span class="line"><span class="meta">?&gt;</span>   </span><br></pre></td></tr></table></figure>
+
+<p>在 “try” 代码块检测有有没有抛出“throw”异常，这里抛出了异常。<br>    “catch” 代码块接收到该异常，并创建一个包含异常信息的对象 ($e)。<br>    通过从这个 exception 对象调用 $e-&gt;getMessage()，输出来自该异常的错误消息<br>    为了遵循“每个 throw 必须对应一个 catch”的原则，可以设置一个顶层的异常处理器来处理漏掉的错误。</p>
+<h3 id="扩展-PHP-内置的异常处理类"><a href="#扩展-PHP-内置的异常处理类" class="headerlink" title="扩展 PHP 内置的异常处理类"></a>扩展 PHP 内置的异常处理类</h3><p>用户可以用自定义的异常处理类来扩展 PHP 内置的异常处理类。以下的代码说明了在内置的异常处理类中，哪些属性和方法在子类中是可访问和可继承的。（注：以下这段代码只为说明内置异常处理类的结构，它并不是一段有实际意义的可用代码。）</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Exception</span>  </span></span><br><span class="line"><span class="class"></span>&#123;  </span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$message</span> = <span class="string">&#x27;Unknown exception&#x27;</span>;   <span class="comment">// 异常信息  </span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$code</span> = <span class="number">0</span>;                        <span class="comment">// 用户自定义异常代码  </span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$file</span>;                            <span class="comment">// 发生异常的文件名  </span></span><br><span class="line">    <span class="keyword">protected</span> <span class="variable">$line</span>;                            <span class="comment">// 发生异常的代码行号  </span></span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$message</span> = <span class="literal">null</span>, <span class="variable">$code</span> = <span class="number">0</span></span>)</span>;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">function</span> <span class="title">getMessage</span>(<span class="params"></span>)</span>;                <span class="comment">// 返回异常信息  </span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">function</span> <span class="title">getCode</span>(<span class="params"></span>)</span>;                   <span class="comment">// 返回异常代码  </span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">function</span> <span class="title">getFile</span>(<span class="params"></span>)</span>;                   <span class="comment">// 返回发生异常的文件名  </span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">function</span> <span class="title">getLine</span>(<span class="params"></span>)</span>;                   <span class="comment">// 返回发生异常的代码行号  </span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">function</span> <span class="title">getTrace</span>(<span class="params"></span>)</span>;                  <span class="comment">// backtrace() 数组  </span></span><br><span class="line">    <span class="keyword">final</span> <span class="function"><span class="keyword">function</span> <span class="title">getTraceAsString</span>(<span class="params"></span>)</span>;          <span class="comment">// 已格成化成字符串的 getTrace() 信息  </span></span><br><span class="line">  </span><br><span class="line">    <span class="comment">/* 可重载的方法 */</span>  </span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>)</span>;                       <span class="comment">// 可输出的字符串  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果使用自定义的类来扩展内置异常处理类，并且要重新定义构造函数的话，建议同时调用 parent::__construct() 来检查所有的变量是否已被赋值。当对象要输出字符串的时候，可以重载__toString() 并自定义输出的样式。 </p>
+<p>构建自定义异常处理类：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line">  </span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment"> *  </span></span><br><span class="line"><span class="comment"> * 自定义一个异常处理类 </span></span><br><span class="line"><span class="comment"> */</span>  </span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyException</span> <span class="keyword">extends</span> <span class="title">Exception</span>  </span></span><br><span class="line"><span class="class"></span>&#123;  </span><br><span class="line">    <span class="comment">// 重定义构造器使 message 变为必须被指定的属性  </span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$message</span>, <span class="variable">$code</span> = <span class="number">0</span></span>) </span>&#123;  </span><br><span class="line">        <span class="comment">// 自定义的代码  </span></span><br><span class="line">  </span><br><span class="line">        <span class="comment">// 确保所有变量都被正确赋值  </span></span><br><span class="line">        <span class="built_in">parent</span>::<span class="title function_ invoke__">__construct</span>(<span class="variable">$message</span>, <span class="variable">$code</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 自定义字符串输出的样式 */  </span></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span>(<span class="params"></span>) </span>&#123;  </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">__CLASS__</span> . <span class="string">&quot;: [<span class="subst">&#123;$this-&gt;code&#125;</span>]: <span class="subst">&#123;$this-&gt;message&#125;</span>\n&quot;</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">customFunction</span>(<span class="params"></span>) </span>&#123;  </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;A Custom function for this type of exception\n&quot;</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 例子 1:抛出自定义异常,但没有默认的异常  </span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27; 例子 1&#x27;</span>, <span class="string">&#x27;&lt;br&gt;&#x27;</span>;  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="comment">// 抛出自定义异常  </span></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">MyException</span>(<span class="string">&#x27;1 is an invalid parameter&#x27;</span>, <span class="number">5</span>);  </span><br><span class="line">&#125; <span class="keyword">catch</span> (MyException <span class="variable">$e</span>) &#123;      <span class="comment">// 捕获异常  </span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Caught my exception\n&quot;</span>, <span class="variable">$e</span>;  </span><br><span class="line">    <span class="variable">$e</span>-&gt;<span class="title function_ invoke__">customFunction</span>();  </span><br><span class="line">&#125; <span class="keyword">catch</span> (<span class="built_in">Exception</span> <span class="variable">$e</span>) &#123;        <span class="comment">// 被忽略  </span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Caught Default Exception\n&quot;</span>, <span class="variable">$e</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">// 执行后续代码  </span></span><br><span class="line"><span class="comment">// 例子 2： 抛出默认的异常  但没有自定义异常  </span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&lt;br&gt;&#x27;</span>, <span class="string">&#x27; 例子 2:&#x27;</span>, <span class="string">&#x27;&lt;br&gt;&#x27;</span>;  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">     <span class="comment">// 抛出默认的异常    </span></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="string">&#x27;2 isnt allowed as a parameter&#x27;</span>, <span class="number">6</span>);  </span><br><span class="line">&#125; <span class="keyword">catch</span> (MyException <span class="variable">$e</span>) &#123;      <span class="comment">// 不能匹配异常的种类，被忽略  </span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Caught my exception\n&quot;</span>, <span class="variable">$e</span>;  </span><br><span class="line">    <span class="variable">$e</span>-&gt;<span class="title function_ invoke__">customFunction</span>();  </span><br><span class="line">&#125; <span class="keyword">catch</span> (<span class="built_in">Exception</span> <span class="variable">$e</span>) &#123;<span class="comment">// 捕获异常  </span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Caught Default Exception\n&quot;</span>, <span class="variable">$e</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="comment">// 执行后续代码  </span></span><br><span class="line"><span class="comment">// 例子 3: 抛出自定义异常 ，使用默认异常类对象来捕获  </span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&lt;br&gt;&#x27;</span>, <span class="string">&#x27; 例子 3:&#x27;</span>, <span class="string">&#x27;&lt;br&gt;&#x27;</span>;  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">     <span class="comment">// 抛出自定义异常   </span></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">MyException</span>(<span class="string">&#x27;3 isnt allowed as a parameter&#x27;</span>, <span class="number">6</span>);  </span><br><span class="line">&#125; <span class="keyword">catch</span> (<span class="built_in">Exception</span> <span class="variable">$e</span>) &#123;        <span class="comment">// 捕获异常  </span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Default Exception caught\n&quot;</span>, <span class="variable">$e</span>;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// 执行后续代码  </span></span><br><span class="line"><span class="comment">// 例子 4  </span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;&lt;br&gt;&#x27;</span>, <span class="string">&#x27; 例子 4:&#x27;</span>, <span class="string">&#x27;&lt;br&gt;&#x27;</span>;  </span><br><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;No Exception &#x27;</span>;  </span><br><span class="line">&#125; <span class="keyword">catch</span> (<span class="built_in">Exception</span> <span class="variable">$e</span>) &#123;        <span class="comment">// 没有异常，被忽略  </span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Default Exception caught\n&quot;</span>, <span class="variable">$e</span>;  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// 执行后续代码</span></span><br></pre></td></tr></table></figure>
+
+<p>MyException 类是作为旧的 exception 类的一个扩展来创建的。这样它就继承了旧类的所有属性和方法，我们可以使用 exception 类的方法，比如 getLine() 、 getFile() 以及 getMessage()。</p>
+<h3 id="嵌套异常处理"><a href="#嵌套异常处理" class="headerlink" title="嵌套异常处理"></a>嵌套异常处理</h3><p>如果在内层 “try” 代码块中异常没有被捕获，则它将在外层级上查找 catch 代码块去捕获。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">MyException</span>(<span class="string">&#x27;foo!&#x27;</span>);  </span><br><span class="line">    &#125; <span class="keyword">catch</span> (MyException <span class="variable">$e</span>) &#123;  </span><br><span class="line">        <span class="comment">/* 重新抛出 rethrow it */</span>  </span><br><span class="line">         <span class="variable">$e</span>-&gt;<span class="title function_ invoke__">customFunction</span>();  </span><br><span class="line">        <span class="keyword">throw</span> <span class="variable">$e</span>;  </span><br><span class="line">        </span><br><span class="line">     &#125;  </span><br><span class="line">&#125; <span class="keyword">catch</span> (<span class="built_in">Exception</span> <span class="variable">$e</span>) &#123;  </span><br><span class="line">        <span class="title function_ invoke__">var_dump</span>(<span class="variable">$e</span>-&gt;<span class="title function_ invoke__">getMessage</span>());  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<h3 id="设置顶层异常处理器-（Top-Level-Exception-Handler）"><a href="#设置顶层异常处理器-（Top-Level-Exception-Handler）" class="headerlink" title="设置顶层异常处理器 （Top Level Exception Handler）"></a>设置顶层异常处理器 （Top Level Exception Handler）</h3><p>set_exception_handler() 函数可设置处理所有未捕获异常的用户定义函数。  </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myException</span>(<span class="params"><span class="variable">$exception</span></span>)  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;b&gt;Exception:&lt;/b&gt; &quot;</span> , <span class="variable">$exception</span>-&gt;<span class="title function_ invoke__">getMessage</span>();  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="title function_ invoke__">set_exception_handler</span>(<span class="string">&#x27;myException&#x27;</span>);  </span><br><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="string">&#x27;Uncaught Exception occurred&#x27;</span>);  </span><br><span class="line">     输出结果：</span><br><span class="line"></span><br><span class="line"><span class="built_in">Exception</span>: Uncaught <span class="built_in">Exception</span> occurred  </span><br></pre></td></tr></table></figure>
+
+<h3 id="异常的规则"><a href="#异常的规则" class="headerlink" title="异常的规则"></a>异常的规则</h3><ul>
+<li>需要进行异常处理的代码应该放入 try 代码块内，以便捕获潜在的异常。</li>
+<li>每个 try 或 throw 代码块必须至少拥有一个对应的 catch 代码块。</li>
+<li>使用多个 catch 代码块可以捕获不同种类的异常。</li>
+<li>可以在 try 代码块内的 catch 代码块中再次抛出（re-thrown）异常。</li>
+</ul>
+<p>简而言之：如果抛出了异常，就必须捕获它,否则程序终止执行。</p>
+<p>在我们实际开发中，错误及异常捕捉仅仅靠try{}catch()是远远不够的。</p>
+<p>set_error_handler<br>一般用于捕捉  <code>E_NOTICE</code> 、<code>E_USER_ERROR</code>、<code>E_USER_WARNING</code>、<code>E_USER_NOTICE</code></p>
+<p>不能捕捉：<br><code>E_ERROR</code>, <code>E_PARSE</code>, <code>E_CORE_ERROR</code>, <code>E_CORE_WARNING</code>, <code>E_COMPILE_ERROR</code> and <code>E_COMPILE_WARNING</code>。</p>
+<p>一般与trigger_error(“…”, E_USER_ERROR)，配合使用。</p>
+<h3 id="PHP错误处理"><a href="#PHP错误处理" class="headerlink" title="PHP错误处理"></a>PHP错误处理</h3><p>在实际开发中，错误及异常捕捉仅仅靠try{}catch()是远远不够的。<br>所以引用以下几中函数。</p>
+<h4 id="set-error-handler"><a href="#set-error-handler" class="headerlink" title="set_error_handler"></a>set_error_handler</h4><p>一般用于捕捉  E_NOTICE 、E_USER_ERROR、E_USER_WARNING、E_USER_NOTICE</p>
+<p>不能捕捉：<br>E_ERROR, E_PARSE, E_CORE_ERROR, E_CORE_WARNING, E_COMPILE_ERROR and E_COMPILE_WARNING。</p>
+<p>一般与trigger_error(“…”, E_USER_ERROR)，配合使用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"><span class="comment">// we will do our own error handling  </span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);  </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">userErrorHandler</span>(<span class="params"><span class="variable">$errno</span>, <span class="variable">$errmsg</span>, <span class="variable">$filename</span>, <span class="variable">$linenum</span>, <span class="variable">$vars</span></span>)  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="comment">// timestamp for the error entry      </span></span><br><span class="line">    <span class="variable">$dt</span> = <span class="title function_ invoke__">date</span>(<span class="string">&quot;Y-m-d H:i:s (T)&quot;</span>);      </span><br><span class="line">    <span class="comment">// define an assoc array of error string      </span></span><br><span class="line">    <span class="comment">// in reality the only entries we should      </span></span><br><span class="line">    <span class="comment">// consider are E_WARNING, E_NOTICE, E_USER_ERROR,      </span></span><br><span class="line">    <span class="comment">// E_USER_WARNING and E_USER_NOTICE      </span></span><br><span class="line">    <span class="variable">$errortype</span> = <span class="keyword">array</span> (                  </span><br><span class="line">        E_ERROR              =&gt; <span class="string">&#x27;Error&#x27;</span>,                  </span><br><span class="line">        E_WARNING            =&gt; <span class="string">&#x27;Warning&#x27;</span>,                  </span><br><span class="line">        E_PARSE              =&gt; <span class="string">&#x27;Parsing Error&#x27;</span>,                  </span><br><span class="line">        E_NOTICE             =&gt; <span class="string">&#x27;Notice&#x27;</span>,                  </span><br><span class="line">        E_CORE_ERROR         =&gt; <span class="string">&#x27;Core Error&#x27;</span>,                  </span><br><span class="line">        E_CORE_WARNING       =&gt; <span class="string">&#x27;Core Warning&#x27;</span>,                  </span><br><span class="line">        E_COMPILE_ERROR      =&gt; <span class="string">&#x27;Compile Error&#x27;</span>,                  </span><br><span class="line">        E_COMPILE_WARNING    =&gt; <span class="string">&#x27;Compile Warning&#x27;</span>,                  </span><br><span class="line">        E_USER_ERROR         =&gt; <span class="string">&#x27;User Error&#x27;</span>,                  </span><br><span class="line">        E_USER_WARNING       =&gt; <span class="string">&#x27;User Warning&#x27;</span>,                  </span><br><span class="line">        E_USER_NOTICE        =&gt; <span class="string">&#x27;User Notice&#x27;</span>,                  </span><br><span class="line">        E_STRICT             =&gt; <span class="string">&#x27;Runtime Notice&#x27;</span>,                  </span><br><span class="line">        E_RECOVERABLE_ERROR  =&gt; <span class="string">&#x27;Catchable Fatal Error&#x27;</span>                  </span><br><span class="line">    );      </span><br><span class="line">    <span class="comment">// set of errors for which a var trace will be saved      </span></span><br><span class="line">    <span class="variable">$user_errors</span> = <span class="keyword">array</span>(E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE);          </span><br><span class="line">    <span class="variable">$err</span> = <span class="string">&quot;&lt;errorentry&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;datetime&gt;&quot;</span> . <span class="variable">$dt</span> . <span class="string">&quot;&lt;/datetime&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;errornum&gt;&quot;</span> . <span class="variable">$errno</span> . <span class="string">&quot;&lt;/errornum&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;errortype&gt;&quot;</span> . <span class="variable">$errortype</span>[<span class="variable">$errno</span>] . <span class="string">&quot;&lt;/errortype&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;errormsg&gt;&quot;</span> . <span class="variable">$errmsg</span> . <span class="string">&quot;&lt;/errormsg&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;scriptname&gt;&quot;</span> . <span class="variable">$filename</span> . <span class="string">&quot;&lt;/scriptname&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;scriptlinenum&gt;&quot;</span> . <span class="variable">$linenum</span> . <span class="string">&quot;&lt;/scriptlinenum&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">in_array</span>(<span class="variable">$errno</span>, <span class="variable">$user_errors</span>)) &#123;          </span><br><span class="line">        <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;vartrace&gt;&quot;</span> . <span class="title function_ invoke__">wddx_serialize_value</span>(<span class="variable">$vars</span>, <span class="string">&quot;Variables&quot;</span>) . <span class="string">&quot;&lt;/vartrace&gt;\n&quot;</span>;      </span><br><span class="line">    &#125;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;&lt;/errorentry&gt;\n\n&quot;</span>;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$err</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">distance</span>(<span class="params"><span class="variable">$vect1</span>, <span class="variable">$vect2</span></span>) </span>&#123;      </span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">is_array</span>(<span class="variable">$vect1</span>) || !<span class="title function_ invoke__">is_array</span>(<span class="variable">$vect2</span>)) &#123;          </span><br><span class="line">        <span class="title function_ invoke__">trigger_error</span>(<span class="string">&quot;Incorrect parameters, arrays expected&quot;</span>, E_USER_ERROR);          </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;      </span><br><span class="line">    &#125;      </span><br><span class="line">    <span class="keyword">if</span> (<span class="title function_ invoke__">count</span>(<span class="variable">$vect1</span>) != <span class="title function_ invoke__">count</span>(<span class="variable">$vect2</span>)) &#123;          </span><br><span class="line">        <span class="title function_ invoke__">trigger_error</span>(<span class="string">&quot;Vectors need to be of the same size&quot;</span>, E_USER_ERROR);          </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">NULL</span>;      </span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="keyword">for</span> (<span class="variable">$i</span>=<span class="number">0</span>; <span class="variable">$i</span>&lt;<span class="title function_ invoke__">count</span>(<span class="variable">$vect1</span>); <span class="variable">$i</span>++) &#123;          </span><br><span class="line">        <span class="variable">$c1</span> = <span class="variable">$vect1</span>[<span class="variable">$i</span>]; <span class="variable">$c2</span> = <span class="variable">$vect2</span>[<span class="variable">$i</span>];          </span><br><span class="line">        <span class="variable">$d</span> = <span class="number">0.0</span>;          </span><br><span class="line">        <span class="keyword">if</span> (!<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$c1</span>)) &#123;              </span><br><span class="line">        <span class="title function_ invoke__">trigger_error</span>(<span class="string">&quot;Coordinate <span class="subst">$i</span> in vector 1 is not a number, using zero&quot;</span>,E_USER_WARNING);              </span><br><span class="line">        <span class="variable">$c1</span> = <span class="number">0.0</span>;          </span><br><span class="line">    &#125;          </span><br><span class="line">    <span class="keyword">if</span> (!<span class="title function_ invoke__">is_numeric</span>(<span class="variable">$c2</span>)) &#123;              </span><br><span class="line">        <span class="title function_ invoke__">trigger_error</span>(<span class="string">&quot;Coordinate <span class="subst">$i</span> in vector 2 is not a number, using zero&quot;</span>,E_USER_WARNING);              </span><br><span class="line">        <span class="variable">$c2</span> = <span class="number">0.0</span>;          </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="variable">$d</span> += <span class="variable">$c2</span>*<span class="variable">$c2</span> - <span class="variable">$c1</span>*<span class="variable">$c1</span>;      </span><br><span class="line">    &#125;      </span><br><span class="line">    <span class="keyword">return</span> <span class="title function_ invoke__">sqrt</span>(<span class="variable">$d</span>);  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="variable">$old_error_handle</span> = <span class="title function_ invoke__">set_error_handler</span>(<span class="string">&quot;userErrorHandler&quot;</span>);  </span><br><span class="line"><span class="variable">$t</span> = I_AM_NOT_DEFINED;  <span class="comment">//generates a warning  </span></span><br><span class="line">  </span><br><span class="line"><span class="comment">// define some &quot;vectors&quot;  </span></span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">array</span>(<span class="number">2</span>, <span class="number">3</span>, <span class="string">&quot;foo&quot;</span>);  </span><br><span class="line"><span class="variable">$b</span> = <span class="keyword">array</span>(<span class="number">5.5</span>, <span class="number">4.3</span>, -<span class="number">1.6</span>);  </span><br><span class="line"><span class="variable">$c</span> = <span class="keyword">array</span>(<span class="number">1</span>, -<span class="number">3</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="comment">//generate a user error  </span></span><br><span class="line"><span class="variable">$t1</span> = <span class="title function_ invoke__">distance</span>(<span class="variable">$c</span>,<span class="variable">$b</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// generate another user error  </span></span><br><span class="line"><span class="variable">$t2</span> = <span class="title function_ invoke__">distance</span>(<span class="variable">$b</span>, <span class="string">&quot;i am not an array&quot;</span>) . <span class="string">&quot;\n&quot;</span>;  </span><br><span class="line">  </span><br><span class="line"><span class="comment">// generate a warning  </span></span><br><span class="line"><span class="variable">$t3</span> = <span class="title function_ invoke__">distance</span>(<span class="variable">$a</span>, <span class="variable">$b</span>) . <span class="string">&quot;\n&quot;</span>;  </span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="set-exception-handler"><a href="#set-exception-handler" class="headerlink" title="set_exception_handler"></a>set_exception_handler</h4><p>设置默认的异常处理程序，用于没有用 try&#x2F;catch 块来捕获的异常。 在 exception_handler 调用后异常会中止。<br>与throw new Exception(‘Uncaught Exception occurred’)，连用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"><span class="comment">// we will do our own error handling  </span></span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);  </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">exceptHandle</span>(<span class="params"><span class="variable">$errno</span>, <span class="variable">$errmsg</span>, <span class="variable">$filename</span>, <span class="variable">$linenum</span>, <span class="variable">$vars</span></span>)  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="comment">// timestamp for the error entry      </span></span><br><span class="line">    <span class="variable">$dt</span> = <span class="title function_ invoke__">date</span>(<span class="string">&quot;Y-m-d H:i:s (T)&quot;</span>);      </span><br><span class="line">    <span class="comment">// define an assoc array of error string      </span></span><br><span class="line">    <span class="comment">// in reality the only entries we should      </span></span><br><span class="line">    <span class="comment">// consider are E_WARNING, E_NOTICE, E_USER_ERROR,      </span></span><br><span class="line">    <span class="comment">// E_USER_WARNING and E_USER_NOTICE      </span></span><br><span class="line">    <span class="variable">$errortype</span> = <span class="keyword">array</span> (                  </span><br><span class="line">        E_ERROR              =&gt; <span class="string">&#x27;Error&#x27;</span>,                  </span><br><span class="line">        E_WARNING            =&gt; <span class="string">&#x27;Warning&#x27;</span>,                  </span><br><span class="line">        E_PARSE              =&gt; <span class="string">&#x27;Parsing Error&#x27;</span>,                  </span><br><span class="line">        E_NOTICE             =&gt; <span class="string">&#x27;Notice&#x27;</span>,                  </span><br><span class="line">        E_CORE_ERROR         =&gt; <span class="string">&#x27;Core Error&#x27;</span>,                  </span><br><span class="line">        E_CORE_WARNING       =&gt; <span class="string">&#x27;Core Warning&#x27;</span>,                  </span><br><span class="line">        E_COMPILE_ERROR      =&gt; <span class="string">&#x27;Compile Error&#x27;</span>,                  </span><br><span class="line">        E_COMPILE_WARNING    =&gt; <span class="string">&#x27;Compile Warning&#x27;</span>,                  </span><br><span class="line">        E_USER_ERROR         =&gt; <span class="string">&#x27;User Error&#x27;</span>,                  </span><br><span class="line">        E_USER_WARNING       =&gt; <span class="string">&#x27;User Warning&#x27;</span>,                  </span><br><span class="line">        E_USER_NOTICE        =&gt; <span class="string">&#x27;User Notice&#x27;</span>,                  </span><br><span class="line">        E_STRICT             =&gt; <span class="string">&#x27;Runtime Notice&#x27;</span>,                  </span><br><span class="line">        E_RECOVERABLE_ERROR  =&gt; <span class="string">&#x27;Catchable Fatal Error&#x27;</span>                  </span><br><span class="line">    );      </span><br><span class="line">    <span class="comment">// set of errors for which a var trace will be saved      </span></span><br><span class="line">    <span class="variable">$err</span> = <span class="string">&quot;&lt;errorentry&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;datetime&gt;&quot;</span> . <span class="variable">$dt</span> . <span class="string">&quot;&lt;/datetime&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;errornum&gt;&quot;</span> . <span class="variable">$errno</span> . <span class="string">&quot;&lt;/errornum&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;errortype&gt;&quot;</span> . <span class="variable">$errortype</span>[<span class="variable">$errno</span>] . <span class="string">&quot;&lt;/errortype&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;errormsg&gt;&quot;</span> . <span class="variable">$errmsg</span> . <span class="string">&quot;&lt;/errormsg&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;scriptname&gt;&quot;</span> . <span class="variable">$filename</span> . <span class="string">&quot;&lt;/scriptname&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;scriptlinenum&gt;&quot;</span> . <span class="variable">$linenum</span> . <span class="string">&quot;&lt;/scriptlinenum&gt;\n&quot;</span>;      </span><br><span class="line">    <span class="keyword">if</span> (<span class="number">1</span>) &#123;          </span><br><span class="line">        <span class="variable">$err</span> .= <span class="string">&quot;\t&lt;vartrace&gt;&quot;</span> . <span class="title function_ invoke__">wddx_serialize_value</span>(<span class="variable">$vars</span>, <span class="string">&quot;Variables&quot;</span>) . <span class="string">&quot;&lt;/vartrace&gt;\n&quot;</span>;      </span><br><span class="line">    &#125;      </span><br><span class="line">    <span class="variable">$err</span> .= <span class="string">&quot;&lt;/errorentry&gt;\n\n&quot;</span>;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$err</span>;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="variable">$old_except_handle</span> = <span class="title function_ invoke__">set_exception_handler</span>(<span class="string">&quot;exceptHandle&quot;</span>);  </span><br><span class="line"><span class="comment">//$t = I_AM_NOT_DEFINED;    //generates a warning  </span></span><br><span class="line"><span class="variable">$a</span>;  </span><br><span class="line"><span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Exception</span>(<span class="string">&#x27;Uncaught Exception occurred&#x27;</span>);      </span><br><span class="line"><span class="meta">?&gt;</span>  </span><br></pre></td></tr></table></figure>
+
+<h4 id="register-shutdown-function"><a href="#register-shutdown-function" class="headerlink" title="register_shutdown_function"></a>register_shutdown_function</h4><p>执行机制是：php把要调用的函数调入内存。当页面所有ＰＨＰ语句都执行完成时，再调用此函数。<br>一般与trigger_error(“…”, E_USER_ERROR)，配合使用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"><span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);  </span><br><span class="line"><span class="title function_ invoke__">date_default_timezone_set</span>(<span class="string">&#x27;Asia/Shanghai&#x27;</span>);  </span><br><span class="line"><span class="title function_ invoke__">register_shutdown_function</span>(<span class="string">&#x27;my_exception_handler&#x27;</span>);  </span><br><span class="line">  </span><br><span class="line"><span class="variable">$t</span> = I_AM_NOT_DEFINED;  <span class="comment">//generates a warning  </span></span><br><span class="line"><span class="title function_ invoke__">trigger_error</span>(<span class="string">&quot;Vectors need to be of the same size&quot;</span>, E_USER_ERROR);       </span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">my_exception_handler</span>(<span class="params"></span>)  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$e</span> = <span class="title function_ invoke__">error_get_last</span>()) &#123;  </span><br><span class="line">    <span class="comment">//$e[&#x27;type&#x27;]对应php_error常量  </span></span><br><span class="line">    <span class="variable">$message</span> = <span class="string">&#x27;&#x27;</span>;  </span><br><span class="line">    <span class="variable">$message</span> .= <span class="string">&quot;出错信息:\t&quot;</span>.<span class="variable">$e</span>[<span class="string">&#x27;message&#x27;</span>].<span class="string">&quot;\n\n&quot;</span>;  </span><br><span class="line">    <span class="variable">$message</span> .= <span class="string">&quot;出错文件:\t&quot;</span>.<span class="variable">$e</span>[<span class="string">&#x27;file&#x27;</span>].<span class="string">&quot;\n\n&quot;</span>;  </span><br><span class="line">    <span class="variable">$message</span> .= <span class="string">&quot;出错行数:\t&quot;</span>.<span class="variable">$e</span>[<span class="string">&#x27;line&#x27;</span>].<span class="string">&quot;\n\n&quot;</span>;  </span><br><span class="line">    <span class="variable">$message</span> .= <span class="string">&quot;\t\t请工程师检查出现程序&quot;</span>.<span class="variable">$e</span>[<span class="string">&#x27;file&#x27;</span>].<span class="string">&quot;出现错误的原因\n&quot;</span>;  </span><br><span class="line">    <span class="variable">$message</span> .= <span class="string">&quot;\t\t希望能您早点解决故障出现的原因&lt;br/&gt;&quot;</span>;  </span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$message</span>;  </span><br><span class="line">    <span class="comment">//sendemail to  </span></span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="meta">?&gt;</span>  </span><br></pre></td></tr></table></figure>
+
+<h3 id="简要说明错误处理："><a href="#简要说明错误处理：" class="headerlink" title="简要说明错误处理："></a>简要说明错误处理：</h3><h4 id="使用指定的文件记录错误报告日志"><a href="#使用指定的文件记录错误报告日志" class="headerlink" title="使用指定的文件记录错误报告日志"></a>使用指定的文件记录错误报告日志</h4><p>使用指定的文件记录错误报告日志使用指定的文件记录错误报告日志使用指定的文件记录错误报告日志 如果使用自己指定的文件记录错误日志，一定要确保将这个文件存放在文档根目录之外，以减少遭到攻击的可能。并且该文件一定要让PHP脚本的执行用户（Web服务器进程所有者）具有写权限。假设在Linux操作系统中，将&#x2F;usr&#x2F;local&#x2F;目录下的error.log文件作为错误日志文件，并设置Web服务器进程用户具有写的权限。然后在PHP的配置文件中，将error_log指令的值设置为这个错误日志文件的绝对路径。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">需要将php.ini中的配置指令做如下修改： </span><br><span class="line">error_reporting  =  E_ALL                   ;将会向PHP报告发生的每个错误     </span><br><span class="line">display_errors = Off                        ;不显示满足上条 指令所定义规则的所有错误报告     </span><br><span class="line">log_errors = On                             ;决定日志语句记录的位置     </span><br><span class="line">log_errors_max_len = 1024                   ;设置每个日志项的最大长度     </span><br><span class="line">error_log = /usr/local/error.log                ;指定产生的 错误报告写入的日志文件位置    </span><br></pre></td></tr></table></figure>
+
+<p>PHP的配置文件按上面的方式设置完成以后，并重新启动Web服务器。这样，在执行PHP的任何脚本文件时，所产生的所有错误报告都不会在浏览器中显示，而会记录在自己指定的错误日志&#x2F;usr&#x2F;local&#x2F;error.log中。此外，不仅可以记录满足error_reporting所定义规则的所有错误，而且还可以使用PHP中的error_log()函数，送出一个用户自定义的错误信息。<br>该函数的原型如下所示：</p>
+<pre><code>  1. bool error_log ( string message [, int message_type  [, string destination [, string extra_headers]]] ) 
+</code></pre>
+<p>此函数会送出错误信息到Web服务器的错误日志文件、某个TCP服务器或到指定文件中。该函数执行成功则返回TRUE，失败则返回FALSE。第一个参数message 是必选项，即为要送出的错误信息。如果仅使用这一个参数，会按配置文件php.ini中所设置的位置处发送消息。第二个参数message_type为整数值：0表示送到操作系统的日志中；1则使用PHP的Mail()函数，发送信息到某E-mail处，第四个参数extra_headers亦会用到；2则将错误信息送到TCP 服务器中，此时第三个参数destination表示目的地IP及Port；3则将信息存到文件destination中。</p>
+<p>如果以登入Oracle数据库出现问题的处理为例，该函数的使用如下所示： </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>        </span><br><span class="line">    <span class="keyword">if</span>(!<span class="title function_ invoke__">Ora_Logon</span>(<span class="variable">$username</span>, <span class="variable">$password</span>))&#123;       </span><br><span class="line">          <span class="title function_ invoke__">error_log</span>(<span class="string">&quot;Oracle数据库不可用!&quot;</span>, <span class="number">0</span>);        <span class="comment">//将错误消息写入到操作系统日志中     </span></span><br><span class="line">     &#125;     </span><br><span class="line">    <span class="keyword">if</span>(!(<span class="variable">$foo</span>=<span class="title function_ invoke__">allocate_new_foo</span>())&#123;     </span><br><span class="line">         <span class="title function_ invoke__">error_log</span>(<span class="string">&quot;出现大麻烦了!&quot;</span>, <span class="number">1</span>, <span class="string">&quot;. mydomain.com&quot;</span>);   <span class="comment">//发送到管理员邮箱中     </span></span><br><span class="line">    &#125;    </span><br><span class="line">     <span class="title function_ invoke__">error_log</span>(<span class="string">&quot;搞砸了!&quot;</span>,   <span class="number">2</span>,   <span class="string">&quot;localhost:5000&quot;</span>);     <span class="comment">//发送到本机对应5000端口的服务器中     </span></span><br><span class="line">     <span class="title function_ invoke__">error_log</span>(<span class="string">&quot;搞砸了!&quot;</span>,   <span class="number">3</span>,   <span class="string">&quot;/usr/local/errors.log&quot;</span>);  <span class="comment">//发送到指定的文件中     </span></span><br><span class="line"><span class="meta">?&gt;</span>    </span><br></pre></td></tr></table></figure>
+
+<h4 id="错误信息记录到操作系统的日志里"><a href="#错误信息记录到操作系统的日志里" class="headerlink" title="错误信息记录到操作系统的日志里"></a>错误信息记录到操作系统的日志里</h4><p>错误信息记录到操作系统的日志里错误信息记录到操作系统的日志里错误信息记录到操作系统的日志里 错误报告也可以被记录到操作系统日志里，但不同的操作系统之间的日志管理有点区别。在Linux上错误语句将送往syslog，而在Windows上错误将发送到事件日志里。如果你不熟悉syslog，起码要知道它是基于UNIX的日志工具，它提供了一个API来记录与系统和应用程序执行有关的消息。Windows事件日志实际上与UNIX的syslog相同，这些日志通常可以通过事件查看器来查看。如果希望将错误报告写到操作系统的日志里，可以在配置文件中将error_log指令的值设置为syslog。</p>
+<p>具体需要在php.ini中修改的配置指令如下所示： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">error_reporting  =  E_ALL                   ;将会向PHP报告发生的每个错误     </span><br><span class="line">display_errors = Off                            ;不显示 满足上条指令所定义规则的所有错误报告     </span><br><span class="line">log_errors = On                             ;决定日志语句记录的位置     </span><br><span class="line">log_errors_max_len = 1024                   ;设置每个日志项的最大长度     </span><br><span class="line">error_log = syslog                          ;指定产生的错误报告写入操作系统的日志里    </span><br></pre></td></tr></table></figure>
+
+<p>除了一般的错误输出之外，PHP还允许向系统syslog中发送定制的消息。虽然通过前面介绍的error_log()函数，也可以向syslog中发送定制的消息，但在PHP中为这个特性提供了需要一起使用的4个专用函数。<br>分别介绍如下：</p>
+<ul>
+<li>define_syslog_variables()</li>
+</ul>
+<p>在使用openlog()、syslog及closelog()三个函数之前必须先调用该函数。因为在调用该函数时，它会根据现在的系统环境为下面三个函数初使用化一些必需的常量。 </p>
+<ul>
+<li>openlog()</li>
+</ul>
+<p>打开一个和当前系统中日志器的连接，为向系统插入日志消息做好准备。并将提供的第一个字符串参数插入到每个日志消息中，该函数还需要指定两个将在日志上下文使用的参数，可以参考官方文档使用。</p>
+<ul>
+<li>syslog()</li>
+</ul>
+<p>该函数向系统日志中发送一个定制消息。需要两个必选参数，第一个参数通过指定一个常量定制消息的优先级。例如LOG_WARNING表示一般的警告，LOG_EMERG表示严重地可以预示着系统崩溃的问题，一些其他的表示严重程度的常量可以参考官方文档使用。第二个参数则是向系统日志中发送的定制消息，需要提供一个消息字符串，也可以是PHP引擎在运行时提供的错误字符串。 </p>
+<ul>
+<li>closelog()</li>
+</ul>
+<p>该函数在向系统日志中发送完成定制消息以后调用，关闭由openlog()函数打开的日志连接。 </p>
+<p>如果在配置文件中，已经开启向syslog发送定制消息的指令，就可以使用前面介绍的四个函数发送一个警告消息到系统日志中，并通过系统中的syslog解析工具，查看和分析由PHP程序发送的定制消息，如下所示： </p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line">      <span class="title function_ invoke__">define_syslog_variables</span>();     </span><br><span class="line">     <span class="title function_ invoke__">openlog</span>(<span class="string">&quot;PHP5&quot;</span>, LOG_PID , LOG_USER);     </span><br><span class="line">     <span class="title function_ invoke__">syslog</span>(LOG_WARNING, <span class="string">&quot;警告报告向syslog中发送的演示， 警告时间：&quot;</span>.<span class="title function_ invoke__">date</span>(<span class="string">&quot;Y/m/d H:i:s&quot;</span>));    </span><br><span class="line">     <span class="title function_ invoke__">closelog</span>();  </span><br></pre></td></tr></table></figure>
+
+<p>以Windows系统为例，通过右击”我的电脑”选择管理选项，然后到系统工具菜单中，选择事件查看器，再找到应用程序选项，就可以看到我们自己定制的警告消息了。上面这段代码将在系统的syslog文件中，生成类似下面的一条信息，是事件的一部分： </p>
+<ol>
+<li>PHP5[3084], 警告报告向syslog中发送的演示， 警告时间：2009&#x2F;03&#x2F;26 04:09:11.</li>
+</ol>
+<p>使用指定的文件还是使用syslog记录错误日志，取决于你所在的Web服务器环境。如果你可以控制Web服务器，使用syslog是最理想的，因为你能利用syslog的解析工具来查看和分析日志。但如果你的网站在共享服务器的虚拟主机中运行，就只有使用单独的文本文件记录错误日志了。</p>
+<p>本文引自<a href="http://blog.csdn.net/hguisu/article/details/7464977">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2015/10/13/PHP%E9%94%99%E8%AF%AF%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E8%AF%A6%E8%A7%A3/" data-title="PHP错误异常处理详解 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/10/14/set-error-hander-重要用法/" title="set_error_hander()重要用法">
+  <strong>上一篇：</strong><br/>
+  <span>
+  set_error_hander()重要用法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/10/09/Nginx-SSL-性能优化/"  title="Nginx SSL 性能优化">
+ <strong>下一篇：</strong><br/> 
+ <span>Nginx SSL 性能优化
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/10/13/PHP错误异常处理详解/" data-title="PHP错误异常处理详解" data-url="https://luckymrwang.github.io/2015/10/13/PHP%E9%94%99%E8%AF%AF%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E8%AF%A6%E8%A7%A3/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">异常的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Try-throw-%E5%92%8C-catch"><span class="toc-number">2.</span> <span class="toc-text">Try, throw 和 catch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A9%E5%B1%95-PHP-%E5%86%85%E7%BD%AE%E7%9A%84%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E7%B1%BB"><span class="toc-number">3.</span> <span class="toc-text">扩展 PHP 内置的异常处理类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B5%8C%E5%A5%97%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="toc-number">4.</span> <span class="toc-text">嵌套异常处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E9%A1%B6%E5%B1%82%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%99%A8-%EF%BC%88Top-Level-Exception-Handler%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">设置顶层异常处理器 （Top Level Exception Handler）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E7%9A%84%E8%A7%84%E5%88%99"><span class="toc-number">6.</span> <span class="toc-text">异常的规则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PHP%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="toc-number">7.</span> <span class="toc-text">PHP错误处理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#set-error-handler"><span class="toc-number">7.1.</span> <span class="toc-text">set_error_handler</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#set-exception-handler"><span class="toc-number">7.2.</span> <span class="toc-text">set_exception_handler</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#register-shutdown-function"><span class="toc-number">7.3.</span> <span class="toc-text">register_shutdown_function</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E8%A6%81%E8%AF%B4%E6%98%8E%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86%EF%BC%9A"><span class="toc-number">8.</span> <span class="toc-text">简要说明错误处理：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%8C%87%E5%AE%9A%E7%9A%84%E6%96%87%E4%BB%B6%E8%AE%B0%E5%BD%95%E9%94%99%E8%AF%AF%E6%8A%A5%E5%91%8A%E6%97%A5%E5%BF%97"><span class="toc-number">8.1.</span> <span class="toc-text">使用指定的文件记录错误报告日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF%E8%AE%B0%E5%BD%95%E5%88%B0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%97%A5%E5%BF%97%E9%87%8C"><span class="toc-number">8.2.</span> <span class="toc-text">错误信息记录到操作系统的日志里</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

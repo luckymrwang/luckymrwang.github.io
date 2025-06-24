@@ -1,0 +1,575 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Golang Mgo笔记 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="mgo概述mgo 为 mongodb golang中实现的driver，简单高效，官方地址： http:&#x2F;&#x2F;labix.org&#x2F;mgo, 主要实现了三个pkg:  API docs for mgo API docs for mgo&#x2F;bson API docs for mgo&#x2F;txn 多文档事务  安装： 1go get gopkg.in&#x2F;mgo.v2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang Mgo笔记">
+<meta property="og:url" content="https://luckymrwang.github.io/2017/10/23/Golang-Mgo%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="mgo概述mgo 为 mongodb golang中实现的driver，简单高效，官方地址： http:&#x2F;&#x2F;labix.org&#x2F;mgo, 主要实现了三个pkg:  API docs for mgo API docs for mgo&#x2F;bson API docs for mgo&#x2F;txn 多文档事务  安装： 1go get gopkg.in&#x2F;mgo.v2">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-10-23T07:06:04.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.191Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Golang">
+<meta property="article:tag" content="Mgo">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/10/23/Golang-Mgo笔记/" title="Golang Mgo笔记" itemprop="url">Golang Mgo笔记</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-10-23T07:06:04.000Z" itemprop="datePublished"> 发表于 2017-10-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#mgo%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">mgo概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example"><span class="toc-number">2.</span> <span class="toc-text">Example</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ObjectID"><span class="toc-number">3.</span> <span class="toc-text">ObjectID</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ObjectID%E4%B8%BA%E7%A9%BA%E5%88%A4%E6%96%AD"><span class="toc-number">3.1.</span> <span class="toc-text">ObjectID为空判断</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#insert-%E4%B8%AD%E7%9A%84-ObjectID"><span class="toc-number">3.2.</span> <span class="toc-text">insert 中的 ObjectID</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E9%97%AE%E9%A2%98-1"><span class="toc-number">4.</span> <span class="toc-text">时间问题 [1]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Update%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">Update更新操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Update%E5%92%8CUpdateId%E5%87%BD%E6%95%B0"><span class="toc-number">5.1.</span> <span class="toc-text">Update和UpdateId函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Update%E5%87%BD%E6%95%B0%E4%BD%BF%E7%94%A8-set-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">5.2.</span> <span class="toc-text">Update函数使用 set 关键字</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UpdateAll-%E5%87%BD%E6%95%B0"><span class="toc-number">5.3.</span> <span class="toc-text">UpdateAll 函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Upsert%E6%88%96UpsertId"><span class="toc-number">5.4.</span> <span class="toc-text">Upsert或UpsertId</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E6%B1%A0%E7%BB%B4%E6%8A%A4"><span class="toc-number">6.</span> <span class="toc-text">连接池维护</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Session-Copy%E9%AB%98%E6%95%88%E5%AE%9E%E7%8E%B0%E8%AE%BF%E9%97%AE"><span class="toc-number">6.1.</span> <span class="toc-text">使用Session Copy高效实现访问</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Session-Clone-%E5%8F%82%E8%A7%81-4"><span class="toc-number">6.2.</span> <span class="toc-text">Session Clone 参见[4]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%88%E7%90%86%E8%AE%BE%E7%BD%AESession%E6%95%B0%E7%9B%AE"><span class="toc-number">6.3.</span> <span class="toc-text">合理设置Session数目</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mgo-pipeline-lookup%E5%A4%96%E9%94%AE%E5%85%B3%E8%81%94"><span class="toc-number">7.</span> <span class="toc-text">mgo pipeline&#x2F;lookup外键关联</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="mgo概述"><a href="#mgo概述" class="headerlink" title="mgo概述"></a>mgo概述</h3><p>mgo 为 mongodb golang中实现的driver，简单高效，官方地址： <a href="http://labix.org/mgo">http://labix.org/mgo</a>, 主要实现了三个pkg:</p>
+<ul>
+<li><a href="http://gopkg.in/mgo.v2">API docs for mgo</a></li>
+<li><a href="http://gopkg.in/mgo.v2/bson">API docs for mgo&#x2F;bson</a></li>
+<li><a href="http://gopkg.in/mgo.v2/txn">API docs for mgo&#x2F;txn</a> 多文档事务</li>
+</ul>
+<p>安装：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get gopkg.in/mgo.v2</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+<p>mogodb采用 bson 格式， bson规范参见<a href="http://bsonspec.org/">http://bsonspec.org</a>, bson tools 支持将csv，json，xml，hex等转换成bson格式的文件。</p>
+<p>Mac下 Mogodb 的界面客户端 <a href="https://robomongo.org/download">Robomongo</a></p>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// This program provides a sample application for using MongoDB with</span></span><br><span class="line"><span class="comment">// the mgo driver.</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;log&quot;</span></span><br><span class="line">    <span class="string">&quot;sync&quot;</span></span><br><span class="line">    <span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;gopkg.in/mgo.v2&quot;</span></span><br><span class="line">    <span class="string">&quot;gopkg.in/mgo.v2/bson&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    MongoDBHosts = <span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line">    AuthDatabase = <span class="string">&quot;test&quot;</span></span><br><span class="line">    AuthUserName = <span class="string">&quot;&quot;</span></span><br><span class="line">    AuthPassword = <span class="string">&quot;&quot;</span></span><br><span class="line">    TestDatabase = <span class="string">&quot;test&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> (</span><br><span class="line">    <span class="comment">// BuoyCondition contains information for an individual station.</span></span><br><span class="line">    BuoyCondition <span class="keyword">struct</span> &#123;</span><br><span class="line">        WindSpeed     <span class="type">float64</span> <span class="string">`bson:&quot;wind_speed_milehour&quot;`</span></span><br><span class="line">        WindDirection <span class="type">int</span>     <span class="string">`bson:&quot;wind_direction_degnorth&quot;`</span></span><br><span class="line">        WindGust      <span class="type">float64</span> <span class="string">`bson:&quot;gust_wind_speed_milehour&quot;`</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// BuoyLocation contains the buoy&#x27;s location.</span></span><br><span class="line">    BuoyLocation <span class="keyword">struct</span> &#123;</span><br><span class="line">        Type        <span class="type">string</span>    <span class="string">`bson:&quot;type&quot;`</span></span><br><span class="line">        Coordinates []<span class="type">float64</span> <span class="string">`bson:&quot;coordinates&quot;`</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// BuoyStation contains information for an individual station.</span></span><br><span class="line">    BuoyStation <span class="keyword">struct</span> &#123;</span><br><span class="line">        ID        bson.ObjectId <span class="string">`bson:&quot;_id,omitempty&quot;`</span></span><br><span class="line">        StationId <span class="type">string</span>        <span class="string">`bson:&quot;station_id&quot;`</span></span><br><span class="line">        Name      <span class="type">string</span>        <span class="string">`bson:&quot;name&quot;`</span></span><br><span class="line">        LocDesc   <span class="type">string</span>        <span class="string">`bson:&quot;location_desc&quot;`</span></span><br><span class="line">        Condition BuoyCondition <span class="string">`bson:&quot;condition&quot;`</span></span><br><span class="line">        Location  BuoyLocation  <span class="string">`bson:&quot;location&quot;`</span></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// main is the entry point for the application.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// We need this object to establish a session to our MongoDB.</span></span><br><span class="line">    mongoDBDialInfo := &amp;mgo.DialInfo&#123;</span><br><span class="line">        Addrs:    []<span class="type">string</span>&#123;MongoDBHosts&#125;,</span><br><span class="line">        Timeout:  <span class="number">60</span> * time.Second,</span><br><span class="line">        Database: AuthDatabase,</span><br><span class="line">        Username: AuthUserName,</span><br><span class="line">        Password: AuthPassword,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create a session which maintains a pool of socket connections</span></span><br><span class="line">    <span class="comment">// to our MongoDB.</span></span><br><span class="line">    mongoSession, err := mgo.DialWithInfo(mongoDBDialInfo)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatalf(<span class="string">&quot;CreateSession: %s\n&quot;</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Reads may not be entirely up-to-date, but they will always see the</span></span><br><span class="line">    <span class="comment">// history of changes moving forward, the data read will be consistent</span></span><br><span class="line">    <span class="comment">// across sequential queries in the same session, and modifications made</span></span><br><span class="line">    <span class="comment">// within the session will be observed in following queries (read-your-writes).</span></span><br><span class="line">    <span class="comment">// http://godoc.org/labix.org/v2/mgo#Session.SetMode</span></span><br><span class="line">    mongoSession.SetMode(mgo.Monotonic, <span class="literal">true</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create a wait group to manage the goroutines.</span></span><br><span class="line">    <span class="keyword">var</span> waitGroup sync.WaitGroup</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Perform 10 concurrent queries against the database.</span></span><br><span class="line">    waitGroup.Add(<span class="number">10</span>)</span><br><span class="line">    <span class="keyword">for</span> query := <span class="number">0</span>; query &lt; <span class="number">10</span>; query++ &#123;</span><br><span class="line">        <span class="keyword">go</span> RunQuery(query, &amp;waitGroup, mongoSession)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Wait for all the queries to complete.</span></span><br><span class="line">    waitGroup.Wait()</span><br><span class="line">    log.Println(<span class="string">&quot;All Queries Completed&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// RunQuery is a function that is launched as a goroutine to perform</span></span><br><span class="line"><span class="comment">// the MongoDB work.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RunQuery</span><span class="params">(query <span class="type">int</span>, waitGroup *sync.WaitGroup, mongoSession *mgo.Session)</span></span> &#123;</span><br><span class="line">    <span class="comment">// Decrement the wait group count so the program knows this</span></span><br><span class="line">    <span class="comment">// has been completed once the goroutine exits.</span></span><br><span class="line">    <span class="keyword">defer</span> waitGroup.Done()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Request a socket connection from the session to process our query.</span></span><br><span class="line">    <span class="comment">// Close the session when the goroutine exits and put the connection back</span></span><br><span class="line">    <span class="comment">// into the pool.</span></span><br><span class="line">    sessionCopy := mongoSession.Copy()</span><br><span class="line">    <span class="keyword">defer</span> sessionCopy.Close()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get a collection to execute the query against.</span></span><br><span class="line">    collection := sessionCopy.DB(TestDatabase).C(<span class="string">&quot;buoy_stations&quot;</span>)</span><br><span class="line"></span><br><span class="line">    log.Printf(<span class="string">&quot;RunQuery : %d : Executing\n&quot;</span>, query)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Retrieve the list of stations.</span></span><br><span class="line">    <span class="keyword">var</span> buoyStations []BuoyStation</span><br><span class="line">    err := collection.Find(<span class="literal">nil</span>).All(&amp;buoyStations)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Printf(<span class="string">&quot;RunQuery : ERROR : %s\n&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    log.Printf(<span class="string">&quot;RunQuery : %d : Count[%d]\n&quot;</span>, query, <span class="built_in">len</span>(buoyStations))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="ObjectID"><a href="#ObjectID" class="headerlink" title="ObjectID"></a>ObjectID</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">type ObjectId string   # 12 个 byte组成</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>4-byte value representing the seconds since the Unix epoch,</li>
+<li>3-byte machine identifier,</li>
+<li>2-byte process id, and</li>
+<li>3-byte counter, starting with a random value.</li>
+</ul>
+<p>mgo中的代码实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewObjectId returns a new unique ObjectId.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewObjectId</span><span class="params">()</span></span> ObjectId &#123;</span><br><span class="line">    <span class="keyword">var</span> b [<span class="number">12</span>]<span class="type">byte</span></span><br><span class="line">    <span class="comment">// Timestamp, 4 bytes, big endian</span></span><br><span class="line">    binary.BigEndian.PutUint32(b[:], <span class="type">uint32</span>(time.Now().Unix()))</span><br><span class="line">    <span class="comment">// Machine, first 3 bytes of md5(hostname)</span></span><br><span class="line">    b[<span class="number">4</span>] = machineId[<span class="number">0</span>]</span><br><span class="line">    b[<span class="number">5</span>] = machineId[<span class="number">1</span>]</span><br><span class="line">    b[<span class="number">6</span>] = machineId[<span class="number">2</span>]</span><br><span class="line">    <span class="comment">// Pid, 2 bytes, specs don&#x27;t specify endianness, but we use big endian.</span></span><br><span class="line">    b[<span class="number">7</span>] = <span class="type">byte</span>(processId &gt;&gt; <span class="number">8</span>)</span><br><span class="line">    b[<span class="number">8</span>] = <span class="type">byte</span>(processId)</span><br><span class="line">    <span class="comment">// Increment, 3 bytes, big endian</span></span><br><span class="line">    i := atomic.AddUint32(&amp;objectIdCounter, <span class="number">1</span>)</span><br><span class="line">    b[<span class="number">9</span>] = <span class="type">byte</span>(i &gt;&gt; <span class="number">16</span>)</span><br><span class="line">    b[<span class="number">10</span>] = <span class="type">byte</span>(i &gt;&gt; <span class="number">8</span>)</span><br><span class="line">    b[<span class="number">11</span>] = <span class="type">byte</span>(i)</span><br><span class="line">    <span class="keyword">return</span> ObjectId(b[:])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ObjectID为空判断"><a href="#ObjectID为空判断" class="headerlink" title="ObjectID为空判断"></a>ObjectID为空判断</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// String returns a hex string representation of the id.</span></span><br><span class="line"><span class="comment">// Example: ObjectIdHex(&quot;4d88e15b60f486e428412dc9&quot;).</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(id ObjectId)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> fmt.Sprintf(<span class="string">`ObjectIdHex(&quot;%x&quot;)`</span>, <span class="type">string</span>(id))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为空测试：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;gopkg.in/mgo.v2/bson&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> MyString <span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s MyString)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;This is mystring nil&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID    bson.ObjectId <span class="string">`bson:&quot;_id,omitempty&quot;`</span></span><br><span class="line">    Name  <span class="type">string</span></span><br><span class="line">    Phone <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// test type string equel</span></span><br><span class="line">    <span class="keyword">var</span> str MyString</span><br><span class="line">    fmt.Println(str == <span class="string">&quot;&quot;</span>) <span class="comment">// expect true</span></span><br><span class="line">    fmt.Println(str)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// test objectID</span></span><br><span class="line">    person := &amp;Person&#123;&#125;</span><br><span class="line">    fmt.Println(person.ID == <span class="string">&quot;&quot;</span>) <span class="comment">// expect true</span></span><br><span class="line"></span><br><span class="line">    person.ID = bson.NewObjectId()</span><br><span class="line">    fmt.Println(person.ID == <span class="string">&quot;&quot;</span>) <span class="comment">// expect false</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">true</span><br><span class="line">This is mystring nil</span><br><span class="line">true</span><br><span class="line">false</span><br></pre></td></tr></table></figure>
+
+<h4 id="insert-中的-ObjectID"><a href="#insert-中的-ObjectID" class="headerlink" title="insert 中的 ObjectID"></a>insert 中的 ObjectID</h4><p><strong>Client主动生成</strong></p>
+<p>采用ObjectID提供的 NewObjectId() 方法，可以保证唯一性。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">采用ObjectID提供的 NewObjectId() 方法，可以保证唯一性。</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID    bson.ObjectId <span class="string">`bson:&quot;_id&quot;`</span></span><br><span class="line">    Name  <span class="type">string</span></span><br><span class="line">    Phone <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">person := &amp;Person&#123;ID: bson.NewObjectId(), Name: <span class="string">&quot;Ale&quot;</span>, Phone: <span class="string">&quot;+55 53 8116 9639&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>NewObjectIdWithTime(t time.Time) 这个方法由于仅仅使用了当前时间值作为了key，因此不推荐使用。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewObjectIdWithTime returns a dummy ObjectId with the timestamp part filled</span></span><br><span class="line"><span class="comment">// with the provided number of seconds from epoch UTC, and all other parts</span></span><br><span class="line"><span class="comment">// filled with zeroes. It&#x27;s not safe to insert a document with an id generated</span></span><br><span class="line"><span class="comment">// by this method, it is useful only for queries to find documents with ids</span></span><br><span class="line"><span class="comment">// generated before or after the specified timestamp.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewObjectIdWithTime</span><span class="params">(t time.Time)</span></span> ObjectId &#123;</span><br><span class="line">    <span class="keyword">var</span> b [<span class="number">12</span>]<span class="type">byte</span></span><br><span class="line">    binary.BigEndian.PutUint32(b[:<span class="number">4</span>], <span class="type">uint32</span>(t.Unix()))</span><br><span class="line">    <span class="keyword">return</span> ObjectId(<span class="type">string</span>(b[:]))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Mgo驱动自动生成</strong></p>
+<p>默认情况下ObjectId是由客户端Mogodb Driver生成的，和服务端没有关系。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID    bson.ObjectId <span class="string">`bson:&quot;_id,omitempty&quot;`</span>   # 注意增加了 omitempty 属性， insert 过程中会自动生成 _id</span><br><span class="line">    Name  <span class="type">string</span></span><br><span class="line">    Phone <span class="type">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="时间问题-1"><a href="#时间问题-1" class="headerlink" title="时间问题 [1]"></a>时间问题 [1]</h3><p>之前看到有人问，为什么保存的时间进入到数据库中慢了8个小时呢？原因是在保存进入MongoDB时，数据是按照UTC时间（不懂什么是UTC？看这里）进行的保存，但是取出是按照当前时区来取出。那么问题来了，我的客户如果不都是国人，我怎么保存时间呢？目前我们采用了两种方式来确定数据库的保存时间。一种是Unix时间戳，这个是不受到时区的影响的，由前端格式化为对应的时区时间；另外一种则是需要在额外的对从MongoDB数据库中取出的数据进行额外的时区校准，简单来说可以这样：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Home <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID         bson.ObjectId <span class="string">`bson:&quot;_id,omitempty&quot;`</span></span><br><span class="line">    Name       <span class="type">string</span>        <span class="string">`bson:&quot;name&quot;`</span></span><br><span class="line">    InsertTime time.Time     <span class="string">`bson:&quot;insert_time&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    sess, _ := mgo.Dial(<span class="string">&quot;127.0.0.1&quot;</span>)</span><br><span class="line">    c := sess.DB(<span class="string">&quot;test&quot;</span>).C(<span class="string">&quot;home&quot;</span>)</span><br><span class="line"></span><br><span class="line">    h := Home&#123;Name: <span class="string">&quot;123&quot;</span>, InsertTime: time.Now()&#125;</span><br><span class="line">    c.Upsert(bson.M&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;123&quot;</span>&#125;, h)</span><br><span class="line"></span><br><span class="line">    c.Find(bson.M&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;123&quot;</span>&#125;).One(&amp;h)</span><br><span class="line"></span><br><span class="line">    fmt.Println(h.InsertTime.Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>))</span><br><span class="line"></span><br><span class="line">    tz, _ := time.LoadLocation(<span class="string">&quot;America/New_York&quot;</span>)</span><br><span class="line">    fmt.Println(h.InsertTime.In(tz).Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Update更新操作"><a href="#Update更新操作" class="headerlink" title="Update更新操作"></a>Update更新操作</h3><h4 id="Update和UpdateId函数"><a href="#Update和UpdateId函数" class="headerlink" title="Update和UpdateId函数"></a>Update和UpdateId函数</h4><p>和mysql不同，Update函数只能用来修改单条记录，即使条件能匹配多条记录，也只会修改第一条匹配的记录, Update()函数会将文档整体update中的data，而不仅仅是更新 Person中的Name， 同时还会将 InsertTime 字段删除。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">selector := bson.M&#123;<span class="string">&quot;_id&quot;</span>: bson.ObjectIdHex(<span class="string">&quot;56fdce98189df8759fd61e5b&quot;</span>)&#125;</span><br><span class="line">data := bson.M&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;otherName&quot;</span>&#125;</span><br><span class="line">err := mongoSession.DB(<span class="string">&quot;test&quot;</span>).C(<span class="string">&quot;Person&quot;</span>).Update(selector, data)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>UpdateId 函数则是将上述的selector更换成了 ObjectId, 一种简化方式，Update中比较常用。</p>
+<h4 id="Update函数使用-set-关键字"><a href="#Update函数使用-set-关键字" class="headerlink" title="Update函数使用 set 关键字"></a>Update函数使用 set 关键字</h4><p>如果仅仅需要更新Person中的Name字段需要使用$set关键词， 用法如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">selector := bson.M&#123;<span class="string">&quot;_id&quot;</span>: bson.ObjectIdHex(<span class="string">&quot;571de968a99cff2c68264807&quot;</span>)&#125;</span><br><span class="line">data := bson.M&#123;<span class="string">&quot;$set&quot;</span>: bson.M&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;otherName&quot;</span>&#125;&#125;</span><br><span class="line"></span><br><span class="line">err := mongoSession.DB(<span class="string">&quot;test&quot;</span>).C(<span class="string">&quot;Person&quot;</span>).Update(selector, data)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123; <span class="comment">// 如果更新的数据不存在，则会报一个not found的错误： err == mgo.ErrNotFound</span></span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="UpdateAll-函数"><a href="#UpdateAll-函数" class="headerlink" title="UpdateAll 函数"></a>UpdateAll 函数</h4><p>符合条件的文档记录会被批量更新</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// func (c *Collection) UpdateAll(selector interface&#123;&#125;, update interface&#123;&#125;) (info *ChangeInfo, err error)</span></span><br><span class="line"></span><br><span class="line">selector := bson.M&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Tom&quot;</span>&#125;</span><br><span class="line">data := bson.M&#123;<span class="string">&quot;$set&quot;</span>: bson.M&#123;<span class="string">&quot;insert_time&quot;</span>: time.Now()&#125;&#125;</span><br><span class="line">changeInfo, err := mongoSession.DB(<span class="string">&quot;test&quot;</span>).C(<span class="string">&quot;Person&quot;</span>).UpdateAll(selector, data)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fmt.Printf(<span class="string">&quot;%+v\n&quot;</span>, changeInfo)</span><br><span class="line"><span class="comment">// output: &amp;&#123;Updated:2 Removed:0 UpsertedId:&lt;nil&gt;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Upsert或UpsertId"><a href="#Upsert或UpsertId" class="headerlink" title="Upsert或UpsertId"></a>Upsert或UpsertId</h4><p>这个函数就是如果数据存在就更新，否则就新增一条记录，比较常用。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">id := bson.ObjectIdHex(<span class="string">&quot;571df02ea99cff2c6826480b&quot;</span>)</span><br><span class="line">data := bson.M&#123;<span class="string">&quot;$set&quot;</span>: bson.M&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;Tom&quot;</span>&#125;&#125;</span><br><span class="line">changeInfo, err := mongoSession.DB(<span class="string">&quot;test&quot;</span>).C(<span class="string">&quot;Person&quot;</span>).UpsertId(id, data)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">fmt.Printf(<span class="string">&quot;%+v\n&quot;</span>, changeInfo)</span><br><span class="line"><span class="comment">// 首次执行output: &amp;&#123;Updated:0 Removed:0 UpsertedId:ObjectIdHex(&quot;571df02ea99cff2c6826480b&quot;)&#125;</span></span><br><span class="line"><span class="comment">// 再次执行output: &amp;&#123;Updated:1 Removed:0 UpsertedId:&lt;nil&gt;&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="连接池维护"><a href="#连接池维护" class="headerlink" title="连接池维护"></a>连接池维护</h3><h4 id="使用Session-Copy高效实现访问"><a href="#使用Session-Copy高效实现访问" class="headerlink" title="使用Session Copy高效实现访问"></a>使用Session Copy高效实现访问</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RunQuery</span><span class="params">(query <span class="type">int</span>, waitGroup *sync.WaitGroup, mongoSession *mgo.Session)</span></span> &#123;</span><br><span class="line">    <span class="comment">// Decrement the wait group count so the program knows this</span></span><br><span class="line">    <span class="comment">// has been completed once the goroutine exits.</span></span><br><span class="line">    <span class="keyword">defer</span> waitGroup.Done()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Request a socket connection from the session to process our query.</span></span><br><span class="line">    <span class="comment">// Close the session when the goroutine exits and put the connection back</span></span><br><span class="line">    <span class="comment">// into the pool.</span></span><br><span class="line">    sessionCopy := mongoSession.Copy()   # 对于原有session的Copy</span><br><span class="line">    <span class="keyword">defer</span> sessionCopy.Close()            # 处理完成后关闭该Session</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get a collection to execute the query against.</span></span><br><span class="line">    collection := sessionCopy.DB(TestDatabase).C(<span class="string">&quot;buoy_stations&quot;</span>)</span><br><span class="line"></span><br><span class="line">    log.Printf(<span class="string">&quot;RunQuery : %d : Executing\n&quot;</span>, query)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Retrieve the list of stations.</span></span><br><span class="line">    <span class="keyword">var</span> buoyStations []BuoyStation</span><br><span class="line">    err := collection.Find(<span class="literal">nil</span>).All(&amp;buoyStations)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Printf(<span class="string">&quot;RunQuery : ERROR : %s\n&quot;</span>, err)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    log.Printf(<span class="string">&quot;RunQuery : %d : Count[%d]\n&quot;</span>, query, <span class="built_in">len</span>(buoyStations))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Session Copy 等同于重新创建一个Session，底层启动一个socket连接到mogodb server，但是使用原有Session的Authentication信息。采用Session Copy的方式一般是连接的数目可控制的场景。</p>
+<h4 id="Session-Clone-参见-4"><a href="#Session-Clone-参见-4" class="headerlink" title="Session Clone 参见[4]"></a>Session Clone 参见[4]</h4><p>Session Clone类似于Session Copy，会尽量直接复用原有session的socket，如果过多的goroutine使用session，但是没有close，会导致重新建立新的连接。</p>
+<h4 id="合理设置Session数目"><a href="#合理设置Session数目" class="headerlink" title="合理设置Session数目"></a>合理设置Session数目</h4><p>mgo中的连接池最大数目为 4096，如果超过这个值会导致其他的连接不能得到处理。</p>
+<p><strong>通过配置文件设置 maxPoolSize 设置</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[host]:[port]?maxPoolSize=300</span><br></pre></td></tr></table></figure>
+
+<p><strong>在代码中进行设置</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dao.GlobalMgoSession.SetPoolLimit(300)</span><br></pre></td></tr></table></figure>
+
+<h3 id="mgo-pipeline-lookup外键关联"><a href="#mgo-pipeline-lookup外键关联" class="headerlink" title="mgo pipeline&#x2F;lookup外键关联"></a>mgo pipeline&#x2F;lookup外键关联</h3><p>参见 <a href="http://www.do1618.com/archives/961">mgo中使用pipeline&#x2F;lookup</a></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://ipfans.github.io/2016/01/something-about-mgo-driver/">Mgo库的常见坑总结</a></li>
+<li><a href="https://www.goinggo.net/2014/02/running-queries-concurrently-against.html">Running MongoDB Queries Concurrently With Go</a> 源码地址：<a href="https://gist.github.com/ardan-bkennedy/9198289">code github</a></li>
+<li><a href="http://blog.csdn.net/xiamizy/article/details/41521025">MongoDB中ObjectId的误区，以及引起的一系列问题</a></li>
+<li><a href="http://studygolang.com/articles/6514">golang mgo的mongo连接池设置</a></li>
+<li><a href="http://www.golangtc.com/t/5537abd8421aa95094000049">mgo 批量插入的问题</a></li>
+<li><a href="https://gist.github.com/DavadDi/e7dc79c9b612a81f184c05b0af29b301">mgoExample.go Github</a></li>
+<li><a href="https://github.com/facebookgo/mgotest">mgoTest Github</a></li>
+<li><a href="http://www.01happy.com/golang-mongodb-update/">golang mongodb修改（update） demo</a></li>
+</ul>
+<p>本文引自<a href="http://www.do1618.com/archives/914">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Golang/">Golang</a><a href="/tags/Mgo/">Mgo</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2017/10/23/Golang-Mgo%E7%AC%94%E8%AE%B0/" data-title="Golang Mgo笔记 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/11/13/CGI、FAST-CGI、PHP-FPM/" title="CGI、FAST-CGI、PHP-FPM’">
+  <strong>上一篇：</strong><br/>
+  <span>
+  CGI、FAST-CGI、PHP-FPM’</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/09/25/vim打开中文乱码/"  title="vim打开中文乱码">
+ <strong>下一篇：</strong><br/> 
+ <span>vim打开中文乱码
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2017/10/23/Golang-Mgo笔记/" data-title="Golang Mgo笔记" data-url="https://luckymrwang.github.io/2017/10/23/Golang-Mgo%E7%AC%94%E8%AE%B0/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#mgo%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">mgo概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example"><span class="toc-number">2.</span> <span class="toc-text">Example</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ObjectID"><span class="toc-number">3.</span> <span class="toc-text">ObjectID</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ObjectID%E4%B8%BA%E7%A9%BA%E5%88%A4%E6%96%AD"><span class="toc-number">3.1.</span> <span class="toc-text">ObjectID为空判断</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#insert-%E4%B8%AD%E7%9A%84-ObjectID"><span class="toc-number">3.2.</span> <span class="toc-text">insert 中的 ObjectID</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%97%B6%E9%97%B4%E9%97%AE%E9%A2%98-1"><span class="toc-number">4.</span> <span class="toc-text">时间问题 [1]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Update%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C"><span class="toc-number">5.</span> <span class="toc-text">Update更新操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Update%E5%92%8CUpdateId%E5%87%BD%E6%95%B0"><span class="toc-number">5.1.</span> <span class="toc-text">Update和UpdateId函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Update%E5%87%BD%E6%95%B0%E4%BD%BF%E7%94%A8-set-%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">5.2.</span> <span class="toc-text">Update函数使用 set 关键字</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UpdateAll-%E5%87%BD%E6%95%B0"><span class="toc-number">5.3.</span> <span class="toc-text">UpdateAll 函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Upsert%E6%88%96UpsertId"><span class="toc-number">5.4.</span> <span class="toc-text">Upsert或UpsertId</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9E%E6%8E%A5%E6%B1%A0%E7%BB%B4%E6%8A%A4"><span class="toc-number">6.</span> <span class="toc-text">连接池维护</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8Session-Copy%E9%AB%98%E6%95%88%E5%AE%9E%E7%8E%B0%E8%AE%BF%E9%97%AE"><span class="toc-number">6.1.</span> <span class="toc-text">使用Session Copy高效实现访问</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Session-Clone-%E5%8F%82%E8%A7%81-4"><span class="toc-number">6.2.</span> <span class="toc-text">Session Clone 参见[4]</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%88%E7%90%86%E8%AE%BE%E7%BD%AESession%E6%95%B0%E7%9B%AE"><span class="toc-number">6.3.</span> <span class="toc-text">合理设置Session数目</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mgo-pipeline-lookup%E5%A4%96%E9%94%AE%E5%85%B3%E8%81%94"><span class="toc-number">7.</span> <span class="toc-text">mgo pipeline&#x2F;lookup外键关联</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">8.</span> <span class="toc-text">参考</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

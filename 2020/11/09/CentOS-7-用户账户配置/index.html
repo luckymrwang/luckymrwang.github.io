@@ -1,0 +1,558 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>CentOS 7 用户账户配置 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="基本信息Centos 7 系统最小化安装，默认配置，是没有创建其他用户的。作为服务器操作系统，为了安全起见，一般是使用一般用户。这就牵涉到用户、用户组的创建以及删除。 此外，CentOS 7 和其他版本的Linux一样，都具有相应用户的配置文件及目录，如下： 1234567&#x2F;etc&#x2F;passwd 　　      &#x2F;&#x2F;用户账户信息，可以看出用户名称 &#x2F;etc&#x2F;shadow          &#x2F;&#x2F;用户">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS 7 用户账户配置">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/11/09/CentOS-7-%E7%94%A8%E6%88%B7%E8%B4%A6%E6%88%B7%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="基本信息Centos 7 系统最小化安装，默认配置，是没有创建其他用户的。作为服务器操作系统，为了安全起见，一般是使用一般用户。这就牵涉到用户、用户组的创建以及删除。 此外，CentOS 7 和其他版本的Linux一样，都具有相应用户的配置文件及目录，如下： 1234567&#x2F;etc&#x2F;passwd 　　      &#x2F;&#x2F;用户账户信息，可以看出用户名称 &#x2F;etc&#x2F;shadow          &#x2F;&#x2F;用户">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/setuid.png">
+<meta property="article:published_time" content="2020-11-09T00:55:52.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.187Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/setuid.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/11/09/CentOS-7-用户账户配置/" title="CentOS 7 用户账户配置" itemprop="url">CentOS 7 用户账户配置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-11-09T00:55:52.000Z" itemprop="datePublished"> 发表于 2020-11-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="toc-number">1.</span> <span class="toc-text">基本信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7"><span class="toc-number">2.</span> <span class="toc-text">创建用户</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E5%88%9B%E5%BB%BA"><span class="toc-number">2.1.</span> <span class="toc-text">简单创建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A6%E5%8F%82%E6%95%B0%E7%9A%84%E5%88%9B%E5%BB%BA%E8%B4%A6%E6%88%B7"><span class="toc-number">2.2.</span> <span class="toc-text">带参数的创建账户</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E6%94%B9%E7%94%A8%E6%88%B7%E8%AE%BE%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">更改用户设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7-%E7%BB%84"><span class="toc-number">4.</span> <span class="toc-text">删除用户&#x2F;组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">5.</span> <span class="toc-text">用户安全配置</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h3><p>Centos 7 系统最小化安装，默认配置，是没有创建其他用户的。作为服务器操作系统，为了安全起见，一般是使用一般用户。这就牵涉到用户、用户组的创建以及删除。</p>
+<p>此外，CentOS 7 和其他版本的Linux一样，都具有相应用户的配置文件及目录，如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/etc/passwd 　　      //用户账户信息，可以看出用户名称 </span><br><span class="line">/etc/shadow          //用户账户加密后信息，包括但不限于/etc/passwd中的信息 </span><br><span class="line">/etc/group           //组账户信息，可以看出组名称 </span><br><span class="line">/etc/gshadow   　　　 //组账户安全信息，包括但不限于/etc/group中的信息 </span><br><span class="line">/etc/default/useradd //账户创建时默认值 </span><br><span class="line">/etc/skel/           //包含默认文件的目录,具体作用尚不清楚 </span><br><span class="line">/etc/login.defs      //安全性的默认配置，与上面/etc/default/useradd有区别</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<p>比较重要的配置文件&#x2F;etc&#x2F;default&#x2F;useradd，内容如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># useradd defaults file</span></span><br><span class="line">GROUP=100                        //起始GID值</span><br><span class="line">HOME=/home                       //家目录位置</span><br><span class="line">INACTIVE=-1　　　　　　　　　　　　 //有效时间，负值为永久，正数代表天数</span><br><span class="line">EXPIRE=</span><br><span class="line">SHELL=/bin/bash                   //shell路径</span><br><span class="line">SKEL=/etc/skel                    //默认配置文件路径</span><br><span class="line">CREATE_MAIL_SPOOL=<span class="built_in">yes</span>             //是否创建邮件池，具体作用待以后学习</span><br></pre></td></tr></table></figure>
+
+<p>&#x2F;etc&#x2F;login.defs文件，重点内容如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">MAIL_DIR        /var/spool/mail</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment"># Password aging controls:           密码期限配置</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#       PASS_MAX_DAYS   Maximum number of days a password may be used.</span></span><br><span class="line"><span class="comment">#       PASS_MIN_DAYS   Minimum number of days allowed between password changes.</span></span><br><span class="line"><span class="comment">#       PASS_MIN_LEN    Minimum acceptable password length.</span></span><br><span class="line"><span class="comment">#       PASS_WARN_AGE   Number of days warning given before a password expires.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">PASS_MAX_DAYS   99999</span><br><span class="line">PASS_MIN_DAYS   0</span><br><span class="line">PASS_MIN_LEN    8</span><br><span class="line">PASS_WARN_AGE   7</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment"># Min/max values for automatic uid selection in useradd      最小/最大UID设置</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">UID_MIN                  1000              //我们创建的用户的UID从1000开始</span><br><span class="line">UID_MAX                 60000</span><br><span class="line">....</span><br><span class="line"></span><br><span class="line"><span class="comment"># Min/max values for automatic gid selection in groupadd</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">GID_MIN                  1000</span><br><span class="line">GID_MAX                 60000</span><br><span class="line">....</span><br><span class="line">CREATE_HOME     <span class="built_in">yes</span>                   //是否创建家目录</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment"># Use SHA512 to encrypt password.        //采用SHA512加密</span></span><br><span class="line">ENCRYPT_METHOD SHA512</span><br></pre></td></tr></table></figure>
+
+<p>从文件内容可见，&#x2F;etc&#x2F;login.defs 是比较宏观的进行偏重安全方面的配置。</p>
+<p>下面是一些实际过程中常用的命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">useradd         //添加用户</span><br><span class="line">passwd          //为用户设置密码   </span><br><span class="line">userdel         //删除用户</span><br><span class="line">usermod         //修改用户信息</span><br><span class="line">groupadd       //添加用户组</span><br><span class="line">groupdel        //删除用户组</span><br><span class="line">groupmod        //修改用户组信息</span><br><span class="line"><span class="built_in">groups</span>          //显示当前进程用户所属的用户组</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h3><h4 id="简单创建"><a href="#简单创建" class="headerlink" title="简单创建"></a>简单创建</h4><p>执行如下命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd <span class="built_in">test</span></span><br><span class="line">passwd <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<p>且系统会对密码做限制，比如长度、复杂度，但是不影响创建。<br>这样一个用户名为test的用户已经创建好了。我们看一下属性。<br>执行命令：id test   &#x2F;&#x2F;查看用户信息</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@control-plane security-demos]# <span class="built_in">id</span> <span class="built_in">test</span></span><br><span class="line">uid=1000(<span class="built_in">test</span>) gid=1000(<span class="built_in">test</span>) 组=1000(<span class="built_in">test</span>)</span><br></pre></td></tr></table></figure>
+
+<p>发现test的uid&#x3D;1000,gid&#x3D;1000,位于test用户组，说明缺参数的新建用户，会默认新建一个与用户名同名的用户组并加入其中，我们也注意到UID、GID的值与默认的配置文件中保持一致，可见配置文件是生效的，同样也可以再新建一个用户，看一下UID、GID的值,会看到是1001.可以尝试一下。我们可以切到&#x2F;home目录下，会看到用户目录，与配置文件设定一致。</p>
+<h4 id="带参数的创建账户"><a href="#带参数的创建账户" class="headerlink" title="带参数的创建账户"></a>带参数的创建账户</h4><p>useradd的参数，如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">-b, --base-dir BASE_DIR       新账户的主目录的基目录</span><br><span class="line">-c, --comment COMMENT         新账户的 GECOS 字段</span><br><span class="line">-d, --home-dir HOME_DIR       新账户的主目录</span><br><span class="line">-D, --defaults                显示或更改默认的 useradd 配置</span><br><span class="line">-e, --expiredate EXPIRE_DATE  新账户的过期日期</span><br><span class="line">-f, --inactive INACTIVE       新账户的密码不活动期</span><br><span class="line">-g, --gid GROUP               新账户主组的名称或 ID</span><br><span class="line">-G, --<span class="built_in">groups</span> GROUPS   新账户的附加组列表</span><br><span class="line">-h, --<span class="built_in">help</span>                    显示此帮助信息并推出</span><br><span class="line">-k, --skel SKEL_DIR   使用此目录作为骨架目录</span><br><span class="line">-K, --key KEY=VALUE           不使用 /etc/login.defs 中的默认值</span><br><span class="line">-l, --no-log-init     不要将此用户添加到最近登录和登录失败数据库</span><br><span class="line">-m, --create-home     创建用户的主目录</span><br><span class="line">-M, --no-create-home          不创建用户的主目录</span><br><span class="line">-N, --no-user-group   不创建同名的组</span><br><span class="line">-o, --non-unique              允许使用重复的 UID 创建用户</span><br><span class="line">-p, --password PASSWORD               加密后的新账户密码</span><br><span class="line">-r, --system                  创建一个系统账户</span><br><span class="line">-R, --root CHROOT_DIR         <span class="built_in">chroot</span> 到的目录</span><br><span class="line">-s, --shell SHELL             新账户的登录 shell</span><br><span class="line">-u, --uid UID                 新账户的用户 ID</span><br><span class="line">-U, --user-group              创建与用户同名的组</span><br><span class="line">-Z, --selinux-user SEUSER             为 SELinux 用户映射使用指定 SEUSER</span><br></pre></td></tr></table></figure>
+<p>  新建一个UID&#x3D;501，GID&#x3D;600，30天有效期，家目录为&#x2F;home&#x2F;test5的用户test4</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">groupadd -g 600  test3                //创建GID=600的用户组test3            </span><br><span class="line">useradd -u 501 -g 600 -f 30 -m   -d /home/test5 test4</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uid=501(test4) gid=600(test3) 组=600(test3)</span><br></pre></td></tr></table></figure>
+
+<h3 id="更改用户设置"><a href="#更改用户设置" class="headerlink" title="更改用户设置"></a>更改用户设置</h3><p>不同的 用户需要不同的权限，拥有不同的SHELL，是否允许登录。这个部分，就需要用到usermod命令修改用户配置。我们上个例子中创建过一个test账户，默认SHELL是&#x2F;bin&#x2F;bash，是可以登录的。</p>
+<p>禁止登录：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usermod -s /sbin/nologin <span class="built_in">test</span> //-s 指定shell </span><br></pre></td></tr></table></figure>
+
+<p>修改用户名：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usermod -l test88 <span class="built_in">test</span> //-l 新的用户名</span><br></pre></td></tr></table></figure>
+
+<p>此外还可以家目录、过期天数、更换组、锁定用户、解锁用户等功能，可以查看参数实践。</p>
+<h3 id="删除用户-组"><a href="#删除用户-组" class="headerlink" title="删除用户&#x2F;组"></a>删除用户&#x2F;组</h3><p>当我们创建用户&#x2F;组有错误时，可能会删除用户&#x2F;组，然后再重新创建。我们使用userdel命令来删除用户。</p>
+<p>执行命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost home]# userdel <span class="built_in">test</span></span><br><span class="line">[root@localhost home]# useradd <span class="built_in">test</span></span><br><span class="line">useradd：警告：此主目录已经存在。</span><br><span class="line">不从 skel 目录里向其中复制任何文件。</span><br><span class="line">正在创建信箱文件: 文件已存在</span><br></pre></td></tr></table></figure>
+
+<p>出现这个问题是因为我们删除用户时，系统为了安全起见并没有删除相关的文件以及目录。我们查看一下userdel参数：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">用法：userdel [选项] 登录</span><br><span class="line"></span><br><span class="line">选项：</span><br><span class="line">  -f, --force                   force some actions that would fail otherwise</span><br><span class="line">                                e.g. removal of user still logged <span class="keyword">in</span></span><br><span class="line">                                or files, even <span class="keyword">if</span> not owned by the user</span><br><span class="line">  -h, --<span class="built_in">help</span>                    显示此帮助信息并推出</span><br><span class="line">  -r, --remove                  删除主目录和邮件池</span><br><span class="line">  -R, --root CHROOT_DIR         <span class="built_in">chroot</span> 到的目录</span><br><span class="line">  -Z, --selinux-user            为用户删除所有的 SELinux 用户映射</span><br></pre></td></tr></table></figure>
+<p>  我们可以使用参数-rf 来删除相关文件目录，这一步具有危险性，是否有回滚操作，不是特别清楚。</p>
+<p>执行命令：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">[root@localhost home]# userdel -rf <span class="built_in">test</span></span><br><span class="line">[root@localhost home]# useradd <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="用户安全配置"><a href="#用户安全配置" class="headerlink" title="用户安全配置"></a>用户安全配置</h3><p>在操作系统安全中，用户权限、文件权限也是非常重要。现在就几个小点记录一下。这次目的主要有禁止root用户连接、一般用户使用sudo命令提权。我们在上个步骤中，创建了一个test用户，当我们输入sudo命令时，会提示如下：</p>
+<p>test不在 sudoers 文件中。此时将被报告。</p>
+<p>解决这个问题，我们只需要在&#x2F;etc&#x2F;sudoers 中添加用户test即可，代码如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//找到如下一行，在下面添加即可</span><br><span class="line">.....</span><br><span class="line">root    ALL=(ALL)       ALL</span><br><span class="line"><span class="built_in">test</span>    ALL=(ALL)       ALL          //这一行是添加的</span><br></pre></td></tr></table></figure>
+
+<p>到这里应该就可以解决问题了。</p>
+<p>新增：在虚拟机里面重新安装了一个CentOS 7，实验了一下，确实可以成功。下面是&#x2F;etc&#x2F;sudoers 属性：</p>
+<p><img src="/images/setuid.png" alt="setuid"></p>
+<p>可以看到拥有setUID权限，任何用户都有x（执行）权限，故可以执行sudo命令。下面的内容就当作是对setUID权限的理解。</p>
+<p>ps.因为之前按照网上的资料对其他部分进行了设置，但是感觉并不影响，下面贴出修改的部分及其目的</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//修改文件 /usr/bin/sudo 用户及用户组</span><br><span class="line"><span class="built_in">chown</span>  root：root /usr/bin/sudo</span><br><span class="line">//修改权限为4755，其中4代表以文件所有者执行</span><br><span class="line"><span class="built_in">chmod</span> 4755 /usr/bin/sudo</span><br></pre></td></tr></table></figure>
+
+<p>上面的命令意思是，将文件&#x2F;usr&#x2F;bin&#x2F;sudo拥有者改为root，当执行时以root身份执行，这也是‘4’的含义。如果设置权限时，勿把“4755” 配置为755，就会出现这个错误。</p>
+<p>sudo：有效用户 ID 不是 0，sudo 属于 root 并设置了 setuid 位吗？</p>
+<p>解决方法呢，就是刚才说的以root（uid&#x3D;0）身份运行。</p>
+<p>在实际环境中，为了防止黑客对root账户进行暴力破解，我们通常禁止root账户SSH远程连接。操作如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//修改 /etc/ssh/sshd.config 文件，</span><br><span class="line">将</span><br><span class="line"><span class="comment">#PermitRootLogin yes</span></span><br><span class="line">修改为</span><br><span class="line">PermitRootLogin no</span><br><span class="line"></span><br><span class="line">//重启sshd服务</span><br><span class="line">systemctl restart sshd.service</span><br></pre></td></tr></table></figure>
+
+<p>本文引自<a href="https://www.cnblogs.com/zutbaz/p/4248845.html">这里</a></p>
+<p>　　</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2020/11/09/CentOS-7-%E7%94%A8%E6%88%B7%E8%B4%A6%E6%88%B7%E9%85%8D%E7%BD%AE/" data-title="CentOS 7 用户账户配置 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/11/10/使用go的io-Pipe优雅的优化中间缓存/" title="使用go的io.Pipe优雅的优化中间缓存">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用go的io.Pipe优雅的优化中间缓存</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/11/06/Parse-the-kubernetes-manifest-in-yaml-or-json/"  title="Parse the kubernetes manifest in yaml or json">
+ <strong>下一篇：</strong><br/> 
+ <span>Parse the kubernetes manifest in yaml or json
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2020/11/09/CentOS-7-用户账户配置/" data-title="CentOS 7 用户账户配置" data-url="https://luckymrwang.github.io/2020/11/09/CentOS-7-%E7%94%A8%E6%88%B7%E8%B4%A6%E6%88%B7%E9%85%8D%E7%BD%AE/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="toc-number">1.</span> <span class="toc-text">基本信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7"><span class="toc-number">2.</span> <span class="toc-text">创建用户</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E5%88%9B%E5%BB%BA"><span class="toc-number">2.1.</span> <span class="toc-text">简单创建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B8%A6%E5%8F%82%E6%95%B0%E7%9A%84%E5%88%9B%E5%BB%BA%E8%B4%A6%E6%88%B7"><span class="toc-number">2.2.</span> <span class="toc-text">带参数的创建账户</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9B%B4%E6%94%B9%E7%94%A8%E6%88%B7%E8%AE%BE%E7%BD%AE"><span class="toc-number">3.</span> <span class="toc-text">更改用户设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7-%E7%BB%84"><span class="toc-number">4.</span> <span class="toc-text">删除用户&#x2F;组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE"><span class="toc-number">5.</span> <span class="toc-text">用户安全配置</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

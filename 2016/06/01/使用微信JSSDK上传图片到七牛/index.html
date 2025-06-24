@@ -1,0 +1,510 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>使用微信JSSDK上传图片到七牛 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="总体思路在微信下选好图片后将图片上传到微信服务器，在后端使用微信服务器返回的图片 serverId 加上调用接口的 access_token 通过七牛的 fetch 接口向微信服务器下载多媒体文件的接口请求图片的二进制流，然后保存至自己七牛账号内的特定 bucket。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用微信JSSDK上传图片到七牛">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/06/01/%E4%BD%BF%E7%94%A8%E5%BE%AE%E4%BF%A1JSSDK%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87%E5%88%B0%E4%B8%83%E7%89%9B/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="总体思路在微信下选好图片后将图片上传到微信服务器，在后端使用微信服务器返回的图片 serverId 加上调用接口的 access_token 通过七牛的 fetch 接口向微信服务器下载多媒体文件的接口请求图片的二进制流，然后保存至自己七牛账号内的特定 bucket。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-06-01T09:43:15.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.211Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="JSSDK">
+<meta property="article:tag" content="Weixin">
+<meta property="article:tag" content="Qiniu">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/06/01/使用微信JSSDK上传图片到七牛/" title="使用微信JSSDK上传图片到七牛" itemprop="url">使用微信JSSDK上传图片到七牛</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-06-01T09:43:15.000Z" itemprop="datePublished"> 发表于 2016-06-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-number">1.</span> <span class="toc-text">总体思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%BE%AE%E4%BF%A1-chooseImage-%E6%8E%A5%E5%8F%A3%EF%BC%8C%E6%88%90%E5%8A%9F%E5%90%8E%E8%B0%83%E7%94%A8-uploadImage-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">调用微信 chooseImage 接口，成功后调用 uploadImage 接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E5%90%8E%E5%8F%B0%E4%BD%BF%E7%94%A8%E4%B8%83%E7%89%9B%E7%9A%84-fetch-%E6%8E%A5%E5%8F%A3%E5%90%91%E5%BE%AE%E4%BF%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%B7%E6%B1%82%E6%96%87%E4%BB%B6%E5%B9%B6%E5%AD%98%E5%85%A5%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%83%E7%89%9B%E4%BB%93%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">在后台使用七牛的 fetch 接口向微信服务器请求文件并存入自己的七牛仓库</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h3 id="总体思路"><a href="#总体思路" class="headerlink" title="总体思路"></a>总体思路</h3><p>在微信下选好图片后将图片上传到微信服务器，在后端使用微信服务器返回的图片 <code>serverId</code> 加上调用接口的 <code>access_token</code> 通过七牛的 <code>fetch</code> 接口向微信服务器下载多媒体文件的接口请求图片的二进制流，然后保存至自己七牛账号内的特定 <code>bucket</code>。</p>
+<span id="more"></span>
+
+<h4 id="调用微信-chooseImage-接口，成功后调用-uploadImage-接口"><a href="#调用微信-chooseImage-接口，成功后调用-uploadImage-接口" class="headerlink" title="调用微信 chooseImage 接口，成功后调用 uploadImage 接口"></a>调用微信 chooseImage 接口，成功后调用 uploadImage 接口</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">wx.<span class="title function_">ready</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">            <span class="comment">// 5.1 拍照、本地选图</span></span><br><span class="line">            <span class="keyword">var</span> images = &#123;</span><br><span class="line">                <span class="attr">localId</span>: [],</span><br><span class="line">                <span class="attr">serverId</span>: []</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#chooseImage&#x27;</span>).<span class="property">onclick</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">                wx.<span class="title function_">chooseImage</span>(&#123;</span><br><span class="line">					<span class="attr">count</span>:<span class="number">1</span>,</span><br><span class="line">                    <span class="attr">success</span>: <span class="keyword">function</span> (<span class="params">res</span>) &#123;</span><br><span class="line">                        images.<span class="property">localId</span> = res.<span class="property">localIds</span>;</span><br><span class="line">						$(<span class="string">&quot;.weui_uploader_file&quot;</span>).<span class="title function_">show</span>().<span class="title function_">css</span>(<span class="string">&#x27;background-image&#x27;</span>, <span class="string">&#x27;url(&#x27;</span> + images.<span class="property">localId</span>[<span class="number">0</span>] + <span class="string">&#x27;)&#x27;</span>);</span><br><span class="line"><span class="comment">//                        alert(&#x27;已选择 &#x27; + res.localIds.length + &#x27; 张图片&#x27;);</span></span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 5.3 上传图片</span></span><br><span class="line">            <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#uploadImage&#x27;</span>).<span class="property">onclick</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (images.<span class="property">localId</span>.<span class="property">length</span> == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="title function_">alert</span>(<span class="string">&#x27;请先选择图片&#x27;</span>);</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                $.<span class="title function_">showLoading</span>(<span class="string">&quot;请稍等...&quot;</span>);</span><br><span class="line">                <span class="keyword">var</span> i = <span class="number">0</span>, length = images.<span class="property">localId</span>.<span class="property">length</span>;</span><br><span class="line">                images.<span class="property">serverId</span> = [];</span><br><span class="line">                <span class="keyword">function</span> <span class="title function_">upload</span>(<span class="params"></span>) &#123;</span><br><span class="line">                    wx.<span class="title function_">uploadImage</span>(&#123;</span><br><span class="line">                        <span class="attr">localId</span>: images.<span class="property">localId</span>[i],</span><br><span class="line">                        <span class="attr">success</span>: <span class="keyword">function</span> (<span class="params">res</span>) &#123;</span><br><span class="line">                            i++;</span><br><span class="line">                            <span class="comment">//alert(&#x27;已上传：&#x27; + i + &#x27;/&#x27; + length);</span></span><br><span class="line">                            <span class="variable language_">console</span>.<span class="title function_">log</span>(res);</span><br><span class="line">                            images.<span class="property">serverId</span>.<span class="title function_">push</span>(res.<span class="property">serverId</span>);</span><br><span class="line"></span><br><span class="line">                            <span class="keyword">var</span> url = <span class="string">&quot;&lt;?php echo base_url(&#x27;vote/home/fetch_url_to_qiniu&#x27;); ?&gt;&quot;</span>;</span><br><span class="line">                            $.<span class="title function_">get</span>(url, &#123;<span class="string">&#x27;media_id&#x27;</span>: res.<span class="property">serverId</span>,<span class="string">&#x27;memo&#x27;</span>: $(<span class="string">&#x27;.weui_textarea&#x27;</span>).<span class="title function_">val</span>()&#125;, <span class="keyword">function</span> (<span class="params">response</span>) &#123;</span><br><span class="line">                                $.<span class="title function_">hideLoading</span>();</span><br><span class="line">                                <span class="keyword">var</span> data = $.<span class="title function_">parseJSON</span>(response);</span><br><span class="line">                                <span class="keyword">if</span> (data.<span class="property">ret</span> == <span class="number">0</span>) &#123;</span><br><span class="line">                                    $.<span class="title function_">toast</span>(data.<span class="property">msg</span>);</span><br><span class="line">                                    <span class="variable language_">window</span>.<span class="property">location</span>.<span class="property">href</span> = <span class="string">&quot;&lt;?php echo base_url(&#x27;vote/home/vote_list&#x27;); ?&gt;&quot;</span>;</span><br><span class="line">                                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                                    $.<span class="title function_">toast</span>(<span class="string">&quot;操作失败&quot;</span>, <span class="string">&quot;forbidden&quot;</span>);</span><br><span class="line">                                    $.<span class="title function_">noti</span>(&#123;</span><br><span class="line">                                        <span class="attr">text</span>: data.<span class="property">msg</span>,</span><br><span class="line">                                        <span class="attr">time</span>: <span class="number">3000</span></span><br><span class="line">                                    &#125;);</span><br><span class="line">									<span class="keyword">return</span>;</span><br><span class="line">                                &#125;</span><br><span class="line">                            &#125;);</span><br><span class="line"></span><br><span class="line">                            <span class="keyword">if</span> (i &lt; length) &#123;</span><br><span class="line">                                <span class="title function_">upload</span>();</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;,</span><br><span class="line">                        <span class="attr">fail</span>: <span class="keyword">function</span> (<span class="params">res</span>) &#123;</span><br><span class="line">                            <span class="title function_">alert</span>(<span class="title class_">JSON</span>.<span class="title function_">stringify</span>(res));</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="built_in">setTimeout</span>(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">                    <span class="title function_">upload</span>();</span><br><span class="line">                &#125;, <span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            wx.<span class="title function_">error</span>(<span class="keyword">function</span> (<span class="params">res</span>) &#123;</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">log</span>(res.<span class="property">errMsg</span>);</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
+
+<h4 id="在后台使用七牛的-fetch-接口向微信服务器请求文件并存入自己的七牛仓库"><a href="#在后台使用七牛的-fetch-接口向微信服务器请求文件并存入自己的七牛仓库" class="headerlink" title="在后台使用七牛的 fetch 接口向微信服务器请求文件并存入自己的七牛仓库"></a>在后台使用七牛的 fetch 接口向微信服务器请求文件并存入自己的七牛仓库</h4><p>下面是七牛PHP fetch接口demo</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require_once</span> <span class="keyword">__DIR__</span> . <span class="string">&#x27;/../autoload.php&#x27;</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Qiniu</span>\<span class="title">Auth</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Qiniu</span>\<span class="title">Storage</span>\<span class="title">BucketManager</span>;</span><br><span class="line"><span class="variable">$accessKey</span> = <span class="string">&#x27;Access_Key&#x27;</span>;</span><br><span class="line"><span class="variable">$secretKey</span> = <span class="string">&#x27;Secret_Key&#x27;</span>;</span><br><span class="line"><span class="variable">$auth</span> = <span class="keyword">new</span> <span class="title class_">Auth</span>(<span class="variable">$accessKey</span>, <span class="variable">$secretKey</span>);</span><br><span class="line"><span class="variable">$bmgr</span> = <span class="keyword">new</span> <span class="title class_">BucketManager</span>(<span class="variable">$auth</span>);</span><br><span class="line"><span class="variable">$url</span> = <span class="string">&#x27;http://php.net/favicon.ico&#x27;</span>;</span><br><span class="line"><span class="variable">$bucket</span> = <span class="string">&#x27;Bucket_Name&#x27;</span>;</span><br><span class="line"><span class="variable">$key</span> = <span class="title function_ invoke__">time</span>() . <span class="string">&#x27;.ico&#x27;</span>;</span><br><span class="line"><span class="keyword">list</span>(<span class="variable">$ret</span>, <span class="variable">$err</span>) = <span class="variable">$bmgr</span>-&gt;<span class="title function_ invoke__">fetch</span>(<span class="variable">$url</span>, <span class="variable">$bucket</span>, <span class="variable">$key</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;=====&gt; fetch <span class="subst">$url</span> to bucket: <span class="subst">$bucket</span>  key: <span class="subst">$key</span>\n&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$err</span> !== <span class="literal">null</span>) &#123;</span><br><span class="line">    <span class="title function_ invoke__">var_dump</span>(<span class="variable">$err</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Success&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中需要特别注意的地方是，通过微信返回的 <code>serverId</code> 去微信服务器下载图片的接口<code>微信公众号</code>和<code>微信企业号</code>是不一样的（微信企业号开发文档没有提供媒体下载接口以为是同公众号下载接口一样，结果总是提示 <code>aceess_token</code>）</p>
+<ul>
+<li><p>微信公众号上传下载媒体接口，<a href="http://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html">官方文档</a></p>
+</li>
+<li><p>微信企业号上传下载媒体接口，上传接口<a href="http://mp.weixin.qq.com/wiki/12/58bfcfabbd501c7cd77c19bd9cfa8354.html">官方文档</a></p>
+<p>下载接口：<a><a href="https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&media_id=MEDIA_ID">https://qyapi.weixin.qq.com/cgi-bin/media/get?access_token=ACCESS_TOKEN&amp;media_id=MEDIA_ID</a></p>
+</li>
+</ul>
+<p> <a href="http://mp.weixin.qq.com/wiki/7/aaa137b55fb2e0456bf8dd9148dd613f.html#.E4.B8.8A.E4.BC.A0.E5.9B.BE.E7.89.87.E6.8E.A5.E5.8F.A3">微信 JSSDK 说明文档</a><br> <a href="http://developer.qiniu.com/docs/v6/api/reference/rs/fetch.html">七牛 fetch 接口说明文档</a><br> <a href="https://github.com/qiniu/php-sdk/blob/master/examples/fetch.php">七牛 PHP-SDK fetch 接口demo</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/JSSDK/">JSSDK</a><a href="/tags/Weixin/">Weixin</a><a href="/tags/Qiniu/">Qiniu</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/06/01/%E4%BD%BF%E7%94%A8%E5%BE%AE%E4%BF%A1JSSDK%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87%E5%88%B0%E4%B8%83%E7%89%9B/" data-title="使用微信JSSDK上传图片到七牛 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/06/11/Go语言的bytes-buffer/" title="Go语言的bytes.buffer">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Go语言的bytes.buffer</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/05/31/PHP连接Access/"  title="PHP连接Access">
+ <strong>下一篇：</strong><br/> 
+ <span>PHP连接Access
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/06/01/使用微信JSSDK上传图片到七牛/" data-title="使用微信JSSDK上传图片到七牛" data-url="https://luckymrwang.github.io/2016/06/01/%E4%BD%BF%E7%94%A8%E5%BE%AE%E4%BF%A1JSSDK%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87%E5%88%B0%E4%B8%83%E7%89%9B/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-number">1.</span> <span class="toc-text">总体思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E7%94%A8%E5%BE%AE%E4%BF%A1-chooseImage-%E6%8E%A5%E5%8F%A3%EF%BC%8C%E6%88%90%E5%8A%9F%E5%90%8E%E8%B0%83%E7%94%A8-uploadImage-%E6%8E%A5%E5%8F%A3"><span class="toc-number">1.1.</span> <span class="toc-text">调用微信 chooseImage 接口，成功后调用 uploadImage 接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E5%90%8E%E5%8F%B0%E4%BD%BF%E7%94%A8%E4%B8%83%E7%89%9B%E7%9A%84-fetch-%E6%8E%A5%E5%8F%A3%E5%90%91%E5%BE%AE%E4%BF%A1%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%B7%E6%B1%82%E6%96%87%E4%BB%B6%E5%B9%B6%E5%AD%98%E5%85%A5%E8%87%AA%E5%B7%B1%E7%9A%84%E4%B8%83%E7%89%9B%E4%BB%93%E5%BA%93"><span class="toc-number">1.2.</span> <span class="toc-text">在后台使用七牛的 fetch 接口向微信服务器请求文件并存入自己的七牛仓库</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

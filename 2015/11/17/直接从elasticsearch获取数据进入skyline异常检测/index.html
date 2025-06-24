@@ -1,0 +1,498 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>直接从elasticsearch获取数据进入skyline异常检测 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="这几天搭建 elasticsearch 集群做日志分析，终于有机会可以实际跑一下 skyline 的效果。不过比较麻烦的事情是，skyline 是一个比较完备的系统而不是插件，要求我们把数据通过 msgpack 发过去存到 redis 里。这是个很没有道理的做法，早在去年刚看到这个项目的时候我就在博客里写下了愿景是应该用 elasticsearch 替换掉 redis。等了这么久没等到，干脆就自己">
+<meta property="og:type" content="article">
+<meta property="og:title" content="直接从elasticsearch获取数据进入skyline异常检测">
+<meta property="og:url" content="https://luckymrwang.github.io/2015/11/17/%E7%9B%B4%E6%8E%A5%E4%BB%8Eelasticsearch%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%E8%BF%9B%E5%85%A5skyline%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="这几天搭建 elasticsearch 集群做日志分析，终于有机会可以实际跑一下 skyline 的效果。不过比较麻烦的事情是，skyline 是一个比较完备的系统而不是插件，要求我们把数据通过 msgpack 发过去存到 redis 里。这是个很没有道理的做法，早在去年刚看到这个项目的时候我就在博客里写下了愿景是应该用 elasticsearch 替换掉 redis。等了这么久没等到，干脆就自己">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-11-17T08:38:29.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.214Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="监控">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/17/直接从elasticsearch获取数据进入skyline异常检测/" title="直接从elasticsearch获取数据进入skyline异常检测" itemprop="url">直接从elasticsearch获取数据进入skyline异常检测</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-17T08:38:29.000Z" itemprop="datePublished"> 发表于 2015-11-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>这几天搭建 elasticsearch 集群做日志分析，终于有机会可以实际跑一下 skyline 的效果。不过比较麻烦的事情是，skyline 是一个比较完备的系统而不是插件，要求我们把数据通过 msgpack 发过去存到 redis 里。这是个很没有道理的做法，早在去年刚看到这个项目的时候我就在博客里写下了愿景是应该用 elasticsearch 替换掉 redis。等了这么久没等到，干脆就自己动手实现。修改后，skyline 其余的程序完全可以直接扔掉，只留下这一个脚本定时运行就够了：</p>
+<span id="more"></span>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pandas</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> scipy</span><br><span class="line"><span class="keyword">import</span> statsmodels.api <span class="keyword">as</span> sm</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> traceback</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> elasticsearch <span class="keyword">import</span> Elasticsearch</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">MAX_RESOLUTION = <span class="number">1000</span></span><br><span class="line">MAX_TOLERABLE_BOREDOM = <span class="number">100</span></span><br><span class="line">MIN_TOLERABLE_LENGTH = <span class="number">1</span></span><br><span class="line">REDOM_SET_SIZE = <span class="number">1</span></span><br><span class="line">BOREDOM_SET_SIZE = <span class="number">1</span></span><br><span class="line">FULL_DURATION = <span class="number">86400</span></span><br><span class="line">CONSENSUS = <span class="number">6</span></span><br><span class="line">STALE_PERIOD = <span class="number">500</span></span><br><span class="line">ALGORITHMS = [</span><br><span class="line">    <span class="string">&#x27;first_hour_average&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;mean_subtraction_cumulation&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;stddev_from_average&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;stddev_from_moving_average&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;least_squares&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;grubbs&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;histogram_bins&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;median_absolute_deviation&#x27;</span>,</span><br><span class="line">    <span class="string">&#x27;ks_test&#x27;</span>,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">logger = logging.getLogger(<span class="string">&quot;AnalyzerLog&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">This is no man&#x27;s land. Do anything you want in here,</span></span><br><span class="line"><span class="string">as long as you return a boolean that determines whether the input</span></span><br><span class="line"><span class="string">timeseries is anomalous or not.</span></span><br><span class="line"><span class="string">To add an algorithm, define it here, and add its name to settings.ALGORITHMS.</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tail_avg</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    This is a utility function used to calculate the average of the last three</span></span><br><span class="line"><span class="string">    datapoints in the series as a measure, instead of just the last datapoint.</span></span><br><span class="line"><span class="string">    It reduces noise, but it also reduces sensitivity and increases the delay</span></span><br><span class="line"><span class="string">    to detection.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        t = (timeseries[-<span class="number">1</span>][<span class="number">1</span>] + timeseries[-<span class="number">2</span>][<span class="number">1</span>] + timeseries[-<span class="number">3</span>][<span class="number">1</span>]) / <span class="number">3</span></span><br><span class="line">        <span class="keyword">return</span> t</span><br><span class="line">    <span class="keyword">except</span> IndexError:</span><br><span class="line">        <span class="keyword">return</span> timeseries[-<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">median_absolute_deviation</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A timeseries is anomalous if the deviation of its latest datapoint with</span></span><br><span class="line"><span class="string">    respect to the median is X times larger than the median of deviations.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    series = pandas.Series([x[<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> timeseries])</span><br><span class="line">    median = series.median()</span><br><span class="line">    demedianed = np.<span class="built_in">abs</span>(series - median)</span><br><span class="line">    median_deviation = demedianed.median()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># The test statistic is infinite when the median is zero,</span></span><br><span class="line">    <span class="comment"># so it becomes super sensitive. We play it safe and skip when this happens.</span></span><br><span class="line">    <span class="keyword">if</span> median_deviation == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    test_statistic = demedianed.iget(-<span class="number">1</span>) / median_deviation</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Completely arbitary...triggers if the median deviation is</span></span><br><span class="line">    <span class="comment"># 6 times bigger than the median</span></span><br><span class="line">    <span class="keyword">if</span> test_statistic &gt; <span class="number">6</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">grubbs</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A timeseries is anomalous if the Z score is greater than the Grubb&#x27;s score.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    series = scipy.array([x[<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> timeseries])</span><br><span class="line">    stdDev = scipy.std(series)</span><br><span class="line">    mean = np.mean(series)</span><br><span class="line">    tail_average = tail_avg(timeseries)</span><br><span class="line">    z_score = (tail_average - mean) / stdDev</span><br><span class="line">    len_series = <span class="built_in">len</span>(series)</span><br><span class="line">    threshold = scipy.stats.t.isf(<span class="number">.05</span> / (<span class="number">2</span> * len_series), len_series - <span class="number">2</span>)</span><br><span class="line">    threshold_squared = threshold * threshold</span><br><span class="line">    grubbs_score = ((len_series - <span class="number">1</span>) / np.sqrt(len_series)) * np.sqrt(threshold_squared / (len_series - <span class="number">2</span> + threshold_squared))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> z_score &gt; grubbs_score</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">first_hour_average</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Calcuate the simple average over one hour, FULL_DURATION seconds ago.</span></span><br><span class="line"><span class="string">    A timeseries is anomalous if the average of the last three datapoints</span></span><br><span class="line"><span class="string">    are outside of three standard deviations of this value.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    last_hour_threshold = time() - (FULL_DURATION - <span class="number">3600</span>)</span><br><span class="line">    series = pandas.Series([x[<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> timeseries <span class="keyword">if</span> x[<span class="number">0</span>] &lt; last_hour_threshold])</span><br><span class="line">    mean = (series).mean()</span><br><span class="line">    stdDev = (series).std()</span><br><span class="line">    t = tail_avg(timeseries)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">abs</span>(t - mean) &gt; <span class="number">3</span> * stdDev</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">stddev_from_average</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A timeseries is anomalous if the absolute value of the average of the latest</span></span><br><span class="line"><span class="string">    three datapoint minus the moving average is greater than three standard</span></span><br><span class="line"><span class="string">    deviations of the average. This does not exponentially weight the MA and so</span></span><br><span class="line"><span class="string">    is better for detecting anomalies with respect to the entire series.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    series = pandas.Series([x[<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> timeseries])</span><br><span class="line">    mean = series.mean()</span><br><span class="line">    stdDev = series.std()</span><br><span class="line">    t = tail_avg(timeseries)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">abs</span>(t - mean) &gt; <span class="number">3</span> * stdDev</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">stddev_from_moving_average</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A timeseries is anomalous if the absolute value of the average of the latest</span></span><br><span class="line"><span class="string">    three datapoint minus the moving average is greater than three standard</span></span><br><span class="line"><span class="string">    deviations of the moving average. This is better for finding anomalies with</span></span><br><span class="line"><span class="string">    respect to the short term trends.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    series = pandas.Series([x[<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> timeseries])</span><br><span class="line">    expAverage = pandas.stats.moments.ewma(series, com=<span class="number">50</span>)</span><br><span class="line">    stdDev = pandas.stats.moments.ewmstd(series, com=<span class="number">50</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">abs</span>(series.iget(-<span class="number">1</span>) - expAverage.iget(-<span class="number">1</span>)) &gt; <span class="number">3</span> * stdDev.iget(-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">mean_subtraction_cumulation</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A timeseries is anomalous if the value of the next datapoint in the</span></span><br><span class="line"><span class="string">    series is farther than three standard deviations out in cumulative terms</span></span><br><span class="line"><span class="string">    after subtracting the mean from each data point.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    series = pandas.Series([x[<span class="number">1</span>] <span class="keyword">if</span> x[<span class="number">1</span>] <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">for</span> x <span class="keyword">in</span> timeseries])</span><br><span class="line">    series = series - series[<span class="number">0</span>:<span class="built_in">len</span>(series) - <span class="number">1</span>].mean()</span><br><span class="line">    stdDev = series[<span class="number">0</span>:<span class="built_in">len</span>(series) - <span class="number">1</span>].std()</span><br><span class="line">    expAverage = pandas.stats.moments.ewma(series, com=<span class="number">15</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">abs</span>(series.iget(-<span class="number">1</span>)) &gt; <span class="number">3</span> * stdDev</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">least_squares</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A timeseries is anomalous if the average of the last three datapoints</span></span><br><span class="line"><span class="string">    on a projected least squares model is greater than three sigma.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    x = np.array([t[<span class="number">0</span>] <span class="keyword">for</span> t <span class="keyword">in</span> timeseries])</span><br><span class="line">    y = np.array([t[<span class="number">1</span>] <span class="keyword">for</span> t <span class="keyword">in</span> timeseries])</span><br><span class="line">    A = np.vstack([x, np.ones(<span class="built_in">len</span>(x))]).T</span><br><span class="line">    results = np.linalg.lstsq(A, y)</span><br><span class="line">    residual = results[<span class="number">1</span>]</span><br><span class="line">    m, c = np.linalg.lstsq(A, y)[<span class="number">0</span>]</span><br><span class="line">    errors = []</span><br><span class="line">    <span class="keyword">for</span> i, value <span class="keyword">in</span> <span class="built_in">enumerate</span>(y):</span><br><span class="line">        projected = m * x[i] + c</span><br><span class="line">        error = value - projected</span><br><span class="line">        errors.append(error)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(errors) &lt; <span class="number">3</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    std_dev = scipy.std(errors)</span><br><span class="line">    t = (errors[-<span class="number">1</span>] + errors[-<span class="number">2</span>] + errors[-<span class="number">3</span>]) / <span class="number">3</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">abs</span>(t) &gt; std_dev * <span class="number">3</span> <span class="keyword">and</span> <span class="built_in">round</span>(std_dev) != <span class="number">0</span> <span class="keyword">and</span> <span class="built_in">round</span>(t) != <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">histogram_bins</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A timeseries is anomalous if the average of the last three datapoints falls</span></span><br><span class="line"><span class="string">    into a histogram bin with less than 20 other datapoints (you&#x27;ll need to tweak</span></span><br><span class="line"><span class="string">    that number depending on your data)</span></span><br><span class="line"><span class="string">    Returns: the size of the bin which contains the tail_avg. Smaller bin size</span></span><br><span class="line"><span class="string">    means more anomalous.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    series = scipy.array([x[<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> timeseries])</span><br><span class="line">    t = tail_avg(timeseries)</span><br><span class="line">    h = np.histogram(series, bins=<span class="number">15</span>)</span><br><span class="line">    bins = h[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">for</span> index, bin_size <span class="keyword">in</span> <span class="built_in">enumerate</span>(h[<span class="number">0</span>]):</span><br><span class="line">        <span class="keyword">if</span> bin_size &lt;= <span class="number">20</span>:</span><br><span class="line">            <span class="comment"># Is it in the first bin?</span></span><br><span class="line">            <span class="keyword">if</span> index == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">if</span> t &lt;= bins[<span class="number">0</span>]:</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">            <span class="comment"># Is it in the current bin?</span></span><br><span class="line">            <span class="keyword">elif</span> t &gt;= bins[index] <span class="keyword">and</span> t &lt; bins[index + <span class="number">1</span>]:</span><br><span class="line">                    <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">ks_test</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A timeseries is anomalous if 2 sample Kolmogorov-Smirnov test indicates</span></span><br><span class="line"><span class="string">    that data distribution for last 10 minutes is different from last hour.</span></span><br><span class="line"><span class="string">    It produces false positives on non-stationary series so Augmented</span></span><br><span class="line"><span class="string">    Dickey-Fuller test applied to check for stationarity.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    hour_ago = time() - <span class="number">3600</span></span><br><span class="line">    ten_minutes_ago = time() - <span class="number">600</span></span><br><span class="line">    reference = scipy.array([x[<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> timeseries <span class="keyword">if</span> x[<span class="number">0</span>] &gt;= hour_ago <span class="keyword">and</span> x[<span class="number">0</span>] &lt; ten_minutes_ago])</span><br><span class="line">    probe = scipy.array([x[<span class="number">1</span>] <span class="keyword">for</span> x <span class="keyword">in</span> timeseries <span class="keyword">if</span> x[<span class="number">0</span>] &gt;= ten_minutes_ago])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> reference.size &lt; <span class="number">20</span> <span class="keyword">or</span> probe.size &lt; <span class="number">20</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">    ks_d, ks_p_value = scipy.stats.ks_2samp(reference, probe)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ks_p_value &lt; <span class="number">0.05</span> <span class="keyword">and</span> ks_d &gt; <span class="number">0.5</span>:</span><br><span class="line">        adf = sm.tsa.stattools.adfuller(reference, <span class="number">10</span>)</span><br><span class="line">        <span class="keyword">if</span> adf[<span class="number">1</span>] &lt; <span class="number">0.05</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_selected_algorithm</span>(<span class="params">timeseries</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Filter timeseries and run selected algorithm.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># Get rid of short series</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(timeseries) &lt; MIN_TOLERABLE_LENGTH:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Get rid of stale series</span></span><br><span class="line">    <span class="keyword">if</span> time() - timeseries[-<span class="number">1</span>][<span class="number">0</span>] &gt; STALE_PERIOD:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Get rid of boring series</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(<span class="built_in">set</span>(item[<span class="number">1</span>] <span class="keyword">for</span> item <span class="keyword">in</span> timeseries[-MAX_TOLERABLE_BOREDOM:])) == BOREDOM_SET_SIZE:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        ensemble = [<span class="built_in">globals</span>()[algorithm](timeseries) <span class="keyword">for</span> algorithm <span class="keyword">in</span> ALGORITHMS]</span><br><span class="line">        threshold = <span class="built_in">len</span>(ensemble) - CONSENSUS</span><br><span class="line">        <span class="keyword">if</span> ensemble.count(<span class="literal">False</span>) &lt;= threshold:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span>, ensemble, timeseries[-<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span>, ensemble, timeseries[-<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        logging.error(<span class="string">&quot;Algorithm error: &quot;</span> + traceback.format_exc())</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">False</span>, [], <span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_es_data</span>(<span class="params">index, field</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Get values of the field from elasticsearh index.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    es = Elasticsearch([<span class="string">&#x27;10.4.16.68&#x27;</span>, <span class="string">&#x27;10.4.27.162&#x27;</span>])</span><br><span class="line">    res = es.search(index=index, body=&#123;</span><br><span class="line">        <span class="string">&quot;query&quot;</span> : &#123;</span><br><span class="line">            <span class="string">&quot;filtered&quot;</span> : &#123;</span><br><span class="line">                <span class="string">&quot;query&quot;</span> : &#123; <span class="string">&quot;match_all&quot;</span> : &#123;&#125;&#125;,</span><br><span class="line">                <span class="string">&quot;filter&quot;</span> : &#123;</span><br><span class="line">                    <span class="string">&quot;range&quot;</span> : &#123; <span class="string">&quot;@timestamp&quot;</span> : &#123; <span class="string">&quot;from&quot;</span> : <span class="string">&quot;now-1h&quot;</span>, <span class="string">&quot;to&quot;</span> : <span class="string">&quot;now&quot;</span> &#125;&#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">&quot;size&quot;</span> : <span class="number">0</span>,</span><br><span class="line">        <span class="string">&quot;facets&quot;</span> : &#123;</span><br><span class="line">            field : &#123; <span class="string">&quot;date_histogram&quot;</span> : &#123; <span class="string">&quot;key_field&quot;</span> : <span class="string">&quot;@timestamp&quot;</span>, <span class="string">&quot;value_field&quot;</span> : field, <span class="string">&quot;interval&quot;</span> : <span class="string">&quot;5m&quot;</span> &#125; &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="built_in">print</span>(res[<span class="string">&#x27;hits&#x27;</span>][<span class="string">&#x27;total&#x27;</span>])</span><br><span class="line">    timeseries = []</span><br><span class="line">    <span class="keyword">for</span> entry <span class="keyword">in</span> res[<span class="string">&#x27;facets&#x27;</span>][field][<span class="string">&#x27;entries&#x27;</span>]:</span><br><span class="line">        timeseries.append( [entry[<span class="string">&#x27;time&#x27;</span>], entry[<span class="string">&#x27;total&#x27;</span>]] )</span><br><span class="line">    <span class="keyword">return</span>(timeseries)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line"></span><br><span class="line">    timeseries = get_es_data(<span class="string">&#x27;logstash-ngxaccounting-2014.05.30&#x27;</span>, <span class="string">&#x27;code.504&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    anomalous, ensemble, datapoint = run_selected_algorithm(timeseries)</span><br><span class="line">    <span class="keyword">if</span> anomalous:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Your anomalous datapoint (&quot;</span> + <span class="built_in">str</span>(datapoint) + <span class="string">&quot;) don&#x27;t pass following test:&quot;</span>)</span><br><span class="line">        <span class="keyword">for</span> index, value <span class="keyword">in</span> <span class="built_in">enumerate</span>(ensemble):</span><br><span class="line">            <span class="keyword">if</span> value:</span><br><span class="line">                <span class="built_in">print</span>(<span class="string">&quot;\t&quot;</span> + ALGORITHMS[index])</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Your latest datapoint is OK&quot;</span>)</span><br><span class="line">        <span class="built_in">print</span>(ensemble, datapoint)</span><br></pre></td></tr></table></figure>
+<p>这里面主要就是拼了一下 elasticsearch 的 date_histogram 类型的 facet 请求，获取最近 1 个小时的每 5 分钟统计值构成的时间序列数据。然后发给前面那些检验算法。</p>
+<p>如果要推广用，把里面这个 code.504 提出来做一个可配置项就行了。</p>
+<p>本文引自<a href="http://chenlinux.com/2014/06/04/elasticsearch-direct-to-skyline/">三斗室</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/监控/">监控</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2015/11/17/%E7%9B%B4%E6%8E%A5%E4%BB%8Eelasticsearch%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%E8%BF%9B%E5%85%A5skyline%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B/" data-title="直接从elasticsearch获取数据进入skyline异常检测 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/11/19/自动化测试基本流程/" title="自动化测试基本流程">
+  <strong>上一篇：</strong><br/>
+  <span>
+  自动化测试基本流程</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/11/17/Kale系统skyline的过滤算法/"  title="Kale系统skyline的过滤算法">
+ <strong>下一篇：</strong><br/> 
+ <span>Kale系统skyline的过滤算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/11/17/直接从elasticsearch获取数据进入skyline异常检测/" data-title="直接从elasticsearch获取数据进入skyline异常检测" data-url="https://luckymrwang.github.io/2015/11/17/%E7%9B%B4%E6%8E%A5%E4%BB%8Eelasticsearch%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE%E8%BF%9B%E5%85%A5skyline%E5%BC%82%E5%B8%B8%E6%A3%80%E6%B5%8B/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

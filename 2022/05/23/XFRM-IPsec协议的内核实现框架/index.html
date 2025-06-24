@@ -1,0 +1,543 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>XFRM -- IPsec协议的内核实现框架 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="IPsec协议帮助IP层建立安全可信的数据包传输通道。当前已经有了如StrongSwan、OpenSwan等比较成熟的解决方案，而它们都使用了Linux内核中的XFRM框架进行报文接收发送。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XFRM -- IPsec协议的内核实现框架">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/05/23/XFRM-IPsec%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%86%85%E6%A0%B8%E5%AE%9E%E7%8E%B0%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="IPsec协议帮助IP层建立安全可信的数据包传输通道。当前已经有了如StrongSwan、OpenSwan等比较成熟的解决方案，而它们都使用了Linux内核中的XFRM框架进行报文接收发送。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/xfrm1.webp">
+<meta property="og:image" content="https://luckymrwang.github.io/images/xfrm2.gif">
+<meta property="og:image" content="https://luckymrwang.github.io/images/xfrm3.webp">
+<meta property="og:image" content="https://luckymrwang.github.io/images/xfrm4.png">
+<meta property="article:published_time" content="2022-05-23T06:16:10.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.206Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/xfrm1.webp">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/" title="XFRM -- IPsec协议的内核实现框架" itemprop="url">XFRM -- IPsec协议的内核实现框架</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-23T06:16:10.000Z" itemprop="datePublished"> 发表于 2022-05-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview"><span class="toc-number">1.</span> <span class="toc-text">Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#XFRM-%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.1.</span> <span class="toc-text">XFRM 实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Netlink-%E9%80%9A%E9%81%93"><span class="toc-number">1.2.</span> <span class="toc-text">Netlink 通道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XFRM-State"><span class="toc-number">1.3.</span> <span class="toc-text">XFRM State</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XFRM-Policy"><span class="toc-number">1.4.</span> <span class="toc-text">XFRM Policy</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6%E5%8F%91%E9%80%81IPsec%E6%8A%A5%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">接收发送IPsec报文</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6"><span class="toc-number">2.1.</span> <span class="toc-text">接收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E9%80%81"><span class="toc-number">2.2.</span> <span class="toc-text">发送</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p><code>IPsec</code>协议帮助IP层建立安全可信的数据包传输通道。当前已经有了如<a href="https://link.segmentfault.com/?enc=yiJRfjDaOBtxIPM5EjpbsA==.Ex4qizN1gKKgbufiqSFjTmO3Q2gj2DujT2N7t2kQhKM=">StrongSwan</a>、<a href="https://link.segmentfault.com/?enc=T3gYD1nBaO8i7odY0GxMxQ==.+n11tAQvYuD0p2voWWWbrQiAh8iqTkWiqQfS536cp0M=">OpenSwan</a>等比较成熟的解决方案，而它们都使用了Linux内核中的<code>XFRM</code>框架进行报文接收发送。</p>
+<p><img src="/images/xfrm1.webp" alt="image"></p>
+<p><img src="/images/xfrm2.gif" alt="image"></p>
+<span id="more"></span>
+<p><code>XFRM</code>的正确读音是<code>transform</code>(转换), 这表示内核协议栈收到的<code>IPsec</code>报文需要经过转换才能还原为原始报文；同样地，要发送的原始报文也需要转换为IPsec报文才能发送出去。</p>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><h3 id="XFRM-实例"><a href="#XFRM-实例" class="headerlink" title="XFRM 实例"></a>XFRM 实例</h3><p>IPsec中有两个重要概念：安全关联(Security Association)和安全策略(Security Policy)，这两类信息都需要存放在内核XFRM。核XFRM使用<code>netns_xfrm</code>这个结构来组织这些信息，它也被称为xfrm instance(实例)。从它的名字也可以看出来，这个实例是与network namespace相关的，每个命名空间都有这样的一个实例，实例间彼此独立。所以同一台主机上的不同容器可以互不干扰地使用XFRM</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">net</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ......</span><br><span class="line">   <span class="meta">#<span class="keyword">ifdef</span> CONFIG_XFRM</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">netns_xfrm</span>    <span class="title">xfrm</span>;</span></span><br><span class="line">    <span class="meta">#<span class="keyword">endif</span> </span></span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Netlink-通道"><a href="#Netlink-通道" class="headerlink" title="Netlink 通道"></a>Netlink 通道</h3><p>上面提到了Security Association和Security Policy信息，这些信息一般是由用户态IPsec进程(eg. StrongSwan)下发到内核XFRM的，这个下发的通道在network namespace初始化时创建。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">int</span> __net_init <span class="title function_">xfrm_user_net_init</span><span class="params">(<span class="keyword">struct</span> net *net)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">sock</span> *<span class="title">nlsk</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">netlink_kernel_cfg</span> <span class="title">cfg</span> =</span> &#123;</span><br><span class="line">        .groups    = XFRMNLGRP_MAX,</span><br><span class="line">        .input    = xfrm_netlink_rcv,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    nlsk = netlink_kernel_create(net, NETLINK_XFRM, &amp;cfg);</span><br><span class="line">    ......</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样，当用户下发IPsec配置时，内核便可以调用 <code>xfrm_netlink_rcv()</code> 来接收</p>
+<h3 id="XFRM-State"><a href="#XFRM-State" class="headerlink" title="XFRM State"></a>XFRM State</h3><p><code>XFRM</code>使用<code>xfrm_state</code>示IPsec协议栈中的Security Association，它表示了一条单方向的IPsec流量所需的一切信息，包括模式(Transport或Tunnel)、密钥、replay参数等信息。用户态IPsec进程通过发送一个XFRM_MSG_NEWSA请求，可以让<code>XFRM</code>创建一个<code>xfrm_state</code>结构</p>
+<p><code>xfrm_state</code>包含的字段很多，这里就不贴了，仅仅列出其中最重要的字段：</p>
+<ul>
+<li>id: 它是一个<code>xfrm_id</code>结构，包含该SA的目的地址、SPI、和协议(AH&#x2F;ESP)</li>
+<li>props：表示该SA的其他属性，包括IPsec Mode(Transport&#x2F;Tunnel)、源地址等信息</li>
+</ul>
+<p>每个<code>xfrm_state</code>在内核中会加入多个哈希表，因此，内核可以从多个特征查找到同一个个SA：</p>
+<ul>
+<li>xfrm_state_lookup()： 通过指定的SPI信息查找SA</li>
+<li>xfrm_state_lookup_byaddr(): 通过源地址查找SA</li>
+<li>xfrm_state_find(): 通过目的地址查找SA</li>
+</ul>
+<p>用户可以通过<code>ip xfrm state ls</code>命令列出当前主机上的<code>xfrm_state</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">src 192.168.0.1 dst 192.168.0.2</span><br><span class="line">    proto esp spi 0xc420a5ed(3290473965) reqid 1(0x00000001) mode tunnel</span><br><span class="line">    replay-window 0 <span class="built_in">seq</span> 0x00000000 flag af-unspec (0x00100000)</span><br><span class="line">    auth-trunc hmac(sha256) 0xa65e95de83369bd9f3be3afafc5c363ea5e5e3e12c3017837a7b9dd40fe1901f (256 bits) 128</span><br><span class="line">    enc cbc(aes) 0x61cd9e16bb8c1d9757852ce1ff46791f (128 bits)</span><br><span class="line">    anti-replay context: <span class="built_in">seq</span> 0x0, oseq 0x1, bitmap 0x00000000</span><br><span class="line">    lifetime config:</span><br><span class="line">      <span class="built_in">limit</span>: soft (INF)(bytes), hard (INF)(bytes)</span><br><span class="line">      <span class="built_in">limit</span>: soft (INF)(packets), hard (INF)(packets)</span><br><span class="line">      expire add: soft 1004(sec), hard 1200(sec)</span><br><span class="line">      expire use: soft 0(sec), hard 0(sec)</span><br><span class="line">    lifetime current:</span><br><span class="line">      84(bytes), 1(packets)</span><br><span class="line">      add 2019-09-02 10:25:39 use 2019-09-02 10:25:39</span><br><span class="line">    stats:</span><br><span class="line">      replay-window 0 replay 0 failed 0</span><br></pre></td></tr></table></figure>
+
+<h3 id="XFRM-Policy"><a href="#XFRM-Policy" class="headerlink" title="XFRM Policy"></a>XFRM Policy</h3><p><code>XFRM</code>使用<code>xfrm_policy</code>表示IPsec协议栈中的Security Policy，用户通过下发这样的规则，可以让XFRM允许或者禁止某些特征的流的发送和接收。用户态IPsec进程通过发送一个<code>XFRM_MSG_POLICY</code>请求，可以让XFRM创建一个<code>xfrm_state</code>结构</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">xfrm_policy</span> &#123;</span></span><br><span class="line">    ......</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">hlist_node</span>    <span class="title">bydst</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">hlist_node</span>    <span class="title">byidx</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/* This lock only affects elements except for entry. */</span></span><br><span class="line">    <span class="type">rwlock_t</span>        lock;</span><br><span class="line">    <span class="type">atomic_t</span>        refcnt;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timer_list</span>    <span class="title">timer</span>;</span></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">flow_cache_object</span> <span class="title">flo</span>;</span></span><br><span class="line">    <span class="type">atomic_t</span>        genid;</span><br><span class="line">    u32            priority;</span><br><span class="line">    u32            index;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">xfrm_mark</span>    <span class="title">mark</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">xfrm_selector</span>    <span class="title">selector</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">xfrm_lifetime_cfg</span> <span class="title">lft</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">xfrm_lifetime_cur</span> <span class="title">curlft</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">xfrm_policy_walk_entry</span> <span class="title">walk</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">xfrm_policy_queue</span> <span class="title">polq</span>;</span></span><br><span class="line">    u8            type;</span><br><span class="line">    u8            action;</span><br><span class="line">    u8            flags;</span><br><span class="line">    u8            xfrm_nr;</span><br><span class="line">    u16            family;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">xfrm_sec_ctx</span>    *<span class="title">security</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">xfrm_tmpl</span>           <span class="title">xfrm_vec</span>[<span class="title">XFRM_MAX_DEPTH</span>];</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rcu_head</span>        <span class="title">rcu</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这个结构的字段很多，但大部分并不用关心，我们重点关注下面列举出的这几个字段就行：</p>
+<ul>
+<li>selector：表示该Policy匹配的流的特征</li>
+<li>action：取值为XFRM_POLICY_ALLOW(0)或XFRM_POLICY_BLOCK(1)，前者表示允许该流量，后者表示不允许。</li>
+<li>xfrm_nr: 表示与这条Policy关联的template的数量，template可以理解为<code>xfrm_state</code>的简化版本，xfrm_nr决定了流量进行转换的次数，通常这个值为1</li>
+<li>xfrm_vec: 表示与这条Policy关联的template，数组的每个元素是<code>xfrm_tmpl</code>, 一个<code>xfrm_tmpl</code>可以还原(resolve)成一个完成<code>state</code></li>
+</ul>
+<p>与<code>xfrm_state</code>类似，用户可以通过<code>ip xfrm policy ls</code>命令列出当前主机上的<code>xfrm_policy</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">src 10.1.0.0/16 dst 10.2.0.0/16 uid 0</span><br><span class="line">    <span class="built_in">dir</span> out action allow index 5025 priority 383615 ptype main share any flag  (0x00000000)</span><br><span class="line">    lifetime config:</span><br><span class="line">      <span class="built_in">limit</span>: soft (INF)(bytes), hard (INF)(bytes)</span><br><span class="line">      <span class="built_in">limit</span>: soft (INF)(packets), hard (INF)(packets)</span><br><span class="line">      expire add: soft 0(sec), hard 0(sec)</span><br><span class="line">      expire use: soft 0(sec), hard 0(sec)</span><br><span class="line">    lifetime current:</span><br><span class="line">      0(bytes), 0(packets)</span><br><span class="line">      add 2019-09-02 10:25:39 use 2019-09-02 10:25:39</span><br><span class="line">    tmpl src 192.168.0.1 dst 192.168.0.2</span><br><span class="line">        proto esp spi 0xc420a5ed(3290473965) reqid 1(0x00000001) mode tunnel</span><br><span class="line">        level required share any </span><br><span class="line">        enc-mask ffffffff auth-mask ffffffff comp-mask ffffffff</span><br></pre></td></tr></table></figure>
+
+<h2 id="接收发送IPsec报文"><a href="#接收发送IPsec报文" class="headerlink" title="接收发送IPsec报文"></a>接收发送IPsec报文</h2><h3 id="接收"><a href="#接收" class="headerlink" title="接收"></a>接收</h3><p>下图展示了<code>XFRM</code>框架接收IPsec报文的流程：</p>
+<p><img src="/images/xfrm3.webp" alt="image"></p>
+<p>从整体上看，IPsec报文的接收是一个迂回的过程，IP层接收时，根据报文的protocol字段，如果它是IPsec类型(AH、ESP)，则会进入<code>XFRM</code>框架进行接收，在此过程里，比较重要的过程是<code>xfrm_state_lookup()</code>, 该函数查找SA，如果找到之后，再根据不同的协议和模式进入不同的处理过程，最终，将原始报文的信息获取出来，重入<code>ip_local_deliver()</code>.然后，还需经历XFRM Policy的过滤，最后再上送到应用层。</p>
+<h3 id="发送"><a href="#发送" class="headerlink" title="发送"></a>发送</h3><p>下图展示了<code>XFRM</code>框架发送IPsec报文的流程：</p>
+<p><img src="/images/xfrm4.png" alt="image"></p>
+<p><code>XFRM</code>在报文路由查找后查找是否有满足条件的SA，如果没有，则直接走<code>ip_output()</code>,否则进入<code>XFRM</code>的处理过程，根据模式和协议做相应处理，最后殊途同归到<code>ip_output()</code></p>
+<p>本文引自<a href="https://segmentfault.com/a/1190000020412259">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/05/23/XFRM-IPsec%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%86%85%E6%A0%B8%E5%AE%9E%E7%8E%B0%E6%A1%86%E6%9E%B6/" data-title="XFRM -- IPsec协议的内核实现框架 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/05/23/使用-Docker-Desktop进行-BPF-开发/" title="使用 Docker Desktop进行 BPF 开发">
+  <strong>上一篇：</strong><br/>
+  <span>
+  使用 Docker Desktop进行 BPF 开发</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/05/12/Calico-eBPF数据平面/"  title="Calico eBPF数据平面">
+ <strong>下一篇：</strong><br/> 
+ <span>Calico eBPF数据平面
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/05/23/XFRM-IPsec协议的内核实现框架/" data-title="XFRM -- IPsec协议的内核实现框架" data-url="https://luckymrwang.github.io/2022/05/23/XFRM-IPsec%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%86%85%E6%A0%B8%E5%AE%9E%E7%8E%B0%E6%A1%86%E6%9E%B6/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Overview"><span class="toc-number">1.</span> <span class="toc-text">Overview</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#XFRM-%E5%AE%9E%E4%BE%8B"><span class="toc-number">1.1.</span> <span class="toc-text">XFRM 实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Netlink-%E9%80%9A%E9%81%93"><span class="toc-number">1.2.</span> <span class="toc-text">Netlink 通道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XFRM-State"><span class="toc-number">1.3.</span> <span class="toc-text">XFRM State</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#XFRM-Policy"><span class="toc-number">1.4.</span> <span class="toc-text">XFRM Policy</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6%E5%8F%91%E9%80%81IPsec%E6%8A%A5%E6%96%87"><span class="toc-number">2.</span> <span class="toc-text">接收发送IPsec报文</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A5%E6%94%B6"><span class="toc-number">2.1.</span> <span class="toc-text">接收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E9%80%81"><span class="toc-number">2.2.</span> <span class="toc-text">发送</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

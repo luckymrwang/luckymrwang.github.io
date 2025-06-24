@@ -1,0 +1,524 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go标准库flag包 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="flag包概述flag包实现了命令行参数的解析 flag包的工作流程基本分为三步：  注册flag,主要用flag.String(), Bool(), Int()等函数注册flag，或者用flag.BoolVar()，StringVar(),IntVar()等函数把flag绑定到变量 解析flag,使用flag.Parse()函数解析在命令行使用了的flag 最后根据命令行输入的flag处理逻辑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go标准库flag包">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/09/16/Go%E6%A0%87%E5%87%86%E5%BA%93flag%E5%8C%85/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="flag包概述flag包实现了命令行参数的解析 flag包的工作流程基本分为三步：  注册flag,主要用flag.String(), Bool(), Int()等函数注册flag，或者用flag.BoolVar()，StringVar(),IntVar()等函数把flag绑定到变量 解析flag,使用flag.Parse()函数解析在命令行使用了的flag 最后根据命令行输入的flag处理逻辑">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-16T15:14:51.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.193Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/09/16/Go标准库flag包/" title="Go标准库flag包" itemprop="url">Go标准库flag包</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-09-16T15:14:51.000Z" itemprop="datePublished"> 发表于 2020-09-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#flag%E5%8C%85%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">flag包概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#flag%E5%8C%85%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">flag包的工作流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FlagSet"><span class="toc-number">3.</span> <span class="toc-text">FlagSet</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.</span> <span class="toc-text">方法介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89-Value"><span class="toc-number">5.</span> <span class="toc-text">自定义 Value</span></a></li></ol>
+		
+		</div>
+		
+		<h4 id="flag包概述"><a href="#flag包概述" class="headerlink" title="flag包概述"></a>flag包概述</h4><p>flag包实现了命令行参数的解析</p>
+<h4 id="flag包的工作流程"><a href="#flag包的工作流程" class="headerlink" title="flag包的工作流程"></a>flag包的工作流程</h4><p>基本分为三步：</p>
+<ul>
+<li>注册flag,主要用flag.String(), Bool(), Int()等函数注册flag，或者用flag.BoolVar()，StringVar(),IntVar()等函数把flag绑定到变量</li>
+<li>解析flag,使用flag.Parse()函数解析在命令行使用了的flag</li>
+<li>最后根据命令行输入的flag处理逻辑</li>
+</ul>
+<span id="more"></span>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;flag&quot;</span></span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1. 使用flag.String(), Bool(), Int()等函数注册flag,解析后保存到bool,int,string类型的指针</span></span><br><span class="line">    n = flag.Int(<span class="string">&quot;n&quot;</span>, <span class="number">1</span>, <span class="string">&quot;print times .&quot;</span>)</span><br><span class="line">    s = flag.String(<span class="string">&quot;s&quot;</span>, <span class="string">&quot;hello world&quot;</span>, <span class="string">&quot;print strings.&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 也可以先声明变量，再用flag.BoolVar把flag绑定到变量</span></span><br><span class="line">    v <span class="type">bool</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 3. 绑定flag到变量</span></span><br><span class="line">    flag.BoolVar(&amp;v, <span class="string">&quot;v&quot;</span>, <span class="literal">false</span>, <span class="string">&quot;print version and exit.&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. flag.usage是一个函数变量，在解析flag发生错误时被调用，输出一个说明文本到命令行，可以重写usage的内容</span></span><br><span class="line">    flag.Usage = usage</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 5. 解析命令行flag，这是使用命令行参数之前首先要做的事</span></span><br><span class="line">    flag.Parse()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 6. bool类型flag可以接收的值：1, 0, t, f, T, F, true, false, TRUE, FALSE, True, False</span></span><br><span class="line">    <span class="comment">//    bool类型也可以只写flag名，省略赋值部分，等价与赋值为true.&quot;例如：cmd -h &quot;</span></span><br><span class="line">    <span class="keyword">if</span> v &#123;</span><br><span class="line">        fmt.Fprintln(os.Stderr, <span class="string">&quot;flag demo version: 1.0.0&quot;</span>)</span><br><span class="line">        os.Exit(<span class="number">0</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 7. flag.Lookup从命令行flag中返回指定名称的flag，如果没有则返回nil</span></span><br><span class="line">    <span class="keyword">if</span> flag.Lookup(<span class="string">&quot;s&quot;</span>)!=<span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> *s != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; *n; i++ &#123;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 8. 命令行flag语法，可以使用1个或2个&#x27;-&#x27;号，效果是一样的。</span></span><br><span class="line">                <span class="comment">//    -flag</span></span><br><span class="line">                <span class="comment">//    -flag=x</span></span><br><span class="line">                <span class="comment">//    -flag x  // 只有非bool类型的flag可以</span></span><br><span class="line">                fmt.Fprintln(os.Stdout, *s)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 9. flag.NFlag返回在命令行使用的flag数</span></span><br><span class="line">    <span class="keyword">if</span> flag.NFlag() == <span class="number">0</span> &#123;</span><br><span class="line">        flag.Usage()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 10. visit,遍历所有在命令行中使用的flag，执行自定义函数func</span></span><br><span class="line">    flag.Visit(<span class="function"><span class="keyword">func</span><span class="params">(f *flag.Flag)</span></span> &#123;</span><br><span class="line">        fmt.Fprintln(os.Stdout,f.Name,f.Value)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 11. visitAll,遍历所有注册过的flag，执行自定义函数func</span></span><br><span class="line">    flag.VisitAll(<span class="function"><span class="keyword">func</span><span class="params">(f *flag.Flag)</span></span> &#123;</span><br><span class="line">        fmt.Fprintln(os.Stdout,f.Name,f.Value)</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 12. 当flag -help或 -h 被调用但没有注册这个flag时，就会返回flag.usage。</span></span><br><span class="line">    <span class="comment">//    ErrHelp is the error returned if the -help or -h flag is invoked</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">usage</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fmt.Fprint(os.Stderr, <span class="string">`</span></span><br><span class="line"><span class="string">Usage:flagDemo [options]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Options:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">`</span>)</span><br><span class="line">    flag.PrintDefaults()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>####Flag</p>
+<p>注册flag就是初始化这个Flag</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Flag represents the state of a flag.</span></span><br><span class="line"><span class="keyword">type</span> Flag <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name     <span class="type">string</span> <span class="comment">// name as it appears on command line</span></span><br><span class="line">    Usage    <span class="type">string</span> <span class="comment">// help message</span></span><br><span class="line">    Value    Value  <span class="comment">// value as set</span></span><br><span class="line">    DefValue <span class="type">string</span> <span class="comment">// default value (as text); for usage message</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="FlagSet"><a href="#FlagSet" class="headerlink" title="FlagSet"></a>FlagSet</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A FlagSet represents a set of defined flags. The zero value of a FlagSet</span></span><br><span class="line"><span class="comment">// has no name and has ContinueOnError error handling.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Flag names must be unique within a FlagSet. An attempt to define a flag whose</span></span><br><span class="line"><span class="comment">// name is already in use will cause a panic.</span></span><br><span class="line"><span class="keyword">type</span> FlagSet <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// Usage is the function called when an error occurs while parsing flags.</span></span><br><span class="line">    <span class="comment">// The field is a function (not a method) that may be changed to point to</span></span><br><span class="line">    <span class="comment">// a custom error handler. What happens after Usage is called depends</span></span><br><span class="line">    <span class="comment">// on the ErrorHandling setting; for the command line, this defaults</span></span><br><span class="line">    <span class="comment">// to ExitOnError, which exits the program after calling Usage.</span></span><br><span class="line">    Usage <span class="function"><span class="keyword">func</span><span class="params">()</span></span></span><br><span class="line"></span><br><span class="line">    name          <span class="type">string</span></span><br><span class="line">    parsed        <span class="type">bool</span></span><br><span class="line">    actual        <span class="keyword">map</span>[<span class="type">string</span>]*Flag</span><br><span class="line">    formal        <span class="keyword">map</span>[<span class="type">string</span>]*Flag</span><br><span class="line">    args          []<span class="type">string</span> <span class="comment">// arguments after flags</span></span><br><span class="line">    errorHandling ErrorHandling</span><br><span class="line">    output        io.Writer <span class="comment">// nil means stderr; use out() accessor</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在命令行中使用的所有flag会被解析成一个FlagSet,<br>我们可以直接使用flag包的Bool(),BoolVar,Parse(),Nflag(),Usage,Visit()等函数去处理flag，这是因为flag包中已经定义了一个FlagSet，名为CommandLine。<br>我们也可以用NewFlagSet()自己定义一个新的FlagSet去处理命令行flag</p>
+<p>区别在于，CommandLine会在Parse()发生错误时退出，而NewFlagSet()可以自定义ErrorHandling</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CommandLine is the default set of command-line flags, parsed from os.Args.</span></span><br><span class="line"><span class="comment">// The top-level functions such as BoolVar, Arg, and so on are wrappers for the</span></span><br><span class="line"><span class="comment">// methods of CommandLine.</span></span><br><span class="line"><span class="keyword">var</span> CommandLine = NewFlagSet(os.Args[<span class="number">0</span>], ExitOnError)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewFlagSet returns a new, empty flag set with the specified name and</span></span><br><span class="line"><span class="comment">// error handling property. If the name is not empty, it will be printed</span></span><br><span class="line"><span class="comment">// in the default usage message and in error messages.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewFlagSet</span><span class="params">(name <span class="type">string</span>, errorHandling ErrorHandling)</span></span> *FlagSet &#123;</span><br><span class="line">    f := &amp;FlagSet&#123;</span><br><span class="line">        name:          name,</span><br><span class="line">        errorHandling: errorHandling,</span><br><span class="line">    &#125;</span><br><span class="line">    f.Usage = f.defaultUsage</span><br><span class="line">    <span class="keyword">return</span> f</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *FlagSet)</span></span> Parse(arguments []<span class="type">string</span>) <span class="type">error</span> &#123;</span><br><span class="line">    f.parsed = <span class="literal">true</span></span><br><span class="line">    f.args = arguments</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        seen, err := f.parseOne()</span><br><span class="line">        <span class="keyword">if</span> seen &#123;</span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">switch</span> f.errorHandling &#123;</span><br><span class="line">        <span class="keyword">case</span> ContinueOnError:</span><br><span class="line">            <span class="keyword">return</span> err</span><br><span class="line">        <span class="keyword">case</span> ExitOnError:</span><br><span class="line">            os.Exit(<span class="number">2</span>)</span><br><span class="line">        <span class="keyword">case</span> PanicOnError:</span><br><span class="line">            <span class="built_in">panic</span>(err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="方法介绍"><a href="#方法介绍" class="headerlink" title="方法介绍"></a>方法介绍</h4><p>Bool(),String(),Int(),BoolVar,StringVar(),IntVar(),Var()都是注册flag的方法<br>Parse()是从命令行解析flag的方法<br>Lookup(name string),判断是否使用了这个flag<br>NFlag(),返回命令行使用的flag数<br>Visit(),按照字母顺序遍历所有在命令行使用的flag<br>VisitAll(),按照字母顺序遍历所有注册过的flag<br>PrintDefaults(),打印所有已定义参数的默认值，默认输出到标准错误。（用 VisitAll 实现）</p>
+<h4 id="自定义-Value"><a href="#自定义-Value" class="headerlink" title="自定义 Value"></a>自定义 Value</h4><p>只要实现 flag.Value 接口即可（要求 receiver 是指针），这时候可以这样注册flag：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">flag.Var(&amp;flagVal, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;help message for flagname&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 1. 定义一个类型，用于增加该类型方法</span></span><br><span class="line"><span class="keyword">type</span> sliceValue []<span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 实现flag包中的Value接口，将命令行接收到的值用,分隔存到slice里</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *sliceValue)</span></span> Set(val <span class="type">string</span>) <span class="type">error</span> &#123;</span><br><span class="line">    *s = strings.Split(val, <span class="string">&quot;,&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *sliceValue)</span></span> String() <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> strings.Join(*s, <span class="string">&quot;,&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> sv *sliceValue</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 3. 分配内存</span></span><br><span class="line">    sv = <span class="built_in">new</span>(sliceValue)</span><br><span class="line">    <span class="comment">// 4. 自定义类型绑定到flag</span></span><br><span class="line">    flag.Var(sv, <span class="string">&quot;sv&quot;</span>, <span class="string">&quot;custom sliceValue&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>扩展：</p>
+<ul>
+<li><a href="https://github.com/urfave/cli">github.com&#x2F;urfave&#x2F;cli</a></li>
+<li><a href="https://github.com/spf13/cobra">github.com&#x2F;spf13&#x2F;cobra</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2020/09/16/Go%E6%A0%87%E5%87%86%E5%BA%93flag%E5%8C%85/" data-title="Go标准库flag包 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/09/22/Dockerfile-ENTRYPOINT和CMD的区别/" title="Dockerfile: ENTRYPOINT和CMD的区别">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Dockerfile: ENTRYPOINT和CMD的区别</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/09/16/Go中strings的常用方法/"  title="Go中strings的常用方法">
+ <strong>下一篇：</strong><br/> 
+ <span>Go中strings的常用方法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2020/09/16/Go标准库flag包/" data-title="Go标准库flag包" data-url="https://luckymrwang.github.io/2020/09/16/Go%E6%A0%87%E5%87%86%E5%BA%93flag%E5%8C%85/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#flag%E5%8C%85%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">flag包概述</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#flag%E5%8C%85%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">flag包的工作流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FlagSet"><span class="toc-number">3.</span> <span class="toc-text">FlagSet</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.</span> <span class="toc-text">方法介绍</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89-Value"><span class="toc-number">5.</span> <span class="toc-text">自定义 Value</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

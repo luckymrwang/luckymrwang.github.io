@@ -1,0 +1,521 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>轮询调度算法(Round-Robin Scheduling) | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="毫无疑问，随着互联网、移动网络接入成本的降低，互联网正在日益深入地走入我们的生活，越来越成为人们获取信息的高效平台，ICP行业也顺势呈现出强劲的成长趋势，成为互联网迅猛发展形势下最大的受益者，也直接促成了从web1.0到web2.0以及社区、博客、视频等一系列互联网时代的更迭和运营模式的变动。 　　但是随着各站点访问量和信息交流量的迅猛增长，如何使用最小的资源成本，提高网络的效率，最优化用户体">
+<meta property="og:type" content="article">
+<meta property="og:title" content="轮询调度算法(Round-Robin Scheduling)">
+<meta property="og:url" content="https://luckymrwang.github.io/2016/11/03/%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Round-Robin-Scheduling/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="毫无疑问，随着互联网、移动网络接入成本的降低，互联网正在日益深入地走入我们的生活，越来越成为人们获取信息的高效平台，ICP行业也顺势呈现出强劲的成长趋势，成为互联网迅猛发展形势下最大的受益者，也直接促成了从web1.0到web2.0以及社区、博客、视频等一系列互联网时代的更迭和运营模式的变动。 　　但是随着各站点访问量和信息交流量的迅猛增长，如何使用最小的资源成本，提高网络的效率，最优化用户体">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/round-robin-scheduling.png">
+<meta property="article:published_time" content="2016-11-03T02:45:05.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.216Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/round-robin-scheduling.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/11/03/轮询调度算法-Round-Robin-Scheduling/" title="轮询调度算法(Round-Robin Scheduling)" itemprop="url">轮询调度算法(Round-Robin Scheduling)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-03T02:45:05.000Z" itemprop="datePublished"> 发表于 2016-11-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Round-Robin-Scheduling"><span class="toc-number">1.</span> <span class="toc-text">轮询调度算法(Round-Robin Scheduling)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%83%E9%87%8D%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Weighted-Round-Robin-Scheduling"><span class="toc-number">2.</span> <span class="toc-text">权重轮询调度算法(Weighted Round-Robin Scheduling)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#golang%E5%AE%9E%E7%8E%B0%E6%9D%83%E9%87%8D%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Weighted-Round-Robin-Scheduling"><span class="toc-number">4.</span> <span class="toc-text">golang实现权重轮询调度算法(Weighted Round-Robin Scheduling)</span></a></li></ol>
+		
+		</div>
+		
+		<p>　　毫无疑问，随着互联网、移动网络接入成本的降低，互联网正在日益深入地走入我们的生活，越来越成为人们获取信息的高效平台，ICP行业也顺势呈现出强劲的成长趋势，成为互联网迅猛发展形势下最大的受益者，也直接促成了从web1.0到web2.0以及社区、博客、视频等一系列互联网时代的更迭和运营模式的变动。</p>
+<p>　　但是随着各站点访问量和信息交流量的迅猛增长，如何使用最小的资源成本，提高网络的效率，最优化用户体验，已经成为网络管理人员不得不面对的挑战。</p>
+<p>　　从技术上讲，就是ICP行业面临的网络资源有效利用问题，也就是如何进行对网络的访问分流，以便能够快速响应用户反应，即：负载均衡。</p>
+<span id="more"></span>
+<p>　　从这篇文章起，我们将讲述在负载均衡技术实现中的核心技术：负载均衡算法(算法)的原理及其实现，使大家对负载均衡底层技术有一个深刻的了解。这些算法是负载均衡设备中的核心实现基础。</p>
+<p>　　本篇文章先讲述轮询调度算法 (Round-Robin)及其在此基础上改进型的权重轮询算法 (Weighted Round-Robin)。
+　　</p>
+<h3 id="轮询调度算法-Round-Robin-Scheduling"><a href="#轮询调度算法-Round-Robin-Scheduling" class="headerlink" title="轮询调度算法(Round-Robin Scheduling)"></a>轮询调度算法(Round-Robin Scheduling)</h3><p>　　轮询调度算法的原理是每一次把来自用户的请求轮流分配给内部中的服务器，从1开始，直到N(内部服务器个数)，然后重新开始循环。</p>
+<p>　　算法的优点是其简洁性，它无需记录当前所有连接的状态，所以它是一种无状态调度。</p>
+<p>　　轮询调度算法流程</p>
+<p>　　假设有一组服务器N台，S &#x3D; {S1, S2, …, Sn}，一个指示变量i表示上一次选择的服务器ID。变量i被初始化为N-1。其算法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">j = i;</span><br><span class="line"></span><br><span class="line">do</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">	j = (j + 1) mod n;</span><br><span class="line"></span><br><span class="line">	i = j;</span><br><span class="line"></span><br><span class="line">	return Si;</span><br><span class="line"></span><br><span class="line">&#125; while (j != i);</span><br><span class="line"></span><br><span class="line">return NULL;</span><br></pre></td></tr></table></figure>
+
+<p>　　轮询调度算法假设所有服务器的处理性能都相同，不关心每台服务器的当前连接数和响应速度。当请求服务间隔时间变化比较大时，轮询调度算法容易导致服务器间的负载不平衡。</p>
+<p>　　所以此种均衡算法适合于服务器组中的所有服务器都有相同的软硬件配置并且平均服务请求相对均衡的情况。
+　　</p>
+<h3 id="权重轮询调度算法-Weighted-Round-Robin-Scheduling"><a href="#权重轮询调度算法-Weighted-Round-Robin-Scheduling" class="headerlink" title="权重轮询调度算法(Weighted Round-Robin Scheduling)"></a>权重轮询调度算法(Weighted Round-Robin Scheduling)</h3><p>　　上面所讲的轮询调度算法并没有考虑每台服务器的处理能力，在实际情况中，可能并不是这种情况。由于每台服务器的配置、安装的业务应用等不同，其处理能力会不一样。所以，我们根据服务器的不同处理能力，给每个服务器分配不同的权值，使其能够接受相应权值数的服务请求。</p>
+<p>　　权重轮询调度算法流程</p>
+<p>　　假设有一组服务器S &#x3D; {S0, S1, …, Sn-1}，W(Si)表示服务器Si的权值，一个指示变量i表示上一次选择的服务器，指示变量cw表示当前调度的权值，max(S)表示集合S中所有服务器的最大权值，gcd(S)表示集合S中所有服务器权值的最大公约数。变量i初始化为-1，cw初始化为零。其算法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">while (true) &#123;</span><br><span class="line"></span><br><span class="line">  i = (i + 1) mod n;</span><br><span class="line"></span><br><span class="line">  if (i == 0) &#123;</span><br><span class="line"></span><br><span class="line">     cw = cw - gcd(S);</span><br><span class="line"></span><br><span class="line">     if (cw &lt;= 0) &#123;</span><br><span class="line"></span><br><span class="line">       cw = max(S);</span><br><span class="line"></span><br><span class="line">       if (cw == 0)</span><br><span class="line"></span><br><span class="line">         return NULL;</span><br><span class="line"></span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  if (W(Si) &gt;= cw)</span><br><span class="line"></span><br><span class="line">    return Si;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>　　由于权重轮询调度算法考虑到了不同服务器的处理能力，所以这种均衡算法能确保高性能的服务器得到更多的使用率，避免低性能的服务器负载过重。所以，在实际应用中比较常见。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>　　轮询调度算法以及权重轮询调度算法的特点是实现起来比较简洁，并且实用。目前几乎所有的负载均衡设备均提供这种功能。</p>
+<p>本文引自<a href="http://blog.163.com/s_u/blog/static/1330836720105233102894/">这里</a></p>
+<h3 id="golang实现权重轮询调度算法-Weighted-Round-Robin-Scheduling"><a href="#golang实现权重轮询调度算法-Weighted-Round-Robin-Scheduling" class="headerlink" title="golang实现权重轮询调度算法(Weighted Round-Robin Scheduling)"></a>golang实现权重轮询调度算法(Weighted Round-Robin Scheduling)</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">import</span> (</span><br><span class="line">    	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">    	<span class="string">&quot;time&quot;</span></span><br><span class="line">    )</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">var</span> slaveDns = <span class="keyword">map</span>[<span class="type">int</span>]<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">    	<span class="number">0</span>: &#123;<span class="string">&quot;connectstring&quot;</span>: <span class="string">&quot;root@tcp(172.16.0.164:3306)/shiqu_tools?charset=utf8&quot;</span>, <span class="string">&quot;weight&quot;</span>: <span class="number">2</span>&#125;,</span><br><span class="line">    	<span class="number">1</span>: &#123;<span class="string">&quot;connectstring&quot;</span>: <span class="string">&quot;root@tcp(172.16.0.165:3306)/shiqu_tools?charset=utf8&quot;</span>, <span class="string">&quot;weight&quot;</span>: <span class="number">4</span>&#125;,</span><br><span class="line">    	<span class="number">2</span>: &#123;<span class="string">&quot;connectstring&quot;</span>: <span class="string">&quot;root@tcp(172.16.0.166:3306)/shiqu_tools?charset=utf8&quot;</span>, <span class="string">&quot;weight&quot;</span>: <span class="number">8</span>&#125;,</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="keyword">var</span> i <span class="type">int</span> = <span class="number">-1</span> <span class="comment">//表示上一次选择的服务器</span></span><br><span class="line">    <span class="keyword">var</span> cw <span class="type">int</span> = <span class="number">0</span> <span class="comment">//表示当前调度的权值</span></span><br><span class="line">    <span class="keyword">var</span> gcd <span class="type">int</span> = <span class="number">2</span> <span class="comment">//当前所有权重的最大公约数 比如 2，4，8 的最大公约数为：2</span></span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">getDns</span><span class="params">()</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    	<span class="keyword">for</span> &#123;</span><br><span class="line">    		i = (i + <span class="number">1</span>) % <span class="built_in">len</span>(slaveDns)</span><br><span class="line">    		<span class="keyword">if</span> i == <span class="number">0</span> &#123;</span><br><span class="line">    			cw = cw - gcd</span><br><span class="line">    			<span class="keyword">if</span> cw &lt;= <span class="number">0</span> &#123;</span><br><span class="line">    				cw = getMaxWeight()</span><br><span class="line">    				<span class="keyword">if</span> cw == <span class="number">0</span> &#123;</span><br><span class="line">    					<span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    				&#125;</span><br><span class="line">    			&#125;</span><br><span class="line">    		&#125;</span><br><span class="line">     </span><br><span class="line">    		<span class="keyword">if</span> weight, _ := slaveDns[i][<span class="string">&quot;weight&quot;</span>].(<span class="type">int</span>); weight &gt;= cw &#123;</span><br><span class="line">    			<span class="keyword">return</span> slaveDns[i][<span class="string">&quot;connectstring&quot;</span>].(<span class="type">string</span>)</span><br><span class="line">    		&#125;</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">getMaxWeight</span><span class="params">()</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    	max := <span class="number">0</span></span><br><span class="line">    	<span class="keyword">for</span> _, v := <span class="keyword">range</span> slaveDns &#123;</span><br><span class="line">    		<span class="keyword">if</span> weight, _ := v[<span class="string">&quot;weight&quot;</span>].(<span class="type">int</span>); weight &gt;= max &#123;</span><br><span class="line">    			max = weight</span><br><span class="line">    		&#125;</span><br><span class="line">    	&#125;</span><br><span class="line">     </span><br><span class="line">    	<span class="keyword">return</span> max</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">     </span><br><span class="line">    	note := <span class="keyword">map</span>[<span class="type">string</span>]<span class="type">int</span>&#123;&#125;</span><br><span class="line">     </span><br><span class="line">    	s_time := time.Now().Unix()</span><br><span class="line">     </span><br><span class="line">    	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">100</span>; i++ &#123;</span><br><span class="line">    		s := getDns()</span><br><span class="line">    		fmt.Println(s)</span><br><span class="line">    		<span class="keyword">if</span> note[s] != <span class="number">0</span> &#123;</span><br><span class="line">    			note[s]++</span><br><span class="line">    		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    			note[s] = <span class="number">1</span></span><br><span class="line">    		&#125;</span><br><span class="line">    	&#125;</span><br><span class="line">     </span><br><span class="line">    	e_time := time.Now().Unix()</span><br><span class="line">     </span><br><span class="line">    	fmt.Println(<span class="string">&quot;total time: &quot;</span>, e_time-s_time)</span><br><span class="line">     </span><br><span class="line">    	fmt.Println(<span class="string">&quot;--------------------------------------------------&quot;</span>)</span><br><span class="line">     </span><br><span class="line">    	<span class="keyword">for</span> k, v := <span class="keyword">range</span> note &#123;</span><br><span class="line">    		fmt.Println(k, <span class="string">&quot; &quot;</span>, v)</span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/round-robin-scheduling.png" alt="结果"></p>
+<p>本文引自<a href="http://studygolang.com/articles/8940">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2016/11/03/%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Round-Robin-Scheduling/" data-title="轮询调度算法(Round-Robin Scheduling) | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2016/11/11/String-Functions/" title="String Functions">
+  <strong>上一篇：</strong><br/>
+  <span>
+  String Functions</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2016/10/24/Golang通过http代理抓取页面代码/"  title="Golang通过http代理抓取页面代码">
+ <strong>下一篇：</strong><br/> 
+ <span>Golang通过http代理抓取页面代码
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2016/11/03/轮询调度算法-Round-Robin-Scheduling/" data-title="轮询调度算法(Round-Robin Scheduling)" data-url="https://luckymrwang.github.io/2016/11/03/%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Round-Robin-Scheduling/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Round-Robin-Scheduling"><span class="toc-number">1.</span> <span class="toc-text">轮询调度算法(Round-Robin Scheduling)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%83%E9%87%8D%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Weighted-Round-Robin-Scheduling"><span class="toc-number">2.</span> <span class="toc-text">权重轮询调度算法(Weighted Round-Robin Scheduling)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#golang%E5%AE%9E%E7%8E%B0%E6%9D%83%E9%87%8D%E8%BD%AE%E8%AF%A2%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-Weighted-Round-Robin-Scheduling"><span class="toc-number">4.</span> <span class="toc-text">golang实现权重轮询调度算法(Weighted Round-Robin Scheduling)</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

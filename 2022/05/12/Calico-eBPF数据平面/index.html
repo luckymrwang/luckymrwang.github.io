@@ -1,0 +1,763 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Calico eBPF数据平面 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="什么是 eBPFeBPF 是嵌入在 Linux 内核中的虚拟机。它允许将小程序加载到内核中，并附加到钩子上，当某些事件发生时会触发这些钩子。这允许（有时大量）定制内核的行为。虽然 eBPF 虚拟机对于每种类型的钩子都是相同的，但钩子的功能却大不相同。由于将程序加载到内核中可能很危险；内核通过非常严格的静态验证器运行所有程序；验证程序对程序进行沙箱处理，确保它只能访问允许的内存部分，并确保它必须快速">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Calico eBPF数据平面">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/05/12/Calico-eBPF%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="什么是 eBPFeBPF 是嵌入在 Linux 内核中的虚拟机。它允许将小程序加载到内核中，并附加到钩子上，当某些事件发生时会触发这些钩子。这允许（有时大量）定制内核的行为。虽然 eBPF 虚拟机对于每种类型的钩子都是相同的，但钩子的功能却大不相同。由于将程序加载到内核中可能很危险；内核通过非常严格的静态验证器运行所有程序；验证程序对程序进行沙箱处理，确保它只能访问允许的内存部分，并确保它必须快速">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-tradition.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-tradition2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-1.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-3.svg">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-4.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-3.svg">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-5.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-6.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-7.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/ebpf-calico-8.png">
+<meta property="article:published_time" content="2022-05-12T03:15:35.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.187Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Calico">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/ebpf-tradition.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/12/Calico-eBPF数据平面/" title="Calico eBPF数据平面" itemprop="url">Calico eBPF数据平面</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-12T03:15:35.000Z" itemprop="datePublished"> 发表于 2022-05-12</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-eBPF"><span class="toc-number">1.</span> <span class="toc-text">什么是 eBPF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eBPF-%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">eBPF 能做什么</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#eBPF-%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">eBPF 程序的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BPF-maps"><span class="toc-number">2.2.</span> <span class="toc-text">BPF maps</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Calico-%E7%9A%84-eBPF-%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2"><span class="toc-number">3.</span> <span class="toc-text">Calico 的 eBPF 数据平面</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%99%90%E5%88%B6"><span class="toc-number">3.1.</span> <span class="toc-text">限制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E7%94%A8-eBPF-%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2"><span class="toc-number">3.2.</span> <span class="toc-text">启用 eBPF 数据平面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-Calico-%E7%9B%B4%E6%8E%A5%E4%B8%8E-API-%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%9A%E4%BF%A1"><span class="toc-number">3.3.</span> <span class="toc-text">配置 Calico 直接与 API 服务器通信</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A6%81%E7%94%A8-kube-proxy"><span class="toc-number">3.4.</span> <span class="toc-text">禁用 kube-proxy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%90%AF-eBPF-%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.5.</span> <span class="toc-text">开启 eBPF 模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%90%AF-DSR-%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.6.</span> <span class="toc-text">开启 DSR 模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E6%AF%94%E8%BE%83"><span class="toc-number">3.7.</span> <span class="toc-text">功能比较</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="toc-number">4.</span> <span class="toc-text">架构概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Calico-eBPF-%E6%B5%81%E7%A8%8B"><span class="toc-number">5.</span> <span class="toc-text">Calico eBPF 流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">5.1.</span> <span class="toc-text">工作流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BDeBPF%E7%A8%8B%E5%BA%8F"><span class="toc-number">5.2.</span> <span class="toc-text">加载eBPF程序</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%98%E6%96%B9%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95"><span class="toc-number">6.</span> <span class="toc-text">官方性能测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pod%E5%88%B0Pod%E7%9A%84%E5%90%9E%E5%90%90%E9%87%8F%E5%92%8CCPU"><span class="toc-number">6.1.</span> <span class="toc-text">Pod到Pod的吞吐量和CPU</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B-kube-proxy"><span class="toc-number">6.2.</span> <span class="toc-text">改进 kube-proxy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AB%98%E6%95%88%E7%9A%84%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2%E6%9B%B4%E6%96%B0"><span class="toc-number">6.3.</span> <span class="toc-text">高效的数据平面更新</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<h3 id="什么是-eBPF"><a href="#什么是-eBPF" class="headerlink" title="什么是 eBPF"></a>什么是 eBPF</h3><p>eBPF 是嵌入在 Linux 内核中的虚拟机。它允许将小程序加载到内核中，并附加到钩子上，当某些事件发生时会触发这些钩子。这允许（有时大量）定制内核的行为。虽然 eBPF 虚拟机对于每种类型的钩子都是相同的，但钩子的功能却大不相同。由于将程序加载到内核中可能很危险；内核通过非常严格的静态验证器运行所有程序；验证程序对程序进行沙箱处理，确保它只能访问允许的内存部分，并确保它必须快速终止。</p>
+<span id="more"></span>
+<h3 id="eBPF-能做什么"><a href="#eBPF-能做什么" class="headerlink" title="eBPF 能做什么"></a>eBPF 能做什么</h3><h4 id="eBPF-程序的类型"><a href="#eBPF-程序的类型" class="headerlink" title="eBPF 程序的类型"></a>eBPF 程序的类型</h4><p>有几类钩子可以在内核中附加 eBPF 程序。eBPF 程序的功能很大程度上取决于它所附加的钩子：</p>
+<ul>
+<li><p>跟踪程序可以附加到内核中很大一部分功能上。跟踪程序对于收集统计信息和深入调试内核很有用。 大多数跟踪挂钩只允许对函数正在处理的数据进行只读访问，但也有一些允许修改数据。例如，找出内核意外丢弃数据包的原因。</p>
+</li>
+<li><p>流量控制(tc) 程序可以在入口和出口处附加到给定的网络设备。内核为每个数据包执行一次程序。由于钩子用于数据包处理，内核允许程序修改或扩展数据包，丢弃数据包，将其标记为排队，或将数据包重定向到另一个接口。Calico 的 eBPF 数据平面就是基于这种类型的钩子；Calico 使用 tc 程序对 Kubernetes 服务进行负载均衡，实施网络策略，并为已建立连接的流量创建快速路径。</p>
+</li>
+<li><p>XDP或“eXpress 数据路径”实际上是 eBPF 挂钩的名称。每个网络设备都有一个 XDP 入口挂钩，在内核为数据包分配套接字缓冲区之前，每个传入数据包都会触发一次该挂钩。XDP 可以为 DoS 保护（在 Calico 的标准 Linux 数据平面中支持）和入口负载平衡（在 facebook 的 Katran 中使用）等用例提供出色的性能。XDP 的缺点是它需要网络设备驱动程序支持才能获得良好的性能。XDP 本身不足以实现 Kubernetes pod 网络所需的所有逻辑，但 XDP 和流量控制挂钩的组合效果很好。</p>
+</li>
+<li><p>套接字程序挂钩到套接字上的各种操作，例如，允许 eBPF 程序更改新创建的套接字的目标 IP，或强制套接字绑定到“正确的”源 IP 地址。Calico 使用此类程序对 Kubernetes 服务进行连接时负载均衡；这减少了开销，因为数据包在处理路径上没有做DNAT。</p>
+</li>
+<li><p>有各种与安全相关的钩子允许以各种方式监管程序行为。例如，seccomp挂钩允许以细粒度的方式监管系统调用。</p>
+</li>
+</ul>
+<p>内核通过<code>helper functions</code>公开每个钩子的功能。例如，<code>tc</code> 钩子有一个 <code>helper function</code> 来调整数据包的大小，但该帮助函数在跟踪钩子中不可用。使用 eBPF 的挑战之一是不同的内核版本支持不同的助手，而缺少助手可能会导致无法实现特定的功能。</p>
+<h4 id="BPF-maps"><a href="#BPF-maps" class="headerlink" title="BPF maps"></a>BPF maps</h4><p>attach 到 eBPF 挂钩的程序能够访问 BPF <code>maps</code>。BPF map 有两个主要用途：</p>
+<ul>
+<li><p>允许 BPF 程序存储和检索长期存在的数据。</p>
+</li>
+<li><p>允许 BPF 程序和用户空间程序之间的通信。BPF 程序可以读取用户空间写入的数据，反之亦然。</p>
+</li>
+</ul>
+<p>有许多类型的 BPF map，包括一些允许在程序之间跳转的特殊类型，以及一些充当队列和堆栈而不是严格作为 key&#x2F;value map 的类型。Calico 使用map来跟踪活动连接，并使用策略和服务 NAT 信息配置 BPF 程序。</p>
+<h3 id="Calico-的-eBPF-数据平面"><a href="#Calico-的-eBPF-数据平面" class="headerlink" title="Calico 的 eBPF 数据平面"></a>Calico 的 eBPF 数据平面</h3><p>Calico 的 eBPF 数据平面是标准 Linux 数据平面（基于 iptables）的替代方案。标准数据平面侧重于通过与 kube-proxy 和 iptables 规则进行交互来实现兼容性，而 eBPF 数据平面则侧重于性能、延迟和改善用户体验，并提供标准数据平面中无法实现的功能。作为其中的一部分，eBPF 数据平面将 kube-proxy 替换为 eBPF 实现。主要的“用户体验”功能是在流量到达 NodePort 时保留来自集群外部的流量源 IP；这使服务器端日志和网络策略在该路径上更加有用。</p>
+<p>新的数据平面与 Calico 的标准Linux网络数据平面相比</p>
+<ul>
+<li><p>它可以扩展到更高的吞吐量。</p>
+</li>
+<li><p>它每 GBit 使用更少的 CPU。</p>
+</li>
+<li><p>它原生支持 Kubernetes 服务（不需要 kube-proxy）：</p>
+<ul>
+<li>减少数据包到服务的第一个数据包延迟。</li>
+<li>将外部客户端源 IP 地址一直保留到 pod。</li>
+<li>支持 DSR（Direct Server Return），实现更高效的服务路由。</li>
+<li>使用比 kube-proxy 更少的 CPU 来保持数据平面同步。</li>
+</ul>
+</li>
+</ul>
+<p>要了解更多的性能指标，请参阅博客 <a href="https://www.tigera.io/blog/introducing-the-calico-ebpf-dataplane/">介绍 Calico eBPF 数据平面</a></p>
+<h4 id="限制"><a href="#限制" class="headerlink" title="限制"></a>限制</h4><p>eBPF 模式目前相对于标准 Linux 管道模式有一些限制：</p>
+<ul>
+<li>eBPF 模式仅支持 x86-64。（目前没有为其他平台构建 eBPF 程序。）</li>
+<li>eBPF 模式尚不支持 IPv6。</li>
+<li>启用 eBPF 模式时，预先存在的连接继续使用非 BPF 数据路径；这样的连接不应该被打断，但它们并不能从 eBPF 模式的优势中受益。</li>
+<li>禁用 eBPF 模式具有破坏性；通过 eBPF 数据平面处理的连接可能会中断，并且可能需要重新启动未检测和恢复的服务。</li>
+<li>不支持混合集群（带有一些 eBPF 节点和一些标准数据平面节点）。（在这样的集群中，从 eBPF 节点到非 eBPF 节点的 NodePort 流量将被丢弃。）这包括具有 Windows 节点的集群。</li>
+<li>eBPF 模式不支持浮动 IP。</li>
+</ul>
+<h4 id="启用-eBPF-数据平面"><a href="#启用-eBPF-数据平面" class="headerlink" title="启用 eBPF 数据平面"></a>启用 eBPF 数据平面</h4><p>eBPF 模式具有以下先决条件：</p>
+<ul>
+<li><p>受支持的 Linux 发行版：</p>
+<ul>
+<li>Ubuntu 20.04（或具有更新内核的 Ubuntu 18.04.4+）。</li>
+<li>带有 Linux 内核 v4.18.0-193 或更高版本的 Red Hat v8.2（Red Hat 已将所需功能向后移植到该版本）。</li>
+<li>另一个支持Linux 内核 v5.3 或更高版本的发行版。</li>
+</ul>
+<p>如果 Calico 没有检测到兼容的内核，Calico 将发出警告并回退到标准 linux 网络。</p>
+</li>
+</ul>
+<h4 id="配置-Calico-直接与-API-服务器通信"><a href="#配置-Calico-直接与-API-服务器通信" class="headerlink" title="配置 Calico 直接与 API 服务器通信"></a>配置 Calico 直接与 API 服务器通信</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">kubernetes-services-endpoint</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">KUBERNETES_SERVICE_HOST:</span> <span class="string">&quot;&lt;API server host&gt;&quot;</span></span><br><span class="line">  <span class="attr">KUBERNETES_SERVICE_PORT:</span> <span class="string">&quot;&lt;API server port&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="禁用-kube-proxy"><a href="#禁用-kube-proxy" class="headerlink" title="禁用 kube-proxy"></a>禁用 kube-proxy</h4><p>在 eBPF 模式下 Calico 会替换kube-proxy，执行如下命令禁用 kube-proxy</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl patch ds -n kube-system kube-proxy -p <span class="string">&#x27;&#123;&quot;spec&quot;:&#123;&quot;template&quot;:&#123;&quot;spec&quot;:&#123;&quot;nodeSelector&quot;:&#123;&quot;non-calico&quot;: &quot;true&quot;&#125;&#125;&#125;&#125;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="开启-eBPF-模式"><a href="#开启-eBPF-模式" class="headerlink" title="开启 eBPF 模式"></a>开启 eBPF 模式</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">calicoctl patch felixconfiguration <span class="keyword">default</span> --patch=<span class="string">&#x27;&#123;&quot;spec&quot;: &#123;&quot;bpfEnabled&quot;: true&#125;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="开启-DSR-模式"><a href="#开启-DSR-模式" class="headerlink" title="开启 DSR 模式"></a>开启 DSR 模式</h4><p>D模式跳过网络中的一跳，以便从集群外部到服务（例如节点端口）的流量。这减少了延迟和 CPU 开销，但它需要底层网络允许节点使用彼此的 IP 发送流量。在 AWS 中，这要求您的所有节点都在同一个子网中，并且要禁用源&#x2F;目标检查</p>
+<p>DSR模式默认关闭；要启用它，将BPFExternalServiceModeFelix 配置参数设置为”DSR”</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">calicoctl patch felixconfiguration <span class="keyword">default</span> --patch=<span class="string">&#x27;&#123;&quot;spec&quot;: &#123;&quot;bpfExternalServiceMode&quot;: &quot;DSR&quot;&#125;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="功能比较"><a href="#功能比较" class="headerlink" title="功能比较"></a>功能比较</h4><p>虽然 eBPF 数据平面具有标准 Linux 数据平面所缺乏的一些特性，但反过来也是如此：</p>
+<table>
+<thead>
+<tr>
+<th align="left">元素</th>
+<th align="left">标准 Linux 数据平面</th>
+<th align="left">eBPF 数据平面</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">吞吐量</td>
+<td align="left">专为 10GBit+ 设计</td>
+<td align="left">专为 40GBit+ 设计</td>
+</tr>
+<tr>
+<td align="left">第一个数据包延迟</td>
+<td align="left">低（kube-proxy 服务延迟是更大的因素）</td>
+<td align="left">降低</td>
+</tr>
+<tr>
+<td align="left">后续数据包延迟</td>
+<td align="left">低</td>
+<td align="left">降低</td>
+</tr>
+<tr>
+<td align="left">在集群中保留源IP</td>
+<td align="left">是</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left">保留外部源IP</td>
+<td align="left">只有externalTrafficPolicy: Local</td>
+<td align="left">是</td>
+</tr>
+<tr>
+<td align="left">直接服务器返回</td>
+<td align="left">不支持</td>
+<td align="left">支持（需要兼容的底层网络）</td>
+</tr>
+<tr>
+<td align="left">连接跟踪</td>
+<td align="left">Linux内核的conntrack表（大小可以调整）</td>
+<td align="left">BPF map</td>
+</tr>
+<tr>
+<td align="left">政策规则</td>
+<td align="left">映射到 iptables 规则</td>
+<td align="left">映射到 BPF 指令</td>
+</tr>
+<tr>
+<td align="left">Kubernetes服务</td>
+<td align="left">kube-proxy iptables 或 IPVS 模式</td>
+<td align="left">BPF 程序和 map</td>
+</tr>
+<tr>
+<td align="left">IPIP</td>
+<td align="left">支持</td>
+<td align="left">支持（由于内核限制没有性能优势）</td>
+</tr>
+<tr>
+<td align="left">VXLAN</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left">兼容其他 iptables 规则</td>
+<td align="left">是（可以在其他规则之上或之下编写规则）</td>
+<td align="left">部分的; iptables 绕过工作负载流量</td>
+</tr>
+<tr>
+<td align="left">主机端点策略</td>
+<td align="left">支持</td>
+<td align="left">支持</td>
+</tr>
+<tr>
+<td align="left">IPv6</td>
+<td align="left">支持</td>
+<td align="left">不支持（暂且）</td>
+</tr>
+</tbody></table>
+<h3 id="架构概述"><a href="#架构概述" class="headerlink" title="架构概述"></a>架构概述</h3><ul>
+<li>传统标准数据面</li>
+</ul>
+<p>从网络角度看，使用传统的iptables和路由通信时，包在内核中的转发路径如下图所示：</p>
+<p><img src="/images/ebpf-tradition.png" alt="image"></p>
+<p>步骤：</p>
+<ol>
+<li>网卡收到一个包（通过 DMA 放到 ring-buffer）。</li>
+<li>包经过 XDP hook 点。</li>
+<li>内核给包分配内存创建skb（包的内核结构体表示），然后送到内核协议栈。</li>
+<li>包经过 GRO 处理，对分片包进行重组。</li>
+<li>包进入 tc（traffic control）的 ingress hook。接下来，所有橙色的框都是 Netfilter 处理点。</li>
+<li>Netfilter：在 PREROUTING hook 点处理 raw table 里的 iptables 规则。</li>
+<li>包经过内核的连接跟踪（conntrack）模块。</li>
+<li>Netfilter：在 PREROUTING hook 点处理 mangle table 的 iptables 规则。</li>
+<li>Netfilter：在 PREROUTING hook 点处理 nat table 的 iptables 规则。</li>
+<li>进行路由判断（FIB：Forwarding Information Base，路由条目的内核表示） 。接下来又是四个 Netfilter 处理点。</li>
+<li>Netfilter：在 FORWARD hook 点处理 mangle table 里的 iptables 规则。</li>
+<li>Netfilter：在 FORWARD hook 点处理 filter table 里的 iptables 规则。</li>
+<li>Netfilter：在 POSTROUTING hook 点处理 mangle table 里的 iptables 规则。</li>
+<li>Netfilter：在 POSTROUTING hook 点处理 nat table 里的 iptables 规则。</li>
+<li>包到达 TC egress hook 点，会进行出方向（egress）的判断，例如判断这个包是到本 地设备，还是到主机外。</li>
+<li>对大包进行分片。根据 step 15 判断的结果，这个包接下来可能会：</li>
+<li>发送到一个本机 veth 设备，或者一个本机 service endpoint，</li>
+<li>或者，如果目的 IP 是主机外，就通过网卡发出去。</li>
+</ol>
+<p>作为对比，再来看下 Calico eBPF 中的包转发路径：</p>
+<p><img src="/images/ebpf-tradition2.png" alt="images"></p>
+<p>对比可以看出，Calico eBPF datapath 做了短路处理：从 tc ingress 直接到 tc egress，节省了 9 个中间步骤（总共 17 个）。更重要的是：这个 datapath 绕过了 整个 Netfilter 框架（橘黄色的框们），Netfilter 在大流量情况下性能是很差的。</p>
+<ul>
+<li>通过 tc 级 eBPF 代理</li>
+</ul>
+<p>去掉那些不用的框之后，Calico eBPF datapath 如下：</p>
+<p><img src="/images/ebpf-calico-1.png" alt="images"></p>
+<p>Calico 的 eBPF 数据平面将 eBPF 程序附加到tc每个 Calico 接口以及隧道接口上的hook上。这允许 Calico 及早发现工作负载数据包，并通过绕过内核通常会执行的 iptables 和其他数据包处理的快速路径来处理它们。</p>
+<ul>
+<li>通过 socket 级 eBPF 代理</li>
+</ul>
+<p>eBPF 代码可以附加在内核的不同位置（级别）：</p>
+<p><img src="/images/ebpf-calico-2.png" alt="images"></p>
+<p>为了提高服务的性能，Calico 还通过hook到socket套接字eBPF程序来进行连接时负载平衡。当程序尝试连接到 Kubernetes 服务时，Calico 会拦截连接尝试并将套接字配置为直接连接到后端 pod 的 IP。这消除了服务连接的所有 NAT 开销。</p>
+<p><img src="/images/ebpf-calico-3.svg" alt="images"></p>
+<h3 id="Calico-eBPF-流程"><a href="#Calico-eBPF-流程" class="headerlink" title="Calico eBPF 流程"></a>Calico eBPF 流程</h3><p>Calico 是如何用 eBPF 实现容器网络方案的。</p>
+<p><img src="/images/ebpf-calico-4.png" alt="images"></p>
+<p>如上图所示：</p>
+<ol>
+<li>Calico felix 生成 eBPF 程序。</li>
+<li>用 LLVM 编译 eBPF 程序，生成 eBPF 对象文件（object file，*.o）。</li>
+<li>用 eBPF loader 将对象文件加载到 Linux 内核。</li>
+<li>校验器（verifier）对 eBPF 指令会进行合法性验证，以确保程序是安全的，例如 ，无非法内存访问、不会 crash 内核、不会有无限循环等。</li>
+<li>对象文件被即时编译（JIT）为能直接在底层平台（例如 x86）运行的 native code。</li>
+<li>如果要在内核和用户态之间共享状态，BPF 程序可以使用 BPF map，这种一种共享存储 ，BPF 侧和用户侧都可以访问。</li>
+<li>BPF 程序就绪，等待事件触发其执行。对于这个例子，就是有数据包到达网络设备时，触发 BPF 程序的执行。</li>
+<li>BPF 程序对收到的包进行处理，例如 mangle。最后返回一个裁决（verdict）结果。</li>
+<li>根据裁决结果，如果是 DROP，这个包将被丢弃；如果是 PASS，包会被送到更网络栈的 更上层继续处理；如果是重定向，就发送给其他设备。</li>
+</ol>
+<p>Calico引入了多个eBPF hook点，下面重点分析 <code>connect_time_loadbalancer</code>，即上面讲到的东西向负载均衡：“减少服务数据包的第一个数据包延迟”</p>
+<h4 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h4><p>相关的逻辑是在 Calico 的 felix 项目中实现的，入口处：<code>felix/dataplane/linux/int_dataplane.go</code> 的 <code>NewIntDataplaneDriver()</code> 函数，进行 <code>dataplane</code> 的初始化</p>
+<p>首先会判断是否开启了BPF，如果是开启状态，则进行以下操作：</p>
+<ol>
+<li>注册 <code>map manager</code>，该 <code>manager</code> 的作用是负责管理 ebpf 的 map（map用于userspace和kernel之间进行数据的共享）</li>
+<li>注册 <code>endpoint manager</code>，该 <code>manager</code> 的作用是负责各种ep的管理，包括host、workload等</li>
+<li>创建各种map，比如nat的 <code>frontendMap</code>、<code>backendMap</code>、<code>routeMap</code>、<code>conntrackMap</code>等</li>
+<li>开启 <code>kube-proxy</code>，此 <code>kube-proxy</code> 并非 kubernetes 的 <code>kube-proxy</code>，而是 proxy 的一个封装，负责和kubernetes 通信，维护各种map中的信息</li>
+<li>若 <code>BPFConnTimeEnabled</code> 开启，则安装 <code>connect_time_loadbalancer</code>，即加载相关的eBPF程序</li>
+<li>启动 <code>dataplane</code></li>
+</ol>
+<p>下面重点看第 <code>5</code> 步代码是如何实现的</p>
+<h4 id="加载eBPF程序"><a href="#加载eBPF程序" class="headerlink" title="加载eBPF程序"></a>加载eBPF程序</h4><p>入口 <code>bpf/nat/connecttime.go</code> 的 <code>InstallConnectTimeLoadBalancer()</code> 函数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InstallConnectTimeLoadBalancer</span><span class="params">(frontendMap, backendMap, rtMap bpf.Map, cgroupv2 <span class="type">string</span>, logLevel <span class="type">string</span>)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    bpfMount, err := bpf.MaybeMountBPFfs()            <span class="comment">// 挂载bpf路径，默认的挂载路径是：/sys/fs/bpf</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.WithError(err).Error(<span class="string">&quot;Failed to mount bpffs, unable to do connect-time load balancing&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cgroupPath, err := ensureCgroupPath(cgroupv2)     <span class="comment">// 配置cgoupv2，位于/run/calico/cgroupv2/</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.Wrap(err, <span class="string">&quot;failed to set-up cgroupv2&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repin := <span class="literal">false</span>                                    <span class="comment">// 检查相关map</span></span><br><span class="line">    <span class="keyword">if</span> pm, ok := frontendMap.(*bpf.PinnedMap); ok &#123;</span><br><span class="line">        repin = pm.RepinningEnabled()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    sendrecvMap := SendRecvMsgMap(&amp;bpf.MapContext&#123;</span><br><span class="line">        RepinningEnabled: repin,</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    err = sendrecvMap.EnsureExists()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.WithMessage(err, <span class="string">&quot;failed to create sendrecv BPF Map&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    maps := []bpf.Map&#123;frontendMap, backendMap, rtMap, sendrecvMap&#125;</span><br><span class="line">    err = installProgram(<span class="string">&quot;connect&quot;</span>, <span class="string">&quot;4&quot;</span>, bpfMount, cgroupPath,logLevel, maps...)       <span class="comment">// 安装calico_connect_v4 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    err = installProgram(<span class="string">&quot;sendmsg&quot;</span>, <span class="string">&quot;4&quot;</span>, bpfMount, cgroupPath, logLevel, maps...)      <span class="comment">// 安装calico_sendmsg_v4 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    err = installProgram(<span class="string">&quot;recvmsg&quot;</span>, <span class="string">&quot;4&quot;</span>, bpfMount, cgroupPath, logLevel, maps...)      <span class="comment">// 安装calico_recvmsg_v4 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    err = installProgram(<span class="string">&quot;sendmsg&quot;</span>, <span class="string">&quot;6&quot;</span>, bpfMount, cgroupPath, logLevel)               <span class="comment">// 安装calico_sendmsg_v6 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    err = installProgram(<span class="string">&quot;recvmsg&quot;</span>, <span class="string">&quot;6&quot;</span>, bpfMount, cgroupPath, logLevel, sendrecvMap)  <span class="comment">// 安装calico_recvmsg_v4 bpf程序</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进入 <code>installProgram()</code> 函数，看如何加载程序</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">installProgram</span><span class="params">(name, ipver, bpfMount, cgroupPath, logLevel <span class="type">string</span>, maps ...bpf.Map)</span></span> <span class="type">error</span> &#123;</span><br><span class="line"> </span><br><span class="line">    progPinDir := path.Join(bpfMount, <span class="string">&quot;calico_connect4&quot;</span>)</span><br><span class="line">    _ = os.RemoveAll(progPinDir)</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">var</span> filename <span class="type">string</span></span><br><span class="line">                                                                                <span class="comment">// 获取bpf程序所在的位置</span></span><br><span class="line">    <span class="keyword">if</span> ipver == <span class="string">&quot;6&quot;</span> &#123;</span><br><span class="line">        filename = path.Join(bpf.ObjectDir, ProgFileName(logLevel, <span class="number">6</span>))</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        filename = path.Join(bpf.ObjectDir, ProgFileName(logLevel, <span class="number">4</span>))</span><br><span class="line">    &#125;</span><br><span class="line">    args := []<span class="type">string</span>&#123;<span class="string">&quot;prog&quot;</span>, <span class="string">&quot;loadall&quot;</span>, filename, progPinDir, <span class="string">&quot;type&quot;</span>, <span class="string">&quot;cgroup/&quot;</span> + name + ipver&#125;</span><br><span class="line">    <span class="keyword">for</span> _, m := <span class="keyword">range</span> maps &#123;</span><br><span class="line">        args = <span class="built_in">append</span>(args, <span class="string">&quot;map&quot;</span>, <span class="string">&quot;name&quot;</span>, m.GetName(), <span class="string">&quot;pinned&quot;</span>, m.Path())</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    cmd := exec.Command(<span class="string">&quot;bpftool&quot;</span>, args...)                                    <span class="comment">// 使用bpftool加载ebpf程序</span></span><br><span class="line">    log.WithField(<span class="string">&quot;args&quot;</span>, cmd.Args).Info(<span class="string">&quot;About to run bpftool&quot;</span>)</span><br><span class="line">    progName := <span class="string">&quot;calico_&quot;</span> + name + <span class="string">&quot;_v&quot;</span> + ipver</span><br><span class="line">    out, err := cmd.CombinedOutput()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        err = errors.Wrapf(err, <span class="string">&quot;failed to load program %s&quot;</span>, progName)</span><br><span class="line">        <span class="keyword">goto</span> out</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 使用bpftool将ebpf程序attach到相应的挂载点。此处的挂载点是socket hook，由于关cgroup关联，因此对于calico这个cgroup下的所有程序，执行socket api时都会经过这个bpf程序</span></span><br><span class="line">    cmd = exec.Command(<span class="string">&quot;bpftool&quot;</span>, <span class="string">&quot;cgroup&quot;</span>, <span class="string">&quot;attach&quot;</span>, cgroupPath,        </span><br><span class="line">        name+ipver, <span class="string">&quot;pinned&quot;</span>, path.Join(progPinDir, progName))</span><br><span class="line">    log.WithField(<span class="string">&quot;args&quot;</span>, cmd.Args).Info(<span class="string">&quot;About to run bpftool&quot;</span>)</span><br><span class="line">    out, err = cmd.CombinedOutput()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        err = errors.Wrapf(err, <span class="string">&quot;failed to attach program %s&quot;</span>, progName)</span><br><span class="line">        <span class="keyword">goto</span> out</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.WithError(err).WithField(<span class="string">&quot;output&quot;</span>, <span class="type">string</span>(out)).Error(<span class="string">&quot;Failed install cgroup program.&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下图是加载 <code>attach bpf</code> 程序后，用户进程调用 <code>socket api</code> 时的路径。在建立 <code>connect</code>、<code>recvmsg</code>、<code>sendmsg</code> 时都会经过这个程序进行处理。而这个ebpf程序所做的工作就是：判断是否要访问的是 <code>k8s service</code>，如果是的话，直接将请求转发到后端的pod上，这样就不在需要做nat了，节省了所有的nat开销。即实现了：“减少服务数据包的第一个数据包延迟”</p>
+<p><img src="/images/ebpf-calico-3.svg" alt="images"></p>
+<p>接下来看看bpf程序是如何实现的，共实现三个 <code>section bpf-gpl/connect_balancer.c</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">__attribute__((section(<span class="string">&quot;calico_connect_v4&quot;</span>)))            <span class="comment">// section 1：在建立connection时，做nat转发，将请求转发至后端的pod</span></span><br><span class="line"><span class="type">int</span> cali_ctlb_v4(<span class="keyword">struct</span> bpf_sock_addr *ctx)</span><br><span class="line">&#123;</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;calico_connect_v4\n&quot;</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/* do not process anything non-TCP or non-UDP, but do not block it, will be</span></span><br><span class="line"><span class="comment">     * dealt with somewhere else.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> (ctx-&gt;<span class="keyword">type</span> != SOCK_STREAM &amp;&amp; ctx-&gt;<span class="keyword">type</span> != SOCK_DGRAM) &#123;</span><br><span class="line">        CALI_INFO(<span class="string">&quot;unexpected sock type %d\n&quot;</span>, ctx-&gt;<span class="keyword">type</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    uint8_t ip_proto;</span><br><span class="line">    <span class="keyword">switch</span> (ctx-&gt;<span class="keyword">type</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> SOCK_STREAM:</span><br><span class="line">        CALI_DEBUG(<span class="string">&quot;SOCK_STREAM -&gt; assuming TCP\n&quot;</span>);</span><br><span class="line">        ip_proto = IPPROTO_TCP;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> SOCK_DGRAM:</span><br><span class="line">        CALI_DEBUG(<span class="string">&quot;SOCK_DGRAM -&gt; assuming UDP\n&quot;</span>);</span><br><span class="line">        ip_proto = IPPROTO_UDP;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        CALI_DEBUG(<span class="string">&quot;Unknown socket type: %d\n&quot;</span>, (<span class="type">int</span>)ctx-&gt;<span class="keyword">type</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    do_nat_common(ctx, ip_proto);</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">__attribute__((section(<span class="string">&quot;calico_sendmsg_v4&quot;</span>)))          <span class="comment">// section2 ： sendmsg处理相关的发包操作</span></span><br><span class="line"><span class="type">int</span> cali_ctlb_sendmsg_v4(<span class="keyword">struct</span> bpf_sock_addr *ctx)</span><br><span class="line">&#123;</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;sendmsg_v4 %x:%d\n&quot;</span>,</span><br><span class="line">            be32_to_host(ctx-&gt;user_ip4), be32_to_host(ctx-&gt;user_port)&gt;&gt;<span class="number">16</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (ctx-&gt;<span class="keyword">type</span> != SOCK_DGRAM) &#123;</span><br><span class="line">        CALI_INFO(<span class="string">&quot;unexpected sock type %d\n&quot;</span>, ctx-&gt;<span class="keyword">type</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    do_nat_common(ctx, IPPROTO_UDP);</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">__attribute__((section(<span class="string">&quot;calico_recvmsg_v4&quot;</span>)))         <span class="comment">// section3： recvmsg处理相关的收包操作</span></span><br><span class="line"><span class="type">int</span> cali_ctlb_recvmsg_v4(<span class="keyword">struct</span> bpf_sock_addr *ctx)</span><br><span class="line">&#123;</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;recvmsg_v4 %x:%d\n&quot;</span>, be32_to_host(ctx-&gt;user_ip4), ctx_port_to_host(ctx-&gt;user_port));</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (ctx-&gt;<span class="keyword">type</span> != SOCK_DGRAM) &#123;</span><br><span class="line">        CALI_INFO(<span class="string">&quot;unexpected sock type %d\n&quot;</span>, ctx-&gt;<span class="keyword">type</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    uint64_t cookie = bpf_get_socket_cookie(ctx);</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;Lookup: ip=%x port=%d(BE) cookie=%x&quot;</span>,ctx-&gt;user_ip4, ctx-&gt;user_port, cookie);</span><br><span class="line">    <span class="keyword">struct</span> sendrecv4_key key = &#123;</span><br><span class="line">        .ip = ctx-&gt;user_ip4,</span><br><span class="line">        .port   = ctx-&gt;user_port,</span><br><span class="line">        .cookie = cookie,</span><br><span class="line">    &#125;;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">struct</span> sendrecv4_val *revnat = cali_v4_srmsg_lookup_elem(&amp;key);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (revnat == NULL) &#123;</span><br><span class="line">        CALI_DEBUG(<span class="string">&quot;revnat miss for %x:%d\n&quot;</span>,</span><br><span class="line">                be32_to_host(ctx-&gt;user_ip4), ctx_port_to_host(ctx-&gt;user_port));</span><br><span class="line">        <span class="comment">/* we are past policy and the packet was allowed. Either the</span></span><br><span class="line"><span class="comment">         * mapping does not exist anymore and if the app cares, it</span></span><br><span class="line"><span class="comment">         * should check the addresses. It is more likely a packet sent</span></span><br><span class="line"><span class="comment">         * to server from outside and no mapping is expected.</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    ctx-&gt;user_ip4 = revnat-&gt;ip;</span><br><span class="line">    ctx-&gt;user_port = revnat-&gt;port;</span><br><span class="line">    CALI_DEBUG(<span class="string">&quot;recvmsg_v4 rev nat to %x:%d\n&quot;</span>,</span><br><span class="line">            be32_to_host(ctx-&gt;user_ip4), ctx_port_to_host(ctx-&gt;user_port));</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际的 nat 操作是 <code>do_nat_common()</code> 来做的</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">static CALI_BPF_INLINE void do_nat_common(<span class="keyword">struct</span> bpf_sock_addr *ctx, uint8_t proto)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/* We do not know what the source address is yet, we only know that it</span></span><br><span class="line"><span class="comment">     * is the localhost, so we might just use 0.0.0.0. That would not</span></span><br><span class="line"><span class="comment">     * conflict with traffic from elsewhere.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * XXX it means that all workloads that use the cgroup hook have the</span></span><br><span class="line"><span class="comment">     * XXX same affinity, which (a) is sub-optimal and (b) leaks info between</span></span><br><span class="line"><span class="comment">     * XXX workloads.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    nat_lookup_result res = NAT_LOOKUP_ALLOW;</span><br><span class="line">    uint16_t dport_he = (uint16_t)(be32_to_host(ctx-&gt;user_port)&gt;&gt;<span class="number">16</span>);</span><br><span class="line">    <span class="keyword">struct</span> calico_nat_dest *nat_dest;</span><br><span class="line">    nat_dest = calico_v4_nat_lookup(<span class="number">0</span>, ctx-&gt;user_ip4, proto, dport_he, &amp;res);        <span class="comment">// 从map中查找k8s service相关的信息</span></span><br><span class="line">    <span class="keyword">if</span> (!nat_dest) &#123;</span><br><span class="line">        CALI_INFO(<span class="string">&quot;NAT miss.\n&quot;</span>);</span><br><span class="line">        <span class="keyword">goto</span> out;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    uint32_t dport_be = host_to_ctx_port(nat_dest-&gt;port);</span><br><span class="line"> </span><br><span class="line">     </span><br><span class="line">    ctx-&gt;user_ip4 = nat_dest-&gt;addr;            <span class="comment">// 修改socket地址的目的地址为后端pod</span></span><br><span class="line">    ctx-&gt;user_port = dport_be;</span><br><span class="line"> </span><br><span class="line">out:</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="官方性能测试"><a href="#官方性能测试" class="headerlink" title="官方性能测试"></a>官方性能测试</h3><h4 id="Pod到Pod的吞吐量和CPU"><a href="#Pod到Pod的吞吐量和CPU" class="headerlink" title="Pod到Pod的吞吐量和CPU"></a>Pod到Pod的吞吐量和CPU</h4><p>使用qperf测量在不同节点上运行的一对Pod之间的吞吐量。由于大部分网络开销都是按数据包计算的，因此同时测试了1440字节MTU和8940字节MTU（其中MTU是最大数据包大小；对于互联网流量而言，实际值为1500；在某些数据中心中为9000；并且都减少了如果是在重叠式网络的顶部运行，请保守估计为60）。测量了吞吐量和CPU使用率。</p>
+<p><img src="/images/ebpf-calico-5.png" alt="images"></p>
+<p>对于 8940 MTU，这两个选项都接近饱和 40Gbit 链路。在较小的数据包大小下，我们看到吞吐量出现了差距。</p>
+<p><img src="/images/ebpf-calico-6.png" alt="images"></p>
+<p>将每 GBit 的 CPU 使用率标准化后，eBPF 数据平面每 GBit 使用的 CPU 比标准 Linux 网络数据平面少得多，在小数据包大小时优势最大。</p>
+<h4 id="改进-kube-proxy"><a href="#改进-kube-proxy" class="headerlink" title="改进 kube-proxy"></a>改进 kube-proxy</h4><p>对于 kube-proxy 和我们的实现，只有新流中的第一个数据包需要付出代价，才能确定流将负载均衡到哪个 pod。（后续数据包采用 conntrack 快速路径，这与您正在运行的服务数量无关。）为了测量第一个数据包延迟的影响，我们使用 curl 并打开详细调试输出来测量到 nginx 的“连接时间”荚。这是进行 TCP 握手交换的时间（每个方向一个数据包）。</p>
+<p>我们改变了服务的数量，并在 IPVS 和 iptables 模式下使用 kube-proxy 以及我们的 eBPF 数据平面运行了测试。</p>
+<p><img src="/images/ebpf-calico-7.png" alt="images"></p>
+<p>在 iptables 模式下，kube-proxy 的实现使用随服务数量增长的规则列表。因此，随着服务数量的增加，它的延迟会变得更糟。IPVS 模式和我们的实现都使用了高效的地图查找，随着服务数量的增加，性能曲线变得平坦。</p>
+<p>将这些数字放在上下文中很重要。虽然 IPVS 和我们的 eBPF 模式比其他模式更快，但这只是第一个数据包。如果您的工作负载正在重用连接（通常是 gRPC 或 REST API 的情况），或者传输一个 1MB 的文件，那么此更改所节省的半毫秒将不会很明显。另一方面，如果您的工作负载涉及数千个短暂的、对延迟敏感的连接，您将看到真正的收益。</p>
+<h4 id="高效的数据平面更新"><a href="#高效的数据平面更新" class="headerlink" title="高效的数据平面更新"></a>高效的数据平面更新</h4><p>当服务更新时，kube-proxy 必须更新内核中的 iptables 或 IPVS 状态。使用 eBPF，能够更有效地更新数据平面。</p>
+<p>下图显示了测试期间的整个节点 CPU 使用情况</p>
+<ul>
+<li>从 5000 个静态服务开始，每个服务由 5 个 pod 支持</li>
+<li>sleep 90s 以获得基线</li>
+<li>100s 内只流失一项服务</li>
+<li>sleep 90s</li>
+</ul>
+<p>kube-proxy 配置了默认的 30 秒最大同步间隔。所有数据平面都配置了 1 秒的最小同步间隔</p>
+<p><img src="/images/ebpf-calico-8.png" alt="images"></p>
+<p>正如预期的那样，对于 5k 服务，您可以看到 IPVS 模式下的 kube-proxy 使用更少的 CPU 来保持数据平面的同步，而不是 iptables 模式下的 kube-proxy。（如果推动更多数量的服务或服务端点，两者之间的差距会变得更大。）相比之下，我们新的 eBPF 数据平面具有更高效的控制平面，在任何一种模式下使用的 CPU 都比 kube-proxy 少，即使在非常大量的服务。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li>有关 eBPF 数据平面的更多信息和性能指标，请参阅 <a href="https://www.projectcalico.org/introducing-the-calico-ebpf-dataplane/">公告博客文章</a>。</li>
+<li>如果您想在 Kubernetes 集群中尝试 eBPF 模式，请遵循 <a href="https://projectcalico.docs.tigera.io/maintenance/ebpf/enabling-bpf">启用 eBPF 数据平面</a>指南。</li>
+<li>XDP开发 <a href="https://www.tigera.io/learn/guides/ebpf/ebpf-xdp/">eBPF XDP：基础知识和快速教程</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Calico/">Calico</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/05/12/Calico-eBPF%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2/" data-title="Calico eBPF数据平面 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/05/23/XFRM-IPsec协议的内核实现框架/" title="XFRM -- IPsec协议的内核实现框架">
+  <strong>上一篇：</strong><br/>
+  <span>
+  XFRM -- IPsec协议的内核实现框架</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/05/11/TCP源码分析-三次握手之-Connect-过程/"  title="TCP源码分析 - 三次握手之 Connect 过程">
+ <strong>下一篇：</strong><br/> 
+ <span>TCP源码分析 - 三次握手之 Connect 过程
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/05/12/Calico-eBPF数据平面/" data-title="Calico eBPF数据平面" data-url="https://luckymrwang.github.io/2022/05/12/Calico-eBPF%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-eBPF"><span class="toc-number">1.</span> <span class="toc-text">什么是 eBPF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#eBPF-%E8%83%BD%E5%81%9A%E4%BB%80%E4%B9%88"><span class="toc-number">2.</span> <span class="toc-text">eBPF 能做什么</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#eBPF-%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">eBPF 程序的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BPF-maps"><span class="toc-number">2.2.</span> <span class="toc-text">BPF maps</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Calico-%E7%9A%84-eBPF-%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2"><span class="toc-number">3.</span> <span class="toc-text">Calico 的 eBPF 数据平面</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%99%90%E5%88%B6"><span class="toc-number">3.1.</span> <span class="toc-text">限制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E7%94%A8-eBPF-%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2"><span class="toc-number">3.2.</span> <span class="toc-text">启用 eBPF 数据平面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE-Calico-%E7%9B%B4%E6%8E%A5%E4%B8%8E-API-%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%80%9A%E4%BF%A1"><span class="toc-number">3.3.</span> <span class="toc-text">配置 Calico 直接与 API 服务器通信</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A6%81%E7%94%A8-kube-proxy"><span class="toc-number">3.4.</span> <span class="toc-text">禁用 kube-proxy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%90%AF-eBPF-%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.5.</span> <span class="toc-text">开启 eBPF 模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%90%AF-DSR-%E6%A8%A1%E5%BC%8F"><span class="toc-number">3.6.</span> <span class="toc-text">开启 DSR 模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%9F%E8%83%BD%E6%AF%94%E8%BE%83"><span class="toc-number">3.7.</span> <span class="toc-text">功能比较</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="toc-number">4.</span> <span class="toc-text">架构概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Calico-eBPF-%E6%B5%81%E7%A8%8B"><span class="toc-number">5.</span> <span class="toc-text">Calico eBPF 流程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">5.1.</span> <span class="toc-text">工作流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BDeBPF%E7%A8%8B%E5%BA%8F"><span class="toc-number">5.2.</span> <span class="toc-text">加载eBPF程序</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%98%E6%96%B9%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95"><span class="toc-number">6.</span> <span class="toc-text">官方性能测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Pod%E5%88%B0Pod%E7%9A%84%E5%90%9E%E5%90%90%E9%87%8F%E5%92%8CCPU"><span class="toc-number">6.1.</span> <span class="toc-text">Pod到Pod的吞吐量和CPU</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%B9%E8%BF%9B-kube-proxy"><span class="toc-number">6.2.</span> <span class="toc-text">改进 kube-proxy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AB%98%E6%95%88%E7%9A%84%E6%95%B0%E6%8D%AE%E5%B9%B3%E9%9D%A2%E6%9B%B4%E6%96%B0"><span class="toc-number">6.3.</span> <span class="toc-text">高效的数据平面更新</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">7.</span> <span class="toc-text">参考</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,611 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Git内部存储原理 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Git是程序员工作中使用频率非常高的工具，要提高日常的工作效率，就需要熟练掌握Git的使用方法。相对于传统的版本控制系统而言，Git更为强大和灵活，其各种命令和命令参数也非常多，如果不了解Git的内部原理，要把Git使用得顺手的话非常困难。本文将用一个具体的例子来帮助理解Git的内部存储原理,加深对Git的理解，从掌握各种Git命令，以在使用Git进行工作时得心应手。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git内部存储原理">
+<meta property="og:url" content="https://luckymrwang.github.io/2021/04/14/Git%E5%86%85%E9%83%A8%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Git是程序员工作中使用频率非常高的工具，要提高日常的工作效率，就需要熟练掌握Git的使用方法。相对于传统的版本控制系统而言，Git更为强大和灵活，其各种命令和命令参数也非常多，如果不了解Git的内部原理，要把Git使用得顺手的话非常困难。本文将用一个具体的例子来帮助理解Git的内部存储原理,加深对Git的理解，从掌握各种Git命令，以在使用Git进行工作时得心应手。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-14T02:05:36.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.190Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2021/04/14/Git内部存储原理/" title="Git内部存储原理" itemprop="url">Git内部存储原理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-04-14T02:05:36.000Z" itemprop="datePublished"> 发表于 2021-04-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">Git 目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-Object%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">Git Object存储方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8BGit-Object%E5%AD%98%E5%82%A8%E5%86%85%E5%AE%B9"><span class="toc-number">3.</span> <span class="toc-text">查看Git Object存储内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-branch%E5%92%8Ctag"><span class="toc-number">4.</span> <span class="toc-text">Git branch和tag</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-Stash%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">Git Stash实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-reset-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">6.</span> <span class="toc-text">Git reset 实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-object%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">7.</span> <span class="toc-text">Git object存储方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>Git是程序员工作中使用频率非常高的工具，要提高日常的工作效率，就需要熟练掌握Git的使用方法。相对于传统的版本控制系统而言，Git更为强大和灵活，其各种命令和命令参数也非常多，如果不了解Git的内部原理，要把Git使用得顺手的话非常困难。本文将用一个具体的例子来帮助理解Git的内部存储原理,加深对Git的理解，从掌握各种Git命令，以在使用Git进行工作时得心应手。</p>
+<span id="more"></span>
+<h3 id="Git-目录结构"><a href="#Git-目录结构" class="headerlink" title="Git 目录结构"></a>Git 目录结构</h3><p>Git的本质是一个文件系统，其工作目录中的所有文件的历史版本以及提交记录(Commit)都是以文件对象的方式保存在.git目录中的。</p>
+<p>首先创建一个work目录，并采用git init命令初始化git仓库。该命令会在工作目录下生成一个.git目录，该目录将用于保存工作区中所有的文件历史的历史版本，提交记录，branch，tag等信息。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir work</span><br><span class="line">$ cd work</span><br><span class="line">$ git init</span><br></pre></td></tr></table></figure>
+
+<p>其目录结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">├── branches             不这么重要，暂不用管                    </span><br><span class="line">├── config               git配置信息，包括用户名，email，remote repository的地址，本地branch和remote</span><br><span class="line">|                        branch的follow关系</span><br><span class="line">├── description          该git库的描述信息，如果使用了GitWeb的话，该描述信息将会被显示在该repo的页面上</span><br><span class="line">├── HEAD                 工作目录当前状态对应的commit，一般来说是当前branch的head，HEAD也可以通过git checkout 命令被直接设置到一个特定的commit上，这种情况被称之为 detached HEAD      </span><br><span class="line">├── hooks                钩子程序，可以被用于在执行git命令时自动执行一些特定操作，例如加入changeid</span><br><span class="line">│   ├── applypatch-msg.sample</span><br><span class="line">│   ├── commit-msg.sample</span><br><span class="line">│   ├── post-update.sample</span><br><span class="line">│   ├── pre-applypatch.sample</span><br><span class="line">│   ├── pre-commit.sample</span><br><span class="line">│   ├── prepare-commit-msg.sample</span><br><span class="line">│   ├── pre-push.sample</span><br><span class="line">│   ├── pre-rebase.sample</span><br><span class="line">│   └── update.sample</span><br><span class="line">├── info                不这么重要，暂不用管</span><br><span class="line">│   └── exclude</span><br><span class="line">├── objects             保存git对象的目录，包括三类对象commit,tag, tree和blob</span><br><span class="line">│   ├── info</span><br><span class="line">│   └── pack</span><br><span class="line">└── refs                保存branch和tag对应的commit</span><br><span class="line">    ├── heads           branch对应的commit</span><br><span class="line">    └── tags            tag对应的commit</span><br></pre></td></tr></table></figure>
+
+<h3 id="Git-Object存储方式"><a href="#Git-Object存储方式" class="headerlink" title="Git Object存储方式"></a>Git Object存储方式</h3><p>目前objects目录中还没有任何内容，我们创建一个文件并提交。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ echo <span class="string">&quot;my project&quot;</span> &gt; <span class="variable constant_">README</span></span><br><span class="line">$ echo <span class="string">&quot;hello world&quot;</span> &gt; src/file1.<span class="property">txt</span></span><br><span class="line">$ git add .</span><br><span class="line">$ git commit -sm <span class="string">&quot;init commit&quot;</span></span><br><span class="line">[<span class="title function_">master</span> (root-commit) b767d71] init commit</span><br><span class="line"> <span class="number">2</span> files changed, <span class="number">2</span> <span class="title function_">insertions</span>(+)</span><br><span class="line"> create mode <span class="number">100644</span> <span class="variable constant_">README</span></span><br><span class="line"> create mode <span class="number">100644</span> src/file1.<span class="property">txt</span></span><br></pre></td></tr></table></figure>
+
+<p>从打印输出可以看到，上面的命令创建了一个commit对象，该commit包含两个文件。 查看.git&#x2F;objects目录，可以看到该目录下增加了5个子目录 06，3b， 82， b7， ca，每个子目录下有一个以一长串字母数字命令的文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.git/objects</span><br><span class="line">├── 06</span><br><span class="line">│   └── 5bcad11008c5e958ff743f2445551e05561f59</span><br><span class="line">├── 3b</span><br><span class="line">│   └── 18e512dba79e4c8300dd08aeb37f8e728b8dad</span><br><span class="line">├── 82</span><br><span class="line">│   └── 424451ac502bd69712561a524e2d97fd932c69</span><br><span class="line">├── b7</span><br><span class="line">│   └── 67d7115ef57666c9d279c7acc955f86f298a8d</span><br><span class="line">├── ca</span><br><span class="line">│   └── 964f37599d41e285d1a71d11495ddc486b6c3b</span><br><span class="line">├── info</span><br><span class="line">└── pack</span><br></pre></td></tr></table></figure>
+
+<p>说明：Git Object目录中存储了三种对象：Commit， tree和blob。Git为对象生成一个文件，并根据文件信息生成一个 SHA-1 哈希值作为文件内容的校验和，创建以该校验和前两个字符为名称的子目录，并以 (校验和) 剩下 38 个字符为文件命名 ，将该文件保存至子目录下。</p>
+<h3 id="查看Git-Object存储内容"><a href="#查看Git-Object存储内容" class="headerlink" title="查看Git Object存储内容"></a>查看Git Object存储内容</h3><p>通过 git cat-file命令可以查看Git Object中存储的内容及对象类型，命令参数为Git Object的SHA-1哈希值，即目录名+文件名。在没有歧义的情况下，不用输入整个Hash，输入前几位即可。</p>
+<p>当前分支的对象引用保存在HEAD文件中，可以查看该文件得到当前HEAD对应的branch，并通过branch查到对应的commit对象。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat .git/HEAD</span><br><span class="line">ref: refs/heads/master</span><br><span class="line">cat .git/refs/heads/master</span><br><span class="line">b767d7115ef57666c9d279c7acc955f86f298a8d</span><br></pre></td></tr></table></figure>
+
+<p>使用 -t 参数查看文件类型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git cat-file -t b767d7</span><br><span class="line">commit</span><br></pre></td></tr></table></figure>
+
+<p>使用 -p 参数可以查看文件内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git cat-file -p b767d7</span><br><span class="line">tree ca964f37599d41e285d1a71d11495ddc486b6c3b</span><br><span class="line">author Huabing Zhao &lt;zhaohuabing@gmail.com&gt; 1548055516 +0800</span><br><span class="line">committer Huabing Zhao &lt;zhaohuabing@gmail.com&gt; 1548055516 +0800</span><br><span class="line"></span><br><span class="line">init commit</span><br><span class="line"></span><br><span class="line">Signed-off-by: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出这是一个commit对象，commit对象中保存了commit的作者，commit的描述信息，签名信息以及该commit中包含哪些tree对象和blob对象。</p>
+<p>b767d7这个commit中保存了一个tree对象，可以把该tree对象看成这次提交相关的所有文件的根目录。让我们来看看该tree对象中的内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git cat-file -p ca964f</span><br><span class="line">100644 blob 065bcad11008c5e958ff743f2445551e05561f59    README</span><br><span class="line">040000 tree 82424451ac502bd69712561a524e2d97fd932c69    src</span><br></pre></td></tr></table></figure>
+
+<p>可以看到该tree对象中包含了一个blob对象，即README文件；和一个tree对象，即src目录。 分别查看该blob对象和tree对象，其内容如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git cat-file -p 065bca</span><br><span class="line">my project</span><br><span class="line">$ git cat-file -p 824244</span><br><span class="line">100644 blob 3b18e512dba79e4c8300dd08aeb37f8e728b8dad    file1.txt</span><br></pre></td></tr></table></figure>
+
+<p>查看file1.txt的内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git cat-file -p 3b18e51</span><br><span class="line">hello world</span><br></pre></td></tr></table></figure>
+
+<p>从上面的实验我们可以得知，git中存储了三种类型的对象，commit，tree和blob。分别对应git commit，此commit中的目录和文件。这些对象之间的关系如下图所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">HEAD---&gt; refs/heads/master--&gt; b767d7(commit)</span><br><span class="line">                                    +</span><br><span class="line">                                    |</span><br><span class="line">                                    v</span><br><span class="line">                                ca964f(tree)</span><br><span class="line">                                    +</span><br><span class="line">                                    |</span><br><span class="line">                          +---------+----------+</span><br><span class="line">                          |                    |</span><br><span class="line">                          v                    v</span><br><span class="line">                     065bca(blob)         824244(tree)</span><br><span class="line">                          README              src</span><br><span class="line">                                               +</span><br><span class="line">                                               |</span><br><span class="line">                                               v</span><br><span class="line">                                          3b18e5(blob)</span><br><span class="line">                                             file1.txt      </span><br></pre></td></tr></table></figure>
+
+<h3 id="Git-branch和tag"><a href="#Git-branch和tag" class="headerlink" title="Git branch和tag"></a>Git branch和tag</h3><p>从refs&#x2F;heads&#x2F;master的内容可以看到，branch是一个指向commit的指针，master branch实际是指向了b767d7这个commit。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b work</span><br><span class="line">Switched to a new branch &#x27;work&#x27;</span><br><span class="line">$ tree .git/refs/</span><br><span class="line">.git/refs/</span><br><span class="line">├── heads</span><br><span class="line">│   ├── master</span><br><span class="line">│   └── work</span><br><span class="line">└── tags</span><br><span class="line">$ cat .git/refs/heads/work .git/refs/heads/master</span><br><span class="line">b767d7115ef57666c9d279c7acc955f86f298a8d</span><br><span class="line">b767d7115ef57666c9d279c7acc955f86f298a8d</span><br></pre></td></tr></table></figure>
+
+<p>上面的命令创建了一个work branch。从其内容可以看到，该branch并没有创建任何新的版本文件，和master一样指向了b767d7这个commit。</p>
+<p>从上面的实验可以看出，一个branch其实只是一个commit对象的应用，Git并不会为每个branch存储一份拷贝，因此在git中创建branch几乎没有任何代价。</p>
+<p>在work branch上进行一些修改，然后提交。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ echo &quot;new line&quot; &gt;&gt; src/file1.txt</span><br><span class="line">$ echo &quot;do nothing&quot; &gt;&gt; Makefile</span><br><span class="line">$ git commit -sm &quot;some change&quot;</span><br><span class="line">[work 4f73993] some change</span><br><span class="line"> 2 files changed, 2 insertions(+)</span><br><span class="line"> create mode 100644 Makefile</span><br></pre></td></tr></table></figure>
+
+<p>查看当前的HEAD和branch内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ cat .git/HEAD</span><br><span class="line">ref: refs/heads/work</span><br><span class="line">huabing@huabing-xubuntu:~/work$ cat .git/refs/heads/work .git/refs/heads/master</span><br><span class="line">4f73993cf81931bc15375f0a23d82c40b3ae6789</span><br><span class="line">b767d7115ef57666c9d279c7acc955f86f298a8d</span><br></pre></td></tr></table></figure>
+
+<p>可以看到HEAD指向了work branch,而work branch则指向了4f73993这个commit，master branch指向的commit未变化，还是b767d7。</p>
+<p>查看4f73993这个commit对象的内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ git cat-file -p 4f73993</span><br><span class="line">tree 082b6d87eeddb15526b7c920e21f09f950f78b54</span><br><span class="line">parent b767d7115ef57666c9d279c7acc955f86f298a8d</span><br><span class="line">author Huabing Zhao &lt;zhaohuabing@gmail.com&gt; 1548069325 +0800</span><br><span class="line">committer Huabing Zhao &lt;zhaohuabing@gmail.com&gt; 1548069325 +0800</span><br><span class="line"></span><br><span class="line">some change</span><br><span class="line"></span><br><span class="line">Signed-off-by: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到commit有一个parent字段，指向了前一个commi b767d7。该commit也包含了一个tree对象，让我们看看其中的内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$  git cat-file -p  082b6d</span><br><span class="line">100644 blob 8cc95f278445722c59d08bbd798fbaf60da8ca14    Makefile</span><br><span class="line">100644 blob 065bcad11008c5e958ff743f2445551e05561f59    README</span><br><span class="line">040000 tree 9aeacd1fa832ca167b0f72fb1d0c744a9ee1902f    src</span><br><span class="line"></span><br><span class="line">$ git cat-file -p 9aeacd</span><br><span class="line">100644 blob 79ee69e841a5fd382faef2be2f2eb6e836cc980a    file1.txt</span><br></pre></td></tr></table></figure>
+
+<p>可以看到该tree对象中包含了该版本的所有文件和目录，由于README没有变化，还是指向的065bca这个blob对象。Makefile是一个新建的blob对象，src和file1.txt则指向了新版本的对象。</p>
+<p>增加了这次commit后，git中各个对象的关系如下图所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">                                          (parent)</span><br><span class="line">HEAD--&gt; refs/heads/work--&gt; 4f7399(commit) +-------&gt; b767d7(commit)&lt;---refs/heads/master</span><br><span class="line">                              +                             +</span><br><span class="line">                              |                             |</span><br><span class="line">                              v                             v</span><br><span class="line">                         082b6d(tree)                   ca964f(tree)</span><br><span class="line">                              +                             +</span><br><span class="line">                              |                             |</span><br><span class="line">               +-----------------------------+     +--------+-----------+</span><br><span class="line">               |              |              |     |                    |</span><br><span class="line">               v              v              v     v                    v</span><br><span class="line">           9aeacd(tree)    8cc95f(blob)    065bca(blob)            824244(tree)</span><br><span class="line">         src (version 2)    Makefile         README               src (version 1)</span><br><span class="line">               +                                                        +</span><br><span class="line">               |                                                        |</span><br><span class="line">               v                                                        v</span><br><span class="line">          79ee69(blob)                                             3b18e5(blob)</span><br><span class="line">        file1.txt (version 2)                                    file1.txt (version 1)</span><br></pre></td></tr></table></figure>
+
+<p>从上图可以看到，Git会为每次commit时修改的目录&#x2F;文件生成一个新的版本的tree&#x2F;blob对象，如果文件没有修改，则会指向老版本的tree&#x2F;blob对象。而branch则只是指向某一个commit的一个指针。即Git中整个工作目录的version是以commit对象的形式存在的，可以认为一个commit就是一个version，而不同version可以指向相同或者不同的tree和blob对象，对应到不同版本的子目录和文件。如果某一个子目录&#x2F;文件在版本间没有变化，则不会为该子目录&#x2F;文件生成新的tree&#x2F;blob对象，不同version的commit对象会指向同一个tree&#x2F;object对象。</p>
+<p>Tag和branch类似，也是指向某个commit的指针。不同的是tag创建后其指向的commit不能变化，而branch创建后，其指针会在提交新的commit后向前移动。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git tag v1.0</span><br><span class="line">$ cat .git/refs/tags/v1.0 .git/refs/heads/work</span><br><span class="line">4f73993cf81931bc15375f0a23d82c40b3ae6789</span><br><span class="line">4f73993cf81931bc15375f0a23d82c40b3ae6789</span><br></pre></td></tr></table></figure>
+
+<p>可以看到新创建的v1.0 tag和work branch都是指向了4f7399这个commit。</p>
+<h3 id="Git-Stash实现原理"><a href="#Git-Stash实现原理" class="headerlink" title="Git Stash实现原理"></a>Git Stash实现原理</h3><p>Git stash的功能说明：经常有这样的事情发生，当你正在进行项目中某一部分的工作，里面的东西处于一个比较杂乱的状态，而你想转到其他分支上进行一些工作。问题是，你不想提交进行了一半的工作，否则以后你无法回到这个工作点。解决这个问题的办法就是git stash命令。</p>
+<p>“‘储藏”“可以获取你工作目录的中间状态——也就是你修改过的被追踪的文件和暂存的变更——并将它保存到一个未完结变更的堆栈中，随时可以重新应用。</p>
+<p>Git是如何实现Stash的呢？理解了Commit, Tree, Blog这三种Git存储对象，我们就可以很容易理解Git Stash的实现原理。因为和bransh及tag类似，Git Stash其实也是通过Commit来实现的。</p>
+<p>通过实验来测试一下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ echo &quot;another line&quot; &gt;&gt; src/file1.txt</span><br><span class="line">$ git stash</span><br></pre></td></tr></table></figure>
+
+<p>通过上面的命令，我们在file1.txt中增加了一行，然后通过git stash命令将这些改动“暂存”在了一个“堆栈”中，让我们来看看.git目录发生了什么变化。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">$ tree .git/</span><br><span class="line">.git/</span><br><span class="line">├── branches</span><br><span class="line">├── COMMIT_EDITMSG</span><br><span class="line">├── config</span><br><span class="line">├── description</span><br><span class="line">├── HEAD</span><br><span class="line">├── hooks</span><br><span class="line">│   ├── applypatch-msg.sample</span><br><span class="line">│   ├── commit-msg.sample</span><br><span class="line">│   ├── post-update.sample</span><br><span class="line">│   ├── pre-applypatch.sample</span><br><span class="line">│   ├── pre-commit.sample</span><br><span class="line">│   ├── prepare-commit-msg.sample</span><br><span class="line">│   ├── pre-push.sample</span><br><span class="line">│   ├── pre-rebase.sample</span><br><span class="line">│   └── update.sample</span><br><span class="line">├── index</span><br><span class="line">├── info</span><br><span class="line">│   └── exclude</span><br><span class="line">├── logs</span><br><span class="line">│   ├── HEAD</span><br><span class="line">│   └── refs</span><br><span class="line">│       ├── heads</span><br><span class="line">│       │   ├── master</span><br><span class="line">│       │   └── work</span><br><span class="line">│       └── stash</span><br><span class="line">├── objects</span><br><span class="line">│   ├── 06</span><br><span class="line">│   │   └── 5bcad11008c5e958ff743f2445551e05561f59</span><br><span class="line">│   ├── 08</span><br><span class="line">│   │   └── 2b6d87eeddb15526b7c920e21f09f950f78b54</span><br><span class="line">│   ├── 11</span><br><span class="line">│   │   └── a6d1031e4fa2d4da0b6303dd74ed8e85c54057</span><br><span class="line">│   ├── 33</span><br><span class="line">│   │   └── f98923002cd224dabf32222c808611badd6d48</span><br><span class="line">│   ├── 3b</span><br><span class="line">│   │   └── 18e512dba79e4c8300dd08aeb37f8e728b8dad</span><br><span class="line">│   ├── 4f</span><br><span class="line">│   │   └── 73993cf81931bc15375f0a23d82c40b3ae6789</span><br><span class="line">│   ├── 6a</span><br><span class="line">│   │   ├── 1474c4da0653af0245970997b6fab0a0a7c1df</span><br><span class="line">│   │   └── d88760c3be94d8cb582bf2d06b99083d034428</span><br><span class="line">│   ├── 75</span><br><span class="line">│   │   └── e170cc1d928ae5a28547b4a3f2f3394a675b9a</span><br><span class="line">│   ├── 79</span><br><span class="line">│   │   └── ee69e841a5fd382faef2be2f2eb6e836cc980a</span><br><span class="line">│   ├── 82</span><br><span class="line">│   │   └── 424451ac502bd69712561a524e2d97fd932c69</span><br><span class="line">│   ├── 8c</span><br><span class="line">│   │   └── c95f278445722c59d08bbd798fbaf60da8ca14</span><br><span class="line">│   ├── 90</span><br><span class="line">│   │   └── c43dbb1e71c271510994d6b147c425cbffa673</span><br><span class="line">│   ├── 9a</span><br><span class="line">│   │   └── eacd1fa832ca167b0f72fb1d0c744a9ee1902f</span><br><span class="line">│   ├── b7</span><br><span class="line">│   │   └── 67d7115ef57666c9d279c7acc955f86f298a8d</span><br><span class="line">│   ├── ca</span><br><span class="line">│   │   └── 964f37599d41e285d1a71d11495ddc486b6c3b</span><br><span class="line">│   ├── e8</span><br><span class="line">│   │   └── 83e779eb08e2d9bca1fc1ee722fc80addac312</span><br><span class="line">│   ├── info</span><br><span class="line">│   └── pack</span><br><span class="line">├── ORIG_HEAD</span><br><span class="line">└── refs</span><br><span class="line">    ├── heads</span><br><span class="line">    │   ├── master</span><br><span class="line">    │   └── work</span><br><span class="line">    ├── stash</span><br><span class="line">    └── tags</span><br><span class="line">        └── v1.0</span><br></pre></td></tr></table></figure>
+
+<p>可以看到objects目录中增加了一些对象文件，refs中增加了一个stash文件。通过命令查看该文件内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ cat .git/refs/stash</span><br><span class="line">11a6d1031e4fa2d4da0b6303dd74ed8e85c54057</span><br><span class="line">$ git cat-file -p 11a6</span><br><span class="line">tree 90c43dbb1e71c271510994d6b147c425cbffa673</span><br><span class="line">parent 4f73993cf81931bc15375f0a23d82c40b3ae6789</span><br><span class="line">parent 6a1474c4da0653af0245970997b6fab0a0a7c1df</span><br><span class="line">author Huabing Zhao &lt;zhaohuabing@gmail.com&gt; 1548326421 +0800</span><br><span class="line">committer Huabing Zhao &lt;zhaohuabing@gmail.com&gt; 1548326421 +0800</span><br><span class="line"></span><br><span class="line">WIP on work: 4f73993 some change</span><br><span class="line">$ git cat-file -p 90c4</span><br><span class="line">100644 blob 8cc95f278445722c59d08bbd798fbaf60da8ca14    Makefile</span><br><span class="line">100644 blob 065bcad11008c5e958ff743f2445551e05561f59    README</span><br><span class="line">040000 tree 33f98923002cd224dabf32222c808611badd6d48    src</span><br><span class="line">$ git cat-file -p 33f9</span><br><span class="line">100644 blob 75e170cc1d928ae5a28547b4a3f2f3394a675b9a    file1.txt</span><br><span class="line">$ git cat-file -p 75e1</span><br><span class="line">hello world</span><br><span class="line">new line</span><br><span class="line">another line</span><br></pre></td></tr></table></figure>
+
+<p>从命令行输出可以看到,git stash实际上创建了一个新的commit对象11a6d1, 该commit对象的父节点为4f7399。commit对象中包含了修改后的file1.txt blob对象75e170。通过git log可以查看：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git log --oneline --graph stash@&#123;0&#125;</span><br><span class="line">*   f566001 WIP on work: 4f73993 some change</span><br><span class="line">|\</span><br><span class="line">| * 0796ced index on work: 4f73993 some change</span><br><span class="line">|/</span><br><span class="line">* 4f73993 some change</span><br><span class="line">* b767d71 init commit</span><br></pre></td></tr></table></figure>
+
+<p>备注：git stash生成的commit对象有两个parent，一个是前面一次git commit命令生成的commit，另一个对应于保存到stage中的commit。</p>
+<p>从该试验可以得知，git stash也是以commit，tree和object对象实现的。Git stash保存到“堆栈”中的修改其实一个commit对象。</p>
+<h3 id="Git-reset-实现原理"><a href="#Git-reset-实现原理" class="headerlink" title="Git reset 实现原理"></a>Git reset 实现原理</h3><p>在进行一些改动以后并通过git commit 将改动的代码提交到本地的repo后，如果你测试发现刚才的改动不合理，希望回退刚才的改动，应该如何处理？</p>
+<p>我们先提交一个错误的改动：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ echo &quot;I did something wrong&quot; &gt;&gt; src/file1.txt</span><br><span class="line">$ git add .</span><br><span class="line">$ git commit -sm &quot;This commit should not be there&quot;</span><br><span class="line">[work ccbc363] This commit should not be there</span><br><span class="line"> 1 file changed, 1 insertion(+)</span><br></pre></td></tr></table></figure>
+
+<p>你可以通过git revert回退刚才的改动，或者修改代码后再次提交，但这样的话你的提交log会显得非常凌乱；如果不想把中间过程的commit push到远程仓库，可以通过git reset 回退刚才的改动。</p>
+<p>先查看目前的log</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ git log</span><br><span class="line">commit ccbc3638142191bd68454d47a0f67fd12519806b</span><br><span class="line">Author: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br><span class="line">Date:   Fri Jan 25 12:35:31 2019 +0800</span><br><span class="line"></span><br><span class="line">    This commit should not be there</span><br><span class="line"></span><br><span class="line">    Signed-off-by: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br><span class="line"></span><br><span class="line">commit 4f73993cf81931bc15375f0a23d82c40b3ae6789</span><br><span class="line">Author: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br><span class="line">Date:   Mon Jan 21 19:15:25 2019 +0800</span><br><span class="line"></span><br><span class="line">    some change</span><br><span class="line"></span><br><span class="line">    Signed-off-by: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br><span class="line"></span><br><span class="line">commit b767d7115ef57666c9d279c7acc955f86f298a8d</span><br><span class="line">Author: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br><span class="line">Date:   Mon Jan 21 15:25:16 2019 +0800</span><br><span class="line"></span><br><span class="line">    init commit</span><br><span class="line"></span><br><span class="line">    Signed-off-by: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br></pre></td></tr></table></figure>
+
+<p>通过 git reset回退到上一个commit。注意这里HEAD是一个指向当前branch最后一个commit指针，因此HEAD~1表示之前的一个commit。git reset命令也可以直接使用commit号作为命令参数。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ git reset HEAD~1</span><br><span class="line">Unstaged changes after reset:</span><br><span class="line">M       src/file1.txt</span><br><span class="line"></span><br><span class="line">$ git log</span><br><span class="line">commit 4f73993cf81931bc15375f0a23d82c40b3ae6789</span><br><span class="line">Author: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br><span class="line">Date:   Mon Jan 21 19:15:25 2019 +0800</span><br><span class="line"></span><br><span class="line">    some change</span><br><span class="line"></span><br><span class="line">    Signed-off-by: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br><span class="line"></span><br><span class="line">commit b767d7115ef57666c9d279c7acc955f86f298a8d</span><br><span class="line">Author: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br><span class="line">Date:   Mon Jan 21 15:25:16 2019 +0800</span><br><span class="line"></span><br><span class="line">    init commit</span><br><span class="line"></span><br><span class="line">    Signed-off-by: Huabing Zhao &lt;zhaohuabing@gmail.com&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到刚才的commit被回退了，但修改的文件还存在，处于Unstaged状态，你可以对这些文件进行改动后再次提交。</p>
+<p>如果你不想保留修改的文件，可以使用–hard参数直接回退到指定的commit，该参数会将HEAD指向该commit，并且工作区中的文件也会和该comit保持一致，该commit后的修改会被直接丢弃。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git reset HEAD --hard</span><br><span class="line">HEAD is now at 4f73993 some change</span><br><span class="line">$ git status</span><br><span class="line">On branch work</span><br><span class="line">nothing to commit, working directory clean</span><br></pre></td></tr></table></figure>
+
+<h3 id="Git-object存储方式"><a href="#Git-object存储方式" class="headerlink" title="Git object存储方式"></a>Git object存储方式</h3><p>Git object是通过下面的方式处理并存储在git内部的文件系统中的：</p>
+<ul>
+<li>首先创建一个header，header的值为 “对象类型 内容长度\0”</li>
+<li>将header和文件内容连接起来，计算得到其SHA-1 hash值</li>
+<li>将连接得到的内容采用zlib压缩</li>
+<li>将压缩后的内容写入到以 “hash值前两位命令的目录&#x2F;hash值后38位命令的文件” 中</li>
+</ul>
+<p>可以通过Ruby手工创建一个 Git object 来验证上面的步骤。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ irb</span><br><span class="line">irb(main):001:0&gt; content = &quot;what is up, doc?&quot;                     //文件内容</span><br><span class="line">=&gt; &quot;what is up, doc?&quot;</span><br><span class="line">irb(main):002:0&gt; header = &quot;blob #&#123;content.length&#125;\0&quot;              //创建header</span><br><span class="line">=&gt; &quot;blob 16\u0000&quot;</span><br><span class="line">irb(main):003:0&gt; store = header + content                         //拼接header和文件内容</span><br><span class="line">=&gt; &quot;blob 16\u0000what is up, doc?&quot;</span><br><span class="line">irb(main):004:0&gt; require &#x27;digest/sha1&#x27;</span><br><span class="line">=&gt; true</span><br><span class="line">irb(main):005:0&gt; sha1 = Digest::SHA1.hexdigest(store)</span><br><span class="line">=&gt; &quot;bd9dbf5aae1a3862dd1526723246b20206e5fc37&quot;                     //计算得到hash值</span><br><span class="line">irb(main):006:0&gt;  require &#x27;zlib&#x27;</span><br><span class="line">=&gt; true</span><br><span class="line">irb(main):007:0&gt; zlib_content = Zlib::Deflate.deflate(store)      //压缩header+文件内容 </span><br><span class="line">=&gt; &quot;x\x9CK\xCA\xC9OR04c(\xCFH,Q\xC8,V(-\xD0QH\xC9O\xB6\a\x00_\x1C\a\x9D&quot;</span><br><span class="line">irb(main):008:0&gt;  path = &#x27;.git/objects/&#x27; + sha1[0,2] + &#x27;/&#x27; + sha1[2,38]</span><br><span class="line">=&gt; &quot;.git/objects/bd/9dbf5aae1a3862dd1526723246b20206e5fc37&quot;       //通过hash值计算文件存储路径</span><br><span class="line">irb(main):009:0&gt; require &#x27;fileutils&#x27;</span><br><span class="line">=&gt; true</span><br><span class="line">irb(main):010:0&gt;  FileUtils.mkdir_p(File.dirname(path))           //写文件</span><br><span class="line">=&gt; [&quot;.git/objects/bd&quot;]</span><br><span class="line">irb(main):011:0&gt; File.open(path, &#x27;w&#x27;) &#123; |f| f.write zlib_content &#125;</span><br><span class="line">=&gt; 32</span><br><span class="line">irb(main):012:0&gt;</span><br></pre></td></tr></table></figure>
+
+<p>文件以及写入到Git的内部存储中，我们尝试通过git cat-file 验证并读取该文件内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git cat-file -p bd9dbf5aae1a3862dd1526723246b20206e5fc37</span><br><span class="line">what is up, doc?</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，可以通过git cat-file文件读取该文件内容，因此该文件是一个合法的git object，和通过git 命令写入的文件格式相同。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Git围绕三种Object来实现了版本控制以及Branch，Tag等机制。</p>
+<ul>
+<li>Commit: Commit可以看作Git中一个Version的所有目录和文件的Snapshot，可以通过git checkout 查看任意一个commit中的内容。</li>
+<li>Tree: 目录对象，内部包含目录和文件</li>
+<li>Blob: 文件对象，对应一个文件</li>
+</ul>
+<p>理解了Git object的存储机制，就可以理解Git的各个命令的实现原理，更好地使用Git来实现源代码管理。</p>
+<p>本文引自<a href="https://zhaohuabing.com/post/2019-01-21-git/">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Git/">Git</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2021/04/14/Git%E5%86%85%E9%83%A8%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86/" data-title="Git内部存储原理 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2021/04/15/istio-externaltrafficpolicy-outboundTrafficPolicy/" title="istio externaltrafficpolicy outboundTrafficPolicy">
+  <strong>上一篇：</strong><br/>
+  <span>
+  istio externaltrafficpolicy outboundTrafficPolicy</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2021/04/11/Go-反向代理reverse-proxy-源码分析/"  title="Go 反向代理reverse proxy 源码分析">
+ <strong>下一篇：</strong><br/> 
+ <span>Go 反向代理reverse proxy 源码分析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2021/04/14/Git内部存储原理/" data-title="Git内部存储原理" data-url="https://luckymrwang.github.io/2021/04/14/Git%E5%86%85%E9%83%A8%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">1.</span> <span class="toc-text">Git 目录结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-Object%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">Git Object存储方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8BGit-Object%E5%AD%98%E5%82%A8%E5%86%85%E5%AE%B9"><span class="toc-number">3.</span> <span class="toc-text">查看Git Object存储内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-branch%E5%92%8Ctag"><span class="toc-number">4.</span> <span class="toc-text">Git branch和tag</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-Stash%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">5.</span> <span class="toc-text">Git Stash实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-reset-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="toc-number">6.</span> <span class="toc-text">Git reset 实现原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-object%E5%AD%98%E5%82%A8%E6%96%B9%E5%BC%8F"><span class="toc-number">7.</span> <span class="toc-text">Git object存储方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

@@ -1,0 +1,514 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go中的条件变量与Channel | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="在Go语言中 sync.Cond 代表条件变量，初始化的时候需要传入一个互斥体，它可以是普通锁（Mutex），也可以是读写锁（RWMutex）。如下： 123var mutex sync.Mutex  &#x2F;&#x2F; 也可以是 sync.RWMutexvar cond &#x3D; sync.NewCond(&amp;mutex)...">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go中的条件变量与Channel">
+<meta property="og:url" content="https://luckymrwang.github.io/2019/07/03/Go%E4%B8%AD%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E4%B8%8EChannel/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="在Go语言中 sync.Cond 代表条件变量，初始化的时候需要传入一个互斥体，它可以是普通锁（Mutex），也可以是读写锁（RWMutex）。如下： 123var mutex sync.Mutex  &#x2F;&#x2F; 也可以是 sync.RWMutexvar cond &#x3D; sync.NewCond(&amp;mutex)...">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-02T16:04:51.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.192Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Go">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/07/03/Go中的条件变量与Channel/" title="Go中的条件变量与Channel" itemprop="url">Go中的条件变量与Channel</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-02T16:04:51.000Z" itemprop="datePublished"> 发表于 2019-07-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p>在Go语言中 <code>sync.Cond</code> 代表条件变量，初始化的时候需要传入一个互斥体，它可以是普通锁（Mutex），也可以是读写锁（RWMutex）。如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mutex sync.Mutex  <span class="comment">// 也可以是 sync.RWMutex</span></span><br><span class="line"><span class="keyword">var</span> cond = sync.NewCond(&amp;mutex)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+<p>为什么创建条件变量需要传入锁？因为 <code>cond.Wait()</code> 的需要。 Wait 内部实现逻辑是：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">把自己加入到挂起队列</span><br><span class="line">mutex.Unlock()</span><br><span class="line">等待被唤醒  <span class="comment">// 挂起的执行体会被后续的 cond.Broadcast 或 cond.Signal() 唤醒</span></span><br><span class="line">mutex.Lock()</span><br></pre></td></tr></table></figure>
+
+<p>使用方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mutex.Lock()</span><br><span class="line"><span class="keyword">defer</span> mutex.Unlock()</span><br><span class="line"><span class="keyword">for</span> conditionNotMetToDo &#123;</span><br><span class="line">    cond.Wait()</span><br><span class="line">&#125;</span><br><span class="line">doSomething</span><br><span class="line"><span class="keyword">if</span> conditionNeedNotify &#123;</span><br><span class="line">    cond.Broadcast()</span><br><span class="line">    <span class="comment">// 有时可以优化为 cond.Signal()</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>加锁后，先用一个 for 循环判断当前是否能够做我们想做的事情，如果做不了就调用 cond.Wait() 进行等待。这里很重要的一个细节是注意用的是 for 循环，而不是 if 语句。这是因为 cond.Wait() 得到了执行权后不代表我们想做的事情就一定能够干了，所以要再重新判断一次条件是否满足。</p>
+<p>确定能够做事情了，于是 doSomething。在做的过程中，如果我们判断可能挂起队列中的部分执行体满足了重新执行的条件，就用 cond.Broadcast 或 cond.Signal 唤醒它们。</p>
+<p>cond.Broadcast 唤醒所有在这个条件变量挂起的执行体，而 cond.Signal 则只唤醒其中一个。</p>
+<p>cond.Signal 的适用范围：</p>
+<ul>
+<li>挂起在这个条件变量上的执行体，它们等待的条件是一致的</li>
+<li>本次 doSomething 操作完成后，所释放的资源只够一个执行体来做事情</li>
+</ul>
+<p>eg：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;runtime&quot;</span></span><br><span class="line">	<span class="string">&quot;sync&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	runtime.GOMAXPROCS(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">	test333()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">testCond</span><span class="params">()</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	c := sync.NewCond(&amp;sync.Mutex&#123;&#125;)</span><br><span class="line">	condition := <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		time.Sleep(time.Second * <span class="number">1</span>)</span><br><span class="line">		c.L.Lock()</span><br><span class="line">		fmt.Println(<span class="string">&quot;[1] 变更condition状态,并发出变更通知.&quot;</span>)</span><br><span class="line">		condition = <span class="literal">true</span></span><br><span class="line">		c.Signal() <span class="comment">//c.Broadcast()</span></span><br><span class="line">		fmt.Println(<span class="string">&quot;[1] 继续后续处理.&quot;</span>)</span><br><span class="line">		c.L.Unlock()</span><br><span class="line"></span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	c.L.Lock()</span><br><span class="line">	fmt.Println(<span class="string">&quot;[2] condition..........1&quot;</span>)</span><br><span class="line">	<span class="keyword">for</span> !condition &#123;</span><br><span class="line">		fmt.Println(<span class="string">&quot;[2] condition..........2&quot;</span>)</span><br><span class="line">		<span class="comment">//等待Cond消息通知</span></span><br><span class="line">		c.Wait()</span><br><span class="line">		fmt.Println(<span class="string">&quot;[2] condition..........3&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="string">&quot;[2] condition..........4&quot;</span>)</span><br><span class="line">	c.L.Unlock()</span><br><span class="line"></span><br><span class="line">	fmt.Println(<span class="string">&quot;main end...&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">testCond()运行结果:</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">[2] condition..........1</span></span><br><span class="line"><span class="comment">[2] condition..........2</span></span><br><span class="line"><span class="comment">[1] 变更condition状态,并发出变更通知.</span></span><br><span class="line"><span class="comment">[1] 继续后续处理.</span></span><br><span class="line"><span class="comment">[2] condition..........3</span></span><br><span class="line"><span class="comment">[2] condition..........4</span></span><br><span class="line"><span class="comment">main end...</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+<p>实现一个 channel：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Channel <span class="keyword">struct</span> &#123;</span><br><span class="line">    mutex sync.Mutex</span><br><span class="line">    cond *sync.Cond</span><br><span class="line">    queue *Queue</span><br><span class="line">    n <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewChannel</span><span class="params">(n <span class="type">int</span>)</span></span> *Channel &#123;</span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">1</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">&quot;todo: support unbuffered channel&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    c := <span class="built_in">new</span>(Channel)</span><br><span class="line">    c.cond = sync.NewCond(&amp;c.mutex)</span><br><span class="line">    c.queue = NewQueue()</span><br><span class="line">    <span class="comment">// 这里 NewQueue 得到一个普通的队列</span></span><br><span class="line">    <span class="comment">// 代码从略</span></span><br><span class="line">    c.n = n</span><br><span class="line">    <span class="keyword">return</span> c</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Channel)</span></span> Push(v <span class="keyword">interface</span>&#123;&#125;) &#123;</span><br><span class="line">    c.mutex.Lock()</span><br><span class="line">    <span class="keyword">defer</span> c.mutex.Unlock()</span><br><span class="line">    <span class="keyword">for</span> c.queue.Len() == c.n &#123; <span class="comment">// 等待队列不满</span></span><br><span class="line">        c.cond.Wait()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> c.queue.Len() == <span class="number">0</span> &#123; <span class="comment">// 原来队列是空的，可能有人等待数据，通知它们</span></span><br><span class="line">        c.cond.Broadcast()</span><br><span class="line">    &#125;</span><br><span class="line">    c.queue.Push(v)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Channel)</span></span> Pop() (v <span class="keyword">interface</span>&#123;&#125;) &#123;</span><br><span class="line">    c.mutex.Lock()</span><br><span class="line">    <span class="keyword">defer</span> c.mutex.Unlock()</span><br><span class="line">    <span class="keyword">for</span> c.queue.Len() == <span class="number">0</span> &#123; <span class="comment">// 等待队列不空</span></span><br><span class="line">        c.cond.Wait()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> c.queue.Len() == c.n &#123; <span class="comment">// 原来队列是满的，可能有人等着写数据，通知它们</span></span><br><span class="line">        c.cond.Broadcast()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> c.queue.Pop()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Channel)</span></span> TryPop() (v <span class="keyword">interface</span>&#123;&#125;, ok <span class="type">bool</span>) &#123;</span><br><span class="line">    c.mutex.Lock()</span><br><span class="line">    <span class="keyword">defer</span> c.mutex.Unlock()</span><br><span class="line">    <span class="keyword">if</span> c.queue.Len() == <span class="number">0</span> &#123; <span class="comment">// 如果队列为空，直接返回</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> c.queue.Len() == c.n &#123; <span class="comment">// 原来队列是满的，可能有人等着写数据，通知它们</span></span><br><span class="line">        c.cond.Broadcast()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> c.queue.Pop(), <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Channel)</span></span> TryPush(v <span class="keyword">interface</span>&#123;&#125;) (ok <span class="type">bool</span>) &#123;</span><br><span class="line">    c.mutex.Lock()</span><br><span class="line">    <span class="keyword">defer</span> c.mutex.Unlock()</span><br><span class="line">    <span class="keyword">if</span> c.queue.Len() == c.n &#123; <span class="comment">// 如果队列满，直接返回</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> c.queue.Len() == <span class="number">0</span> &#123; <span class="comment">// 原来队列是空的，可能有人等待数据，通知它们</span></span><br><span class="line">        c.cond.Broadcast()</span><br><span class="line">    &#125;</span><br><span class="line">    c.queue.Push(v)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>A线程notify或者signal，被唤醒的线程并不会马上执行，而是需要等待A线程退出同步块或者unlock才会执行</strong></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2019/07/03/Go%E4%B8%AD%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E4%B8%8EChannel/" data-title="Go中的条件变量与Channel | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/07/22/Minikube的安装/" title="Minikube的安装">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Minikube的安装</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/06/05/MacOS-安装PHP5-6/"  title="MacOS 安装PHP5.6">
+ <strong>下一篇：</strong><br/> 
+ <span>MacOS 安装PHP5.6
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2019/07/03/Go中的条件变量与Channel/" data-title="Go中的条件变量与Channel" data-url="https://luckymrwang.github.io/2019/07/03/Go%E4%B8%AD%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E4%B8%8EChannel/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

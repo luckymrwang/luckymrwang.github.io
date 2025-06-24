@@ -1,0 +1,571 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Centos下布置kale系统skyline | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Skyline 的页面上已经介绍了安装步骤，下面我记录一下在Centos上安装出现的问题已经相应的解决办法 Centos上默认安装了python2.6以及对应的pip，如果想升级点击这里">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Centos下布置kale系统skyline">
+<meta property="og:url" content="https://luckymrwang.github.io/2015/11/17/Centos%E4%B8%8B%E5%B8%83%E7%BD%AEkale%E7%B3%BB%E7%BB%9Fskyline/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Skyline 的页面上已经介绍了安装步骤，下面我记录一下在Centos上安装出现的问题已经相应的解决办法 Centos上默认安装了python2.6以及对应的pip，如果想升级点击这里">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-11-17T04:52:16.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.188Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="监控">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/17/Centos下布置kale系统skyline/" title="Centos下布置kale系统skyline" itemprop="url">Centos下布置kale系统skyline</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-11-17T04:52:16.000Z" itemprop="datePublished"> 发表于 2015-11-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			
+		
+		</div>
+		
+		<p><a href="https://github.com/etsy/skyline">Skyline</a> 的页面上已经介绍了安装步骤，下面我记录一下在Centos上安装出现的问题已经相应的解决办法</p>
+<p>Centos上默认安装了python2.6以及对应的pip，如果想升级<a href="http://ruiaylin.github.io/2014/12/12/python%20update/">点击这里</a></p>
+<span id="more"></span>
+<p>我是以默认的python2.6安装的，在第2步执行如下：</p>
+<pre><code>pip install scipy
+</code></pre>
+<p>会提示这样的错误</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line">	Collecting scipy</span><br><span class="line">  Using cached scipy-0.16.1.tar.gz</span><br><span class="line">Installing collected packages: scipy</span><br><span class="line">  Running setup.py install for scipy</span><br><span class="line">    Complete output from command /usr/bin/python -c &quot;import setuptools, tokenize;__file__=&#x27;/tmp/pip-build-7YhC6v/scipy/setup.py&#x27;;exec(compile(getattr(tokenize, &#x27;open&#x27;, open)(__file__).read().replace(&#x27;\r\n&#x27;, &#x27;\n&#x27;), __file__, &#x27;exec&#x27;))&quot; install --record /tmp/pip-TtkOaR-record/install-record.txt --single-version-externally-managed --compile:</span><br><span class="line">    lapack_opt_info:</span><br><span class="line">    openblas_lapack_info:</span><br><span class="line">      libraries openblas not found in [&#x27;/usr/local/lib64&#x27;, &#x27;/usr/local/lib&#x27;, &#x27;/usr/lib64&#x27;, &#x27;/usr/lib&#x27;]</span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">    lapack_mkl_info:</span><br><span class="line">    mkl_info:</span><br><span class="line">      libraries mkl,vml,guide not found in [&#x27;/usr/local/lib64&#x27;, &#x27;/usr/local/lib&#x27;, &#x27;/usr/lib64&#x27;, &#x27;/usr/lib&#x27;]</span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">    atlas_3_10_threads_info:</span><br><span class="line">    Setting PTATLAS=ATLAS</span><br><span class="line">      libraries tatlas,tatlas not found in /usr/local/lib64</span><br><span class="line">      libraries lapack_atlas not found in /usr/local/lib64</span><br><span class="line">      libraries tatlas,tatlas not found in /usr/local/lib</span><br><span class="line">      libraries lapack_atlas not found in /usr/local/lib</span><br><span class="line">      libraries tatlas,tatlas not found in /usr/lib64/atlas</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64/atlas</span><br><span class="line">      libraries tatlas,tatlas not found in /usr/lib64/sse2</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64/sse2</span><br><span class="line">      libraries tatlas,tatlas not found in /usr/lib64</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64</span><br><span class="line">      libraries tatlas,tatlas not found in /usr/lib</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib</span><br><span class="line">    &lt;class &#x27;numpy.distutils.system_info.atlas_3_10_threads_info&#x27;&gt;</span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">    atlas_3_10_info:</span><br><span class="line">      libraries satlas,satlas not found in /usr/local/lib64</span><br><span class="line">      libraries lapack_atlas not found in /usr/local/lib64</span><br><span class="line">      libraries satlas,satlas not found in /usr/local/lib</span><br><span class="line">      libraries lapack_atlas not found in /usr/local/lib</span><br><span class="line">      libraries satlas,satlas not found in /usr/lib64/atlas</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64/atlas</span><br><span class="line">      libraries satlas,satlas not found in /usr/lib64/sse2</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64/sse2</span><br><span class="line">      libraries satlas,satlas not found in /usr/lib64</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64</span><br><span class="line">      libraries satlas,satlas not found in /usr/lib</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib</span><br><span class="line">    &lt;class &#x27;numpy.distutils.system_info.atlas_3_10_info&#x27;&gt;</span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">    atlas_threads_info:</span><br><span class="line">    Setting PTATLAS=ATLAS</span><br><span class="line">      libraries ptf77blas,ptcblas,atlas not found in /usr/local/lib64</span><br><span class="line">      libraries lapack_atlas not found in /usr/local/lib64</span><br><span class="line">      libraries ptf77blas,ptcblas,atlas not found in /usr/local/lib</span><br><span class="line">      libraries lapack_atlas not found in /usr/local/lib</span><br><span class="line">      libraries ptf77blas,ptcblas,atlas not found in /usr/lib64/atlas</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64/atlas</span><br><span class="line">      libraries ptf77blas,ptcblas,atlas not found in /usr/lib64/sse2</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64/sse2</span><br><span class="line">      libraries ptf77blas,ptcblas,atlas not found in /usr/lib64</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64</span><br><span class="line">      libraries ptf77blas,ptcblas,atlas not found in /usr/lib</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib</span><br><span class="line">    &lt;class &#x27;numpy.distutils.system_info.atlas_threads_info&#x27;&gt;</span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">    atlas_info:</span><br><span class="line">      libraries f77blas,cblas,atlas not found in /usr/local/lib64</span><br><span class="line">      libraries lapack_atlas not found in /usr/local/lib64</span><br><span class="line">      libraries f77blas,cblas,atlas not found in /usr/local/lib</span><br><span class="line">      libraries lapack_atlas not found in /usr/local/lib</span><br><span class="line">      libraries f77blas,cblas,atlas not found in /usr/lib64/atlas</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64/atlas</span><br><span class="line">      libraries f77blas,cblas,atlas not found in /usr/lib64/sse2</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64/sse2</span><br><span class="line">      libraries f77blas,cblas,atlas not found in /usr/lib64</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib64</span><br><span class="line">      libraries f77blas,cblas,atlas not found in /usr/lib</span><br><span class="line">      libraries lapack_atlas not found in /usr/lib</span><br><span class="line">    &lt;class &#x27;numpy.distutils.system_info.atlas_info&#x27;&gt;</span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">    /usr/lib64/python2.6/site-packages/numpy/distutils/system_info.py:1552: UserWarning:</span><br><span class="line">        Atlas (http://math-atlas.sourceforge.net/) libraries not found.</span><br><span class="line">        Directories to search for the libraries can be specified in the</span><br><span class="line">        numpy/distutils/site.cfg file (section [atlas]) or by setting</span><br><span class="line">        the ATLAS environment variable.</span><br><span class="line">      warnings.warn(AtlasNotFoundError.__doc__)</span><br><span class="line">    lapack_info:</span><br><span class="line">      libraries lapack not found in [&#x27;/usr/local/lib64&#x27;, &#x27;/usr/local/lib&#x27;, &#x27;/usr/lib64&#x27;, &#x27;/usr/lib&#x27;]</span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">    /usr/lib64/python2.6/site-packages/numpy/distutils/system_info.py:1563: UserWarning:</span><br><span class="line">        Lapack (http://www.netlib.org/lapack/) libraries not found.</span><br><span class="line">        Directories to search for the libraries can be specified in the</span><br><span class="line">        numpy/distutils/site.cfg file (section [lapack]) or by setting</span><br><span class="line">        the LAPACK environment variable.</span><br><span class="line">      warnings.warn(LapackNotFoundError.__doc__)</span><br><span class="line">    lapack_src_info:</span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">    /usr/lib64/python2.6/site-packages/numpy/distutils/system_info.py:1566: UserWarning:</span><br><span class="line">        Lapack (http://www.netlib.org/lapack/) sources not found.</span><br><span class="line">        Directories to search for the sources can be specified in the</span><br><span class="line">        numpy/distutils/site.cfg file (section [lapack_src]) or by setting</span><br><span class="line">        the LAPACK_SRC environment variable.</span><br><span class="line">      warnings.warn(LapackSrcNotFoundError.__doc__)</span><br><span class="line">      NOT AVAILABLE</span><br><span class="line"></span><br><span class="line">    Running from scipy source directory.</span><br><span class="line">    Traceback (most recent call last):</span><br><span class="line">      File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;</span><br><span class="line">      File &quot;/tmp/pip-build-7YhC6v/scipy/setup.py&quot;, line 253, in &lt;module&gt;</span><br><span class="line">        setup_package()</span><br><span class="line">      File &quot;/tmp/pip-build-7YhC6v/scipy/setup.py&quot;, line 250, in setup_package</span><br><span class="line">        setup(**metadata)</span><br><span class="line">      File &quot;/usr/lib64/python2.6/site-packages/numpy/distutils/core.py&quot;, line 135, in setup</span><br><span class="line">        config = configuration()</span><br><span class="line">      File &quot;/tmp/pip-build-7YhC6v/scipy/setup.py&quot;, line 175, in configuration</span><br><span class="line">        config.add_subpackage(&#x27;scipy&#x27;)</span><br><span class="line">      File &quot;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&quot;, line 1001, in add_subpackage</span><br><span class="line">        caller_level = 2)</span><br><span class="line">      File &quot;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&quot;, line 970, in get_subpackage</span><br><span class="line">        caller_level = caller_level + 1)</span><br><span class="line">      File &quot;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&quot;, line 907, in _get_configuration_from_setup_py</span><br><span class="line">        config = setup_module.configuration(*args)</span><br><span class="line">      File &quot;scipy/setup.py&quot;, line 15, in configuration</span><br><span class="line">        config.add_subpackage(&#x27;linalg&#x27;)</span><br><span class="line">      File &quot;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&quot;, line 1001, in add_subpackage</span><br><span class="line">        caller_level = 2)</span><br><span class="line">      File &quot;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&quot;, line 970, in get_subpackage</span><br><span class="line">        caller_level = caller_level + 1)</span><br><span class="line">      File &quot;/usr/lib64/python2.6/site-packages/numpy/distutils/misc_util.py&quot;, line 907, in _get_configuration_from_setup_py</span><br><span class="line">        config = setup_module.configuration(*args)</span><br><span class="line">      File &quot;scipy/linalg/setup.py&quot;, line 20, in configuration</span><br><span class="line">        raise NotFoundError(&#x27;no lapack/blas resources found&#x27;)</span><br><span class="line">    numpy.distutils.system_info.NotFoundError: no lapack/blas resources found</span><br><span class="line"></span><br><span class="line">    ----------------------------------------</span><br><span class="line">	Command &quot;/usr/bin/python -c &quot;import setuptools, tokenize;__file__=&#x27;/tmp/pip-build-7YhC6v/scipy/setup.py&#x27;;exec(compile(getattr(tokenize, &#x27;open&#x27;, open)(__file__).read().replace(&#x27;\r\n&#x27;, &#x27;\n&#x27;), __file__, &#x27;exec&#x27;))&quot; install --record /tmp/pip-TtkOaR-record/install-record.txt --single-version-externally-managed --compile&quot; failed with error code 1 in /tmp/pip-build-7YhC6v/scipy</span><br></pre></td></tr></table></figure>
+
+<p>这是因为缺少 <strong>lapack</strong> 的原因，执行如下命令安装即可</p>
+<pre><code>sudo yum -y install lapack-devel
+</code></pre>
+<p>之后再次执行，成功安装：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install scipy</span><br><span class="line">Collecting scipy</span><br><span class="line">  Using cached scipy-0.16.1.tar.gz</span><br><span class="line">Installing collected packages: scipy</span><br><span class="line">  Running setup.py install for scipy</span><br><span class="line">Successfully installed scipy-0.16.1</span><br></pre></td></tr></table></figure>
+<p>安装Redis的错误提示</p>
+<p>在执行</p>
+<pre><code>make test
+</code></pre>
+<p>提示系统需要<strong>tcl</strong>8.5以上版本，直接执行命令安装即可：</p>
+<pre><code>yum install tcl
+</code></pre>
+<p>之后</p>
+<pre><code>make install 
+</code></pre>
+<p>安装完启动 <em>&#x2F;var&#x2F;log&#x2F;redis&#x2F;redis.log</em> 会有如下错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WARNING overcommit_memory is set to 0! Background save may fail under low memory condition. To fix this issue add &#x27;vm.overcommit_memory = 1&#x27; to /etc/sysctl.conf and then reboot or run the command &#x27;sysctl vm.overcommit_memory=1&#x27; for this to take effect.</span><br><span class="line">WARNING: The TCP backlog setting of 511 cannot be enforced because /proc/sys/net/core/somaxconn is set to the lower value of 128.</span><br></pre></td></tr></table></figure>
+<p>解决方法</p>
+<p>第一个警告两个方式解决(overcommit_memory)</p>
+<ol>
+<li>echo “vm.overcommit_memory&#x3D;1” &gt; &#x2F;etc&#x2F;sysctl.conf  或 vi &#x2F;etcsysctl.conf , 然后reboot重启机器</li>
+<li>echo 1 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;overcommit_memory  不需要启机器就生效</li>
+</ol>
+<p>第二个警告解决</p>
+<ol>
+<li>echo 511 &gt; &#x2F;proc&#x2F;sys&#x2F;net&#x2F;core&#x2F;somaxconn</li>
+</ol>
+<p>overcommit_memory参数说明：</p>
+<p>设置内存分配策略（可选，根据服务器的实际情况进行设置）<br>&#x2F;proc&#x2F;sys&#x2F;vm&#x2F;overcommit_memory</p>
+<p>可选值：0、1、2。</p>
+<p>0， 表示内核将检查是否有足够的可用内存供应用进程使用；如果有足够的可用内存，内存申请允许；否则，内存申请失败，并把错误返回给应用进程。</p>
+<p>1， 表示内核允许分配所有的物理内存，而不管当前的内存状态如何。</p>
+<p>2， 表示内核允许分配超过所有物理内存和交换空间总和的内存</p>
+<p>注意：redis在dump数据的时候，会fork出一个子进程，理论上child进程所占用的内存和parent是一样的，比如parent占用 的内存为8G，这个时候也要同样分配8G的内存给child,如果内存无法负担，往往会造成redis服务器的down机或者IO负载过高，效率下降。所 以这里比较优化的内存分配策略应该设置为 1（表示内核允许分配所有的物理内存，而不管当前的内存状态如何）。</p>
+<p>这里又涉及到Overcommit和OOM。</p>
+<p>什么是Overcommit和OOM</p>
+<p>在Unix中，当一个用户进程使用malloc()函数申请内存时，假如返回值是NULL，则这个进程知道当前没有可用内存空间，就会做相应的处理工作。许多进程会打印错误信息并退出。<br>Linux使用另外一种处理方式，它对大部分申请内存的请求都回复”yes”，以便能跑更多更大的程序。因为申请内存后，并不会马上使用内存。这种技术叫做Overcommit。<br>当内存不足时，会发生OOM killer(OOM&#x3D;out-of-memory)。它会选择杀死一些进程(用户态进程，不是内核线程)，以便释放内存。</p>
+<p>Overcommit的策略</p>
+<p>Linux下overcommit有三种策略(Documentation&#x2F;vm&#x2F;overcommit-accounting)：</p>
+<ol start="0">
+<li>启发式策略。合理的overcommit会被接受，不合理的overcommit会被拒绝。</li>
+<li>任何overcommit都会被接受。</li>
+<li>当系统分配的内存超过swap+N%*物理RAM(N%由vm.overcommit_ratio决定)时，会拒绝commit。</li>
+<li></li>
+</ol>
+<p>overcommit的策略通过vm.overcommit_memory设置。<br>overcommit的百分比由vm.overcommit_ratio设置。</p>
+<p># echo 2 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;overcommit_memory</p>
+<p># echo 80 &gt; &#x2F;proc&#x2F;sys&#x2F;vm&#x2F;overcommit_ratio</p>
+<p>当oom-killer发生时，linux会选择杀死哪些进程<br>选择进程的函数是oom_badness函数(在mm&#x2F;oom_kill.c中)，该函数会计算每个进程的点数(0~1000)。<br>点数越高，这个进程越有可能被杀死。<br>每个进程的点数跟oom_score_adj有关，而且oom_score_adj可以被设置(-1000最低，1000最高)。</p>
+<p>最后启动的时候，如果执行</p>
+<pre><code>sudo ./analyzer.d start
+</code></pre>
+<p>提示缺少factorial之类的库时大多是因为scipy没有装好或者版本不对应</p>
+<p>最后测试数据时，执行：</p>
+<pre><code>cd utils
+python seed_data.py
+</code></pre>
+<p>如果提示：<br>	<br>	Woops, looks like the metrics didn’t make it into Horizon. Try again?<br>	<br>则需要做如下设置：</p>
+<ol>
+<li><p>找到配置文件 <em>settings.py</em> 将下面前边的 # 去掉并改为：</p>
+<p> HORIZON_IP &#x3D; ‘127.0.0.1’ </p>
+<p> 之后重启 .&#x2F;horizon.d</p>
+</li>
+<li><p>修改 <em>seed_data.py</em> 中的44行 <strong>socket.gethostname()</strong> 为 <strong>‘127.0.0.1’</strong></p>
+</li>
+</ol>
+<p>如果在其他终端浏览器中通过该机IP查看端口1500不能访问的话则修改配置文件 <em>settings.py</em> </p>
+<pre><code>WEBAPP_IP = &#39;127.0.0.1&#39;
+</code></pre>
+<p>将其值修改为对应的机器IP，并重启 .&#x2F;webapp.d 即可</p>
+<p>Graphite后端 Carbon和Whisper的安装 <a href="http://segmentfault.com/a/1190000002533877">点这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/监控/">监控</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2015/11/17/Centos%E4%B8%8B%E5%B8%83%E7%BD%AEkale%E7%B3%BB%E7%BB%9Fskyline/" data-title="Centos下布置kale系统skyline | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/11/17/Kale系统skyline的过滤算法/" title="Kale系统skyline的过滤算法">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Kale系统skyline的过滤算法</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/11/12/正向代理与反向代理的区别/"  title="正向代理与反向代理的区别">
+ <strong>下一篇：</strong><br/> 
+ <span>正向代理与反向代理的区别
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2015/11/17/Centos下布置kale系统skyline/" data-title="Centos下布置kale系统skyline" data-url="https://luckymrwang.github.io/2015/11/17/Centos%E4%B8%8B%E5%B8%83%E7%BD%AEkale%E7%B3%BB%E7%BB%9Fskyline/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ 
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

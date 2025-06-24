@@ -1,0 +1,716 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Kubernetes client-go解析 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="注：本次使用的client-go版本为：client-go 11.0，主要参考CSDN上的深入浅出kubernetes之client-go系列，建议看本文前先参考该文档。本文档为CSDN文档的深挖和补充。本文中的visio图可以从这里获取 下图为来自官方的Client-go架构图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kubernetes client-go解析">
+<meta property="og:url" content="https://luckymrwang.github.io/2020/12/27/Kubernetes-client-go%E8%A7%A3%E6%9E%90/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="注：本次使用的client-go版本为：client-go 11.0，主要参考CSDN上的深入浅出kubernetes之client-go系列，建议看本文前先参考该文档。本文档为CSDN文档的深挖和补充。本文中的visio图可以从这里获取 下图为来自官方的Client-go架构图">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go1.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go3.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go4.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go5.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go6.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go7.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go8.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go9.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/client-go10.png">
+<meta property="article:published_time" content="2020-12-27T14:56:51.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.195Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/client-go1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/12/27/Kubernetes-client-go解析/" title="Kubernetes client-go解析" itemprop="url">Kubernetes client-go解析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-27T14:56:51.000Z" itemprop="datePublished"> 发表于 2020-12-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Indexer"><span class="toc-number">1.</span> <span class="toc-text">Indexer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DeltaFIFO"><span class="toc-number">2.</span> <span class="toc-text">DeltaFIFO</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ListWatch"><span class="toc-number">3.</span> <span class="toc-text">ListWatch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reflector"><span class="toc-number">4.</span> <span class="toc-text">Reflector</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Controller"><span class="toc-number">5.</span> <span class="toc-text">Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ShareInformer"><span class="toc-number">6.</span> <span class="toc-text">ShareInformer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SharedInformerFactory"><span class="toc-number">7.</span> <span class="toc-text">SharedInformerFactory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#workqueue"><span class="toc-number">8.</span> <span class="toc-text">workqueue</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97"><span class="toc-number">8.1.</span> <span class="toc-text">延时队列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%99%90%E9%80%9F%E9%98%9F%E5%88%97"><span class="toc-number">8.2.</span> <span class="toc-text">限速队列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BucketRateLimiter"><span class="toc-number">8.3.</span> <span class="toc-text">BucketRateLimiter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%99%90%E9%80%9F%E9%98%9F%E5%88%97%E7%9A%84%E8%B0%83%E7%94%A8"><span class="toc-number">8.4.</span> <span class="toc-text">限速队列的调用</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<p>注：本次使用的client-go版本为：<strong>client-go 11.0</strong>，主要参考CSDN上的<a href="https://so.csdn.net/so/search/s.do?q=%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAkubernetes%E4%B9%8Bclient-go&t=blog&u=weixin_42663840">深入浅出kubernetes之client-go</a>系列，建议看本文前先参考该文档。本文档为CSDN文档的深挖和补充。<br>本文中的visio图可以从<a href="https://files.cnblogs.com/files/charlieroro/client-go.rar">这里</a>获取</p>
+<p>下图为来自<a href="https://github.com/kubernetes/sample-controller/blob/master/docs/images/client-go-controller-interaction.jpeg">官方</a>的Client-go架构图</p>
+<span id="more"></span>
+
+<p><img src="/images/client-go1.png" alt="client-go"></p>
+<p>下图也可以作为参考</p>
+<p><img src="/images/client-go2.png" alt="client-go"></p>
+<h3 id="Indexer"><a href="#Indexer" class="headerlink" title="Indexer"></a>Indexer</h3><p>Indexer保存了来自apiServer的资源。使用listWatch方式来维护资源的增量变化。通过这种方式可以减小对apiServer的访问，减轻apiServer端的压力</p>
+<p>Indexer的接口定义如下，它继承了Store接口，Store中定义了对对象的增删改查等方法。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/index.gotype Indexer interface &#123;</span></span><br><span class="line">    Store</span><br><span class="line">    <span class="comment">// Retrieve list of objects that match on the named indexing function</span></span><br><span class="line">    Index(indexName <span class="type">string</span>, obj <span class="keyword">interface</span>&#123;&#125;) ([]<span class="keyword">interface</span>&#123;&#125;, <span class="type">error</span>)</span><br><span class="line">    <span class="comment">// IndexKeys returns the set of keys that match on the named indexing function.</span></span><br><span class="line">    IndexKeys(indexName, indexKey <span class="type">string</span>) ([]<span class="type">string</span>, <span class="type">error</span>)</span><br><span class="line">    <span class="comment">// ListIndexFuncValues returns the list of generated values of an Index func</span></span><br><span class="line">    ListIndexFuncValues(indexName <span class="type">string</span>) []<span class="type">string</span></span><br><span class="line">    <span class="comment">// ByIndex lists object that match on the named indexing function with the exact key</span></span><br><span class="line">    ByIndex(indexName, indexKey <span class="type">string</span>) ([]<span class="keyword">interface</span>&#123;&#125;, <span class="type">error</span>)</span><br><span class="line">    <span class="comment">// GetIndexer return the indexers</span></span><br><span class="line">    GetIndexers() Indexers</span><br><span class="line"></span><br><span class="line">    <span class="comment">// AddIndexers adds more indexers to this store.  If you call this after you already have data</span></span><br><span class="line">    <span class="comment">// in the store, the results are undefined.</span></span><br><span class="line">    AddIndexers(newIndexers Indexers) <span class="type">error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/store.gotype Store interface &#123;</span></span><br><span class="line">    Add(obj <span class="keyword">interface</span>&#123;&#125;) <span class="type">error</span></span><br><span class="line">    Update(obj <span class="keyword">interface</span>&#123;&#125;) <span class="type">error</span></span><br><span class="line">    Delete(obj <span class="keyword">interface</span>&#123;&#125;) <span class="type">error</span></span><br><span class="line">    List() []<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">    ListKeys() []<span class="type">string</span></span><br><span class="line">    Get(obj <span class="keyword">interface</span>&#123;&#125;) (item <span class="keyword">interface</span>&#123;&#125;, exists <span class="type">bool</span>, err <span class="type">error</span>)</span><br><span class="line">    GetByKey(key <span class="type">string</span>) (item <span class="keyword">interface</span>&#123;&#125;, exists <span class="type">bool</span>, err <span class="type">error</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Replace will delete the contents of the store, using instead the</span></span><br><span class="line">    <span class="comment">// given list. Store takes ownership of the list, you should not reference</span></span><br><span class="line">    <span class="comment">// it after calling this function.</span></span><br><span class="line">    Replace([]<span class="keyword">interface</span>&#123;&#125;, <span class="type">string</span>) <span class="type">error</span></span><br><span class="line">    Resync() <span class="type">error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>cache实现了Indexer接口，但cache是包内私有的(首字母小写)，只能通过包内封装的函数进行调用。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/store.gotype cache struct &#123;</span></span><br><span class="line">    <span class="comment">// cacheStorage bears the burden of thread safety for the cache</span></span><br><span class="line">    cacheStorage ThreadSafeStore</span><br><span class="line">    <span class="comment">// keyFunc is used to make the key for objects stored in and retrieved from items, and</span></span><br><span class="line">    <span class="comment">// should be deterministic.</span></span><br><span class="line">    keyFunc KeyFunc</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/thread_safe_store.go</span></span><br><span class="line"><span class="keyword">type</span> ThreadSafeStore <span class="keyword">interface</span> &#123;</span><br><span class="line">    Add(key <span class="type">string</span>, obj <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">    Update(key <span class="type">string</span>, obj <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">    Delete(key <span class="type">string</span>)</span><br><span class="line">    Get(key <span class="type">string</span>) (item <span class="keyword">interface</span>&#123;&#125;, exists <span class="type">bool</span>)</span><br><span class="line">    List() []<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">    ListKeys() []<span class="type">string</span></span><br><span class="line">    Replace(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;, <span class="type">string</span>)</span><br><span class="line">    Index(indexName <span class="type">string</span>, obj <span class="keyword">interface</span>&#123;&#125;) ([]<span class="keyword">interface</span>&#123;&#125;, <span class="type">error</span>)</span><br><span class="line">    IndexKeys(indexName, indexKey <span class="type">string</span>) ([]<span class="type">string</span>, <span class="type">error</span>)</span><br><span class="line">    ListIndexFuncValues(name <span class="type">string</span>) []<span class="type">string</span></span><br><span class="line">    ByIndex(indexName, indexKey <span class="type">string</span>) ([]<span class="keyword">interface</span>&#123;&#125;, <span class="type">error</span>)</span><br><span class="line">    GetIndexers() Indexers</span><br><span class="line"></span><br><span class="line">    <span class="comment">// AddIndexers adds more indexers to this store.  If you call this after you already have data</span></span><br><span class="line">    <span class="comment">// in the store, the results are undefined.</span></span><br><span class="line">    AddIndexers(newIndexers Indexers) <span class="type">error</span></span><br><span class="line">    Resync() <span class="type">error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以通过NewStore和NewIndexer初始化cache来返回一个Store或Indexer指针(cache实现了Store和Indexer接口)。NewStore和NewIndexer返回的Store和Indexer接口的数据载体为threadSafeMap，threadSafeMap通过NewThreadSafeStore函数初始化。</p>
+<p>注：运行go语言接口中的方法即运行该方法的实现。以threadSafeMap为例，在运行cache.Add函数中的“c.cacheStorage.Add(key, obj)”时，实际是在运行”(&amp;threadSafeMap{items:map[string]interface{}{}, indexers: indexers, indices:  indices}).Add(key, obj)“</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/store.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *cache)</span></span> Add(obj <span class="keyword">interface</span>&#123;&#125;) <span class="type">error</span> &#123;</span><br><span class="line">    key, err := c.keyFunc(obj)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> KeyError&#123;obj, err&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    c.cacheStorage.Add(key, obj)</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/store.go// NewStore returns a Store implemented simply with a map and a lock.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewStore</span><span class="params">(keyFunc KeyFunc)</span></span> Store &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;cache&#123;</span><br><span class="line">        cacheStorage: NewThreadSafeStore(Indexers&#123;&#125;, Indices&#123;&#125;),</span><br><span class="line">        keyFunc:      keyFunc,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// NewIndexer returns an Indexer implemented simply with a map and a lock.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewIndexer</span><span class="params">(keyFunc KeyFunc, indexers Indexers)</span></span> Indexer &#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;cache&#123;</span><br><span class="line">        cacheStorage: NewThreadSafeStore(indexers, Indices&#123;&#125;),</span><br><span class="line">        keyFunc:      keyFunc,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>client-go中的很多实现封装都非常规范，index.go中给出了索引相关的操作(接口)；store.go中给出了与操作存储相关的接口，并提供了一个cache实现，当然也可以实现自行实现Store接口；thread_safe_store.go为cache的私有实现。</p>
+<p>client-go的indexer实际操作的还是threadSafeMap中的方法和数据，调用关系如下：</p>
+<p><img src="/images/client-go3.png" alt="client-go"></p>
+<p>可以通过下图理解threadSafeMap中各种索引之间的关系</p>
+<p><img src="/images/client-go4.png" alt="client-go"></p>
+<ul>
+<li>indexer实际的对象存储在threadSafeMap结构中</li>
+<li>indexers划分了不同的索引类型(indexName，如namespace)，并按照索引类型进行索引(indexFunc，如MetaNamespaceIndexFunc)，得出符合该对象的索引键(indexKeys，如namespaces)，一个对象在一个索引类型中可能有多个索引键。</li>
+<li>indices按照索引类型保存了索引(index，如包含所有namespaces下面的obj)，进而可以按照索引键找出特定的对象键(keys，如某个namespace下面的对象键)，indices用于快速查找对象</li>
+<li>items按照对象键保存了实际的对象</li>
+</ul>
+<p>以namespace作为索引类型为例来讲，首先从indexers获取计算namespace的indexFunc，然后使用该indexFunc计算出与入参对象相关的所有namespaces。indices中保存了所有namespaces下面的对象键，可以获取特定namespace下面的所有对象键，在items中输入特定的对象键就可以得出特定的对象。indexers用于找出与特定对象相关的资源，如找出某Pod相关的secrets。</p>
+<p>默认的indexFunc如下，根据对象的namespace进行分类</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/index.gofunc MetaNamespaceIndexFunc(obj interface&#123;&#125;) ([]string, error) &#123;</span></span><br><span class="line">    meta, err := meta.Accessor(obj)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> []<span class="type">string</span>&#123;<span class="string">&quot;&quot;</span>&#125;, fmt.Errorf(<span class="string">&quot;object has no meta: %v&quot;</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> []<span class="type">string</span>&#123;meta.GetNamespace()&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>cache结构中的keyFunc用于生成objectKey，下面是默认的keyFunc。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//client-go/tools/cache/thread_safe_store.gofunc MetaNamespaceKeyFunc(obj interface&#123;&#125;) (string, error) &#123;</span></span><br><span class="line">    <span class="keyword">if</span> key, ok := obj.(ExplicitKey); ok &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">string</span>(key), <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    meta, err := meta.Accessor(obj)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span>, fmt.Errorf(<span class="string">&quot;object has no meta: %v&quot;</span>, err)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(meta.GetNamespace()) &gt; <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> meta.GetNamespace() + <span class="string">&quot;/&quot;</span> + meta.GetName(), <span class="literal">nil</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> meta.GetName(), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="DeltaFIFO"><a href="#DeltaFIFO" class="headerlink" title="DeltaFIFO"></a>DeltaFIFO</h3><p>DeltaFIFO的源码注释写的比较清楚，它是一个生产者-消费者队列，生产者为Reflector，消费者为Pop()函数，从架构图中可以看出DeltaFIFO的数据来源为Reflector，通过Pop操作消费数据，消费的数据一方面存储到Indexer中，另一方面可以通过informer的handler进行处理(见下文)。informer的handler处理的数据需要与存储在Indexer中的数据匹配。需要注意的是，Pop的单位是一个Deltas，而不是Delta。</p>
+<p>DeltaFIFO同时实现了Queue和Store接口。DeltaFIFO使用Deltas保存了对象状态的变更(Add&#x2F;Delete&#x2F;Update)信息(如Pod的删除添加等)，Deltas缓存了针对相同对象的多个状态变更信息，如Pod的Deltas[0]可能更新了标签，Deltas[1]可能删除了该Pod。最老的状态变更信息为Newest()，最新的状态变更信息为Oldest()。使用中，获取DeltaFIFO中对象的key以及获取DeltaFIFO都以最新状态为准。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//client-go/tools/cache/delta_fifo.go</span></span><br><span class="line"><span class="keyword">type</span> Delta <span class="keyword">struct</span> &#123;</span><br><span class="line">    Type   DeltaType</span><br><span class="line">    Object <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Deltas is a list of one or more &#x27;Delta&#x27;s to an individual object.</span></span><br><span class="line"><span class="comment">// The oldest delta is at index 0, the newest delta is the last one.</span></span><br><span class="line"><span class="string">`type Deltas []Delta`</span></span><br></pre></td></tr></table></figure>
+
+<p>DeltaFIFO结构中比较难以理解的是knownObjects，它的类型为KeyListerGetter。其接口中的方法ListKeys和GetByKey也是Store接口中的方法，因此knownObjects能够被赋值为实现了Store的类型指针；同样地，由于Indexer继承了Store方法，因此knownObjects能够被赋值为实现了Indexer的类型指针。</p>
+<p>DeltaFIFO.knownObjects.GetByKey就是执行的store.go中的GetByKey函数，用于获取Indexer中的对象键。</p>
+<p>initialPopulationCount用于表示是否完成全量同步，initialPopulationCount在Replace函数中增加，在Pop函数中减小，当initialPopulationCount为0且populated为true时表示Pop了所有Replace添加到DeltaFIFO中的对象，populated用于判断是DeltaFIFO中是否为初始化状态(即没有处理过任何对象)。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//client-go/tools/cache/delta_fifo.go</span></span><br><span class="line"><span class="keyword">type</span> DeltaFIFO <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// lock/cond protects access to &#x27;items&#x27; and &#x27;queue&#x27;.</span></span><br><span class="line">    lock sync.RWMutex</span><br><span class="line">    cond sync.Cond</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We depend on the property that items in the set are in</span></span><br><span class="line">    <span class="comment">// the queue and vice versa, and that all Deltas in this</span></span><br><span class="line">    <span class="comment">// map have at least one Delta.</span></span><br><span class="line">    <span class="string">`items`</span> <span class="keyword">map</span>[<span class="type">string</span>]Deltas</span><br><span class="line">    queue []<span class="type">string</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// populated is true if the first batch of items inserted by Replace() has been populated</span></span><br><span class="line">    <span class="comment">// or Delete/Add/Update was called first.</span></span><br><span class="line">    populated <span class="type">bool</span></span><br><span class="line">    <span class="comment">// initialPopulationCount is the number of items inserted by the first call of Replace()</span></span><br><span class="line">    <span class="string">`initialPopulationCount`</span> <span class="type">int</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// keyFunc is used to make the key used for queued item</span></span><br><span class="line">    <span class="comment">// insertion and retrieval, and should be deterministic.</span></span><br><span class="line">    keyFunc KeyFunc  <span class="comment">//用于计算Delta的key</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// knownObjects list keys that are &quot;known&quot;, for the</span></span><br><span class="line">    <span class="comment">// purpose of figuring out which items have been deleted</span></span><br><span class="line">    <span class="comment">// when Replace() or Delete() is called.</span></span><br><span class="line">    <span class="string">`knownObjects`</span> KeyListerGetter<span class="comment">// Indication the queue is closed.</span></span><br><span class="line">    <span class="comment">// Used to indicate a queue is closed so a control loop can exit when a queue is empty.</span></span><br><span class="line">    <span class="comment">// Currently, not used to gate any of CRED operations.</span></span><br><span class="line">    closed     <span class="type">bool</span></span><br><span class="line">    closedLock sync.Mutex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A KeyListerGetter is anything that knows how to list its keys and look up by key.</span></span><br><span class="line"><span class="keyword">type</span> KeyListerGetter <span class="keyword">interface</span> &#123;</span><br><span class="line">    KeyLister</span><br><span class="line">    KeyGetter</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// A KeyLister is anything that knows how to list its keys.</span></span><br><span class="line"><span class="keyword">type</span> KeyLister <span class="keyword">interface</span> &#123;</span><br><span class="line">    ListKeys() []<span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// A KeyGetter is anything that knows how to get the value stored under a given key.</span></span><br><span class="line"><span class="keyword">type</span> KeyGetter <span class="keyword">interface</span> &#123;</span><br><span class="line">    GetByKey(key <span class="type">string</span>) (<span class="keyword">interface</span>&#123;&#125;, <span class="type">bool</span>, <span class="type">error</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在NewSharedIndexInformer(<code>client-go/tools/cache/shared_informer.go</code>)函数中使用下面进行初始化一个sharedIndexInformer，即使用函数DeletionHandlingMetaNamespaceKeyFunc初始化indexer，并在sharedIndexInformer.Run中将该indexer作为knownObjects入参，最终初始化为一个DeltaFIFO。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NewIndexer(DeletionHandlingMetaNamespaceKeyFunc, indexers) <span class="comment">//NewDeltaFIFO</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fifo := NewDeltaFIFO(MetaNamespaceKeyFunc, s.indexer) <span class="comment">//sharedIndexInformer.Run</span></span><br></pre></td></tr></table></figure>
+
+<p>DeltaFIFO实现了Queue接口。可以看到Queue接口同时也(Indexer继承了Store)继承了Store接口。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//client-go/tools/cache/delta_fifo.go</span></span><br><span class="line"><span class="keyword">type</span> Queue <span class="keyword">interface</span> &#123;</span><br><span class="line">    Store</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Pop blocks until it has something to process.</span></span><br><span class="line">    <span class="comment">// It returns the object that was process and the result of processing.</span></span><br><span class="line">    <span class="comment">// The PopProcessFunc may return an ErrRequeue&#123;...&#125; to indicate the item</span></span><br><span class="line">    <span class="comment">// should be requeued before releasing the lock on the queue.</span></span><br><span class="line">    Pop(PopProcessFunc) (<span class="keyword">interface</span>&#123;&#125;, <span class="type">error</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// AddIfNotPresent adds a value previously</span></span><br><span class="line">    <span class="comment">// returned by Pop back into the queue as long</span></span><br><span class="line">    <span class="comment">// as nothing else (presumably more recent)</span></span><br><span class="line">    <span class="comment">// has since been added.</span></span><br><span class="line">    AddIfNotPresent(<span class="keyword">interface</span>&#123;&#125;) <span class="type">error</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// HasSynced returns true if the first batch of items has been popped</span></span><br><span class="line">    HasSynced() <span class="type">bool</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Close queue</span></span><br><span class="line">    Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>knownObjects实际使用时为Indexer，它对应图2中的localStore，DeltaFIFO根据其保存的对象状态变更消息处理(增&#x2F;删&#x2F;改&#x2F;同步)knownObjects中相应的对象。其中同步(Sync)Detals中即将被删除的对象是没有意义的(参见willObjectBeDeletedLocked函数)。</p>
+<p>ListWatch的list步骤中会调用Replace(<code>client-go/tools/cache/delta_fifo.go</code>)函数来对DeltaFIFO进行全量更新，包括3个步骤：</p>
+<ul>
+<li>Sync所有DeltaFIFO中的对象，将输入对象全部加入DeltaFIFO；</li>
+<li>如果knownObjects为空，则删除DeltaFIFO中不存在于输入对象的对象，使DeltaFIFO中的有效对象(非DeletedFinalStateUnknown)等同于输入对象；</li>
+<li>如果knownObjects非空，获取knownObjects中不存在于输入对象的对象，并在DeltaFIFO中删除这些对象。</li>
+</ul>
+<p>第2步好理解，knownObjects为空，只需要更新DeltaFIFO即可。第3步中，当knownObjects非空时，需要以knowObjects为基准进行对象的删除，否则会造成indexer中的数据与apiserver的数据不一致，举个例子，比如knownObjects中的对象为{obj1, obj2, obj3}，而DeltaFIFO中待处理的对象为{obj2, obj3,obj4}，如果仅按照2步骤进行处理，会导致knownObjects中残留obj1，因此需要在DeltaFIFO中添加删除obj1变更消息。从下面ShareInformer章节的图中可以看出，knownObjects(即Indexer)的数据只能通过DeltaFIFO变更。</p>
+<p><img src="/images/client-go5.png" alt="client-go"></p>
+<h3 id="ListWatch"><a href="#ListWatch" class="headerlink" title="ListWatch"></a>ListWatch</h3><p>Lister用于获取某个资源(如Pod)的全量，Watcher用于获取某个资源的增量变化。实际使用中Lister和Watcher都从apiServer获取资源信息，Lister一般用于首次获取某资源(如Pod)的全量信息，而Watcher用于持续获取该资源的增量变化信息。Lister和Watcher的接口定义如下，使用NewListWatchFromClient函数来初始化ListerWatcher</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/listwatch.go</span></span><br><span class="line"><span class="keyword">type</span> Lister <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// List should return a list type object; the Items field will be extracted, and the</span></span><br><span class="line">    <span class="comment">// ResourceVersion field will be used to start the watch in the right place.</span></span><br><span class="line">    List(options metav1.ListOptions) (runtime.Object, <span class="type">error</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Watcher is any object that knows how to start a watch on a resource.</span></span><br><span class="line"><span class="keyword">type</span> Watcher <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// Watch should begin a watch at the specified version.</span></span><br><span class="line">    Watch(options metav1.ListOptions) (watch.Interface, <span class="type">error</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ListerWatcher is any object that knows how to perform an initial list and start a watch on a resource.</span></span><br><span class="line"><span class="keyword">type</span> ListerWatcher <span class="keyword">interface</span> &#123;</span><br><span class="line">    Lister</span><br><span class="line">    Watcher</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在workqueue的例子中可以看到调用NewListWatchFromClient的地方，该例子会从clientset.CoreV1().RESTClient()获取”pods”的相关信息。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/examples/workqueue/main.go</span></span><br><span class="line"><span class="comment">// create the pod watcher</span></span><br><span class="line">podListWatcher := cache.NewListWatchFromClient(<span class="string">`clientset.CoreV1().RESTClient()`</span>, <span class="string">&quot;pods&quot;</span>, v1.NamespaceDefault, fields.Everything())</span><br></pre></td></tr></table></figure>
+
+<p>cache.NewListWatchFromClient函数中的资源名称可以从types.go中获得</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// k8s.io/api/core/v1/types.go</span></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    <span class="comment">// Pods, number</span></span><br><span class="line">    ResourcePods ResourceName = <span class="string">&quot;pods&quot;</span></span><br><span class="line">    <span class="comment">// Services, number</span></span><br><span class="line">    ResourceServices ResourceName = <span class="string">&quot;services&quot;</span></span><br><span class="line">    <span class="comment">// ReplicationControllers, number</span></span><br><span class="line">    ResourceReplicationControllers ResourceName = <span class="string">&quot;replicationcontrollers&quot;</span></span><br><span class="line">    <span class="comment">// ResourceQuotas, number</span></span><br><span class="line">    ResourceQuotas ResourceName = <span class="string">&quot;resourcequotas&quot;</span></span><br><span class="line">    <span class="comment">// ResourceSecrets, number</span></span><br><span class="line">    ResourceSecrets ResourceName = <span class="string">&quot;secrets&quot;</span></span><br><span class="line">    <span class="comment">// ResourceConfigMaps, number</span></span><br><span class="line">    ResourceConfigMaps ResourceName = <span class="string">&quot;configmaps&quot;</span></span><br><span class="line">    <span class="comment">// ResourcePersistentVolumeClaims, number</span></span><br><span class="line">    ResourcePersistentVolumeClaims ResourceName = <span class="string">&quot;persistentvolumeclaims&quot;</span></span><br><span class="line">    <span class="comment">// ResourceServicesNodePorts, number</span></span><br><span class="line">    ResourceServicesNodePorts ResourceName = <span class="string">&quot;services.nodeports&quot;</span></span><br><span class="line">    <span class="comment">// ResourceServicesLoadBalancers, number</span></span><br><span class="line">    ResourceServicesLoadBalancers ResourceName = <span class="string">&quot;services.loadbalancers&quot;</span></span><br><span class="line">    <span class="comment">// CPU request, in cores. (500m = .5 cores)</span></span><br><span class="line">    ResourceRequestsCPU ResourceName = <span class="string">&quot;requests.cpu&quot;</span></span><br><span class="line">    <span class="comment">// Memory request, in bytes. (500Gi = 500GiB = 500 * 1024 * 1024 * 1024)</span></span><br><span class="line">    ResourceRequestsMemory ResourceName = <span class="string">&quot;requests.memory&quot;</span></span><br><span class="line">    <span class="comment">// Storage request, in bytes</span></span><br><span class="line">    ResourceRequestsStorage ResourceName = <span class="string">&quot;requests.storage&quot;</span></span><br><span class="line">    <span class="comment">// Local ephemeral storage request, in bytes. (500Gi = 500GiB = 500 * 1024 * 1024 * 1024)</span></span><br><span class="line">    ResourceRequestsEphemeralStorage ResourceName = <span class="string">&quot;requests.ephemeral-storage&quot;</span></span><br><span class="line">    <span class="comment">// CPU limit, in cores. (500m = .5 cores)</span></span><br><span class="line">    ResourceLimitsCPU ResourceName = <span class="string">&quot;limits.cpu&quot;</span></span><br><span class="line">    <span class="comment">// Memory limit, in bytes. (500Gi = 500GiB = 500 * 1024 * 1024 * 1024)</span></span><br><span class="line">    ResourceLimitsMemory ResourceName = <span class="string">&quot;limits.memory&quot;</span></span><br><span class="line">    <span class="comment">// Local ephemeral storage limit, in bytes. (500Gi = 500GiB = 500 * 1024 * 1024 * 1024)</span></span><br><span class="line">    ResourceLimitsEphemeralStorage ResourceName = <span class="string">&quot;limits.ephemeral-storage&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+
+<p>除了可以从CoreV1版本的API group获取RESTClient信息外，还可以从下面Clientset结构体定义的API group中获取信息</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/kubernetes/clientset.go</span></span><br><span class="line"><span class="keyword">type</span> Clientset <span class="keyword">struct</span> &#123;</span><br><span class="line">    *discovery.DiscoveryClient</span><br><span class="line">    admissionregistrationV1beta1 *admissionregistrationv1beta1.AdmissionregistrationV1beta1Client</span><br><span class="line">    appsV1                       *appsv1.AppsV1Client</span><br><span class="line">    appsV1beta1                  *appsv1beta1.AppsV1beta1Client</span><br><span class="line">    appsV1beta2                  *appsv1beta2.AppsV1beta2Client</span><br><span class="line">    auditregistrationV1alpha1    *auditregistrationv1alpha1.AuditregistrationV1alpha1Client</span><br><span class="line">    authenticationV1             *authenticationv1.AuthenticationV1Client</span><br><span class="line">    authenticationV1beta1        *authenticationv1beta1.AuthenticationV1beta1Client</span><br><span class="line">    authorizationV1              *authorizationv1.AuthorizationV1Client</span><br><span class="line">    authorizationV1beta1         *authorizationv1beta1.AuthorizationV1beta1Client</span><br><span class="line">    autoscalingV1                *autoscalingv1.AutoscalingV1Client</span><br><span class="line">    autoscalingV2beta1           *autoscalingv2beta1.AutoscalingV2beta1Client</span><br><span class="line">    autoscalingV2beta2           *autoscalingv2beta2.AutoscalingV2beta2Client</span><br><span class="line">    batchV1                      *batchv1.BatchV1Client</span><br><span class="line">    batchV1beta1                 *batchv1beta1.BatchV1beta1Client</span><br><span class="line">    batchV2alpha1                *batchv2alpha1.BatchV2alpha1Client</span><br><span class="line">    certificatesV1beta1          *certificatesv1beta1.CertificatesV1beta1Client</span><br><span class="line">    coordinationV1beta1          *coordinationv1beta1.CoordinationV1beta1Client</span><br><span class="line">    coordinationV1               *coordinationv1.CoordinationV1Client</span><br><span class="line">    coreV1                       *corev1.CoreV1Client</span><br><span class="line">    eventsV1beta1                *eventsv1beta1.EventsV1beta1Client</span><br><span class="line">    extensionsV1beta1            *extensionsv1beta1.ExtensionsV1beta1Client</span><br><span class="line">    networkingV1                 *networkingv1.NetworkingV1Client</span><br><span class="line">    networkingV1beta1            *networkingv1beta1.NetworkingV1beta1Client</span><br><span class="line">    nodeV1alpha1                 *nodev1alpha1.NodeV1alpha1Client</span><br><span class="line">    nodeV1beta1                  *nodev1beta1.NodeV1beta1Client</span><br><span class="line">    policyV1beta1                *policyv1beta1.PolicyV1beta1Client</span><br><span class="line">    rbacV1                       *rbacv1.RbacV1Client</span><br><span class="line">    rbacV1beta1                  *rbacv1beta1.RbacV1beta1Client</span><br><span class="line">    rbacV1alpha1                 *rbacv1alpha1.RbacV1alpha1Client</span><br><span class="line">    schedulingV1alpha1           *schedulingv1alpha1.SchedulingV1alpha1Client</span><br><span class="line">    schedulingV1beta1            *schedulingv1beta1.SchedulingV1beta1Client</span><br><span class="line">    schedulingV1                 *schedulingv1.SchedulingV1Client</span><br><span class="line">    settingsV1alpha1             *settingsv1alpha1.SettingsV1alpha1Client</span><br><span class="line">    storageV1beta1               *storagev1beta1.StorageV1beta1Client</span><br><span class="line">    storageV1                    *storagev1.StorageV1Client</span><br><span class="line">    storageV1alpha1              *storagev1alpha1.StorageV1alpha1Client</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>RESTClient()的返回值为Interface接口类型，该类型中包含如下对资源的操作方法，如Get()就封装了HTTP的Get方法。NewListWatchFromClient初始化ListWatch的时候使用了Get方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/rest/client.go</span></span><br><span class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</span><br><span class="line">    GetRateLimiter() flowcontrol.RateLimiter</span><br><span class="line">    Verb(verb <span class="type">string</span>) *Request</span><br><span class="line">    Post() *Request</span><br><span class="line">    Put() *Request</span><br><span class="line">    Patch(pt types.PatchType) *Request</span><br><span class="line">    Get() *Request</span><br><span class="line">    Delete() *Request</span><br><span class="line">    APIVersion() schema.GroupVersion</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Reflector"><a href="#Reflector" class="headerlink" title="Reflector"></a>Reflector</h3><p>reflector使用listerWatcher获取资源，并将其保存在store中，此处的store就是DeltaFIFO，Reflector核心处理函数为ListAndWatch(client-go&#x2F;tools&#x2F;cache&#x2F;reflector.go)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/reflector.go</span></span><br><span class="line"><span class="keyword">type</span> Reflector <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// name identifies this reflector. By default it will be a file:line if possible.</span></span><br><span class="line">    name <span class="type">string</span></span><br><span class="line">    <span class="comment">// metrics tracks basic metric information about the reflector</span></span><br><span class="line">    metrics *reflectorMetrics</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The type of object we expect to place in the store.</span></span><br><span class="line">    expectedType reflect.Type</span><br><span class="line">    <span class="comment">// The destination to sync up with the watch source</span></span><br><span class="line">    <span class="string">`store Store`</span></span><br><span class="line">    <span class="comment">// listerWatcher is used to perform lists and watches.</span></span><br><span class="line">    <span class="string">`listerWatcher ListerWatcher`</span></span><br><span class="line">    <span class="comment">// period controls timing between one watch ending and</span></span><br><span class="line">    <span class="comment">// the beginning of the next one.</span></span><br><span class="line">    period       time.Duration</span><br><span class="line">    resyncPeriod time.Duration</span><br><span class="line">    ShouldResync <span class="function"><span class="keyword">func</span><span class="params">()</span></span> <span class="type">bool</span></span><br><span class="line">    <span class="comment">// clock allows tests to manipulate time</span></span><br><span class="line">    clock clock.Clock</span><br><span class="line">    <span class="comment">// lastSyncResourceVersion is the resource version token last</span></span><br><span class="line">    <span class="comment">// observed when doing a sync with the underlying store</span></span><br><span class="line">    <span class="comment">// it is thread safe, but not synchronized with the underlying store</span></span><br><span class="line">    lastSyncResourceVersion <span class="type">string</span></span><br><span class="line">    <span class="comment">// lastSyncResourceVersionMutex guards read/write access to lastSyncResourceVersion</span></span><br><span class="line">    lastSyncResourceVersionMutex sync.RWMutex</span><br><span class="line">    <span class="comment">// WatchListPageSize is the requested chunk size of initial and resync watch lists.</span></span><br><span class="line">    <span class="comment">// Defaults to pager.PageSize.</span></span><br><span class="line">    WatchListPageSize <span class="type">int64</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ListAndWatch在Reflector.Run函数中启动，并以Reflector.period周期性进行调度。ListAndWatch使用resourceVersion来获取资源的增量变化：在List时会获取资源的首个resourceVersion值，在Watch的时候会使用List获取的resourceVersion来获取资源的增量变化，然后将获取到的资源的resourceVersion保存起来，作为下一次Watch的基线。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/reflector.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *Reflector)</span></span> Run(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;) &#123;</span><br><span class="line">    klog.V(<span class="number">3</span>).Infof(<span class="string">&quot;Starting reflector %v (%s) from %s&quot;</span>, r.expectedType, r.resyncPeriod, r.name)</span><br><span class="line">    wait.Until(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> err := r.ListAndWatch(stopCh); err != <span class="literal">nil</span> &#123;</span><br><span class="line">            utilruntime.HandleError(err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, r.period, stopCh)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如可以使用如下命令获取Pod的resourceVersion</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># oc get pod $PodName -oyaml|grep resourceVersion:</span><br><span class="line">resourceVersion: &quot;4993804&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/client-go6.png" alt="client-go"></p>
+<p>上图中的Resync触发的Sync动作，其作用与Replace中的第三步相同，用于将knowObject中的对象与DeltaFIFO中同步。这种操作是有必要的</p>
+<h3 id="Controller"><a href="#Controller" class="headerlink" title="Controller"></a>Controller</h3><p>controller的结构如下，其包含一个配置变量config，在注释中可以看到Config.Queue就是DeltaFIFO。controller定义了如何调度Reflector。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/controller.go</span></span><br><span class="line"><span class="keyword">type</span> controller <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="string">`config         Config`</span></span><br><span class="line">    reflector      *Reflector</span><br><span class="line">    reflectorMutex sync.RWMutex</span><br><span class="line">    clock          clock.Clock</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/controller.go</span></span><br><span class="line"><span class="keyword">type</span> Config <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// The queue for your objects - has to be a DeltaFIFO due to</span></span><br><span class="line">    <span class="comment">// assumptions in the implementation. Your Process() function</span></span><br><span class="line">    <span class="comment">// should accept the output of this Queue&#x27;s Pop() method.</span></span><br><span class="line">    Queue</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Something that can list and watch your objects.</span></span><br><span class="line">    ListerWatcher</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Something that can process your objects.</span></span><br><span class="line">    Process ProcessFunc</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The type of your objects.</span></span><br><span class="line">    ObjectType runtime.Object</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Reprocess everything at least this often.</span></span><br><span class="line">    <span class="comment">// Note that if it takes longer for you to clear the queue than this</span></span><br><span class="line">    <span class="comment">// period, you will end up processing items in the order determined</span></span><br><span class="line">    <span class="comment">// by FIFO.Replace(). Currently, this is random. If this is a</span></span><br><span class="line">    <span class="comment">// problem, we can change that replacement policy to append new</span></span><br><span class="line">    <span class="comment">// things to the end of the queue instead of replacing the entire</span></span><br><span class="line">    <span class="comment">// queue.</span></span><br><span class="line">    FullResyncPeriod time.Duration</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ShouldResync, if specified, is invoked when the controller&#x27;s reflector determines the next</span></span><br><span class="line">    <span class="comment">// periodic sync should occur. If this returns true, it means the reflector should proceed with</span></span><br><span class="line">    <span class="comment">// the resync.</span></span><br><span class="line">    ShouldResync ShouldResyncFunc</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If true, when Process() returns an error, re-enqueue the object.</span></span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> add interface to let you inject a delay/backoff or drop</span></span><br><span class="line">    <span class="comment">//       the object completely if desired. Pass the object in</span></span><br><span class="line">    <span class="comment">//       question to this interface as a parameter.</span></span><br><span class="line">    RetryOnError <span class="type">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>controller的框架比较简单它使用wg.StartWithChannel启动Reflector.Run，相当于启动了一个DeltaFIFO的生产者(wg.StartWithChannel(stopCh, r.Run)表示可以将r.Run放在独立的协程运行，并可以使用stopCh来停止r.Run)；使用wait.Until来启动一个消费者(wait.Until(c.processLoop, time.Second, stopCh)表示每秒会触发一次c.processLoop，但如果c.processLoop在1秒之内没有结束，则运行c.processLoop继续运行，不会结束其运行状态)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/controller.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *controller)</span></span> Run(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;) &#123;</span><br><span class="line">    <span class="keyword">defer</span> utilruntime.HandleCrash()</span><br><span class="line">    <span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        &lt;-stopCh</span><br><span class="line">        c.config.Queue.Close()</span><br><span class="line">    &#125;()</span><br><span class="line">    r := NewReflector(</span><br><span class="line">        c.config.ListerWatcher,</span><br><span class="line">        c.config.ObjectType,</span><br><span class="line">        c.config.Queue,</span><br><span class="line">        c.config.FullResyncPeriod,</span><br><span class="line">    )</span><br><span class="line">    r.ShouldResync = c.config.ShouldResync</span><br><span class="line">    r.clock = c.clock</span><br><span class="line"></span><br><span class="line">    c.reflectorMutex.Lock()</span><br><span class="line">    c.reflector = r</span><br><span class="line">    c.reflectorMutex.Unlock()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> wg wait.Group</span><br><span class="line">    <span class="keyword">defer</span> wg.Wait()</span><br><span class="line"></span><br><span class="line">    <span class="string">`wg.StartWithChannel(stopCh, r.Run)`</span></span><br><span class="line"></span><br><span class="line">    <span class="string">`wait.Until(c.processLoop, time.Second, stopCh)`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>processLoop的框架也很简单，它运行了DeltaFIFO.Pop函数，用于消费DeltaFIFO中的对象，并在DeltaFIFO.Pop运行失败后可能重新处理该对象(AddIfNotPresent)</p>
+<p>注：c.config.RetryOnError在目前版本中初始化为False</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/controller.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *controller)</span></span> processLoop() &#123;</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        <span class="string">`obj, err := c.config.Queue.Pop(PopProcessFunc(c.config.Process))`</span></span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> err == FIFOClosedError &#123;</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> c.config.RetryOnError &#123;</span><br><span class="line">                <span class="comment">// This is the safe way to re-enqueue.</span></span><br><span class="line">                <span class="string">`c.config.Queue.AddIfNotPresent(obj)`</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//client-go/tools/cache/shared_informer.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *sharedIndexInformer)</span></span> Run(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;) &#123;</span><br><span class="line">    <span class="keyword">defer</span> utilruntime.HandleCrash()</span><br><span class="line"></span><br><span class="line">    fifo := NewDeltaFIFO(MetaNamespaceKeyFunc, s.indexer)</span><br><span class="line"></span><br><span class="line">    cfg := &amp;Config&#123;</span><br><span class="line">        Queue:            fifo,</span><br><span class="line">        ListerWatcher:    s.listerWatcher,</span><br><span class="line">        ObjectType:       s.objectType,</span><br><span class="line">        FullResyncPeriod: s.resyncCheckPeriod,</span><br><span class="line">        RetryOnError:     <span class="literal">false</span>,</span><br><span class="line">        ShouldResync:     s.processor.shouldResync,</span><br><span class="line"></span><br><span class="line">        Process: s.HandleDeltas,</span><br><span class="line">    &#125;...</span><br></pre></td></tr></table></figure>
+
+<h3 id="ShareInformer"><a href="#ShareInformer" class="headerlink" title="ShareInformer"></a>ShareInformer</h3><p>下图为SharedInformer的运行图。可以看出SharedInformer启动了controller，reflector，并将其与Indexer结合起来。</p>
+<p><em>注：不同颜色表示不同的chan，相同颜色表示在同一个chan中的处理</em></p>
+<p><img src="/images/client-go7.png" alt="client-go"></p>
+<p>SharedInformer.Run启动了两个chan，s.c.Run为controller的入口，s.c.Run函数中会Pop DeltaFIFO中的元素，并根据DeltaFIFO的元素的类型(Sync&#x2F;Added&#x2F;Updated&#x2F;Deleted)进两类处理，一类会使用indexer.Update,indexer,Add,indexer.Delete对保存的在Store中的数据进行处理；另一类会根据DeltaFIFO的元素的类型将其封装为sharedInformer内部类型updateNotification，addNotification，deleteNotification，传递给s.processor.Listeners.addCh，后续给注册的pl.handler处理。</p>
+<p>s.processor.run主要用于处理注册的handler，processorListener.run函数接受processorListener.nextCh中的值，将其作为参数传递给handler进行处理。而processorListener.pop负责将processorListener.addCh中的元素缓存到p.pendingNotifications，并读取p.pendingNotifications中的元素，将其传递到processorListener.nextCh。即processorListener.pop负责管理数据，processorListener.run负责使用processorListener.pop管理的数据进行处理。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/controller.go</span></span><br><span class="line"><span class="keyword">type</span> ResourceEventHandler <span class="keyword">interface</span> &#123;</span><br><span class="line">    OnAdd(obj <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">    OnUpdate(oldObj, newObj <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">    OnDelete(obj <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>sharedIndexInformer有3个状态：启动前，启动后，停止后，由started, stopped两个bool值表示。</p>
+<ul>
+<li>stopped&#x3D;true表示inforer不再运作且不能添加新的handler(因为即使添加了也不会运行)</li>
+<li>informer启动前和停止后允许添加新的indexer(sharedIndexInformer.AddIndexers)，但不能在informer运行时添加，因为此时需要通过listwatch以及handler等一系列处理来操作sharedIndexInformer.inxder。如果允许同时使用sharedIndexInformer.AddIndexers，可能会造成数据不一致。</li>
+</ul>
+<p>还有一个状态sharedProcessor.listenersStarted，用于表示是否所有的s.processor.Listeners都已经启动，如果已经启动，则在添加新的processorListener时，需要运行新添加的processorListener，否则仅仅添加即可(添加后同样会被sharedProcessor.run调度)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/tools/cache/shared_informer.go</span></span><br><span class="line"><span class="keyword">type</span> sharedIndexInformer <span class="keyword">struct</span> &#123;</span><br><span class="line">    indexer    Indexer</span><br><span class="line">    controller Controller</span><br><span class="line"></span><br><span class="line">    processor             *sharedProcessor</span><br><span class="line">    cacheMutationDetector CacheMutationDetector</span><br><span class="line"></span><br><span class="line">    <span class="comment">// This block is tracked to handle late initialization of the controller</span></span><br><span class="line">    listerWatcher ListerWatcher</span><br><span class="line">    objectType    runtime.Object</span><br><span class="line"></span><br><span class="line">    <span class="comment">// resyncCheckPeriod is how often we want the reflector&#x27;s resync timer to fire so it can call</span></span><br><span class="line">    <span class="comment">// shouldResync to check if any of our listeners need a resync.</span></span><br><span class="line">    resyncCheckPeriod time.Duration</span><br><span class="line">    <span class="comment">// defaultEventHandlerResyncPeriod is the default resync period for any handlers added via</span></span><br><span class="line">    <span class="comment">// AddEventHandler (i.e. they don&#x27;t specify one and just want to use the shared informer&#x27;s default</span></span><br><span class="line">    <span class="comment">// value).</span></span><br><span class="line">    defaultEventHandlerResyncPeriod time.Duration</span><br><span class="line">    <span class="comment">// clock allows for testability</span></span><br><span class="line">    clock clock.Clock</span><br><span class="line"></span><br><span class="line">    <span class="string">`started, stopped bool`</span></span><br><span class="line">    startedLock      sync.Mutex</span><br><span class="line"></span><br><span class="line">    <span class="comment">// blockDeltas gives a way to stop all event distribution so that a late event handler</span></span><br><span class="line">    <span class="comment">// can safely join the shared informer.</span></span><br><span class="line">    blockDeltas sync.Mutex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="SharedInformerFactory"><a href="#SharedInformerFactory" class="headerlink" title="SharedInformerFactory"></a>SharedInformerFactory</h3><p>sharedInformerFactory接口的内容如下，它按照group和version对informer进行了分类。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/informers/factory.go</span></span><br><span class="line"><span class="keyword">type</span> SharedInformerFactory <span class="keyword">interface</span> &#123;</span><br><span class="line">    internalinterfaces.SharedInformerFactory</span><br><span class="line">    ForResource(resource schema.GroupVersionResource) (GenericInformer, <span class="type">error</span>)</span><br><span class="line">    WaitForCacheSync(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;) <span class="keyword">map</span>[reflect.Type]<span class="type">bool</span></span><br><span class="line"></span><br><span class="line">    <span class="string">`Admissionregistration() admissionregistration.Interface</span></span><br><span class="line"><span class="string">    Apps() apps.Interface</span></span><br><span class="line"><span class="string">    Auditregistration() auditregistration.Interface</span></span><br><span class="line"><span class="string">    Autoscaling() autoscaling.Interface</span></span><br><span class="line"><span class="string">    Batch() batch.Interface</span></span><br><span class="line"><span class="string">    Certificates() certificates.Interface</span></span><br><span class="line"><span class="string">    Coordination() coordination.Interface</span></span><br><span class="line"><span class="string">    Core() core.Interface</span></span><br><span class="line"><span class="string">    Events() events.Interface</span></span><br><span class="line"><span class="string">    Extensions() extensions.Interface</span></span><br><span class="line"><span class="string">    Networking() networking.Interface</span></span><br><span class="line"><span class="string">    Node() node.Interface</span></span><br><span class="line"><span class="string">    Policy() policy.Interface</span></span><br><span class="line"><span class="string">    Rbac() rbac.Interface</span></span><br><span class="line"><span class="string">    Scheduling() scheduling.Interface</span></span><br><span class="line"><span class="string">    Settings() settings.Interface</span></span><br><span class="line"><span class="string">    Storage() storage.Interface`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注：下图来自<a href="https://blog.csdn.net/weixin_42663840/article/details/81980022">https://blog.csdn.net/weixin_42663840&#x2F;article&#x2F;details&#x2F;81980022</a></p>
+<p><img src="/images/client-go8.png" alt="client-go"></p>
+<p>sharedInformerFactory负责在不同的chan中启动不同的informer(或shared_informer)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/informers/factory.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *sharedInformerFactory)</span></span> Start(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;) &#123;</span><br><span class="line">    f.lock.Lock()</span><br><span class="line">    <span class="keyword">defer</span> f.lock.Unlock()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> informerType, informer := <span class="keyword">range</span> f.informers &#123;</span><br><span class="line">        <span class="keyword">if</span> !f.startedInformers[informerType] &#123;</span><br><span class="line">            <span class="keyword">go</span> informer.Run(stopCh)</span><br><span class="line">            f.startedInformers[informerType] = <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那sharedInformerFactory启动的informer又是怎么注册到sharedInformerFactory.informers中的呢？informer的注册函数统一为InformerFor，代码如下，所有类型的informer都会调用该函数注册到sharedInformerFactory</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/informers/factory.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f *sharedInformerFactory)</span></span> InformerFor(obj runtime.Object, newFunc internalinterfaces.NewInformerFunc) cache.SharedIndexInformer &#123;</span><br><span class="line">    f.lock.Lock()</span><br><span class="line">    <span class="keyword">defer</span> f.lock.Unlock()</span><br><span class="line"></span><br><span class="line">    informerType := reflect.TypeOf(obj)</span><br><span class="line">    informer, exists := f.informers[informerType]</span><br><span class="line">    <span class="keyword">if</span> exists &#123;</span><br><span class="line">        <span class="keyword">return</span> informer</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    resyncPeriod, exists := f.customResync[informerType]</span><br><span class="line">    <span class="keyword">if</span> !exists &#123;</span><br><span class="line">        resyncPeriod = f.defaultResync</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    informer = newFunc(f.client, resyncPeriod)</span><br><span class="line">    f.informers[informerType] = informer</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> informer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面以(Core，v1，podInformer)为例结合client-go中提供的代码进行讲解。代码如下，在调用informers.Core().V1().Pods().Informer()的时候会同时调用informers.InformerFor注册到sharedInformerFactory，后续直接调用informers.Start启动注册的informer。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/examples/fake-client/main_test.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestFakeClient</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">    ctx, cancel := context.WithCancel(context.Background())</span><br><span class="line">    <span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create the fake client.</span></span><br><span class="line">    client := fake.NewSimpleClientset()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We will create an informer that writes added pods to a channel.</span></span><br><span class="line">    pods := <span class="built_in">make</span>(<span class="keyword">chan</span> *v1.Pod, <span class="number">1</span>)</span><br><span class="line">    informers := informers.NewSharedInformerFactory(client, <span class="number">0</span>)    <span class="comment">//创建一个新的shareInformerFactory</span></span><br><span class="line">    podInformer := informers.Core().V1().Pods().Informer()        <span class="comment">//创建一个podInformer，并调用InformerFor函数进行注册</span></span><br><span class="line">    podInformer.AddEventHandler(&amp;cache.ResourceEventHandlerFuncs&#123;</span><br><span class="line">        AddFunc: <span class="function"><span class="keyword">func</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</span><br><span class="line">            pod := obj.(*v1.Pod)</span><br><span class="line">            t.Logf(<span class="string">&quot;pod added: %s/%s&quot;</span>, pod.Namespace, pod.Name)</span><br><span class="line">            pods &lt;- pod</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Make sure informers are running.</span></span><br><span class="line">    informers.Start(ctx.Done())                                   <span class="comment">//启动所有的informer    ...</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="workqueue"><a href="#workqueue" class="headerlink" title="workqueue"></a>workqueue</h3><p>indexer用于保存apiserver的资源信息，而workqueue用于保存informer中的handler处理之后的数据。workqueue的接口定义如下： </p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/queue.go</span></span><br><span class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</span><br><span class="line">    Add(item <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">    Len() <span class="type">int</span></span><br><span class="line">    Get() (item <span class="keyword">interface</span>&#123;&#125;, shutdown <span class="type">bool</span>)</span><br><span class="line">    Done(item <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">    ShutDown()</span><br><span class="line">    ShuttingDown() <span class="type">bool</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/client-go9.png" alt="client-go"></p>
+<p>参见上图可以看到真正处理的元素来自queue，dirty和queue中的元素可能不一致，不一致点来自于当Get一个元素后且Done执行前，此时Get操作会删除dirty中的该元素，如果此时发生了Add正在处理的元素的操作，由于此时dirty中没有该元素且processing中存在该元素，会发生dirty中的元素大于queue中元素的情况。但对某一元素的不一致会在Done完成后消除，即Done函数中会判断该元素是否在dirty中，如果存在则会将该元素append到queue中。总之，dirty中的数据都会被append到queue中，后续queue中的数据会insert到processing中进行处理()</p>
+<p>Type实现了Interface接口。包含下面几个变量：</p>
+<ul>
+<li>queue：使用数组顺序存储了待处理的元素；</li>
+<li>dirty：使用哈希表存储了需要处理的元素，它包含了queue中的所有元素，用于快速查找元素，dirty中可能包含queue中不存在的元素。dirty可以防止重复添加正在处理的元素；</li>
+<li>processing：使用哈希表保存了正在处理的元素，它不包含queue中的元素，但可能包含dirty中的元素</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/queue.go</span></span><br><span class="line"><span class="comment">// Type is a work queue (see the package comment).</span></span><br><span class="line"><span class="keyword">type</span> Type <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// queue defines the order in which we will work on items. Every</span></span><br><span class="line">    <span class="comment">// element of queue should be in the dirty set and not in the</span></span><br><span class="line">    <span class="comment">// processing set.</span></span><br><span class="line">    <span class="string">`queue []t`</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// dirty defines all of the items that need to be processed.</span></span><br><span class="line">    <span class="string">`dirty set`</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Things that are currently being processed are in the processing set.</span></span><br><span class="line">    <span class="comment">// These things may be simultaneously in the dirty set. When we finish</span></span><br><span class="line">    <span class="comment">// processing something and remove it from this set, we&#x27;ll check if</span></span><br><span class="line">    <span class="comment">// it&#x27;s in the dirty set, and if so, add it to the queue.</span></span><br><span class="line">    <span class="string">`processing set`</span></span><br><span class="line"></span><br><span class="line">    cond *sync.Cond</span><br><span class="line"></span><br><span class="line">    shuttingDown <span class="type">bool</span></span><br><span class="line"></span><br><span class="line">    metrics queueMetrics</span><br><span class="line"></span><br><span class="line">    unfinishedWorkUpdatePeriod time.Duration</span><br><span class="line">    clock                      clock.Clock</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>workqueue的使用例子可以参见client-go&#x2F;util&#x2F;workqueue&#x2F;queue_test.go</p>
+<h4 id="延时队列"><a href="#延时队列" class="headerlink" title="延时队列"></a>延时队列</h4><p>延时队列接口继承了queue的Interface接口，仅新增了一个AddAfter方法，它用于在duration时间之后将元素添加到queue中。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/delaying_queue.go</span></span><br><span class="line"><span class="keyword">type</span> DelayingInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">    Interface</span><br><span class="line">    <span class="comment">// AddAfter adds an item to the workqueue after the indicated duration has passed</span></span><br><span class="line">    AddAfter(item <span class="keyword">interface</span>&#123;&#125;, duration time.Duration)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>delayingType实现了DelayingInterface接口使用waitingForAddCh来传递需要添加到queue的元素，</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/delaying_queue.go</span></span><br><span class="line"><span class="keyword">type</span> delayingType <span class="keyword">struct</span> &#123;</span><br><span class="line">    Interface</span><br><span class="line"></span><br><span class="line">    <span class="comment">// clock tracks time for delayed firing</span></span><br><span class="line">    clock clock.Clock</span><br><span class="line"></span><br><span class="line">    <span class="comment">// stopCh lets us signal a shutdown to the waiting loop</span></span><br><span class="line">    stopCh <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">    <span class="comment">// stopOnce guarantees we only signal shutdown a single time</span></span><br><span class="line">    stopOnce sync.Once</span><br><span class="line"></span><br><span class="line">    <span class="comment">// heartbeat ensures we wait no more than maxWait before firing</span></span><br><span class="line">    heartbeat clock.Ticker</span><br><span class="line"></span><br><span class="line">    <span class="comment">// waitingForAddCh is a buffered channel that feeds waitingForAdd</span></span><br><span class="line">    <span class="string">`waitingForAddCh chan *waitFor`</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// metrics counts the number of retries</span></span><br><span class="line">    metrics           retryMetrics</span><br><span class="line">    deprecatedMetrics retryMetrics</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>delayingType.waitingForAddCh中的元素如果没有超过延时时间会添加到waitForPriorityQueue中，否则直接加入queue中。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/delaying_queue.go</span></span><br><span class="line"><span class="keyword">type</span> waitForPriorityQueue []*waitFor</span><br></pre></td></tr></table></figure>
+
+<p>延时队列实现逻辑比较简单，需要注意的是waitingForQueue是以heap方式实现的队列，队列的pop和push等操作使用的是heap.pop和heap.push</p>
+<p><img src="/images/client-go10.png" alt="client-go"></p>
+<h4 id="限速队列"><a href="#限速队列" class="headerlink" title="限速队列"></a>限速队列</h4><p>限速队列实现了3个接口，When用于返回元素的重试时间，Forget用于清除元素的重试记录，NumRequeues返回元素的重试次数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//client-go/util/workqueue/default_rate_limiter.go</span></span><br><span class="line"><span class="keyword">type</span> RateLimiter <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// When gets an item and gets to decide how long that item should wait</span></span><br><span class="line">    When(item <span class="keyword">interface</span>&#123;&#125;) time.Duration</span><br><span class="line">    <span class="comment">// Forget indicates that an item is finished being retried.  Doesn&#x27;t matter whether its for perm failing</span></span><br><span class="line">    <span class="comment">// or for success, we&#x27;ll stop tracking it</span></span><br><span class="line">    Forget(item <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">    <span class="comment">// NumRequeues returns back how many failures the item has had</span></span><br><span class="line">    NumRequeues(item <span class="keyword">interface</span>&#123;&#125;) <span class="type">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ItemExponentialFailureRateLimiter对使用指数退避的方式进行失败重试，当failures增加时，下次重试的时间就变为了baseDelay.Nanoseconds()) * math.Pow(2, float64(exp)，maxDelay用于限制重试时间的最大值，当计算的重试时间超过maxDelay时则采用maxDelay</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/default_rate_limiters.go</span></span><br><span class="line"><span class="keyword">type</span> ItemExponentialFailureRateLimiter <span class="keyword">struct</span> &#123;</span><br><span class="line">    failuresLock sync.Mutex</span><br><span class="line">    <span class="string">`failures`</span>     <span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]<span class="type">int</span></span><br><span class="line"></span><br><span class="line">    <span class="string">`baseDelay`</span> time.Duration</span><br><span class="line">    <span class="string">`maxDelay`</span>  time.Duration</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ItemFastSlowRateLimiter针对失败次数采用不同的重试时间。当重试次数小于maxFastAttempts时，重试时间为fastDelay，否则为slowDelay。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/default_rate_limiters.go</span></span><br><span class="line"><span class="keyword">type</span> ItemFastSlowRateLimiter <span class="keyword">struct</span> &#123;</span><br><span class="line">    failuresLock sync.Mutex</span><br><span class="line">    failures     <span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]<span class="type">int</span></span><br><span class="line"></span><br><span class="line">    <span class="string">`maxFastAttempts`</span> <span class="type">int</span></span><br><span class="line">    <span class="string">`fastDelay`</span>       time.Duration</span><br><span class="line">    <span class="string">`slowDelay`</span>       time.Duration</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>MaxOfRateLimiter为一个限速队列列表，它的实现中返回列表中重试时间最长的限速队列的值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/default_rate_limiters.go</span></span><br><span class="line"><span class="keyword">type</span> MaxOfRateLimiter <span class="keyword">struct</span> &#123;</span><br><span class="line">    limiters []RateLimiter</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *MaxOfRateLimiter)</span></span> When(item <span class="keyword">interface</span>&#123;&#125;) time.Duration &#123;</span><br><span class="line">    ret := time.Duration(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">for</span> _, limiter := <span class="keyword">range</span> r.limiters &#123;</span><br><span class="line">        curr := limiter.When(item)</span><br><span class="line">        <span class="keyword">if</span> curr &gt; ret &#123;</span><br><span class="line">            ret = curr</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="BucketRateLimiter"><a href="#BucketRateLimiter" class="headerlink" title="BucketRateLimiter"></a>BucketRateLimiter</h4><p>使用令牌桶实现一个固定速率的限速器</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/default_rate_limiters.go</span></span><br><span class="line"><span class="keyword">type</span> BucketRateLimiter <span class="keyword">struct</span> &#123;</span><br><span class="line">    *rate.Limiter</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="限速队列的调用"><a href="#限速队列的调用" class="headerlink" title="限速队列的调用"></a>限速队列的调用</h4><p>所有的限速队列实际上就是根据不同的需求，最终提供一个延时时间，在延时时间到后通过AddAfter函数将元素添加添加到队列中。在queue.go中给出了workqueue的基本框架，delaying_queue.go扩展了workqueue的功能，提供了限速的功能，而default_rate_limiters.go提供了多种限速队列，用于给delaying_queue.go中的AddAfter提供延时参数，最后rate_limiting_queue.go给出了使用使用限速队列的入口。</p>
+<p>RateLimitingInterface为限速队列入口，AddRateLimited</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-g0/util/workqueue/rate_limiting_queue.go</span></span><br><span class="line"><span class="keyword">type</span> RateLimitingInterface <span class="keyword">interface</span> &#123;</span><br><span class="line">    DelayingInterface</span><br><span class="line"></span><br><span class="line">    <span class="comment">// AddRateLimited adds an item to the workqueue after the rate limiter says it&#x27;s ok</span></span><br><span class="line">    AddRateLimited(item <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Forget indicates that an item is finished being retried.  Doesn&#x27;t matter whether it&#x27;s for perm failing</span></span><br><span class="line">    <span class="comment">// or for success, we&#x27;ll stop the rate limiter from tracking it.  This only clears the `rateLimiter`, you</span></span><br><span class="line">    <span class="comment">// still have to call `Done` on the queue.</span></span><br><span class="line">    Forget(item <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// NumRequeues returns back how many times the item was requeued</span></span><br><span class="line">    NumRequeues(item <span class="keyword">interface</span>&#123;&#125;) <span class="type">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>rateLimitingType实现了RateLimitingInterface接口，第二个参数就是限速队列接口。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-g0/util/workqueue/rate_limiting_queue.go</span></span><br><span class="line"><span class="keyword">type</span> rateLimitingType <span class="keyword">struct</span> &#123;</span><br><span class="line">    DelayingInterface</span><br><span class="line"></span><br><span class="line">    rateLimiter RateLimiter</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面是限速队列的使用：</p>
+<ul>
+<li>使用NewItemExponentialFailureRateLimiter初始化一个限速器</li>
+<li>使用NewRateLimitingQueue新建一个限速队列，并使用上一步的限速器进行初始化</li>
+<li>后续就可以使用AddRateLimited添加元素</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// client-go/util/workqueue/rate_limiting_queue_test.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestRateLimitingQueue</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">    limiter := NewItemExponentialFailureRateLimiter(<span class="number">1</span>*time.Millisecond, <span class="number">1</span>*time.Second)</span><br><span class="line">    queue := NewRateLimitingQueue(limiter).(*rateLimitingType)</span><br><span class="line">    fakeClock := clock.NewFakeClock(time.Now())</span><br><span class="line">    delayingQueue := &amp;delayingType&#123;</span><br><span class="line">        Interface:         New(),</span><br><span class="line">        clock:             fakeClock,</span><br><span class="line">        heartbeat:         fakeClock.NewTicker(maxWait),</span><br><span class="line">        stopCh:            <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;),</span><br><span class="line">        waitingForAddCh:   <span class="built_in">make</span>(<span class="keyword">chan</span> *waitFor, <span class="number">1000</span>),</span><br><span class="line">        metrics:           newRetryMetrics(<span class="string">&quot;&quot;</span>),</span><br><span class="line">        deprecatedMetrics: newDeprecatedRetryMetrics(<span class="string">&quot;&quot;</span>),</span><br><span class="line">    &#125;</span><br><span class="line">    queue.DelayingInterface = delayingQueue</span><br><span class="line"></span><br><span class="line">    queue.AddRateLimited(<span class="string">&quot;one&quot;</span>)</span><br><span class="line">    waitEntry := &lt;-delayingQueue.waitingForAddCh</span><br><span class="line">    <span class="keyword">if</span> e, a := <span class="number">1</span>*time.Millisecond, waitEntry.readyAt.Sub(fakeClock.Now()); e != a &#123;</span><br><span class="line">        t.Errorf(<span class="string">&quot;expected %v, got %v&quot;</span>, e, a)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    queue.Forget(<span class="string">&quot;one&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> e, a := <span class="number">0</span>, queue.NumRequeues(<span class="string">&quot;one&quot;</span>); e != a &#123;</span><br><span class="line">        t.Errorf(<span class="string">&quot;expected %v, got %v&quot;</span>, e, a)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><em>PS：后续会使用client-go编写简单程序</em></p>
+<p>TIPS：</p>
+<ul>
+<li>使用Client-go编写程序时，需要注意client-go的版本需要与对接的kubernetes相匹配，对应关系参见<a href="github">github</a></li>
+<li>实际使用中会先创建SharedIndexInformer，DeltaFIFO和Reflector是在SharedIndexInformer.Run过程中自动创建的。用户通过SharedIndexInformer暴露的接口对其进行操作，通常为对SharedIndexInformer的indexer进行操作，添加eventhandler以及判断是否sync过。主要接口如下，其中GetStore和GetIndexer功能相同，返回informer的indexer</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"># client-<span class="keyword">go</span>/tools/cache/shared_informer.gotype SharedInformer <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// AddEventHandler adds an event handler to the shared informer using the shared informer&#x27;s resync</span></span><br><span class="line">    <span class="comment">// period.  Events to a single handler are delivered sequentially, but there is no coordination</span></span><br><span class="line">    <span class="comment">// between different handlers.</span></span><br><span class="line">    AddEventHandler(handler ResourceEventHandler)</span><br><span class="line">    <span class="comment">// AddEventHandlerWithResyncPeriod adds an event handler to the</span></span><br><span class="line">    <span class="comment">// shared informer using the specified resync period.  The resync</span></span><br><span class="line">    <span class="comment">// operation consists of delivering to the handler a create</span></span><br><span class="line">    <span class="comment">// notification for every object in the informer&#x27;s local cache; it</span></span><br><span class="line">    <span class="comment">// does not add any interactions with the authoritative storage.</span></span><br><span class="line">    AddEventHandlerWithResyncPeriod(handler ResourceEventHandler, resyncPeriod time.Duration)</span><br><span class="line">    <span class="comment">// GetStore returns the informer&#x27;s local cache as a Store.</span></span><br><span class="line">    GetStore() Store</span><br><span class="line">    <span class="comment">// GetController gives back a synthetic interface that &quot;votes&quot; to start the informer</span></span><br><span class="line">    GetController() Controller</span><br><span class="line">    <span class="comment">// Run starts and runs the shared informer, returning after it stops.</span></span><br><span class="line">    <span class="comment">// The informer will be stopped when stopCh is closed.</span></span><br><span class="line">    Run(stopCh &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;)</span><br><span class="line">    <span class="comment">// HasSynced returns true if the shared informer&#x27;s store has been</span></span><br><span class="line">    <span class="comment">// informed by at least one full LIST of the authoritative state</span></span><br><span class="line">    <span class="comment">// of the informer&#x27;s object collection.  This is unrelated to &quot;resync&quot;.</span></span><br><span class="line">    HasSynced() <span class="type">bool</span></span><br><span class="line">    <span class="comment">// LastSyncResourceVersion is the resource version observed when last synced with the underlying</span></span><br><span class="line">    <span class="comment">// store. The value returned is not synchronized with access to the underlying store and is not</span></span><br><span class="line">    <span class="comment">// thread-safe.</span></span><br><span class="line">    LastSyncResourceVersion() <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> SharedIndexInformer <span class="keyword">interface</span> &#123;</span><br><span class="line">    SharedInformer</span><br><span class="line">    <span class="comment">// AddIndexers add indexers to the informer before it starts.</span></span><br><span class="line">    AddIndexers(indexers Indexers) <span class="type">error</span></span><br><span class="line">    GetIndexer() Indexer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参考:</p>
+<ul>
+<li><a href="https://www.huweihuang.com/kubernetes-notes/code-analysis/kube-controller-manager/sharedIndexInformer.html">https://www.huweihuang.com/kubernetes-notes/code-analysis/kube-controller-manager/sharedIndexInformer.html</a></li>
+<li><a href="https://rancher.com/using-kubernetes-api-go-kubecon-2017-session-recap/">https://rancher.com/using-kubernetes-api-go-kubecon-2017-session-recap/</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/">https://kubernetes.io/docs/tasks/access-kubernetes-api/custom-resources/custom-resource-definitions/</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/">https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/</a></li>
+<li><a href="https://www.jianshu.com/p/d17f70369c35">https://www.jianshu.com/p/d17f70369c35</a></li>
+<li><a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/controllers.md">https://github.com/kubernetes/community/blob/master/contributors/devel/sig-api-machinery/controllers.md</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2020/12/27/Kubernetes-client-go%E8%A7%A3%E6%9E%90/" data-title="Kubernetes client-go解析 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/12/28/破解-Java-Agent-探针黑科技/" title="破解 Java Agent 探针黑科技">
+  <strong>上一篇：</strong><br/>
+  <span>
+  破解 Java Agent 探针黑科技</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/12/17/Examples-For-Using-io-Pipe-in-Go/"  title="Examples For Using io.Pipe in Go">
+ <strong>下一篇：</strong><br/> 
+ <span>Examples For Using io.Pipe in Go
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2020/12/27/Kubernetes-client-go解析/" data-title="Kubernetes client-go解析" data-url="https://luckymrwang.github.io/2020/12/27/Kubernetes-client-go%E8%A7%A3%E6%9E%90/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Indexer"><span class="toc-number">1.</span> <span class="toc-text">Indexer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DeltaFIFO"><span class="toc-number">2.</span> <span class="toc-text">DeltaFIFO</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ListWatch"><span class="toc-number">3.</span> <span class="toc-text">ListWatch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Reflector"><span class="toc-number">4.</span> <span class="toc-text">Reflector</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Controller"><span class="toc-number">5.</span> <span class="toc-text">Controller</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ShareInformer"><span class="toc-number">6.</span> <span class="toc-text">ShareInformer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SharedInformerFactory"><span class="toc-number">7.</span> <span class="toc-text">SharedInformerFactory</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#workqueue"><span class="toc-number">8.</span> <span class="toc-text">workqueue</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97"><span class="toc-number">8.1.</span> <span class="toc-text">延时队列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%99%90%E9%80%9F%E9%98%9F%E5%88%97"><span class="toc-number">8.2.</span> <span class="toc-text">限速队列</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BucketRateLimiter"><span class="toc-number">8.3.</span> <span class="toc-text">BucketRateLimiter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%99%90%E9%80%9F%E9%98%9F%E5%88%97%E7%9A%84%E8%B0%83%E7%94%A8"><span class="toc-number">8.4.</span> <span class="toc-text">限速队列的调用</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

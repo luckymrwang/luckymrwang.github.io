@@ -1,0 +1,610 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Commit message 和 Change log 编写指南 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Git 每次提交代码，都要写 Commit message（提交说明），否则就不允许提交。 1$ git commit -m &quot;hello world&quot;  上面代码的-m参数，就是用来指定 commit mesage 的。 如果一行不够，可以只执行git commit，就会跳出文本编辑器，让你写多行。 1$ git commit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Commit message 和 Change log 编写指南">
+<meta property="og:url" content="https://luckymrwang.github.io/2023/01/06/Commit-message-%E5%92%8C-Change-log-%E7%BC%96%E5%86%99%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Git 每次提交代码，都要写 Commit message（提交说明），否则就不允许提交。 1$ git commit -m &quot;hello world&quot;  上面代码的-m参数，就是用来指定 commit mesage 的。 如果一行不够，可以只执行git commit，就会跳出文本编辑器，让你写多行。 1$ git commit">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/gitcommit1.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/gitcommit2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/gitcommit3.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/gitcommit4.png">
+<meta property="article:published_time" content="2023-01-06T08:20:52.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.188Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Git">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/gitcommit1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2023/01/06/Commit-message-和-Change-log-编写指南/" title="Commit message 和 Change log 编写指南" itemprop="url">Commit message 和 Change log 编写指南</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2023-01-06T08:20:52.000Z" itemprop="datePublished"> 发表于 2023-01-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Commit-message-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">一、Commit message 的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Commit-message-%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">二、Commit message 的格式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Header"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 Header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Body"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 Body</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Footer"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 Footer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Revert"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 Revert</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Commitizen"><span class="toc-number">3.</span> <span class="toc-text">三、Commitizen</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81validate-commit-msg"><span class="toc-number">4.</span> <span class="toc-text">四、validate-commit-msg</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E7%94%9F%E6%88%90-Change-log"><span class="toc-number">5.</span> <span class="toc-text">五、生成 Change log</span></a></li></ol>
+		
+		</div>
+		
+		<p>Git 每次提交代码，都要写 Commit message（提交说明），否则就不允许提交。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git commit -m <span class="string">&quot;hello world&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>上面代码的<code>-m</code>参数，就是用来指定 commit mesage 的。</p>
+<p>如果一行不够，可以只执行<code>git commit</code>，就会跳出文本编辑器，让你写多行。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git commit</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+
+<p>基本上，你写什么都行（<a href="http://www.commitlogsfromlastnight.com/">这里</a>，<a href="http://blog.no-panic.at/2014/10/20/funny-initial-git-commit-messages/">这里</a>和<a href="http://whatthecommit.com/">这里</a>）。</p>
+<p>但是，一般来说，commit message 应该清晰明了，说明本次提交的目的。</p>
+<p><img src="/images/gitcommit1.png" alt="image"></p>
+<p>目前，社区有多种 Commit message 的<a href="https://github.com/ajoslin/conventional-changelog/blob/master/conventions">写法规范</a>。本文介绍<a href="https://docs.google.com/document/d/1QrDFcIiPjSLDn3EL15IJygNPiHORgU1_OOAqWjiDU5Y/edit#heading=h.greljkmo14y0">Angular 规范</a>（见上图），这是目前使用最广的写法，比较合理和系统化，并且有配套的工具。</p>
+<h2 id="一、Commit-message-的作用"><a href="#一、Commit-message-的作用" class="headerlink" title="一、Commit message 的作用"></a>一、Commit message 的作用</h2><p>格式化的Commit message，有几个好处。</p>
+<p><strong>（1）提供更多的历史信息，方便快速浏览。</strong></p>
+<p>比如，下面的命令显示上次发布后的变动，每个commit占据一行。你只看行首，就知道某次 commit 的目的。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> &lt;last tag&gt; HEAD --pretty=format:%s</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/gitcommit2.png" alt="image"></p>
+<p><strong>（2）可以过滤某些commit（比如文档改动），便于快速查找信息。</strong></p>
+<p>比如，下面的命令仅仅显示本次发布新增加的功能。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">log</span> &lt;last release&gt; HEAD --grep feature</span><br></pre></td></tr></table></figure>
+
+<p><strong>（3）可以直接从commit生成Change log。</strong></p>
+<p>Change Log 是发布新版本时，用来说明与上一个版本差异的文档，详见后文。</p>
+<p><img src="/images/gitcommit3.png" alt="image"></p>
+<h2 id="二、Commit-message-的格式"><a href="#二、Commit-message-的格式" class="headerlink" title="二、Commit message 的格式"></a>二、Commit message 的格式</h2><p>每次提交，Commit message 都包括三个部分：Header，Body 和 Footer。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="built_in">type</span>&gt;(&lt;scope&gt;): &lt;subject&gt;</span><br><span class="line">// 空一行</span><br><span class="line">&lt;body&gt;</span><br><span class="line">// 空一行</span><br><span class="line">&lt;footer&gt;</span><br></pre></td></tr></table></figure>
+
+<p>其中，Header 是必需的，Body 和 Footer 可以省略。</p>
+<p>不管是哪一个部分，任何一行都不得超过72个字符（或100个字符）。这是为了避免自动换行影响美观。</p>
+<h3 id="2-1-Header"><a href="#2-1-Header" class="headerlink" title="2.1 Header"></a>2.1 Header</h3><p>Header部分只有一行，包括三个字段：<code>type</code>（必需）、<code>scope</code>（可选）和<code>subject</code>（必需）。</p>
+<p><strong>（1）type</strong></p>
+<p><code>type</code> 用于说明 commit 的类别，只允许使用下面7个标识。</p>
+<ul>
+<li>feat：新功能（feature）</li>
+<li>fix：修补bug</li>
+<li>docs：文档（documentation）</li>
+<li>style： 格式（不影响代码运行的变动）</li>
+<li>refactor：重构（即不是新增功能，也不是修改bug的代码变动）</li>
+<li>test：增加测试</li>
+<li>chore：构建过程或辅助工具的变动</li>
+</ul>
+<p>如果<code>type</code>为<code>feat</code>和<code>fix</code>，则该 commit 将肯定出现在 Change log 之中。其他情况（<code>docs</code>、<code>chore</code>、<code>style</code>、<code>refactor</code>、<code>test</code>）由你决定，要不要放入 Change log，建议是不要。</p>
+<p><strong>（2）scope</strong></p>
+<p><code>scope</code>用于说明 commit 影响的范围，比如数据层、控制层、视图层等等，视项目不同而不同。</p>
+<p><strong>（3）subject</strong></p>
+<p><code>subject</code>是 commit 目的的简短描述，不超过50个字符。</p>
+<ul>
+<li>以动词开头，使用第一人称现在时，比如change，而不是changed或changes</li>
+<li>第一个字母小写</li>
+<li>结尾不加句号（.）</li>
+</ul>
+<h3 id="2-2-Body"><a href="#2-2-Body" class="headerlink" title="2.2 Body"></a>2.2 Body</h3><p>Body 部分是对本次 commit 的详细描述，可以分成多行。下面是一个范例。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">More detailed explanatory text, <span class="keyword">if</span> necessary.  Wrap it to </span><br><span class="line">about 72 characters or so. </span><br><span class="line"></span><br><span class="line">Further paragraphs come after blank lines.</span><br><span class="line"></span><br><span class="line">- Bullet points are okay, too</span><br><span class="line">- Use a hanging indent</span><br></pre></td></tr></table></figure>
+
+<p>有两个注意点。</p>
+<p>（1）使用第一人称现在时，比如使用<code>change</code>而不是<code>changed</code>或<code>changes</code>。</p>
+<p>（2）应该说明代码变动的动机，以及与以前行为的对比。</p>
+<h3 id="2-3-Footer"><a href="#2-3-Footer" class="headerlink" title="2.3 Footer"></a>2.3 Footer</h3><p>Footer 部分只用于两种情况。</p>
+<p><strong>（1）不兼容变动</strong></p>
+<p>如果当前代码与上一个版本不兼容，则 Footer 部分以<code>BREAKING CHANGE</code>开头，后面是对变动的描述、以及变动理由和迁移方法。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">BREAKING CHANGE: isolate scope bindings definition has changed.</span><br><span class="line"></span><br><span class="line">    To migrate the code follow the example below:</span><br><span class="line"></span><br><span class="line">    Before:</span><br><span class="line"></span><br><span class="line">    scope: &#123;</span><br><span class="line">      myAttr: <span class="string">&#x27;attribute&#x27;</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    After:</span><br><span class="line"></span><br><span class="line">    scope: &#123;</span><br><span class="line">      myAttr: <span class="string">&#x27;@&#x27;</span>,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    The removed `inject` wasn<span class="string">&#x27;t generaly useful for directives so there should be no code using it.</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>（2）关闭 Issue</strong></p>
+<p>如果当前 commit 针对某个issue，那么可以在 Footer 部分关闭这个 issue 。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Closes <span class="comment">#234</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以一次关闭多个 issue 。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Closes <span class="comment">#123, #245, #992</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-4-Revert"><a href="#2-4-Revert" class="headerlink" title="2.4 Revert"></a>2.4 Revert</h3><p>还有一种特殊情况，如果当前 commit 用于撤销以前的 commit，则必须以<code>revert:</code>开头，后面跟着被撤销 Commit 的 Header。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">revert: feat(pencil): add <span class="string">&#x27;graphiteWidth&#x27;</span> option</span><br><span class="line"></span><br><span class="line">This reverts commit 667ecc1654a317a13331b17617d973392f415f02.</span><br></pre></td></tr></table></figure>
+
+<p>Body部分的格式是固定的，必须写成<code>This reverts commit &amp;lt;hash&gt;.</code>，其中的<code>hash</code>是被撤销 commit 的 SHA 标识符。</p>
+<p>如果当前 commit 与被撤销的 commit，在同一个发布（release）里面，那么它们都不会出现在 Change log 里面。如果两者在不同的发布，那么当前 commit，会出现在 Change log 的<code>Reverts</code>小标题下面。</p>
+<h2 id="三、Commitizen"><a href="#三、Commitizen" class="headerlink" title="三、Commitizen"></a>三、Commitizen</h2><p><a href="https://github.com/commitizen/cz-cli">Commitizen</a>是一个撰写合格 Commit message 的工具。</p>
+<p>安装命令如下。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g commitizen</span><br></pre></td></tr></table></figure>
+
+<p>然后，在项目目录里，运行下面的命令，使其支持 Angular 的 Commit message 格式。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ commitizen init cz-conventional-changelog --save --save-exact</span><br></pre></td></tr></table></figure>
+
+<p>以后，凡是用到<code>git commit</code>命令，一律改为使用<code>git cz</code>。这时，就会出现选项，用来生成符合格式的 Commit message。</p>
+<p><img src="/images/gitcommit4.png" alt="image"></p>
+<h2 id="四、validate-commit-msg"><a href="#四、validate-commit-msg" class="headerlink" title="四、validate-commit-msg"></a>四、validate-commit-msg</h2><p><a href="https://github.com/kentcdodds/validate-commit-msg">validate-commit-msg</a> 用于检查 Node 项目的 Commit message 是否符合格式。</p>
+<p>它的安装是手动的。首先，拷贝下面这个<a href="https://github.com/kentcdodds/validate-commit-msg/blob/master/index.js">JS文件</a>，放入你的代码库。文件名可以取为<code>validate-commit-msg.js</code>。</p>
+<p>接着，把这个脚本加入 Git 的 hook。下面是在<code>package.json</code>里面使用 <a href="http://npm.im/ghooks">ghooks</a>，把这个脚本加为<code>commit-msg</code>时运行。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;config&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;ghooks&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;commit-msg&quot;</span><span class="punctuation">:</span> <span class="string">&quot;./validate-commit-msg.js&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后，每次<code>git commit</code>的时候，这个脚本就会自动检查 Commit message 是否合格。如果不合格，就会报错。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git add -A </span><br><span class="line">$ git commit -m <span class="string">&quot;edit markdown&quot;</span> </span><br><span class="line">INVALID COMMIT MSG: does not match <span class="string">&quot;&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;&quot;</span> ! was: edit markdown</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、生成-Change-log"><a href="#五、生成-Change-log" class="headerlink" title="五、生成 Change log"></a>五、生成 Change log</h2><p>如果你的所有 Commit 都符合 Angular 格式，那么发布新版本时， Change log 就可以用脚本自动生成（<a href="https://github.com/ajoslin/conventional-changelog/blob/master/CHANGELOG.md">例1</a>，<a href="https://github.com/karma-runner/karma/blob/master/CHANGELOG.md">例2</a>，<a href="https://github.com/btford/grunt-conventional-changelog/blob/master/CHANGELOG.md">例3</a>）。</p>
+<p>生成的文档包括以下三个部分。</p>
+<ul>
+<li>New features</li>
+<li>Bug fixes</li>
+<li>Breaking changes.</li>
+</ul>
+<p>每个部分都会罗列相关的 commit ，并且有指向这些 commit 的链接。当然，生成的文档允许手动修改，所以发布前，你还可以添加其他内容。</p>
+<p><a href="https://github.com/ajoslin/conventional-changelog">conventional-changelog</a> 就是生成 Change log 的工具，运行下面的命令即可。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g conventional-changelog</span><br><span class="line">$ cd my-project</span><br><span class="line">$ conventional-changelog -p angular -i <span class="variable constant_">CHANGELOG</span>.<span class="property">md</span> -w</span><br></pre></td></tr></table></figure>
+
+<p>上面命令不会覆盖以前的 Change log，只会在<code>CHANGELOG.md</code>的头部加上自从上次发布以来的变动。</p>
+<p>如果你想生成所有发布的 Change log，要改为运行下面的命令。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ conventional-changelog -p angular -i CHANGELOG.md -w -r 0</span><br></pre></td></tr></table></figure>
+
+<p>为了方便使用，可以将其写入<code>package.json</code>的<code>scripts</code>字段。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;scripts&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;changelog&quot;</span><span class="punctuation">:</span> <span class="string">&quot;conventional-changelog -p angular -i CHANGELOG.md -w -r 0&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>以后，直接运行下面的命令即可。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm run changelog</span><br></pre></td></tr></table></figure>
+
+<p>本文引自<a href="http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Git/">Git</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2023/01/06/Commit-message-%E5%92%8C-Change-log-%E7%BC%96%E5%86%99%E6%8C%87%E5%8D%97/" data-title="Commit message 和 Change log 编写指南 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2023/01/31/进程切换原理/" title="进程切换原理">
+  <strong>上一篇：</strong><br/>
+  <span>
+  进程切换原理</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2023/01/05/实验说明-Golang-HTTP-连接池参数/"  title="实验说明 Golang HTTP 连接池参数">
+ <strong>下一篇：</strong><br/> 
+ <span>实验说明 Golang HTTP 连接池参数
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2023/01/06/Commit-message-和-Change-log-编写指南/" data-title="Commit message 和 Change log 编写指南" data-url="https://luckymrwang.github.io/2023/01/06/Commit-message-%E5%92%8C-Change-log-%E7%BC%96%E5%86%99%E6%8C%87%E5%8D%97/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Commit-message-%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.</span> <span class="toc-text">一、Commit message 的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Commit-message-%E7%9A%84%E6%A0%BC%E5%BC%8F"><span class="toc-number">2.</span> <span class="toc-text">二、Commit message 的格式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-Header"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 Header</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-Body"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 Body</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-Footer"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 Footer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-Revert"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 Revert</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Commitizen"><span class="toc-number">3.</span> <span class="toc-text">三、Commitizen</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81validate-commit-msg"><span class="toc-number">4.</span> <span class="toc-text">四、validate-commit-msg</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E7%94%9F%E6%88%90-Change-log"><span class="toc-number">5.</span> <span class="toc-text">五、生成 Change log</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

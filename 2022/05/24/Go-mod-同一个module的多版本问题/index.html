@@ -1,0 +1,531 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Go mod 同一个module的多版本问题 | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="首先，注意区分使用Go mod后，module和package的概念  module是go mod的引入单位，go.mod文件里引入的是module：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go mod 同一个module的多版本问题">
+<meta property="og:url" content="https://luckymrwang.github.io/2022/05/24/Go-mod-%E5%90%8C%E4%B8%80%E4%B8%AAmodule%E7%9A%84%E5%A4%9A%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="首先，注意区分使用Go mod后，module和package的概念  module是go mod的引入单位，go.mod文件里引入的是module：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/gomod1.awebp">
+<meta property="og:image" content="https://luckymrwang.github.io/images/gomod2.awebp">
+<meta property="article:published_time" content="2022-05-24T01:46:31.000Z">
+<meta property="article:modified_time" content="2025-06-19T10:22:16.190Z">
+<meta property="article:author" content="luckymrwang">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/gomod1.awebp">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2022/05/24/Go-mod-同一个module的多版本问题/" title="Go mod 同一个module的多版本问题" itemprop="url">Go mod 同一个module的多版本问题</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-24T01:46:31.000Z" itemprop="datePublished"> 发表于 2022-05-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go-mod-%E5%B5%8C%E5%A5%97%E5%BC%95%E7%94%A8%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84module%EF%BC%8C%E6%9C%80%E7%BB%88%E4%BD%BF%E7%94%A8%E5%93%AA%E4%B8%AA%E7%89%88%E6%9C%AC%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">Go mod 嵌套引用不同版本的module，最终使用哪个版本？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go-mod%E5%A6%82%E4%BD%95%E5%90%8C%E6%97%B6%E5%BC%95%E7%94%A8%E5%A4%9A%E4%B8%AA%E7%89%88%E6%9C%AC%E7%9A%84module"><span class="toc-number">2.</span> <span class="toc-text">Go mod如何同时引用多个版本的module</span></a></li></ol>
+		
+		</div>
+		
+		<p>首先，注意区分使用Go mod后，module和package的概念</p>
+<ul>
+<li>module是go mod的引入单位，go.mod文件里引入的是module：</li>
+</ul>
+<p><img src="/images/gomod1.awebp" alt="image"></p>
+<span id="more"></span>
+
+<ul>
+<li>package是go代码import的单位，一个module可以覆盖多个package</li>
+</ul>
+<p><img src="/images/gomod2.awebp" alt="image"></p>
+<h2 id="Go-mod-嵌套引用不同版本的module，最终使用哪个版本？"><a href="#Go-mod-嵌套引用不同版本的module，最终使用哪个版本？" class="headerlink" title="Go mod 嵌套引用不同版本的module，最终使用哪个版本？"></a>Go mod 嵌套引用不同版本的module，最终使用哪个版本？</h2><p>答案是：全局使用二者之中最新的版本来运行程序。</p>
+<p>比如下面的目录关系：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ tree</span><br><span class="line">.</span><br><span class="line">├── <span class="keyword">go</span>.mod</span><br><span class="line">├── <span class="keyword">go</span>.sum</span><br><span class="line">├── mtest</span><br><span class="line">│   ├── <span class="keyword">go</span>.mod</span><br><span class="line">│   ├── <span class="keyword">go</span>.sum</span><br><span class="line">│   └── main.<span class="keyword">go</span></span><br><span class="line">└── test.<span class="keyword">go</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>test.go</code>一级的<code>go.mod</code>里引用一个版本的<code>qmgo</code>：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">require (</span><br><span class="line">	github.com/qiniu/qmgo v0<span class="number">.7</span><span class="number">.6</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>在<code>mtest</code>一级的<code>go.mod</code>里使用另一个版本：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">require (</span><br><span class="line">	github.com/qiniu/qmgo v0<span class="number">.7</span><span class="number">.7</span></span><br><span class="line">）</span><br></pre></td></tr></table></figure>
+
+<p>然后在<code>test.go</code>里调用<code>mtest</code>包里的方法<code>RunTest()</code>，此时，<code>go mod</code>会选择二者中最新的版本来进行编译和运行，也是就说<code>test.go</code>和<code>mtest.go</code>里使用的<code>qmgo</code>都是v0.7.7版本（<code>test.go</code>一级的<code>go.mod</code>里的<code>v0.7.6</code>会被改写成<code>v0.7.7</code>）。</p>
+<p>上例中两个go.mod的引用版本调换，结果依然是使用最新的版本来编译和运行。</p>
+<p>Go mod的这个设计无可厚非，只是实际工程中，包的引用是间接的、复杂的，如果某个包的新版本不向前对旧版本兼容，比如新版本删除了一个旧版本的API，那么使用新版本来编译旧版本实现，会导致编译失败。解决方案需要根据实际情况来具体分析，比如替换旧版本module引用(线上更新或者拉私有库修改)，回退新版本，某些情况下也可以通过下面的方法同时支持2个版本的存在。</p>
+<p>代码如下：</p>
+<p>test.go:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;mtest&quot;</span> <span class="comment">// test.go一层的go.mod里，mtest需要replace，上面的go.mod里没有写</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/qiniu/qmgo&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	client, err := qmgo.NewClient(context.Background(), &amp;qmgo.Config&#123;Uri: <span class="string">&quot;mongodb://localhost:27017&quot;</span>&#125;)</span><br><span class="line">	fmt.Println(err)</span><br><span class="line">	<span class="keyword">defer</span> client.Close(context.Background())</span><br><span class="line"></span><br><span class="line">	mtest.RunTest()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>mtest.go:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> mtest</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/qiniu/qmgo&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">RunTest</span><span class="params">()</span></span> &#123;</span><br><span class="line">	client, err := qmgo.NewClient(context.Background(), &amp;qmgo.Config&#123;Uri: <span class="string">&quot;mongodb://localhost:27017&quot;</span>&#125;)</span><br><span class="line">	fmt.Println(err)</span><br><span class="line">	<span class="keyword">defer</span> client.Close(context.Background())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Go-mod如何同时引用多个版本的module"><a href="#Go-mod如何同时引用多个版本的module" class="headerlink" title="Go mod如何同时引用多个版本的module"></a>Go mod如何同时引用多个版本的module</h2><p>使用<code>replace</code>即可达成目的</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">module test</span><br><span class="line"></span><br><span class="line"><span class="keyword">go</span> <span class="number">1.14</span></span><br><span class="line"></span><br><span class="line">replace github.com/qiniu/qmgo077 =&gt; github.com/qiniu/qmgo v0<span class="number">.7</span><span class="number">.7</span></span><br><span class="line"></span><br><span class="line">require (</span><br><span class="line">	github.com/qiniu/qmgo v0<span class="number">.7</span><span class="number">.6</span></span><br><span class="line">	github.com/qiniu/qmgo077 v0<span class="number">.0</span><span class="number">.0</span><span class="number">-00010101000000</span><span class="number">-000000000000</span> <span class="comment">// 自动生成</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/qiniu/qmgo&quot;</span></span><br><span class="line">	qmgo077 <span class="string">&quot;github.com/qiniu/qmgo077&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	client, err := qmgo.NewClient(context.Background(), &amp;qmgo.Config&#123;Uri: <span class="string">&quot;mongodb://localhost:27017&quot;</span>&#125;)</span><br><span class="line">	fmt.Println(err)</span><br><span class="line">	<span class="keyword">defer</span> client.Close(context.Background())</span><br><span class="line"></span><br><span class="line">	client077, err := qmgo077.NewClient(context.Background(), &amp;qmgo077.Config&#123;Uri: <span class="string">&quot;mongodb://localhost:27017&quot;</span>&#125;)</span><br><span class="line">	fmt.Println(err)</span><br><span class="line">	<span class="keyword">defer</span> client077.Close(context.Background())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>本文引自<a href="https://juejin.cn/post/6884151427178954766">这里</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Golang/">Golang</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2022/05/24/Go-mod-%E5%90%8C%E4%B8%80%E4%B8%AAmodule%E7%9A%84%E5%A4%9A%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98/" data-title="Go mod 同一个module的多版本问题 | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2022/05/31/netfilter内核态与用户态通信之sockopt/" title="netfilter内核态与用户态通信之sockopt">
+  <strong>上一篇：</strong><br/>
+  <span>
+  netfilter内核态与用户态通信之sockopt</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2022/05/23/使用-Docker-Desktop进行-BPF-开发/"  title="使用 Docker Desktop进行 BPF 开发">
+ <strong>下一篇：</strong><br/> 
+ <span>使用 Docker Desktop进行 BPF 开发
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2022/05/24/Go-mod-同一个module的多版本问题/" data-title="Go mod 同一个module的多版本问题" data-url="https://luckymrwang.github.io/2022/05/24/Go-mod-%E5%90%8C%E4%B8%80%E4%B8%AAmodule%E7%9A%84%E5%A4%9A%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Go-mod-%E5%B5%8C%E5%A5%97%E5%BC%95%E7%94%A8%E4%B8%8D%E5%90%8C%E7%89%88%E6%9C%AC%E7%9A%84module%EF%BC%8C%E6%9C%80%E7%BB%88%E4%BD%BF%E7%94%A8%E5%93%AA%E4%B8%AA%E7%89%88%E6%9C%AC%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">Go mod 嵌套引用不同版本的module，最终使用哪个版本？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Go-mod%E5%A6%82%E4%BD%95%E5%90%8C%E6%97%B6%E5%BC%95%E7%94%A8%E5%A4%9A%E4%B8%AA%E7%89%88%E6%9C%AC%E7%9A%84module"><span class="toc-number">2.</span> <span class="toc-text">Go mod如何同时引用多个版本的module</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
