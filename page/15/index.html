@@ -85,6 +85,70 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/11/13/用Golang实现-服务器-客户端/" title="用Golang实现 服务器/客户端" itemprop="url">用Golang实现 服务器/客户端</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-13T12:59:16.000Z" itemprop="datePublished"> 发表于 2016-11-13</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="服务端的实现思路及步骤"><a href="#服务端的实现思路及步骤" class="headerlink" title="服务端的实现思路及步骤"></a>服务端的实现思路及步骤</h3><ol>
+<li>创建一个套接字对象, 指定其IP以及端口</li>
+<li>开始监听套接字指定的端口</li>
+<li>如有新的客户端连接请求, 则建立一个goroutine, 在goroutine中, 读取客户端消息, 并转发回去, 直到客户端断开连接</li>
+<li>主进程继续监听端口</li>
+</ol>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/11/13/%E7%94%A8Golang%E5%AE%9E%E7%8E%B0-%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%AE%A2%E6%88%B7%E7%AB%AF/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/13/用Golang实现-服务器-客户端/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/13/用Golang实现-服务器-客户端/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/11/11/Writing-Files/" title="Writing Files" itemprop="url">Writing Files</a>
   </h1>
   <p class="article-author">By
@@ -625,65 +689,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/09/28/Golang中container:list包用法/" title="Golang中container/list包用户" itemprop="url">Golang中container/list包用户</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-09-28T09:39:29.000Z" itemprop="datePublished"> 发表于 2016-09-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>list是一个双向链表。该结构具有链表的所有功能。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/09/28/Golang%E4%B8%ADcontainer:list%E5%8C%85%E7%94%A8%E6%B3%95/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/09/28/Golang中container:list包用法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/28/Golang中container:list包用法/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/14/">&lt;span&gt;&lt;&#x2F;span&gt;Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="page-number" href="/page/14/">14</a><span class="page-number current">15</span><a class="page-number" href="/page/16/">16</a><a class="page-number" href="/page/17/">17</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/16/">Next&lt;span&gt;&lt;&#x2F;span&gt;</a>
@@ -775,15 +780,15 @@
 			
 		
 			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>4</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
 			
 		
 			

@@ -85,6 +85,70 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/12/23/Supervisor安装使用/" title="Supervisor安装使用" itemprop="url">Supervisor安装使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-12-23T04:35:26.000Z" itemprop="datePublished"> 发表于 2016-12-23</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p><code>Supervisor</code> 是一个 <code>Python</code> 开发的 <code>client/server</code> 系统，可以管理和监控类 <code>UNIX</code> 操作系统上面的进程。它可以同时启动，关闭多个进程，使用起来特别的方便。</p>
+<h3 id="组成部分"><a href="#组成部分" class="headerlink" title="组成部分"></a>组成部分</h3><p>supervisor 主要由两部分组成：</p>
+<ul>
+<li>supervisord(server 部分)：主要负责管理子进程，响应客户端命令以及日志的输出等；</li>
+<li>supervisorctl(client 部分)：命令行客户端，用户可以通过它与不同的 supervisord 进程联系，获取子进程的状态等。</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/12/23/Supervisor%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Centos/">Centos</a><a href="/tags/Linus/">Linus</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/12/23/Supervisor安装使用/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/12/23/Supervisor安装使用/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/12/05/Bash-日期时间戳格式化/" title="Bash 日期时间戳格式化" itemprop="url">Bash 日期时间戳格式化</a>
   </h1>
   <p class="article-author">By
@@ -654,70 +718,6 @@
 
 
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/11/13/用Golang实现-服务器-客户端/" title="用Golang实现 服务器/客户端" itemprop="url">用Golang实现 服务器/客户端</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-11-13T12:59:16.000Z" itemprop="datePublished"> 发表于 2016-11-13</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="服务端的实现思路及步骤"><a href="#服务端的实现思路及步骤" class="headerlink" title="服务端的实现思路及步骤"></a>服务端的实现思路及步骤</h3><ol>
-<li>创建一个套接字对象, 指定其IP以及端口</li>
-<li>开始监听套接字指定的端口</li>
-<li>如有新的客户端连接请求, 则建立一个goroutine, 在goroutine中, 读取客户端消息, 并转发回去, 直到客户端断开连接</li>
-<li>主进程继续监听端口</li>
-</ol>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/11/13/%E7%94%A8Golang%E5%AE%9E%E7%8E%B0-%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%AE%A2%E6%88%B7%E7%AB%AF/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/11/13/用Golang实现-服务器-客户端/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/13/用Golang实现-服务器-客户端/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
 
   <nav id="page-nav" class="clearfix">
     <a class="extend prev" rel="prev" href="/page/13/">&lt;span&gt;&lt;&#x2F;span&gt;Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/page/26/">26</a><a class="extend next" rel="next" href="/page/15/">Next&lt;span&gt;&lt;&#x2F;span&gt;</a>
@@ -809,15 +809,15 @@
 			
 		
 			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>4</sup></a></li>
+			
+		
+			
 				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
 			
 		
 			
 				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
-			
-		
-			
-				<li><a href="/tags/Docker/" title="Docker">Docker<sup>3</sup></a></li>
 			
 		
 			
