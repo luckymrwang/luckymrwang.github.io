@@ -85,6 +85,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/09/28/Golang中container-heap包用法/" title="Golang中container/heap包用法" itemprop="url">Golang中container/heap包用法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-09-28T12:05:40.000Z" itemprop="datePublished"> 发表于 2016-09-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>heap包对任意实现了heap接口的类型提供堆操作。（小根）堆是具有“每个节点都是以其为根的子树中最小值”属性的树。树的最小元素在根部，为index 0.</p>
+<p>heap是常用的实现优先队列的方法。要创建一个优先队列，实现一个具有使用（负的）优先级作为比较的依据的Less方法的Heap接口，如此一来可用Push添加项目而用Pop取出队列最高优先级的项目。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Interface</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</span><br><span class="line">    sort.Interface</span><br><span class="line">    Push(x <span class="keyword">interface</span>&#123;&#125;) <span class="comment">// add x as element Len()</span></span><br><span class="line">    Pop() <span class="keyword">interface</span>&#123;&#125;   <span class="comment">// remove and return element Len() - 1.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/09/28/Golang%E4%B8%ADcontainer-heap%E5%8C%85%E7%94%A8%E6%B3%95/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/09/28/Golang中container-heap包用法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/28/Golang中container-heap包用法/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/09/28/Golang中container:list包用法/" title="Golang中container/list包用户" itemprop="url">Golang中container/list包用户</a>
   </h1>
   <p class="article-author">By
@@ -634,68 +695,6 @@
 	
 	  	<span></span>
 		<a href="/2016/08/08/CentOS7-部署VPN-PPTP/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/08/CentOS7-部署VPN-PPTP/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/08/07/设置PPTP-VPN-Server-on-CentOS-6/" title="设置PPTP VPN Server on CentOS 6" itemprop="url">设置PPTP VPN Server on CentOS 6</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-08-07T11:22:30.000Z" itemprop="datePublished"> 发表于 2016-08-07</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="以yum安装VPN服务"><a href="#以yum安装VPN服务" class="headerlink" title="以yum安装VPN服务"></a>以<code>yum</code>安装VPN服务</h3><pre><code>yum install -y pptpd
-</code></pre>
-<h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><h4 id="修改-etc-ppp-options-pptpd"><a href="#修改-etc-ppp-options-pptpd" class="headerlink" title="修改/etc/ppp/options.pptpd"></a>修改<code>/etc/ppp/options.pptpd</code></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">name pptpd</span><br><span class="line">refuse-pap</span><br><span class="line">refuse-chap</span><br><span class="line">refuse-mschap</span><br><span class="line">require-mschap-v2</span><br><span class="line">require-mppe-128</span><br><span class="line">proxyarp</span><br><span class="line">lock</span><br><span class="line">nobsdcomp </span><br><span class="line">novj</span><br><span class="line">novjccomp</span><br><span class="line">nologfd</span><br><span class="line">ms-dns 8.8.8.8</span><br><span class="line">ms-dns 8.8.4.4</span><br></pre></td></tr></table></figure>
-<p><em>ms-dns 8.8.8.8， ms-dns 8.8.4.4是使用google的dns服务器</em></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/08/07/%E8%AE%BE%E7%BD%AEPPTP-VPN-Server-on-CentOS-6/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/CentOS/">CentOS</a><a href="/tags/PPTP/">PPTP</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/08/07/设置PPTP-VPN-Server-on-CentOS-6/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/07/设置PPTP-VPN-Server-on-CentOS-6/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

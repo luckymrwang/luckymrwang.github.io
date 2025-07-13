@@ -85,6 +85,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/" title="扩展golang的sync mutex的trylock及islocked" itemprop="url">扩展golang的sync mutex的trylock及islocked</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-02-11T08:24:31.000Z" itemprop="datePublished"> 发表于 2020-02-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>  Golang的 sync mutex是阻塞互斥锁，在一个 goroutine 获得 Mutex 后，其他 goroutine 只能等到这个 goroutine 释放该 Mutex，使用 Lock() 加锁后，不能再继续对其加锁，直到利用 Unlock() 解锁后才能再加锁。但有时逻辑里面需要 非阻塞模式的拿锁 及 非阻塞得知锁的状态。trylock, 可以用非阻塞的模型进行拿锁，要么拿到锁，要么锁被别人拿到。 islocked, 就是判断锁的状态。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/02/11/%E6%89%A9%E5%B1%95golang%E7%9A%84sync-mutex%E7%9A%84trylock%E5%8F%8Aislocked/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/02/11/扩展golang的sync-mutex的trylock及islocked/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/01/07/Go-module-如何发布-v2-及以上版本/" title="Go module 如何发布 v2 及以上版本" itemprop="url">Go module 如何发布 v2 及以上版本</a>
   </h1>
   <p class="article-author">By
@@ -619,66 +678,6 @@
 	
 	  	<span></span>
 		<a href="/2019/07/22/Minikube的安装/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/07/22/Minikube的安装/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2019/07/03/Go中的条件变量与Channel/" title="Go中的条件变量与Channel" itemprop="url">Go中的条件变量与Channel</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2019-07-02T16:04:51.000Z" itemprop="datePublished"> 发表于 2019-07-03</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>在Go语言中 <code>sync.Cond</code> 代表条件变量，初始化的时候需要传入一个互斥体，它可以是普通锁（Mutex），也可以是读写锁（RWMutex）。如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mutex sync.Mutex  <span class="comment">// 也可以是 sync.RWMutex</span></span><br><span class="line"><span class="keyword">var</span> cond = sync.NewCond(&amp;mutex)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2019/07/03/Go%E4%B8%AD%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E4%B8%8EChannel/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2019/07/03/Go中的条件变量与Channel/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/07/03/Go中的条件变量与Channel/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

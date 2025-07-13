@@ -85,6 +85,64 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/12/08/PHPExcel隐藏Sheet/" title="PHPExcel隐藏Sheet" itemprop="url">PHPExcel隐藏Sheet</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-12-08T09:27:27.000Z" itemprop="datePublished"> 发表于 2015-12-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>PHPExcel隐藏Sheet语句：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">createSheet</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//在07版以上不起作用，在excel中取消隐藏后即可显示</span></span><br><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">getSheetByName</span>(<span class="string">&#x27;Worksheet&#x27;</span>)-&gt;<span class="title function_ invoke__">setSheetState</span>(<span class="title class_">PHPExcel_Worksheet</span>::<span class="variable constant_">SHEETSTATE_HIDDEN</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//适用于07版及以上，在excel中不能取消隐藏，可在visual_basic中查看</span></span><br><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">getSheetByName</span>(<span class="string">&#x27;Worksheet&#x27;</span>)-&gt;<span class="title function_ invoke__">setSheetState</span>(<span class="title class_">PHPExcel_Worksheet</span>::<span class="variable constant_">SHEETSTATE_VERYHIDDEN</span>);</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHPExcel/">PHPExcel</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/12/08/PHPExcel隐藏Sheet/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/08/PHPExcel隐藏Sheet/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/12/07/jQuery动态绑定事件/" title="jQuery动态绑定事件" itemprop="url">jQuery动态绑定事件</a>
   </h1>
   <p class="article-author">By
@@ -607,65 +665,6 @@
 	
 	  	<span></span>
 		<a href="/2015/11/03/MySQL-分表，分区的区别和联系/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/11/03/MySQL-分表，分区的区别和联系/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/10/26/网页前端缓存/" title="网页前端缓存" itemprop="url">网页前端缓存</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-10-26T04:54:59.000Z" itemprop="datePublished"> 发表于 2015-10-26</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="Web缓存的工作原理"><a href="#Web缓存的工作原理" class="headerlink" title="Web缓存的工作原理"></a>Web缓存的工作原理</h3><p>所有的缓存都是基于一套规则来帮助他们决定什么时候使用缓存中的副本提供服务（假设有副本可用的情况下，未被销毁回收或者未被删除修改）。这些规则有的在协议中有定义（如HTTP协议1.0和1.1），有的则是由缓存的管理员设置（如DBA、浏览器的用户、代理服务器管理员或者应用开发者）。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/10/26/%E7%BD%91%E9%A1%B5%E5%89%8D%E7%AB%AF%E7%BC%93%E5%AD%98/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/缓存/">缓存</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/10/26/网页前端缓存/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/10/26/网页前端缓存/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

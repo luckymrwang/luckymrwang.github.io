@@ -85,6 +85,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/11/09/CentOS-7-用户账户配置/" title="CentOS 7 用户账户配置" itemprop="url">CentOS 7 用户账户配置</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-11-09T00:55:52.000Z" itemprop="datePublished"> 发表于 2020-11-09</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h3><p>Centos 7 系统最小化安装，默认配置，是没有创建其他用户的。作为服务器操作系统，为了安全起见，一般是使用一般用户。这就牵涉到用户、用户组的创建以及删除。</p>
+<p>此外，CentOS 7 和其他版本的Linux一样，都具有相应用户的配置文件及目录，如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/etc/passwd 　　      //用户账户信息，可以看出用户名称 </span><br><span class="line">/etc/shadow          //用户账户加密后信息，包括但不限于/etc/passwd中的信息 </span><br><span class="line">/etc/group           //组账户信息，可以看出组名称 </span><br><span class="line">/etc/gshadow   　　　 //组账户安全信息，包括但不限于/etc/group中的信息 </span><br><span class="line">/etc/default/useradd //账户创建时默认值 </span><br><span class="line">/etc/skel/           //包含默认文件的目录,具体作用尚不清楚 </span><br><span class="line">/etc/login.defs      //安全性的默认配置，与上面/etc/default/useradd有区别</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/11/09/CentOS-7-%E7%94%A8%E6%88%B7%E8%B4%A6%E6%88%B7%E9%85%8D%E7%BD%AE/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/11/09/CentOS-7-用户账户配置/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/11/09/CentOS-7-用户账户配置/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/11/06/Parse-the-kubernetes-manifest-in-yaml-or-json/" title="Parse the kubernetes manifest in yaml or json" itemprop="url">Parse the kubernetes manifest in yaml or json</a>
   </h1>
   <p class="article-author">By
@@ -617,65 +678,6 @@
 	
 	  	<span></span>
 		<a href="/2020/08/04/Kubernetes-Volume-挂载/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/08/04/Kubernetes-Volume-挂载/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/" title="扩展golang的sync mutex的trylock及islocked" itemprop="url">扩展golang的sync mutex的trylock及islocked</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-02-11T08:24:31.000Z" itemprop="datePublished"> 发表于 2020-02-11</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>  Golang的 sync mutex是阻塞互斥锁，在一个 goroutine 获得 Mutex 后，其他 goroutine 只能等到这个 goroutine 释放该 Mutex，使用 Lock() 加锁后，不能再继续对其加锁，直到利用 Unlock() 解锁后才能再加锁。但有时逻辑里面需要 非阻塞模式的拿锁 及 非阻塞得知锁的状态。trylock, 可以用非阻塞的模型进行拿锁，要么拿到锁，要么锁被别人拿到。 islocked, 就是判断锁的状态。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/02/11/%E6%89%A9%E5%B1%95golang%E7%9A%84sync-mutex%E7%9A%84trylock%E5%8F%8Aislocked/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/02/11/扩展golang的sync-mutex的trylock及islocked/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

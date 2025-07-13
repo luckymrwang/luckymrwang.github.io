@@ -85,6 +85,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2017/01/17/HomeBrew/" title="HomeBrew" itemprop="url">HomeBrew</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-01-17T02:48:49.000Z" itemprop="datePublished"> 发表于 2017-01-17</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><pre><code>ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;
+</code></pre>
+<h3 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">brew search &lt;package_name&gt;      # 搜索</span><br><span class="line">brew install &lt;package_name&gt;     # 安装一个软件</span><br><span class="line">brew update                     # 从服务器上拉取，并更新本地 brew 的包目录</span><br><span class="line">brew upgrade &lt;package_name&gt;     # 更新软件</span><br><span class="line">brew outdated                   # 查看你的软件中哪些有新版本可用</span><br><span class="line">brew cleanup                    # 清理老版本。使用 `-n` 参数，不会真正执行，只是打印出真正运行时会做什么。</span><br><span class="line">brew list --versions            # 查看你安装过的包列表（包括版本号）</span><br><span class="line">brew link &lt;package_name&gt;        # 将软件的当前最新版本软链到`/usr/local`目录下</span><br><span class="line">brew unlink &lt;package_name&gt;      # 将软件在`/usr/local`目录下的软链接删除。</span><br><span class="line">brew info                       # 显示软件的信息 </span><br><span class="line">brew deps                       # 显示包依赖</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Brew/">Brew</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/01/17/HomeBrew/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/01/17/HomeBrew/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/12/23/Supervisor安装使用/" title="Supervisor安装使用" itemprop="url">Supervisor安装使用</a>
   </h1>
   <p class="article-author">By
@@ -632,79 +691,6 @@
 	
 	  	<span></span>
 		<a href="/2016/11/14/网络编程调试/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/14/网络编程调试/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/11/13/用Golang实现-文本广播式聊天服务器-客户端/" title="用Golang实现 文本广播式聊天服务器/客户端" itemprop="url">用Golang实现 文本广播式聊天服务器/客户端</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-11-13T13:07:48.000Z" itemprop="datePublished"> 发表于 2016-11-13</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>根据 <a href="https://luckymrwang.github.io/2016/11/13/%E7%94%A8Golang%E5%AE%9E%E7%8E%B0-%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%AE%A2%E6%88%B7%E7%AB%AF/">用Golang实现 服务器&#x2F;客户端</a> 将其改造成一个文本信息聊天室</p>
-<h3 id="服务端的改动"><a href="#服务端的改动" class="headerlink" title="服务端的改动"></a>服务端的改动</h3><ol>
-<li><p>服务器为了实现聊天信息的群体广播, 需要记录所有连接到服务器的客户端信息, 所以, 我们需要添加一个集合来保存所有客户端的连接:</p>
-<pre><code> var ConnMap map[string]*net.TCPConn
- 
-</code></pre>
-</li>
-<li><p>接着, 每次当有新的客户端连接到服务器时, 需要把这个客户端连接行信息加入集合:</p>
-<pre><code> ConnMap[tcpConn.RemoteAddr().String()] = tcpConn
- 
-</code></pre>
-</li>
-<li><p>当服务器收到客户端的聊天信息时, 需要广播到所有客户端, 所以我们需要利用上面保存TCPConn的map来遍历所有TCPConn进行广播, 用以下方法实现:</p>
-</li>
-</ol>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/11/13/%E7%94%A8Golang%E5%AE%9E%E7%8E%B0-%E6%96%87%E6%9C%AC%E5%B9%BF%E6%92%AD%E5%BC%8F%E8%81%8A%E5%A4%A9%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%AE%A2%E6%88%B7%E7%AB%AF/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/11/13/用Golang实现-文本广播式聊天服务器-客户端/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/13/用Golang实现-文本广播式聊天服务器-客户端/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

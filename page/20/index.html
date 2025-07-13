@@ -85,6 +85,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/01/08/PHP-全局变量：global与��区别和使用/" title="[PHP]全局变量：global与��区别和使用" itemprop="url">[PHP]全局变量：global与��区别和使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-01-08T15:11:01.000Z" itemprop="datePublished"> 发表于 2016-01-08</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>今天在写框架的时候想把SaeMySQL初始化之后作为全局变量使用。<br>但是后来发现PHP中的全局变量和Java或者OC中的全局变量还是有较大区别的。<br>下面记录一下php里面的global的使用相关注意事项。<br>1.有些场合需要全局变量的出现，如下例子：</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/01/08/PHP-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%EF%BC%9Aglobal%E4%B8%8E%EF%BF%BD%EF%BF%BD%E5%8C%BA%E5%88%AB%E5%92%8C%E4%BD%BF%E7%94%A8/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/01/08/PHP-全局变量：global与��区别和使用/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/01/08/PHP-全局变量：global与��区别和使用/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/12/30/对比材料设计和扁平化设计/" title="对比材料设计和扁平化设计" itemprop="url">对比材料设计和扁平化设计</a>
   </h1>
   <p class="article-author">By
@@ -628,64 +687,6 @@
 	
 	  	<span></span>
 		<a href="/2015/12/11/Draggable拖拽克隆后可拖拽/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/11/Draggable拖拽克隆后可拖拽/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/12/08/PHPExcel隐藏Sheet/" title="PHPExcel隐藏Sheet" itemprop="url">PHPExcel隐藏Sheet</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-12-08T09:27:27.000Z" itemprop="datePublished"> 发表于 2015-12-08</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>PHPExcel隐藏Sheet语句：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">createSheet</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">//在07版以上不起作用，在excel中取消隐藏后即可显示</span></span><br><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">getSheetByName</span>(<span class="string">&#x27;Worksheet&#x27;</span>)-&gt;<span class="title function_ invoke__">setSheetState</span>(<span class="title class_">PHPExcel_Worksheet</span>::<span class="variable constant_">SHEETSTATE_HIDDEN</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//适用于07版及以上，在excel中不能取消隐藏，可在visual_basic中查看</span></span><br><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">getSheetByName</span>(<span class="string">&#x27;Worksheet&#x27;</span>)-&gt;<span class="title function_ invoke__">setSheetState</span>(<span class="title class_">PHPExcel_Worksheet</span>::<span class="variable constant_">SHEETSTATE_VERYHIDDEN</span>);</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/PHPExcel/">PHPExcel</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/12/08/PHPExcel隐藏Sheet/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/12/08/PHPExcel隐藏Sheet/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

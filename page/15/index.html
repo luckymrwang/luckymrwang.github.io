@@ -85,6 +85,79 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/11/13/用Golang实现-文本广播式聊天服务器-客户端/" title="用Golang实现 文本广播式聊天服务器/客户端" itemprop="url">用Golang实现 文本广播式聊天服务器/客户端</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-11-13T13:07:48.000Z" itemprop="datePublished"> 发表于 2016-11-13</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>根据 <a href="https://luckymrwang.github.io/2016/11/13/%E7%94%A8Golang%E5%AE%9E%E7%8E%B0-%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%AE%A2%E6%88%B7%E7%AB%AF/">用Golang实现 服务器&#x2F;客户端</a> 将其改造成一个文本信息聊天室</p>
+<h3 id="服务端的改动"><a href="#服务端的改动" class="headerlink" title="服务端的改动"></a>服务端的改动</h3><ol>
+<li><p>服务器为了实现聊天信息的群体广播, 需要记录所有连接到服务器的客户端信息, 所以, 我们需要添加一个集合来保存所有客户端的连接:</p>
+<pre><code> var ConnMap map[string]*net.TCPConn
+ 
+</code></pre>
+</li>
+<li><p>接着, 每次当有新的客户端连接到服务器时, 需要把这个客户端连接行信息加入集合:</p>
+<pre><code> ConnMap[tcpConn.RemoteAddr().String()] = tcpConn
+ 
+</code></pre>
+</li>
+<li><p>当服务器收到客户端的聊天信息时, 需要广播到所有客户端, 所以我们需要利用上面保存TCPConn的map来遍历所有TCPConn进行广播, 用以下方法实现:</p>
+</li>
+</ol>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/11/13/%E7%94%A8Golang%E5%AE%9E%E7%8E%B0-%E6%96%87%E6%9C%AC%E5%B9%BF%E6%92%AD%E5%BC%8F%E8%81%8A%E5%A4%A9%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%AE%A2%E6%88%B7%E7%AB%AF/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/11/13/用Golang实现-文本广播式聊天服务器-客户端/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/11/13/用Golang实现-文本广播式聊天服务器-客户端/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/11/13/用Golang实现-服务器-客户端/" title="用Golang实现 服务器/客户端" itemprop="url">用Golang实现 服务器/客户端</a>
   </h1>
   <p class="article-author">By
@@ -615,67 +688,6 @@
 	
 	  	<span></span>
 		<a href="/2016/09/29/Go互斥锁Mutex/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/29/Go互斥锁Mutex/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/09/28/Golang中container-heap包用法/" title="Golang中container/heap包用法" itemprop="url">Golang中container/heap包用法</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-09-28T12:05:40.000Z" itemprop="datePublished"> 发表于 2016-09-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>heap包对任意实现了heap接口的类型提供堆操作。（小根）堆是具有“每个节点都是以其为根的子树中最小值”属性的树。树的最小元素在根部，为index 0.</p>
-<p>heap是常用的实现优先队列的方法。要创建一个优先队列，实现一个具有使用（负的）优先级作为比较的依据的Less方法的Heap接口，如此一来可用Push添加项目而用Pop取出队列最高优先级的项目。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Interface</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</span><br><span class="line">    sort.Interface</span><br><span class="line">    Push(x <span class="keyword">interface</span>&#123;&#125;) <span class="comment">// add x as element Len()</span></span><br><span class="line">    Pop() <span class="keyword">interface</span>&#123;&#125;   <span class="comment">// remove and return element Len() - 1.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/09/28/Golang%E4%B8%ADcontainer-heap%E5%8C%85%E7%94%A8%E6%B3%95/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go笔记/">Go笔记</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/09/28/Golang中container-heap包用法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/09/28/Golang中container-heap包用法/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

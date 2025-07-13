@@ -85,6 +85,68 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/08/07/设置PPTP-VPN-Server-on-CentOS-6/" title="设置PPTP VPN Server on CentOS 6" itemprop="url">设置PPTP VPN Server on CentOS 6</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-08-07T11:22:30.000Z" itemprop="datePublished"> 发表于 2016-08-07</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="以yum安装VPN服务"><a href="#以yum安装VPN服务" class="headerlink" title="以yum安装VPN服务"></a>以<code>yum</code>安装VPN服务</h3><pre><code>yum install -y pptpd
+</code></pre>
+<h3 id="修改配置文件"><a href="#修改配置文件" class="headerlink" title="修改配置文件"></a>修改配置文件</h3><h4 id="修改-etc-ppp-options-pptpd"><a href="#修改-etc-ppp-options-pptpd" class="headerlink" title="修改/etc/ppp/options.pptpd"></a>修改<code>/etc/ppp/options.pptpd</code></h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">name pptpd</span><br><span class="line">refuse-pap</span><br><span class="line">refuse-chap</span><br><span class="line">refuse-mschap</span><br><span class="line">require-mschap-v2</span><br><span class="line">require-mppe-128</span><br><span class="line">proxyarp</span><br><span class="line">lock</span><br><span class="line">nobsdcomp </span><br><span class="line">novj</span><br><span class="line">novjccomp</span><br><span class="line">nologfd</span><br><span class="line">ms-dns 8.8.8.8</span><br><span class="line">ms-dns 8.8.4.4</span><br></pre></td></tr></table></figure>
+<p><em>ms-dns 8.8.8.8， ms-dns 8.8.4.4是使用google的dns服务器</em></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/08/07/%E8%AE%BE%E7%BD%AEPPTP-VPN-Server-on-CentOS-6/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/CentOS/">CentOS</a><a href="/tags/PPTP/">PPTP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/08/07/设置PPTP-VPN-Server-on-CentOS-6/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/08/07/设置PPTP-VPN-Server-on-CentOS-6/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/08/07/CentOS7-防火墙/" title="CentOS7 防火墙" itemprop="url">CentOS7 防火墙</a>
   </h1>
   <p class="article-author">By
@@ -636,65 +698,6 @@ systemctl enable iptables.service #设置防火墙开机启动
 	
 	  	<span></span>
 		<a href="/2016/06/11/Go语言的bytes-buffer/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/06/11/Go语言的bytes-buffer/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/06/01/使用微信JSSDK上传图片到七牛/" title="使用微信JSSDK上传图片到七牛" itemprop="url">使用微信JSSDK上传图片到七牛</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-06-01T09:43:15.000Z" itemprop="datePublished"> 发表于 2016-06-01</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="总体思路"><a href="#总体思路" class="headerlink" title="总体思路"></a>总体思路</h3><p>在微信下选好图片后将图片上传到微信服务器，在后端使用微信服务器返回的图片 <code>serverId</code> 加上调用接口的 <code>access_token</code> 通过七牛的 <code>fetch</code> 接口向微信服务器下载多媒体文件的接口请求图片的二进制流，然后保存至自己七牛账号内的特定 <code>bucket</code>。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2016/06/01/%E4%BD%BF%E7%94%A8%E5%BE%AE%E4%BF%A1JSSDK%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87%E5%88%B0%E4%B8%83%E7%89%9B/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/JSSDK/">JSSDK</a><a href="/tags/Weixin/">Weixin</a><a href="/tags/Qiniu/">Qiniu</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/06/01/使用微信JSSDK上传图片到七牛/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/06/01/使用微信JSSDK上传图片到七牛/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

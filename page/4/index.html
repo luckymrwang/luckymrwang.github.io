@@ -85,6 +85,69 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/05/24/Go-mod-同一个module的多版本问题/" title="Go mod 同一个module的多版本问题" itemprop="url">Go mod 同一个module的多版本问题</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-24T01:46:31.000Z" itemprop="datePublished"> 发表于 2022-05-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>首先，注意区分使用Go mod后，module和package的概念</p>
+<ul>
+<li>module是go mod的引入单位，go.mod文件里引入的是module：</li>
+</ul>
+<p><img src="/images/gomod1.awebp" alt="image"></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/24/Go-mod-%E5%90%8C%E4%B8%80%E4%B8%AAmodule%E7%9A%84%E5%A4%9A%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Golang/">Golang</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/24/Go-mod-同一个module的多版本问题/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/24/Go-mod-同一个module的多版本问题/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/05/23/使用-Docker-Desktop进行-BPF-开发/" title="使用 Docker Desktop进行 BPF 开发" itemprop="url">使用 Docker Desktop进行 BPF 开发</a>
   </h1>
   <p class="article-author">By
@@ -616,67 +679,6 @@
 	
 	  	<span></span>
 		<a href="/2022/05/06/使用-etcdctl-访问-Kubernetes-数据/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/06/使用-etcdctl-访问-Kubernetes-数据/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/04/24/iptables-nat-conntrack的特殊之处/" title="iptables nat&amp;conntrack的特殊之处" itemprop="url">iptables nat&amp;conntrack的特殊之处</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-04-24T02:07:09.000Z" itemprop="datePublished"> 发表于 2022-04-24</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="问题与解释"><a href="#问题与解释" class="headerlink" title="问题与解释"></a>问题与解释</h3><p>我在<code>PREROUTING</code>上做了一个<code>REDIRECT</code>端口改写，相应的服务处理请求后会返回应答。</p>
-<p>按照我以往的认识，认为回包的流量应该先后经过<code>OUTPUT</code>和<code>POSTROUTING</code>，所以我利用<code>iptables -t nat -nvL</code>去查看<code>NAT</code>表在<code>OUTPUT</code>链和<code>POSTROUTING</code>链上的<code>packge</code>计数器，结果发现没有上涨，这让我陷入了沉思。</p>
-<p>经过谷歌后找到了完美的解释：<a href="https://superuser.com/questions/1269859/linux-netfilter-how-does-connection-tracking-track-connections-changed-by-nat">linux-netfilter-how-does-connection-tracking-track-connections-changed-by-nat</a>。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/04/24/iptables-nat-conntrack%E7%9A%84%E7%89%B9%E6%AE%8A%E4%B9%8B%E5%A4%84/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/04/24/iptables-nat-conntrack的特殊之处/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/24/iptables-nat-conntrack的特殊之处/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

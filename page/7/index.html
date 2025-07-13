@@ -85,6 +85,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/12/28/破解-Java-Agent-探针黑科技/" title="破解 Java Agent 探针黑科技" itemprop="url">破解 Java Agent 探针黑科技</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-12-28T07:54:50.000Z" itemprop="datePublished"> 发表于 2020-12-28</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="什么是-Java-Agent"><a href="#什么是-Java-Agent" class="headerlink" title="什么是 Java Agent"></a>什么是 Java Agent</h3><p>笼统地来讲，Java Agent 是一个统称，该功能是 Java 虚拟机提供的一整套后门。通过这套后门可以对虚拟机方方面面进行监控与分析。甚至干预虚拟机的运行。</p>
+<p>Java Agent 又叫做 Java 探针，Java Agent 是在 JDK1.5 引入的，是一种可以动态修改 Java 字节码的技术。Java 类编译之后形成字节码被 JVM 执行，在 JVM 在执行这些字节码之前获取这些字节码信息，并且通过字节码转换器对这些字节码进行修改，来完成一些额外的功能，这种就是 Java Agent 技术。</p>
+<p>从用户使用层面来看，Java Agent 一般通过在应用启动参数中添加 -javaagent 参数添加 ClassFileTransformer 字节码转换器。 在 Java 虚拟机启动时，执 行main() 函数之前，Java  虚拟机会先找到 -javaagent 命令指定 jar 包，然后执行 premain-class 中的 premain() 方法。用一句概括其功能的话就是：main() 函数之前的一个拦截器。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/12/28/%E7%A0%B4%E8%A7%A3-Java-Agent-%E6%8E%A2%E9%92%88%E9%BB%91%E7%A7%91%E6%8A%80/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Java/">Java</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/12/28/破解-Java-Agent-探针黑科技/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/28/破解-Java-Agent-探针黑科技/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/12/27/Kubernetes-client-go解析/" title="Kubernetes client-go解析" itemprop="url">Kubernetes client-go解析</a>
   </h1>
   <p class="article-author">By
@@ -628,67 +689,6 @@
 	
 	  	<span></span>
 		<a href="/2020/11/10/使用go的io-Pipe优雅的优化中间缓存/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/11/10/使用go的io-Pipe优雅的优化中间缓存/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/11/09/CentOS-7-用户账户配置/" title="CentOS 7 用户账户配置" itemprop="url">CentOS 7 用户账户配置</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-11-09T00:55:52.000Z" itemprop="datePublished"> 发表于 2020-11-09</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="基本信息"><a href="#基本信息" class="headerlink" title="基本信息"></a>基本信息</h3><p>Centos 7 系统最小化安装，默认配置，是没有创建其他用户的。作为服务器操作系统，为了安全起见，一般是使用一般用户。这就牵涉到用户、用户组的创建以及删除。</p>
-<p>此外，CentOS 7 和其他版本的Linux一样，都具有相应用户的配置文件及目录，如下：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/etc/passwd 　　      //用户账户信息，可以看出用户名称 </span><br><span class="line">/etc/shadow          //用户账户加密后信息，包括但不限于/etc/passwd中的信息 </span><br><span class="line">/etc/group           //组账户信息，可以看出组名称 </span><br><span class="line">/etc/gshadow   　　　 //组账户安全信息，包括但不限于/etc/group中的信息 </span><br><span class="line">/etc/default/useradd //账户创建时默认值 </span><br><span class="line">/etc/skel/           //包含默认文件的目录,具体作用尚不清楚 </span><br><span class="line">/etc/login.defs      //安全性的默认配置，与上面/etc/default/useradd有区别</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/11/09/CentOS-7-%E7%94%A8%E6%88%B7%E8%B4%A6%E6%88%B7%E9%85%8D%E7%BD%AE/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/11/09/CentOS-7-用户账户配置/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/11/09/CentOS-7-用户账户配置/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

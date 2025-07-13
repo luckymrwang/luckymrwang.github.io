@@ -85,6 +85,63 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2025/07/13/Transformer推理性能优化技术——KVcache/" title="Transformer推理性能优化技术——KVcache" itemprop="url">Transformer推理性能优化技术——KVcache</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2025-07-13T04:51:59.000Z" itemprop="datePublished"> 发表于 2025-07-13</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="Motivation-为什么要KVCache"><a href="#Motivation-为什么要KVCache" class="headerlink" title="Motivation: 为什么要KVCache"></a>Motivation: 为什么要KVCache</h2><p>对于LLM类模型的一次推理（生成一个token）的过程，我们可以将这个过程分解为下列过程：</p>
+<p><img src="/images/kvcache1.png"></p>
+<p>用一个流程图来表示，就是：</p>
+<p><img src="/images/kvcache2.png"></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2025/07/13/Transformer%E6%8E%A8%E7%90%86%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF%E2%80%94%E2%80%94KVcache/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2025/07/13/Transformer推理性能优化技术——KVcache/#comments" class="ds-thread-count comments-count-link" data-thread-key="2025/07/13/Transformer推理性能优化技术——KVcache/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2025/07/09/Architecture/" title="Architecture" itemprop="url">Architecture</a>
   </h1>
   <p class="article-author">By
@@ -614,68 +671,6 @@
 	
 	  	<span></span>
 		<a href="/2023/02/15/Github-Actions-自动构建-Docker-镜像/#comments" class="ds-thread-count comments-count-link" data-thread-key="2023/02/15/Github-Actions-自动构建-Docker-镜像/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2023/01/31/进程切换原理/" title="进程切换原理" itemprop="url">进程切换原理</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2023-01-31T06:59:02.000Z" itemprop="datePublished"> 发表于 2023-01-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="什么是CPU上下文"><a href="#什么是CPU上下文" class="headerlink" title="什么是CPU上下文"></a>什么是CPU上下文</h2><p>Linux是一个多任务操作系统，它支持远大于CPU核心数的任务同时进行。当然，这些任务并不是真的同时在运行，而是因为系统在很短的时间内，将CPU轮流分配给它们，造成多任务同时运行的错觉。每个任务在运行前，CPU都需要知道任务从哪来加载，又从哪里开始运行，也就是说，需要事先帮它们设置好CPU寄存器和程序计数器( Program Counter，PC )。</p>
-<p><strong>CPU寄存器</strong>：是CPU内置的容量小、但速度快的内存，用来临时存放指令执行运行过程中的操作数和中间（最终）的操作结果。</p>
-<p><strong>程序计数器</strong>：是用来存储CPU正在运行的指令位置、或者即将执行的下一条指令位置。</p>
-<p><strong>CPU寄存器和程序计数器是CPU运行任何任务前，必须依赖的环境，也被称作CPU上下文。</strong></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2023/01/31/%E8%BF%9B%E7%A8%8B%E5%88%87%E6%8D%A2%E5%8E%9F%E7%90%86/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2023/01/31/进程切换原理/#comments" class="ds-thread-count comments-count-link" data-thread-key="2023/01/31/进程切换原理/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

@@ -85,6 +85,68 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2023/01/31/进程切换原理/" title="进程切换原理" itemprop="url">进程切换原理</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2023-01-31T06:59:02.000Z" itemprop="datePublished"> 发表于 2023-01-31</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="什么是CPU上下文"><a href="#什么是CPU上下文" class="headerlink" title="什么是CPU上下文"></a>什么是CPU上下文</h2><p>Linux是一个多任务操作系统，它支持远大于CPU核心数的任务同时进行。当然，这些任务并不是真的同时在运行，而是因为系统在很短的时间内，将CPU轮流分配给它们，造成多任务同时运行的错觉。每个任务在运行前，CPU都需要知道任务从哪来加载，又从哪里开始运行，也就是说，需要事先帮它们设置好CPU寄存器和程序计数器( Program Counter，PC )。</p>
+<p><strong>CPU寄存器</strong>：是CPU内置的容量小、但速度快的内存，用来临时存放指令执行运行过程中的操作数和中间（最终）的操作结果。</p>
+<p><strong>程序计数器</strong>：是用来存储CPU正在运行的指令位置、或者即将执行的下一条指令位置。</p>
+<p><strong>CPU寄存器和程序计数器是CPU运行任何任务前，必须依赖的环境，也被称作CPU上下文。</strong></p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2023/01/31/%E8%BF%9B%E7%A8%8B%E5%88%87%E6%8D%A2%E5%8E%9F%E7%90%86/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2023/01/31/进程切换原理/#comments" class="ds-thread-count comments-count-link" data-thread-key="2023/01/31/进程切换原理/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2023/01/06/Commit-message-和-Change-log-编写指南/" title="Commit message 和 Change log 编写指南" itemprop="url">Commit message 和 Change log 编写指南</a>
   </h1>
   <p class="article-author">By
@@ -630,66 +692,6 @@
 	
 	  	<span></span>
 		<a href="/2022/09/05/深入了解-Systemd-之概要介绍/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/09/05/深入了解-Systemd-之概要介绍/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/09/04/清理systemd日志/" title="清理systemd日志" itemprop="url">清理systemd日志</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-09-04T14:15:22.000Z" itemprop="datePublished"> 发表于 2022-09-04</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p><code>systemd journal</code> 之于 <code>systemd</code> 犹如 <code>syslog</code> 之于 <code>init</code>，其日志文件保存在 <code>/var/log/journal</code> 目录下。随着时间的流逝，该目录下会积累大量日志文件，占用不少的磁盘空间。如果硬盘容量较小或可用空间紧张，可以考虑清理过期日志释放占用的空间。</p>
-<p>本文介绍清理systemd日志的方法。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/09/04/%E6%B8%85%E7%90%86systemd%E6%97%A5%E5%BF%97/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/09/04/清理systemd日志/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/09/04/清理systemd日志/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

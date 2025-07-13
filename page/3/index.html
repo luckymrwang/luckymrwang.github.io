@@ -85,6 +85,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/09/04/清理systemd日志/" title="清理systemd日志" itemprop="url">清理systemd日志</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-09-04T14:15:22.000Z" itemprop="datePublished"> 发表于 2022-09-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p><code>systemd journal</code> 之于 <code>systemd</code> 犹如 <code>syslog</code> 之于 <code>init</code>，其日志文件保存在 <code>/var/log/journal</code> 目录下。随着时间的流逝，该目录下会积累大量日志文件，占用不少的磁盘空间。如果硬盘容量较小或可用空间紧张，可以考虑清理过期日志释放占用的空间。</p>
+<p>本文介绍清理systemd日志的方法。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/09/04/%E6%B8%85%E7%90%86systemd%E6%97%A5%E5%BF%97/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/09/04/清理systemd日志/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/09/04/清理systemd日志/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/09/02/内核协议栈/" title="内核协议栈" itemprop="url">内核协议栈</a>
   </h1>
   <p class="article-author">By
@@ -634,69 +694,6 @@
 	
 	  	<span></span>
 		<a href="/2022/05/31/netfilter内核态与用户态通信之sockopt/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/31/netfilter内核态与用户态通信之sockopt/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/05/24/Go-mod-同一个module的多版本问题/" title="Go mod 同一个module的多版本问题" itemprop="url">Go mod 同一个module的多版本问题</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-05-24T01:46:31.000Z" itemprop="datePublished"> 发表于 2022-05-24</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>首先，注意区分使用Go mod后，module和package的概念</p>
-<ul>
-<li>module是go mod的引入单位，go.mod文件里引入的是module：</li>
-</ul>
-<p><img src="/images/gomod1.awebp" alt="image"></p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/05/24/Go-mod-%E5%90%8C%E4%B8%80%E4%B8%AAmodule%E7%9A%84%E5%A4%9A%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Golang/">Golang</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/05/24/Go-mod-同一个module的多版本问题/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/24/Go-mod-同一个module的多版本问题/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

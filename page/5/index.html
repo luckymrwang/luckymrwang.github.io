@@ -85,6 +85,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/04/24/iptables-nat-conntrack的特殊之处/" title="iptables nat&amp;conntrack的特殊之处" itemprop="url">iptables nat&amp;conntrack的特殊之处</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-04-24T02:07:09.000Z" itemprop="datePublished"> 发表于 2022-04-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="问题与解释"><a href="#问题与解释" class="headerlink" title="问题与解释"></a>问题与解释</h3><p>我在<code>PREROUTING</code>上做了一个<code>REDIRECT</code>端口改写，相应的服务处理请求后会返回应答。</p>
+<p>按照我以往的认识，认为回包的流量应该先后经过<code>OUTPUT</code>和<code>POSTROUTING</code>，所以我利用<code>iptables -t nat -nvL</code>去查看<code>NAT</code>表在<code>OUTPUT</code>链和<code>POSTROUTING</code>链上的<code>packge</code>计数器，结果发现没有上涨，这让我陷入了沉思。</p>
+<p>经过谷歌后找到了完美的解释：<a href="https://superuser.com/questions/1269859/linux-netfilter-how-does-connection-tracking-track-connections-changed-by-nat">linux-netfilter-how-does-connection-tracking-track-connections-changed-by-nat</a>。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/04/24/iptables-nat-conntrack%E7%9A%84%E7%89%B9%E6%AE%8A%E4%B9%8B%E5%A4%84/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/04/24/iptables-nat-conntrack的特殊之处/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/04/24/iptables-nat-conntrack的特殊之处/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/04/23/calico-iptables/" title="calico-iptables" itemprop="url">calico-iptables</a>
   </h1>
   <p class="article-author">By
@@ -622,65 +683,6 @@
 	
 	  	<span></span>
 		<a href="/2021/10/25/Go-Http包解析：为什么需要response-Body-Close/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/10/25/Go-Http包解析：为什么需要response-Body-Close/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2021/07/16/使用-dlv-GoLand-远程调试/" title="使用 dlv + GoLand 远程调试" itemprop="url">使用 dlv + GoLand 远程调试</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2021-07-16T02:04:08.000Z" itemprop="datePublished"> 发表于 2021-07-16</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在开发&#x2F;排查过程中, 偶尔会遇到一些仅在正式环境才能复现的BUG，但由于本地不能访问正式环境,，只能用有限的方式对问题进行Debug，例如添加日志等原始方法，效率过低，因此推荐借助IDE和Delve进行远程调试, 完成对BUG的快速排查与修复。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2021/07/16/%E4%BD%BF%E7%94%A8-dlv-GoLand-%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2021/07/16/使用-dlv-GoLand-远程调试/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/07/16/使用-dlv-GoLand-远程调试/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

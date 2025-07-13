@@ -1,0 +1,581 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Transformer推理性能优化技术——KVcache | iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="Motivation: 为什么要KVCache对于LLM类模型的一次推理（生成一个token）的过程，我们可以将这个过程分解为下列过程：  用一个流程图来表示，就是：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Transformer推理性能优化技术——KVcache">
+<meta property="og:url" content="https://luckymrwang.github.io/2025/07/13/Transformer%E6%8E%A8%E7%90%86%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF%E2%80%94%E2%80%94KVcache/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="Motivation: 为什么要KVCache对于LLM类模型的一次推理（生成一个token）的过程，我们可以将这个过程分解为下列过程：  用一个流程图来表示，就是：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache1.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache2.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache3.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache4.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache5.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache6.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache7.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache8.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache9.png">
+<meta property="og:image" content="https://luckymrwang.github.io/images/kvcache10.png">
+<meta property="article:published_time" content="2025-07-13T04:51:59.000Z">
+<meta property="article:modified_time" content="2025-07-13T05:53:32.205Z">
+<meta property="article:author" content="luckymrwang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luckymrwang.github.io/images/kvcache1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2025/07/13/Transformer推理性能优化技术——KVcache/" title="Transformer推理性能优化技术——KVcache" itemprop="url">Transformer推理性能优化技术——KVcache</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2025-07-13T04:51:59.000Z" itemprop="datePublished"> 发表于 2025-07-13</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Motivation-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81KVCache"><span class="toc-number">1.</span> <span class="toc-text">Motivation: 为什么要KVCache</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVCache%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AE%BE%E8%AE%A1%E7%BB%86%E8%8A%82"><span class="toc-number">2.</span> <span class="toc-text">KVCache的原理及设计细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVCache%E7%9A%84%E5%AD%98%E5%82%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="toc-number">3.</span> <span class="toc-text">KVCache的存储及实现细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVCache%E6%88%90%E7%AB%8B%E6%9D%A1%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">KVCache成立条件</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="Motivation-为什么要KVCache"><a href="#Motivation-为什么要KVCache" class="headerlink" title="Motivation: 为什么要KVCache"></a>Motivation: 为什么要KVCache</h2><p>对于LLM类模型的一次推理（生成一个token）的过程，我们可以将这个过程分解为下列过程：</p>
+<p><img src="/images/kvcache1.png"></p>
+<p>用一个流程图来表示，就是：</p>
+<p><img src="/images/kvcache2.png"></p>
+<span id="more"></span>
+
+<p>通过如下具体的代码查看详细推理逻辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">from transformers import GPT2LMHeadModel, GPT2Tokenizer</span><br><span class="line">import torch</span><br><span class="line"></span><br><span class="line"># 加载模型和分词器</span><br><span class="line">tokenizer = GPT2Tokenizer.from_pretrained(&#x27;gpt2&#x27;)</span><br><span class="line">model = GPT2LMHeadModel.from_pretrained(&#x27;gpt2&#x27;)</span><br><span class="line"></span><br><span class="line"># 获取嵌入维度 D（hidden_size）</span><br><span class="line">D = model.config.hidden_size  # GPT-2 Small 的 hidden_size 为 768</span><br><span class="line">print(f&quot;Embedding dimension (D): &#123;D&#125;&quot;)</span><br><span class="line"></span><br><span class="line"># 输入文本</span><br><span class="line">text = &quot;Hello, how are you&quot;</span><br><span class="line">inputs = tokenizer(text, return_tensors=&quot;pt&quot;)</span><br><span class="line">input_ids = inputs[&#x27;input_ids&#x27;]  # 形状: (batch_size, seq_len)</span><br><span class="line"></span><br><span class="line"># 获取 token embedding（第0层隐藏状态）</span><br><span class="line">embedding_layer = model.get_input_embeddings()</span><br><span class="line">token_embeddings = embedding_layer(input_ids)  # 形状: (batch_size, seq_len, D)</span><br><span class="line">print(f&quot;Token embeddings shape: &#123;token_embeddings.shape&#125;&quot;)  # 打印 token embedding 形状</span><br><span class="line"></span><br><span class="line"># 获取模型输出，包括所有层的隐藏状态</span><br><span class="line">outputs = model(**inputs, output_hidden_states=True)</span><br><span class="line"></span><br><span class="line"># 最后一层隐藏状态</span><br><span class="line">last_hidden_states = outputs.hidden_states[-1]  # 形状: (batch_size, seq_len, D)</span><br><span class="line">print(f&quot;Last hidden states shape: &#123;last_hidden_states.shape&#125;&quot;)  # 打印最后一层隐藏状态形状</span><br><span class="line"></span><br><span class="line"># 通过 lm_head 获取 logits</span><br><span class="line">lm_head = model.lm_head</span><br><span class="line">logits = lm_head(last_hidden_states)  # 形状: (batch_size, seq_len, vocab_size)</span><br><span class="line">print(f&quot;Logits shape: &#123;logits.shape&#125;&quot;)</span><br><span class="line"></span><br><span class="line"># 转换为概率</span><br><span class="line">probs = torch.softmax(logits, dim=-1)</span><br><span class="line">print(f&quot;Probabilities shape: &#123;probs.shape&#125;&quot;)</span><br><span class="line"># 打印最后一个 token 的概率（示例）</span><br><span class="line">last_token_probs = probs[0, -1, :]  # 最后一个 token 的概率分布</span><br><span class="line">print(f&quot;Probabilities for the last token (top 5):&quot;)</span><br><span class="line">top_probs, top_indices = torch.topk(last_token_probs, 5)</span><br><span class="line">for prob, idx in zip(top_probs, top_indices):</span><br><span class="line">    token = tokenizer.decode([idx])</span><br><span class="line">    print(f&quot;Token: &#123;token&#125;, Probability: &#123;prob.item():.4f&#125;&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Embedding dimension (D): 768</span><br><span class="line">Token embeddings shape: torch.Size([1, 5, 768])</span><br><span class="line">Last hidden states shape: torch.Size([1, 5, 768])</span><br><span class="line">Logits shape: torch.Size([1, 5, 50257])</span><br><span class="line">Probabilities shape: torch.Size([1, 5, 50257])</span><br><span class="line">Probabilities <span class="keyword">for</span> the last token (top 5):</span><br><span class="line">Token:  doing, Probability: 0.2651</span><br><span class="line">Token: ?, Probability: 0.1503</span><br><span class="line">Token:  feeling, Probability: 0.1476</span><br><span class="line">Token: ?<span class="string">&quot;, Probability: 0.0780</span></span><br><span class="line"><span class="string">Token: ,, Probability: 0.0337</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>嵌入层（Embedding Layer）的含义</p>
+<p>嵌入层是语言模型（如GPT-2）中的一个关键组件，它将输入的每个token（通常是一个整数，代表词汇表中的某个单词或子词）映射为一个高维向量，称为token embedding。这些向量是模型处理的核心表示，用于捕捉token的语义信息。</p>
+<p><strong>输入</strong>：一个token（如单词“hello”在词汇表中的ID，例如整数150）。</p>
+<p><strong>输出</strong>：一个高维向量 $x_i^0$，维度为 $D$，通常是一个实数值向量（例如，768维或更高）。</p>
+<p><strong>作用</strong>：这个向量表示token在高维空间中的语义特征，不同token的向量可以通过训练学习到语义上的相似性（例如，“cat”和“dog”的向量可能在空间中较接近）。</p>
+<p>在上述的描述中，输入序列 ${T_1, \cdots, T_i, \cdots, T_n}$ 的每个token $T_i$ 通过嵌入层被转换为对应的token embedding ${x_1^0, \cdots, x_i^0, \cdots, x_n^0}$，每个 $x_i^0$ 是一个 $D$ 维向量。</p>
+</li>
+<li><p>以GPT-2为例：维度 $D$ 是多少？</p>
+<p>在GPT-2模型中，<strong>嵌入层的输出维度 $D$</strong> 具体取决于模型的大小版本。以下是GPT-2不同版本的 $D$ 值（也称为隐藏维度或模型维度）：</p>
+<p><strong>GPT-2 Small</strong>：$D &#x3D; 768$ 维</p>
+<p><strong>GPT-2 Medium</strong>：$D &#x3D; 1024$ 维</p>
+<p><strong>GPT-2 Large</strong>：$D &#x3D; 1280$ 维</p>
+<p><strong>GPT-2 XL</strong>：$D &#x3D; 1600$ 维</p>
+<p>以最常用的 <strong>GPT-2 Small</strong> 为例，每个token通过嵌入层被映射为一个 <strong>768维的向量</strong>。这个向量 $x_i^0$ 就是初始的token embedding，进入Transformer层进行后续处理。</p>
+</li>
+<li><p>Token Embedding 和隐藏状态的关系</p>
+<p><strong>Token Embedding</strong>：指的是嵌入层直接输出的初始向量 ${x_1^0, \cdots, x_i^0, \cdots, x_n^0}$，也就是第0层的输出。这些向量是token的初始表示，尚未经过Transformer层的处理。</p>
+<p><strong>隐藏状态（Hidden States）</strong>：在Transformer模型中，每一层的输出都可以称为隐藏状态。例如，第1层的输出是 ${x_1^1, \cdots, x_i^1, \cdots, x_n^1}$，第2层是 ${x_1^2, \cdots, x_i^2, \cdots, x_n^2}$，依此类推。隐藏状态是每一层对token embedding的进一步变换结果，维度仍然是 $D$（在GPT-2中，例如768维）。</p>
+<p><strong>区别</strong>：</p>
+<ul>
+<li>Token embedding 是<strong>初始输入</strong>（第0层的隐藏状态）。</li>
+<li>隐藏状态是<strong>每一层Transformer的输出</strong>，是对token embedding的动态更新，包含了更多的上下文信息。</li>
+</ul>
+<p>在GPT-2中，嵌入层的输出（token embedding）维度与后续Transformer层的隐藏状态维度是相同的（例如，768维）。因此，token embedding 可以看作是第0层的隐藏状态，但术语上“隐藏状态”更常指Transformer层处理后的结果。</p>
+<p>3.1 <strong>隐藏状态的存储与计算</strong></p>
+<ul>
+<li><strong>单序列的隐藏状态大小</strong>：<ul>
+<li>计算公式：<code>batch_size × seq_length × hidden_dim × layers × bytes_per_float</code>（通常 float16 占 2 字节）。</li>
+<li>例如，DeepSeek 67B（<code>hidden_dim=8192</code>）处理 2K 长度序列时：<ul>
+<li>单层隐藏状态大小：<code>1 × 2048 × 8192 × 2 = 32 MB</code>。</li>
+<li>64 层总大小：约 <strong>2 GB</strong>（仅隐藏状态，未计参数）。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>GPT-4 的更高需求</strong>：<ul>
+<li>若 <code>hidden_dim=12288</code>，处理长上下文时显存占用显著增加（需分布式计算）。</li>
+</ul>
+</li>
+</ul>
+<ol start="4">
+<li>GPT-2嵌入层的具体实现</li>
+</ol>
+<ul>
+<li><strong>嵌入矩阵</strong>：GPT-2的嵌入层是一个可学习的矩阵，大小为 $[V, D]$，其中 $V$ 是词汇表大小（对于GPT-2，$V &#x3D; 50257$），$D$ 是嵌入维度（例如768）。</li>
+<li><strong>映射过程</strong>：对于输入的token ID（整数），嵌入层通过查找（lookup）或one-hot编码与嵌入矩阵相乘，得到对应的 $D$ 维向量。</li>
+<li><strong>初始化</strong>：这些向量在训练过程中通过优化（如梯度下降）学习，以捕捉token的语义信息。</li>
+</ul>
+<p>例如，给定token“hello”（假设ID为150），嵌入层会输出一个768维的向量 $x_{150}^0$，这个向量随后被送入Transformer层进行处理。</p>
+<p><img src="/images/kvcache3.png"></p>
+<p>我们可以用简单的代码来验证这一结论：</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> GPT2Tokenizer, GPT2Model</span><br><span class="line">tokenizer = GPT2Tokenizer.from_pretrained(<span class="string">&#x27;gpt2&#x27;</span>)</span><br><span class="line">model = GPT2Model.from_pretrained(<span class="string">&#x27;gpt2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># text: &quot;The quick brown fox jumps over the lazy&quot;</span></span><br><span class="line">tokens = [[<span class="number">464</span>, <span class="number">2068</span>, <span class="number">7586</span>, <span class="number">21831</span>, <span class="number">18045</span>, <span class="number">625</span>, <span class="number">262</span>, <span class="number">16931</span>]]</span><br><span class="line">input_n = torch.tensor(tokens)</span><br><span class="line">output_n = model(input_ids=input_n, output_hidden_states=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># text: &quot; dog&quot;</span></span><br><span class="line">tokens[<span class="number">0</span>].append(<span class="number">3290</span>)</span><br><span class="line">input_n_plus_1 = torch.tensor(tokens)</span><br><span class="line">output_n_plus_1 = model(input_ids=input_n_plus_1, output_hidden_states=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i, (hidden_n, hidden_n_plus_1) <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="built_in">zip</span>(output_n.hidden_states, output_n_plus_1.hidden_states)):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;layer <span class="subst">&#123;i&#125;</span>, max difference <span class="subst">&#123;(hidden_n - hidden_n_plus_1[:, :-<span class="number">1</span>, :]).<span class="built_in">abs</span>().<span class="built_in">max</span>().item()&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">assert</span> torch.allclose(hidden_n, hidden_n_plus_1[:, :-<span class="number">1</span>, :], atol=<span class="number">1e-4</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">layer 0, max difference 0.0</span><br><span class="line">layer 1, max difference 0.0</span><br><span class="line">layer 2, max difference 0.0</span><br><span class="line">layer 3, max difference 0.0</span><br><span class="line">layer 4, max difference 0.0</span><br><span class="line">layer 5, max difference 0.0</span><br><span class="line">layer 6, max difference 0.0</span><br><span class="line">layer 7, max difference 0.0</span><br><span class="line">layer 8, max difference 0.0</span><br><span class="line">layer 9, max difference 0.0</span><br><span class="line">layer 10, max difference 0.0</span><br><span class="line">layer 11, max difference 0.0</span><br><span class="line">layer 12, max difference 0.0</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/images/kvcache4.png"></p>
+<p>更具体的计算流程如下图所示：</p>
+<p><img src="/images/kvcache5.png"></p>
+<p>我们使用不同的颜色来区分初始输入（黑色）、生成第一个token时计算得出的中间结果（红色）、后续生成每个token需要计算并保存的中间结果（蓝色）。</p>
+<p>严格来说，本文中的nnn表示输入prompt的token数目，随着generation进行，我们还需要引入另一个变量来表示generate的token个数。为了避免引入太多符号，下文中我们用nnn表示prompt的token数目加上已经generate的token个数，也就是当前拥有的token数。这样我们就能聚焦在next token prediction本身了。</p>
+<h2 id="KVCache的原理及设计细节"><a href="#KVCache的原理及设计细节" class="headerlink" title="KVCache的原理及设计细节"></a>KVCache的原理及设计细节</h2><p><img src="/images/kvcache6.png"></p>
+<p><img src="/images/kvcache7.png"></p>
+<h2 id="KVCache的存储及实现细节"><a href="#KVCache的存储及实现细节" class="headerlink" title="KVCache的存储及实现细节"></a>KVCache的存储及实现细节</h2><p><img src="/images/kvcache8.png"></p>
+<ul>
+<li><p>分配一个最大容量的缓冲区，要求提前预知最大的token数量。而且现在大模型卷得厉害，动不动支持上百万长度，而大部分的用户请求都很短。因此，按照最大容量来分配是非常浪费的。</p>
+</li>
+<li><p>动态分配缓冲区大小，类似经典的vector append的处理方式，超过容量了就扩增一倍。这也是一种可行的解决方案，但是（在GPU设备上）频繁申请、释放内存的开销很大，效率不高。</p>
+</li>
+<li><p>把数据拆散，按最小单元存储，用一份元数据记录每一块数据的位置。</p>
+</li>
+</ul>
+<p>最后一种方案，就是目前采用最多的方案，也叫PageAttention。程序在初始化时申请一整块显存（例如4GB），按照KVCache的大小划分成一个一个的小块，并记录每个token在推理时要用到第几个小块。小块显存的申请、释放、管理，类似操作系统对物理内存的虚拟化过程，这就是大名鼎鼎的<a href="https://zhida.zhihu.com/search?content_id=652794957&content_type=Answer&match_order=1&q=vLLM&zhida_source=entity">vLLM</a>的思路（具体参见论文<a href="https://link.zhihu.com/?target=https://arxiv.org/abs/2309.06180">Efficient Memory Management for Large Language Model Serving with PagedAttention</a>）。</p>
+<h2 id="KVCache成立条件"><a href="#KVCache成立条件" class="headerlink" title="KVCache成立条件"></a>KVCache成立条件</h2><p>KVCache是一种用更大的显存空间换取更快的推理速度的手段。那么，它是否能够无条件适用于所有的LLM呢？其实并不是的。分析了它的原理后，我们就可以得出它适用的条件：</p>
+<p><img src="/images/kvcache9.png"></p>
+<p><img src="/images/kvcache10.png"></p>
+</li>
+</ol>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2025/07/13/Transformer%E6%8E%A8%E7%90%86%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF%E2%80%94%E2%80%94KVcache/" data-title="Transformer推理性能优化技术——KVcache | iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2025/07/09/Architecture/"  title="Architecture">
+ <strong>下一篇：</strong><br/> 
+ <span>Architecture
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2025/07/13/Transformer推理性能优化技术——KVcache/" data-title="Transformer推理性能优化技术——KVcache" data-url="https://luckymrwang.github.io/2025/07/13/Transformer%E6%8E%A8%E7%90%86%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF%E2%80%94%E2%80%94KVcache/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Motivation-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81KVCache"><span class="toc-number">1.</span> <span class="toc-text">Motivation: 为什么要KVCache</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVCache%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E8%AE%BE%E8%AE%A1%E7%BB%86%E8%8A%82"><span class="toc-number">2.</span> <span class="toc-text">KVCache的原理及设计细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVCache%E7%9A%84%E5%AD%98%E5%82%A8%E5%8F%8A%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="toc-number">3.</span> <span class="toc-text">KVCache的存储及实现细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#KVCache%E6%88%90%E7%AB%8B%E6%9D%A1%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">KVCache成立条件</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

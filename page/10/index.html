@@ -85,6 +85,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2019/07/03/Go中的条件变量与Channel/" title="Go中的条件变量与Channel" itemprop="url">Go中的条件变量与Channel</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-02T16:04:51.000Z" itemprop="datePublished"> 发表于 2019-07-03</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>在Go语言中 <code>sync.Cond</code> 代表条件变量，初始化的时候需要传入一个互斥体，它可以是普通锁（Mutex），也可以是读写锁（RWMutex）。如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mutex sync.Mutex  <span class="comment">// 也可以是 sync.RWMutex</span></span><br><span class="line"><span class="keyword">var</span> cond = sync.NewCond(&amp;mutex)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2019/07/03/Go%E4%B8%AD%E7%9A%84%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F%E4%B8%8EChannel/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2019/07/03/Go中的条件变量与Channel/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/07/03/Go中的条件变量与Channel/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2019/06/05/MacOS-安装PHP5-6/" title="MacOS 安装PHP5.6" itemprop="url">MacOS 安装PHP5.6</a>
   </h1>
   <p class="article-author">By
@@ -627,68 +687,6 @@
 	
 	  	<span></span>
 		<a href="/2018/11/28/Golang-Json-科学计数法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2018/11/28/Golang-Json-科学计数法/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2018/09/19/Neo4j实例/" title="Neo4j实例" itemprop="url">Neo4j实例</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2018-09-19T02:43:54.000Z" itemprop="datePublished"> 发表于 2018-09-19</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="实例介绍"><a href="#实例介绍" class="headerlink" title="实例介绍"></a>实例介绍</h3><p>为了方便用户入门，Neo4j Web管理界面提供了一个官方入门实例“电影关系图”，帮助初学者在自己电脑上一步步创建一个入门级别的图数据库。下面围绕这个“电影关系图”实例一步步介绍、分析其创建和查询等操作。</p>
-<p>首先，打开Neo4j Web管理界面后，在引导实例区单即“Write Code”链接进入代码书写引导页，然后单击Movie Graph下的Create a graph链接就进入“电影关系图”实例引导界面了，如下图：</p>
-<p><img src="/images/neo4j_2.png" alt="neo4j"></p>
-<p>电影关系图实例将电影、电影导演、演员之间的复杂网状关系作为蓝本，使用Neo4j创建三者关系的图结构，虽然实例数据规模小但结构是相对完整的。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2018/09/19/Neo4j%E5%AE%9E%E4%BE%8B/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Neo4j/">Neo4j</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2018/09/19/Neo4j实例/#comments" class="ds-thread-count comments-count-link" data-thread-key="2018/09/19/Neo4j实例/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

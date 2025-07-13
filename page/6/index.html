@@ -85,6 +85,65 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2021/07/16/使用-dlv-GoLand-远程调试/" title="使用 dlv + GoLand 远程调试" itemprop="url">使用 dlv + GoLand 远程调试</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2021-07-16T02:04:08.000Z" itemprop="datePublished"> 发表于 2021-07-16</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>在开发&#x2F;排查过程中, 偶尔会遇到一些仅在正式环境才能复现的BUG，但由于本地不能访问正式环境,，只能用有限的方式对问题进行Debug，例如添加日志等原始方法，效率过低，因此推荐借助IDE和Delve进行远程调试, 完成对BUG的快速排查与修复。</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2021/07/16/%E4%BD%BF%E7%94%A8-dlv-GoLand-%E8%BF%9C%E7%A8%8B%E8%B0%83%E8%AF%95/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2021/07/16/使用-dlv-GoLand-远程调试/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/07/16/使用-dlv-GoLand-远程调试/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2021/04/25/CentOS7-部署K8S集群/" title="CentOS7 部署K8S集群" itemprop="url">CentOS7 部署K8S集群</a>
   </h1>
   <p class="article-author">By
@@ -620,67 +679,6 @@
 	
 	  	<span></span>
 		<a href="/2021/01/28/解决-Homebrew-下载更新极慢的问题/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/01/28/解决-Homebrew-下载更新极慢的问题/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/12/28/破解-Java-Agent-探针黑科技/" title="破解 Java Agent 探针黑科技" itemprop="url">破解 Java Agent 探针黑科技</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-12-28T07:54:50.000Z" itemprop="datePublished"> 发表于 2020-12-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="什么是-Java-Agent"><a href="#什么是-Java-Agent" class="headerlink" title="什么是 Java Agent"></a>什么是 Java Agent</h3><p>笼统地来讲，Java Agent 是一个统称，该功能是 Java 虚拟机提供的一整套后门。通过这套后门可以对虚拟机方方面面进行监控与分析。甚至干预虚拟机的运行。</p>
-<p>Java Agent 又叫做 Java 探针，Java Agent 是在 JDK1.5 引入的，是一种可以动态修改 Java 字节码的技术。Java 类编译之后形成字节码被 JVM 执行，在 JVM 在执行这些字节码之前获取这些字节码信息，并且通过字节码转换器对这些字节码进行修改，来完成一些额外的功能，这种就是 Java Agent 技术。</p>
-<p>从用户使用层面来看，Java Agent 一般通过在应用启动参数中添加 -javaagent 参数添加 ClassFileTransformer 字节码转换器。 在 Java 虚拟机启动时，执 行main() 函数之前，Java  虚拟机会先找到 -javaagent 命令指定 jar 包，然后执行 premain-class 中的 premain() 方法。用一句概括其功能的话就是：main() 函数之前的一个拦截器。</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/12/28/%E7%A0%B4%E8%A7%A3-Java-Agent-%E6%8E%A2%E9%92%88%E9%BB%91%E7%A7%91%E6%8A%80/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Java/">Java</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/12/28/破解-Java-Agent-探针黑科技/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/12/28/破解-Java-Agent-探针黑科技/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
