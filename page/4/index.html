@@ -85,6 +85,78 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/05/31/netfilter内核态与用户态通信之sockopt/" title="netfilter内核态与用户态通信之sockopt" itemprop="url">netfilter内核态与用户态通信之sockopt</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-31T11:12:51.000Z" itemprop="datePublished"> 发表于 2022-05-31</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>用户态与内核态交互通信的方法不止一种，sockopt是比较方便的一个，写法也简单.</p>
+<p>缺点就是使用 copy_from_user()&#x2F;copy_to_user()完成内核和用户的通信， 效率其实不高， 多用在传递控制 选项 信息，不适合做大量的数据传输。</p>
+<p>用户态函数：</p>
+<ul>
+<li>发送：int setsockopt ( int sockfd, int proto, int cmd, void *data, int datelen);</li>
+<li>接收：int getsockopt(int sockfd, int proto, int cmd, void *data, int datalen)<ul>
+<li>第一个参数是socket描述符；</li>
+<li>第二个参数proto是sock协议，IP RAW的就用SOL_SOCKET&#x2F;SOL_IP等，TCP&#x2F;UDP socket的可用SOL_SOCKET&#x2F;SOL_IP&#x2F;SOL_TCP&#x2F;SOL_UDP等，即高层的socket是都可以使用低层socket的命令字 的，IPPROTO_IP；</li>
+<li>第三个参数cmd是操作命令字，由自己定义；</li>
+<li>第四个参数是数据缓冲区起始位置指针，set操作时是将缓冲区数据写入内核，get的时候是将内核中的数 据读入该缓冲区；</li>
+<li>第五个参数数据长度</li>
+</ul>
+</li>
+</ul>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/31/netfilter%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8E%E7%94%A8%E6%88%B7%E6%80%81%E9%80%9A%E4%BF%A1%E4%B9%8Bsockopt/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Socket/">Socket</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/31/netfilter内核态与用户态通信之sockopt/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/31/netfilter内核态与用户态通信之sockopt/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/05/24/Go-mod-同一个module的多版本问题/" title="Go mod 同一个module的多版本问题" itemprop="url">Go mod 同一个module的多版本问题</a>
   </h1>
   <p class="article-author">By
@@ -619,66 +691,6 @@
 	
 	  	<span></span>
 		<a href="/2022/05/08/Go性能分析-内存/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/08/Go性能分析-内存/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/05/06/使用-etcdctl-访问-Kubernetes-数据/" title="使用 etcdctl 访问 Kubernetes 数据" itemprop="url">使用 etcdctl 访问 Kubernetes 数据</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-05-06T08:01:16.000Z" itemprop="datePublished"> 发表于 2022-05-06</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Kubenretes1.6 中使用 <code>etcd V3</code> 版本的 API，使用 <code>etcdctl</code> 直接 <code>ls</code> 的话只能看到 <code>/kube-centos</code> 一个路径。需要在命令前加上 <code>ETCDCTL_API=3</code> 这个环境变量才能看到 kuberentes 在 etcd 中保存的数据。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable constant_">ETCDCTL_API</span>=<span class="number">3</span> etcdctl get /registry/namespaces/<span class="keyword">default</span> -w=json|python -m json.<span class="property">tool</span></span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/05/06/%E4%BD%BF%E7%94%A8-etcdctl-%E8%AE%BF%E9%97%AE-Kubernetes-%E6%95%B0%E6%8D%AE/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/05/06/使用-etcdctl-访问-Kubernetes-数据/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/06/使用-etcdctl-访问-Kubernetes-数据/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

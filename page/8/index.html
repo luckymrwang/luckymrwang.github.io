@@ -85,6 +85,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/11/10/使用go的io-Pipe优雅的优化中间缓存/" title="使用go的io.Pipe优雅的优化中间缓存" itemprop="url">使用go的io.Pipe优雅的优化中间缓存</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-11-10T06:05:33.000Z" itemprop="datePublished"> 发表于 2020-11-10</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="BEFORE"><a href="#BEFORE" class="headerlink" title="BEFORE"></a>BEFORE</h3><p>向其他服务器发送json数据时，都需要先声明一个bytes缓存，然后通过json库把结构体中的内容mashal成字节流，再通过Post函数发送。<br>代码如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">        <span class="string">&quot;bytes&quot;</span></span><br><span class="line">        <span class="string">&quot;encoding/json&quot;</span></span><br><span class="line">        <span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">        <span class="string">&quot;log&quot;</span></span><br><span class="line">        <span class="string">&quot;net/http&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">        log.SetFlags(log.Lshortfile)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">        cli := http.Client&#123;&#125;</span><br><span class="line"></span><br><span class="line">        msg := <span class="keyword">struct</span> &#123;</span><br><span class="line">            Name, Addr <span class="type">string</span></span><br><span class="line">            Price      <span class="type">float64</span></span><br><span class="line">        &#125;&#123;</span><br><span class="line">            Name:  <span class="string">&quot;hello&quot;</span>,</span><br><span class="line">            Addr:  <span class="string">&quot;beijing&quot;</span>,</span><br><span class="line">            Price: <span class="number">123.56</span>,</span><br><span class="line">        &#125;</span><br><span class="line">        buf := bytes.NewBuffer(<span class="literal">nil</span>)</span><br><span class="line">        json.NewEncoder(buf).Encode(msg)</span><br><span class="line">        resp, err := cli.Post(<span class="string">&quot;http://localhost:9999/json&quot;</span>, <span class="string">&quot;application/json&quot;</span>, buf)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            log.Fatalln(err)</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        body := resp.Body</span><br><span class="line">        <span class="keyword">defer</span> body.Close()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> body_bytes, err := ioutil.ReadAll(body); err == <span class="literal">nil</span> &#123;</span><br><span class="line">            log.Println(<span class="string">&quot;response:&quot;</span>, <span class="type">string</span>(body_bytes))</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            log.Fatalln(err)</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/11/10/%E4%BD%BF%E7%94%A8go%E7%9A%84io-Pipe%E4%BC%98%E9%9B%85%E7%9A%84%E4%BC%98%E5%8C%96%E4%B8%AD%E9%97%B4%E7%BC%93%E5%AD%98/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/11/10/使用go的io-Pipe优雅的优化中间缓存/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/11/10/使用go的io-Pipe优雅的优化中间缓存/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/11/09/CentOS-7-用户账户配置/" title="CentOS 7 用户账户配置" itemprop="url">CentOS 7 用户账户配置</a>
   </h1>
   <p class="article-author">By
@@ -618,66 +678,6 @@
 	
 	  	<span></span>
 		<a href="/2020/08/05/Golang进度条功能实现/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/08/05/Golang进度条功能实现/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2020/08/04/Kubernetes-Volume-挂载/" title="Kubernetes Volume 挂载" itemprop="url">Kubernetes Volume 挂载</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2020-08-04T06:15:49.000Z" itemprop="datePublished"> 发表于 2020-08-04</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="挂载配置文件到应用程序所在的目录"><a href="#挂载配置文件到应用程序所在的目录" class="headerlink" title="挂载配置文件到应用程序所在的目录"></a>挂载配置文件到应用程序所在的目录</h3><p>应用程序代码：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;io&quot;</span></span><br><span class="line">    <span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">    <span class="string">&quot;log&quot;</span></span><br><span class="line">    <span class="string">&quot;net/http&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;gopkg.in/yaml.v2&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> config <span class="keyword">struct</span> &#123;</span><br><span class="line">    Port <span class="type">string</span> <span class="string">`yaml:&quot;port&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> c = <span class="built_in">new</span>(config)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fContent, err := ioutil.ReadFile(<span class="string">&quot;config.yaml&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> err = yaml.Unmarshal(fContent, c); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    handlerFunc := <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">        io.WriteString(w, <span class="string">&quot;Hello !&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    http.HandleFunc(<span class="string">&quot;/&quot;</span>, handlerFunc)</span><br><span class="line">    log.Fatal(http.ListenAndServe(fmt.Sprintf(<span class="string">&quot;:%s&quot;</span>, c.Port), <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2020/08/04/Kubernetes-Volume-%E6%8C%82%E8%BD%BD/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2020/08/04/Kubernetes-Volume-挂载/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/08/04/Kubernetes-Volume-挂载/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

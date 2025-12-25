@@ -1,0 +1,544 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iBlog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="luckymrwang">
+    
+
+    
+    <meta name="description" content="title: nvidia-smidate: 2025-12-25 14:09:18 tags: [Nvidia] nvidia-smi 是 NVIDIA 驱动提供的命令行工具，能够帮助用户监控和管理 GPU 的状态与行为。本文整理了一些常用的 nvidia-smi 命令，帮助大家快速上手和高效使用。 1. 显示 GPU 基本信息使用最常见的 nvidia-smi 命令可以展示所有 GPU 的概览">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iBlog">
+<meta property="og:url" content="https://luckymrwang.github.io/2025/12/25/nvidia-smi/index.html">
+<meta property="og:site_name" content="iBlog">
+<meta property="og:description" content="title: nvidia-smidate: 2025-12-25 14:09:18 tags: [Nvidia] nvidia-smi 是 NVIDIA 驱动提供的命令行工具，能够帮助用户监控和管理 GPU 的状态与行为。本文整理了一些常用的 nvidia-smi 命令，帮助大家快速上手和高效使用。 1. 显示 GPU 基本信息使用最常见的 nvidia-smi 命令可以展示所有 GPU 的概览">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-12-25T06:09:18.137Z">
+<meta property="article:modified_time" content="2025-12-25T06:12:19.501Z">
+<meta property="article:author" content="luckymrwang">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="iBlog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2966365318189151"
+     crossorigin="anonymous"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="iBlog" title="iBlog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="iBlog">iBlog</a></h1>
+				<h2 class="blog-motto">Write down what I think.</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">主页</a></li>
+					
+						<li><a href="/archives">文章列表</a></li>
+					
+						<li><a href="/about">关于</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:luckymrwang.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2025/12/25/nvidia-smi/" title="" itemprop="url"></a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2025-12-25T06:09:18.137Z" itemprop="datePublished"> 发表于 2025-12-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%98%BE%E7%A4%BA-GPU-%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="toc-number">1.</span> <span class="toc-text">1. 显示 GPU 基本信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%98%BE%E7%A4%BA-GPU-%E5%9E%8B%E5%8F%B7%E4%BF%A1%E6%81%AF"><span class="toc-number">2.</span> <span class="toc-text">2. 显示 GPU 型号信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%98%BE%E7%A4%BA-GPU-%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF"><span class="toc-number">3.</span> <span class="toc-text">3. 显示 GPU 详细信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9F%A5%E7%9C%8B%E7%89%B9%E5%AE%9A-GPU"><span class="toc-number">4.</span> <span class="toc-text">4. 查看特定 GPU</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%9B%91%E6%8E%A7%E6%95%B4%E4%BD%93-GPU-%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-number">5.</span> <span class="toc-text">5. 监控整体 GPU 使用情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%9F%A5%E7%9C%8B%E4%B8%8E-GPU-%E4%BA%A4%E4%BA%92%E7%9A%84%E8%BF%9B%E7%A8%8B"><span class="toc-number">6.</span> <span class="toc-text">6. 查看与 GPU 交互的进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%AE%9E%E6%97%B6%E5%88%B7%E6%96%B0-GPU-%E4%BF%A1%E6%81%AF"><span class="toc-number">7.</span> <span class="toc-text">7. 实时刷新 GPU 信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%99%90%E5%88%B6-GPU-%E7%9A%84%E5%8A%9F%E8%80%97"><span class="toc-number">8.</span> <span class="toc-text">8. 限制 GPU 的功耗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%B8%85%E9%99%A4%E5%B7%B2%E5%8F%91%E7%94%9F%E7%9A%84%E9%94%99%E8%AF%AF%E8%AE%B0%E5%BD%95"><span class="toc-number">9.</span> <span class="toc-text">9. 清除已发生的错误记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E6%9F%A5%E7%9C%8B%E9%A9%B1%E5%8A%A8%E7%89%88%E6%9C%AC"><span class="toc-number">10.</span> <span class="toc-text">10. 查看驱动版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E6%9F%A5%E7%9C%8B%E6%98%BE%E5%AD%98%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-number">11.</span> <span class="toc-text">11. 查看显存使用情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E8%AE%BE%E7%BD%AE-GPU-%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F"><span class="toc-number">12.</span> <span class="toc-text">12. 设置 GPU 计算模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">13.</span> <span class="toc-text">参考</span></a></li></ol>
+		
+		</div>
+		
+		<p>title: nvidia-smi<br>date: 2025-12-25 14:09:18</p>
+<p>tags: [Nvidia]</p>
+<p><code>nvidia-smi</code> 是 NVIDIA 驱动提供的命令行工具，能够帮助用户监控和管理 GPU 的状态与行为。本文整理了一些常用的 <code>nvidia-smi</code> 命令，帮助大家快速上手和高效使用。</p>
+<h2 id="1-显示-GPU-基本信息"><a href="#1-显示-GPU-基本信息" class="headerlink" title="1. 显示 GPU 基本信息"></a>1. 显示 GPU 基本信息</h2><p>使用最常见的 <code>nvidia-smi</code> 命令可以展示所有 GPU 的概览信息，包括每块 GPU 的利用率、显存使用情况、风扇速度和温度等。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<p>输出内容示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">+---------------------------------------------------------------------------------------+</span><br><span class="line">| NVIDIA-SMI 535.183.01             Driver Version: 535.183.01   CUDA Version: 12.2     |</span><br><span class="line">|-----------------------------------------+----------------------+----------------------+</span><br><span class="line">| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |</span><br><span class="line">| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |</span><br><span class="line">|                                         |                      |               MIG M. |</span><br><span class="line">|=========================================+======================+======================|</span><br><span class="line">|   0  Tesla T4                       On  | 00000000:81:00.0 Off |                    0 |</span><br><span class="line">| N/A   40C    P8              10W /  70W |      2MiB / 15360MiB |      0%      Default |</span><br><span class="line">|                                         |                      |                  N/A |</span><br><span class="line">+-----------------------------------------+----------------------+----------------------+</span><br><span class="line"></span><br><span class="line">+---------------------------------------------------------------------------------------+</span><br><span class="line">| Processes:                                                                            |</span><br><span class="line">|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |</span><br><span class="line">|        ID   ID                                                             Usage      |</span><br><span class="line">|=======================================================================================|</span><br><span class="line">|  No running processes found                                                           |</span><br><span class="line">+---------------------------------------------------------------------------------------+</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-显示-GPU-型号信息"><a href="#2-显示-GPU-型号信息" class="headerlink" title="2. 显示 GPU 型号信息"></a>2. 显示 GPU 型号信息</h2><p>如果我们要获取显卡型号信息，可以使用 <code>-L</code> 参数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi -L</span><br><span class="line">GPU 0: Tesla T4 (UUID: GPU-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxx)</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-显示-GPU-详细信息"><a href="#3-显示-GPU-详细信息" class="headerlink" title="3. 显示 GPU 详细信息"></a>3. 显示 GPU 详细信息</h2><p>如果我们需要获取更详细的信息，可以使用 <code>-q</code> 参数。这会展示每个 GPU 的所有硬件细节，包括温度、电源使用情况、性能状态等。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi -q</span><br></pre></td></tr></table></figure>
+
+<p>部分输出内容示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">==============NVSMI LOG==============</span><br><span class="line"></span><br><span class="line">Timestamp                                 : Thu Sep 26 19:11:30 2024</span><br><span class="line">Driver Version                            : 535.183.01</span><br><span class="line">CUDA Version                              : 12.2</span><br><span class="line"></span><br><span class="line">Attached GPUs                             : 1</span><br><span class="line">GPU 00000000:81:00.0</span><br><span class="line">    Product Name                          : Tesla T4</span><br><span class="line">    Product Brand                         : NVIDIA</span><br><span class="line">    Product Architecture                  : Turing</span><br><span class="line">    Display Mode                          : Enabled</span><br><span class="line">    Display Active                        : Disabled</span><br><span class="line">    Persistence Mode                      : Enabled</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-查看特定-GPU"><a href="#4-查看特定-GPU" class="headerlink" title="4. 查看特定 GPU"></a>4. 查看特定 GPU</h2><p>当系统中有多块 GPU 时，我们可以使用 <code>-i</code> 参数指定查看某块 GPU 的信息。例如，查看 ID 为 0 的 GPU：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi -i 0</span><br></pre></td></tr></table></figure>
+
+<p>输出仅限于指定的 GPU 设备。</p>
+<h2 id="5-监控整体-GPU-使用情况"><a href="#5-监控整体-GPU-使用情况" class="headerlink" title="5. 监控整体 GPU 使用情况"></a>5. 监控整体 GPU 使用情况</h2><p>我们可以通过如下命令查看当前 GPU 资源整体使用情况。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi dmon -i 0 -d 2</span><br><span class="line"><span class="comment">#-i 0: 指定 GPU 的索引号，这里是索引为 0 的 GPU。</span></span><br><span class="line"><span class="comment">#-d 2: 设置采样间隔（采样频率），单位为秒，这里是每 2 秒采样一次。</span></span><br><span class="line"><span class="comment"># gpu    pwr  gtemp  mtemp     sm    mem    enc    dec    jpg    ofa   mclk   pclk</span></span><br><span class="line"><span class="comment"># Idx      W      C      C      %      %      %      %      %      %    MHz    MHz</span></span><br><span class="line">    0     15     41      -      0      0      0      0      0      0    405    300</span><br><span class="line">    0     15     41      -      0      0      0      0      0      0    405    300</span><br><span class="line">    0     15     40      -      0      0      0      0      0      0    405    300</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="comment">#GPU 的索引号是 0。</span></span><br><span class="line"><span class="comment">#功耗是 15 瓦。</span></span><br><span class="line"><span class="comment">#GPU 温度是 41 摄氏度。</span></span><br><span class="line"><span class="comment">#显存温度没有显示（用 - 表示）。</span></span><br><span class="line"><span class="comment">#Streaming Multiprocessor 的利用率是 0%。</span></span><br><span class="line"><span class="comment">#显存利用率是 0%。</span></span><br><span class="line"><span class="comment">#视频编码引擎利用率是 0%。</span></span><br><span class="line"><span class="comment">#视频解码引擎利用率是 0%。</span></span><br><span class="line"><span class="comment">#JPEG 引擎利用率是 0%。</span></span><br><span class="line"><span class="comment">#Optical Flow Accelerator 的利用率是 0%。</span></span><br><span class="line"><span class="comment">#显存时钟频率是 405 MHz。</span></span><br><span class="line"><span class="comment">#GPU 核心时钟频率是 300 MHz。</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="6-查看与-GPU-交互的进程"><a href="#6-查看与-GPU-交互的进程" class="headerlink" title="6. 查看与 GPU 交互的进程"></a>6. 查看与 GPU 交互的进程</h2><p>可以通过以下命令查看当前使用 GPU 资源的进程。默认情况下，它只会显示与 GPU 计算资源交互的进程。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi pmon -i 0</span><br></pre></td></tr></table></figure>
+
+<p>输出示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># gpu        pid  type    sm   mem   enc   dec   command</span><br><span class="line"># Idx         #   C/G     %     %     %     %   name</span><br><span class="line">    0      2635     C     0     0     0     0   python</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">#gpu (Idx): GPU 的索引号。</span><br><span class="line">#pid (#): 进程的进程 ID（PID）。</span><br><span class="line">#type (C/G): 进程类型，C 代表计算进程，G 代表图形进程。</span><br><span class="line">#sm (%): Streaming Multiprocessor 的利用率百分比。</span><br><span class="line">#mem (%): 显存带宽利用率百分比。</span><br><span class="line">#enc (%): 视频编码引擎利用率百分比。</span><br><span class="line">#dec (%): 视频解码引擎利用率百分比。</span><br><span class="line">#command (name): 进程的命令名称。</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-实时刷新-GPU-信息"><a href="#7-实时刷新-GPU-信息" class="headerlink" title="7. 实时刷新 GPU 信息"></a>7. 实时刷新 GPU 信息</h2><p>我们可以使用 <code>-l</code> 参数让 <code>nvidia-smi</code> 命令每隔固定时间刷新一次 GPU 状态。如下命令每 5 秒刷新一次：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi -l 5</span><br></pre></td></tr></table></figure>
+
+<p>这是一个很好的工具，用于实时监控 GPU 资源的使用。</p>
+<h2 id="8-限制-GPU-的功耗"><a href="#8-限制-GPU-的功耗" class="headerlink" title="8. 限制 GPU 的功耗"></a>8. 限制 GPU 的功耗</h2><p>为了在使用 GPU 时更好地控制功耗，可以设置一个功耗限制。如下命令将 GPU 的最大功耗限制在 70 瓦以内：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi -i 0 -pl 70</span><br></pre></td></tr></table></figure>
+
+<p>请注意，功耗限制只能在指定的范围内设置，不同的 GPU 设备支持不同的功耗范围。</p>
+<h2 id="9-清除已发生的错误记录"><a href="#9-清除已发生的错误记录" class="headerlink" title="9. 清除已发生的错误记录"></a>9. 清除已发生的错误记录</h2><p>如果 GPU 上曾发生过错误（如 XID 错误），可以使用以下命令清除这些错误记录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi --clear-gpu-errors</span><br></pre></td></tr></table></figure>
+
+<p>这是在调试和监控过程中保持 GPU 状态清晰的一个好方法。</p>
+<h2 id="10-查看驱动版本"><a href="#10-查看驱动版本" class="headerlink" title="10. 查看驱动版本"></a>10. 查看驱动版本</h2><p>可以通过查询功能，查看每块 GPU 的驱动版本。命令输出的格式为 CSV 格式，便于后续处理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi --query-gpu=driver_version --format=csv</span><br></pre></td></tr></table></figure>
+
+<p>输出内容示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">driver_version</span><br><span class="line">460.39</span><br></pre></td></tr></table></figure>
+
+<h2 id="11-查看显存使用情况"><a href="#11-查看显存使用情况" class="headerlink" title="11. 查看显存使用情况"></a>11. 查看显存使用情况</h2><p>此命令可以显示每块 GPU 的显存总量、已用显存和可用显存：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi --query-gpu=memory.total,memory.used,memory.free --format=csv</span><br></pre></td></tr></table></figure>
+
+<p>输出示例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">memory.total [MiB], memory.used [MiB], memory.free [MiB]</span><br><span class="line">15109 MiB, 0 MiB, 15109 MiB</span><br></pre></td></tr></table></figure>
+
+<h2 id="12-设置-GPU-计算模式"><a href="#12-设置-GPU-计算模式" class="headerlink" title="12. 设置 GPU 计算模式"></a>12. 设置 GPU 计算模式</h2><p>可以为 GPU 设置不同的计算模式，以控制进程对 GPU 资源的访问权限。常用的计算模式包括：</p>
+<ul>
+<li><code>0</code>：默认模式，所有进程均可使用 GPU；</li>
+<li><code>1</code>：仅计算进程模式，只有计算任务可以使用 GPU；</li>
+<li><code>2</code>：禁止模式，新的进程无法访问 GPU。</li>
+</ul>
+<p>例如，将 GPU 0 设置为仅计算进程模式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi -i 0 -c 1</span><br></pre></td></tr></table></figure>
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br></pre></td><td class="code"><pre><span class="line">nvidia-smi -h</span><br><span class="line"></span><br><span class="line">NVIDIA System Management Interface -- v535.104.05</span><br><span class="line"></span><br><span class="line">NVSMI provides monitoring information <span class="keyword">for</span> Tesla and <span class="keyword">select</span> Quadro devices.</span><br><span class="line">The data is presented <span class="keyword">in</span> either a plain text or an XML format, via stdout or a file.</span><br><span class="line">NVSMI also provides several management operations <span class="keyword">for</span> changing the device state.</span><br><span class="line"></span><br><span class="line">Note that the functionality of NVSMI is exposed through the NVML C-based</span><br><span class="line">library. See the NVIDIA developer website <span class="keyword">for</span> more information about NVML.</span><br><span class="line">Python wrappers to NVML are also available.  The output of NVSMI is</span><br><span class="line">not guaranteed to be backwards compatible; NVML and the bindings are backwards</span><br><span class="line">compatible.</span><br><span class="line"></span><br><span class="line">http://developer.nvidia.com/nvidia-management-library-nvml/</span><br><span class="line">http://pypi.python.org/pypi/nvidia-ml-py/</span><br><span class="line">Supported products:</span><br><span class="line">- Full Support</span><br><span class="line">    - All Tesla products, starting with the Kepler architecture</span><br><span class="line">    - All Quadro products, starting with the Kepler architecture</span><br><span class="line">    - All GRID products, starting with the Kepler architecture</span><br><span class="line">    - GeForce Titan products, starting with the Kepler architecture</span><br><span class="line">- Limited Support</span><br><span class="line">    - All Geforce products, starting with the Kepler architecture</span><br><span class="line">nvidia-smi [OPTION1 [ARG1]] [OPTION2 [ARG2]] ...</span><br><span class="line"></span><br><span class="line">    -h,   --<span class="built_in">help</span>                Print usage information and <span class="built_in">exit</span>.</span><br><span class="line"></span><br><span class="line">  LIST OPTIONS:</span><br><span class="line"></span><br><span class="line">    -L,   --list-gpus           Display a list of GPUs connected to the system.</span><br><span class="line"></span><br><span class="line">    -B,   --list-excluded-gpus  Display a list of excluded GPUs <span class="keyword">in</span> the system.</span><br><span class="line"></span><br><span class="line">  SUMMARY OPTIONS:</span><br><span class="line"></span><br><span class="line">    &lt;no arguments&gt;              Show a summary of GPUs connected to the system.</span><br><span class="line"></span><br><span class="line">    [plus any of]</span><br><span class="line"></span><br><span class="line">    -i,   --<span class="built_in">id</span>=                 Target a specific GPU.</span><br><span class="line">    -f,   --filename=           Log to a specified file, rather than to stdout.</span><br><span class="line">    -l,   --loop=               Probe <span class="keyword">until</span> Ctrl+C at specified second interval.</span><br><span class="line"></span><br><span class="line">  QUERY OPTIONS:</span><br><span class="line"></span><br><span class="line">    -q,   --query               Display GPU or Unit info.</span><br><span class="line"></span><br><span class="line">    [plus any of]</span><br><span class="line"></span><br><span class="line">    -u,   --unit                Show unit, rather than GPU, attributes.</span><br><span class="line">    -i,   --<span class="built_in">id</span>=                 Target a specific GPU or Unit.</span><br><span class="line">    -f,   --filename=           Log to a specified file, rather than to stdout.</span><br><span class="line">    -x,   --xml-format          Produce XML output.</span><br><span class="line">          --dtd                 When showing xml output, embed DTD.</span><br><span class="line">    -d,   --display=            Display only selected information: MEMORY,</span><br><span class="line">                                    UTILIZATION, ECC, TEMPERATURE, POWER, CLOCK,</span><br><span class="line">                                    COMPUTE, PIDS, PERFORMANCE, SUPPORTED_CLOCKS,</span><br><span class="line">                                    PAGE_RETIREMENT, ACCOUNTING, ENCODER_STATS,</span><br><span class="line">                                    SUPPORTED_GPU_TARGET_TEMP, VOLTAGE</span><br><span class="line">                                    FBC_STATS, ROW_REMAPPER, RESET_STATUS</span><br><span class="line">                                Flags can be combined with comma e.g. ECC,POWER.</span><br><span class="line">                                Sampling data with max/min/avg is also returned</span><br><span class="line">                                <span class="keyword">for</span> POWER, UTILIZATION and CLOCK display types.</span><br><span class="line">                                Doesn<span class="string">&#x27;t work with -u or -x flags.</span></span><br><span class="line"><span class="string">    -l,   --loop=               Probe until Ctrl+C at specified second interval.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    -lms, --loop-ms=            Probe until Ctrl+C at specified millisecond interval.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  SELECTIVE QUERY OPTIONS:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Allows the caller to pass an explicit list of properties to query.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    [one of]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    --query-gpu                 Information about GPU.</span></span><br><span class="line"><span class="string">                                Call --help-query-gpu for more info.</span></span><br><span class="line"><span class="string">    --query-supported-clocks    List of supported clocks.</span></span><br><span class="line"><span class="string">                                Call --help-query-supported-clocks for more info.</span></span><br><span class="line"><span class="string">    --query-compute-apps        List of currently active compute processes.</span></span><br><span class="line"><span class="string">                                Call --help-query-compute-apps for more info.</span></span><br><span class="line"><span class="string">    --query-accounted-apps      List of accounted compute processes.</span></span><br><span class="line"><span class="string">                                Call --help-query-accounted-apps for more info.</span></span><br><span class="line"><span class="string">                                This query is not supported on vGPU host.</span></span><br><span class="line"><span class="string">    --query-retired-pages       List of device memory pages that have been retired.</span></span><br><span class="line"><span class="string">                                Call --help-query-retired-pages for more info.</span></span><br><span class="line"><span class="string">    --query-remapped-rows       Information about remapped rows.</span></span><br><span class="line"><span class="string">                                Call --help-query-remapped-rows for more info.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    [mandatory]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    --format=                   Comma separated list of format options:</span></span><br><span class="line"><span class="string">                                  csv - comma separated values (MANDATORY)</span></span><br><span class="line"><span class="string">                                  noheader - skip the first line with column headers</span></span><br><span class="line"><span class="string">                                  nounits - don&#x27;</span>t <span class="built_in">print</span> units <span class="keyword">for</span> numerical</span><br><span class="line">                                             values</span><br><span class="line"></span><br><span class="line">    [plus any of]</span><br><span class="line"></span><br><span class="line">    -i,   --<span class="built_in">id</span>=                 Target a specific GPU or Unit.</span><br><span class="line">    -f,   --filename=           Log to a specified file, rather than to stdout.</span><br><span class="line">    -l,   --loop=               Probe <span class="keyword">until</span> Ctrl+C at specified second interval.</span><br><span class="line">    -lms, --loop-ms=            Probe <span class="keyword">until</span> Ctrl+C at specified millisecond interval.</span><br><span class="line"></span><br><span class="line">  DEVICE MODIFICATION OPTIONS:</span><br><span class="line"></span><br><span class="line">    [any one of]</span><br><span class="line"></span><br><span class="line">    -pm,  --persistence-mode=   Set persistence mode: 0/DISABLED, 1/ENABLED</span><br><span class="line">    -e,   --ecc-config=         Toggle ECC support: 0/DISABLED, 1/ENABLED</span><br><span class="line">    -p,   --reset-ecc-errors=   Reset ECC error counts: 0/VOLATILE, 1/AGGREGATE</span><br><span class="line">    -c,   --compute-mode=       Set MODE <span class="keyword">for</span> compute applications:</span><br><span class="line">                                0/DEFAULT, 1/EXCLUSIVE_THREAD (DEPRECATED),</span><br><span class="line">                                2/PROHIBITED, 3/EXCLUSIVE_PROCESS</span><br><span class="line">          --gom=                Set GPU Operation Mode:</span><br><span class="line">                                    0/ALL_ON, 1/COMPUTE, 2/LOW_DP</span><br><span class="line">    -r    --gpu-reset           Trigger reset of the GPU.</span><br><span class="line">                                Can be used to reset the GPU HW state <span class="keyword">in</span> situations</span><br><span class="line">                                that would otherwise require a machine reboot.</span><br><span class="line">                                Typically useful <span class="keyword">if</span> a double bit ECC error has</span><br><span class="line">                                occurred.</span><br><span class="line">                                Reset operations are not guarenteed to work <span class="keyword">in</span></span><br><span class="line">                                all cases and should be used with caution.</span><br><span class="line">    -vm   --virt-mode=          Switch GPU Virtualization Mode:</span><br><span class="line">                                Sets GPU virtualization mode to 3/VGPU or 4/VSGA</span><br><span class="line">                                Virtualization mode of a GPU can only be <span class="built_in">set</span> when</span><br><span class="line">                                it is running on a hypervisor.</span><br><span class="line">    -lgc  --lock-gpu-clocks=    Specifies &lt;minGpuClock,maxGpuClock&gt; clocks as a</span><br><span class="line">                                    pair (e.g. 1500,1500) that defines the range</span><br><span class="line">                                    of desired locked GPU clock speed <span class="keyword">in</span> MHz.</span><br><span class="line">                                    Setting this will supercede application clocks</span><br><span class="line">                                    and take effect regardless <span class="keyword">if</span> an app is running.</span><br><span class="line">                                    Input can also be a singular desired clock value</span><br><span class="line">                                    (e.g. &lt;GpuClockValue&gt;). Optionally, --mode can be</span><br><span class="line">                                    specified to indicate a special mode.</span><br><span class="line">    -m    --mode=               Specifies the mode <span class="keyword">for</span> --locked-gpu-clocks.</span><br><span class="line">                                    Valid modes: 0, 1</span><br><span class="line">    -rgc  --reset-gpu-clocks</span><br><span class="line">                                Resets the Gpu clocks to the default values.</span><br><span class="line">    -lmc  --lock-memory-clocks=  Specifies &lt;minMemClock,maxMemClock&gt; clocks as a</span><br><span class="line">                                    pair (e.g. 5100,5100) that defines the range</span><br><span class="line">                                    of desired locked Memory clock speed <span class="keyword">in</span> MHz.</span><br><span class="line">                                    Input can also be a singular desired clock value</span><br><span class="line">                                    (e.g. &lt;MemClockValue&gt;).</span><br><span class="line">    -rmc  --reset-memory-clocks</span><br><span class="line">                                Resets the Memory clocks to the default values.</span><br><span class="line">    -lmcd --lock-memory-clocks-deferred=</span><br><span class="line">                                    Specifies memClock clock to lock. This <span class="built_in">limit</span> is</span><br><span class="line">                                    applied the next <span class="keyword">time</span> GPU is initialized.</span><br><span class="line">                                    This is guaranteed by unloading and reloading the kernel module.</span><br><span class="line">                                    Requires root.</span><br><span class="line">    -rmcd --reset-memory-clocks-deferred</span><br><span class="line">                                Resets the deferred Memory clocks applied.</span><br><span class="line">    -ac   --applications-clocks= Specifies &lt;memory,graphics&gt; clocks as a</span><br><span class="line">                                    pair (e.g. 2000,800) that defines GPU<span class="string">&#x27;s</span></span><br><span class="line"><span class="string">                                    speed in MHz while running applications on a GPU.</span></span><br><span class="line"><span class="string">    -rac  --reset-applications-clocks</span></span><br><span class="line"><span class="string">                                Resets the applications clocks to the default values.</span></span><br><span class="line"><span class="string">    -pl   --power-limit=        Specifies maximum power management limit in watts.</span></span><br><span class="line"><span class="string">                                Takes an optional argument --scope.</span></span><br><span class="line"><span class="string">    -sc   --scope=              Specifies the device type for --scope: 0/GPU, 1/TOTAL_MODULE (Grace Hopper Only)</span></span><br><span class="line"><span class="string">    -cc   --cuda-clocks=        Overrides or restores default CUDA clocks.</span></span><br><span class="line"><span class="string">                                In override mode, GPU clocks higher frequencies when running CUDA applications.</span></span><br><span class="line"><span class="string">                                Only on supported devices starting from the Volta series.</span></span><br><span class="line"><span class="string">                                Requires administrator privileges.</span></span><br><span class="line"><span class="string">                                0/RESTORE_DEFAULT, 1/OVERRIDE</span></span><br><span class="line"><span class="string">    -am   --accounting-mode=    Enable or disable Accounting Mode: 0/DISABLED, 1/ENABLED</span></span><br><span class="line"><span class="string">    -caa  --clear-accounted-apps</span></span><br><span class="line"><span class="string">                                Clears all the accounted PIDs in the buffer.</span></span><br><span class="line"><span class="string">          --auto-boost-default= Set the default auto boost policy to 0/DISABLED</span></span><br><span class="line"><span class="string">                                or 1/ENABLED, enforcing the change only after the</span></span><br><span class="line"><span class="string">                                last boost client has exited.</span></span><br><span class="line"><span class="string">          --auto-boost-permission=</span></span><br><span class="line"><span class="string">                                Allow non-admin/root control over auto boost mode:</span></span><br><span class="line"><span class="string">                                0/UNRESTRICTED, 1/RESTRICTED</span></span><br><span class="line"><span class="string">    -mig  --multi-instance-gpu= Enable or disable Multi Instance GPU: 0/DISABLED, 1/ENABLED</span></span><br><span class="line"><span class="string">                                Requires root.</span></span><br><span class="line"><span class="string">    -gtt  --gpu-target-temp=    Set GPU Target Temperature for a GPU in degree celsius.</span></span><br><span class="line"><span class="string">                                Requires administrator privileges</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">   [plus optional]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    -i,   --id=                 Target a specific GPU.</span></span><br><span class="line"><span class="string">    -eow, --error-on-warning    Return a non-zero error for warnings.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  UNIT MODIFICATION OPTIONS:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    -t,   --toggle-led=         Set Unit LED state: 0/GREEN, 1/AMBER</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">   [plus optional]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    -i,   --id=                 Target a specific Unit.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  SHOW DTD OPTIONS:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">          --dtd                 Print device DTD and exit.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">     [plus optional]</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    -f,   --filename=           Log to a specified file, rather than to stdout.</span></span><br><span class="line"><span class="string">    -u,   --unit                Show unit, rather than device, DTD.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    --debug=                    Log encrypted debug information to a specified file.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> Device Monitoring:</span></span><br><span class="line"><span class="string">    dmon                        Displays device stats in scrolling format.</span></span><br><span class="line"><span class="string">                                &quot;nvidia-smi dmon -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    daemon                      Runs in background and monitor devices as a daemon process.</span></span><br><span class="line"><span class="string">                                This is an experimental feature. Not supported on Windows baremetal</span></span><br><span class="line"><span class="string">                                &quot;nvidia-smi daemon -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    replay                      Used to replay/extract the persistent stats generated by daemon.</span></span><br><span class="line"><span class="string">                                This is an experimental feature.</span></span><br><span class="line"><span class="string">                                &quot;nvidia-smi replay -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> Process Monitoring:</span></span><br><span class="line"><span class="string">    pmon                        Displays process stats in scrolling format.</span></span><br><span class="line"><span class="string">                                &quot;nvidia-smi pmon -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> TOPOLOGY:</span></span><br><span class="line"><span class="string">    topo                        Displays device/system topology. &quot;nvidia-smi topo -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> DRAIN STATES:</span></span><br><span class="line"><span class="string">    drain                       Displays/modifies GPU drain states for power idling. &quot;nvidia-smi drain -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> NVLINK:</span></span><br><span class="line"><span class="string">    nvlink                      Displays device nvlink information. &quot;nvidia-smi nvlink -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> C2C:</span></span><br><span class="line"><span class="string">    c2c                         Displays device C2C information. &quot;nvidia-smi c2c -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> CLOCKS:</span></span><br><span class="line"><span class="string">    clocks                      Control and query clock information. &quot;nvidia-smi clocks -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> ENCODER SESSIONS:</span></span><br><span class="line"><span class="string">    encodersessions             Displays device encoder sessions information. &quot;nvidia-smi encodersessions -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> FBC SESSIONS:</span></span><br><span class="line"><span class="string">    fbcsessions                 Displays device FBC sessions information. &quot;nvidia-smi fbcsessions -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> GRID vGPU:</span></span><br><span class="line"><span class="string">    vgpu                        Displays vGPU information. &quot;nvidia-smi vgpu -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> MIG:</span></span><br><span class="line"><span class="string">    mig                         Provides controls for MIG management. &quot;nvidia-smi mig -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> COMPUTE POLICY:</span></span><br><span class="line"><span class="string">    compute-policy              Control and query compute policies. &quot;nvidia-smi compute-policy -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> BOOST SLIDER:</span></span><br><span class="line"><span class="string">    boost-slider                Control and query boost sliders. &quot;nvidia-smi boost-slider -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> POWER HINT:</span></span><br><span class="line"><span class="string">    power-hint                  Estimates GPU power usage. &quot;nvidia-smi power-hint -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> BASE CLOCKS:</span></span><br><span class="line"><span class="string">    base-clocks                 Query GPU base clocks. &quot;nvidia-smi base-clocks -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> CONFIDENTIAL COMPUTE:</span></span><br><span class="line"><span class="string">    conf-compute                Control and query confidential compute. &quot;nvidia-smi conf-compute -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"> GPU PERFORMANCE MONITORING:</span></span><br><span class="line"><span class="string">    gpm                         Control and query GPU performance monitoring unit. &quot;nvidia-smi gpm -h&quot; for more information.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Please see the nvidia-smi(1) manual page for more detailed information.</span></span><br></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="https://luckymrwang.github.io/2025/12/25/nvidia-smi/" data-title="iBlog" data-tsina="iuckymrwang" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2025/07/13/Transformer推理性能优化技术——KVcache/"  title="Transformer推理性能优化技术——KVcache">
+ <strong>下一篇：</strong><br/> 
+ <span>Transformer推理性能优化技术——KVcache
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section id="comments" class="comment">
+	<div class="ds-thread" data-thread-key="2025/12/25/nvidia-smi/" data-title="" data-url="https://luckymrwang.github.io/2025/12/25/nvidia-smi/"></div>
+</section>
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E6%98%BE%E7%A4%BA-GPU-%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="toc-number">1.</span> <span class="toc-text">1. 显示 GPU 基本信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%98%BE%E7%A4%BA-GPU-%E5%9E%8B%E5%8F%B7%E4%BF%A1%E6%81%AF"><span class="toc-number">2.</span> <span class="toc-text">2. 显示 GPU 型号信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E6%98%BE%E7%A4%BA-GPU-%E8%AF%A6%E7%BB%86%E4%BF%A1%E6%81%AF"><span class="toc-number">3.</span> <span class="toc-text">3. 显示 GPU 详细信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%9F%A5%E7%9C%8B%E7%89%B9%E5%AE%9A-GPU"><span class="toc-number">4.</span> <span class="toc-text">4. 查看特定 GPU</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E7%9B%91%E6%8E%A7%E6%95%B4%E4%BD%93-GPU-%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-number">5.</span> <span class="toc-text">5. 监控整体 GPU 使用情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E6%9F%A5%E7%9C%8B%E4%B8%8E-GPU-%E4%BA%A4%E4%BA%92%E7%9A%84%E8%BF%9B%E7%A8%8B"><span class="toc-number">6.</span> <span class="toc-text">6. 查看与 GPU 交互的进程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E5%AE%9E%E6%97%B6%E5%88%B7%E6%96%B0-GPU-%E4%BF%A1%E6%81%AF"><span class="toc-number">7.</span> <span class="toc-text">7. 实时刷新 GPU 信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-%E9%99%90%E5%88%B6-GPU-%E7%9A%84%E5%8A%9F%E8%80%97"><span class="toc-number">8.</span> <span class="toc-text">8. 限制 GPU 的功耗</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-%E6%B8%85%E9%99%A4%E5%B7%B2%E5%8F%91%E7%94%9F%E7%9A%84%E9%94%99%E8%AF%AF%E8%AE%B0%E5%BD%95"><span class="toc-number">9.</span> <span class="toc-text">9. 清除已发生的错误记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E6%9F%A5%E7%9C%8B%E9%A9%B1%E5%8A%A8%E7%89%88%E6%9C%AC"><span class="toc-number">10.</span> <span class="toc-text">10. 查看驱动版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-%E6%9F%A5%E7%9C%8B%E6%98%BE%E5%AD%98%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-number">11.</span> <span class="toc-text">11. 查看显存使用情况</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-%E8%AE%BE%E7%BD%AE-GPU-%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%BC%8F"><span class="toc-number">12.</span> <span class="toc-text">12. 设置 GPU 计算模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">13.</span> <span class="toc-text">参考</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/example/" title="example">example<sup>1</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Go/" title="Go">Go<sup>46</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>35</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/PHP/" title="PHP">PHP<sup>19</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Kubernetes/" title="Kubernetes">Kubernetes<sup>15</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Golang/" title="Golang">Golang<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mac/" title="Mac">Mac<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/jQuery/" title="jQuery">jQuery<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Apache/" title="Apache">Apache<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MySQL/" title="MySQL">MySQL<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/CentOS/" title="CentOS">CentOS<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Go笔记/" title="Go笔记">Go笔记<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Docker/" title="Docker">Docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/eBPF/" title="eBPF">eBPF<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Git/" title="Git">Git<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/DataTables/" title="DataTables">DataTables<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/GoExample/" title="GoExample">GoExample<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/监控/" title="监控">监控<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JS/" title="JS">JS<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hexo/" title="Hexo">Hexo<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+    </ul>
+</div>
+
+  
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Just do it <br/>
+			</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://github.com/luckymrwang" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		
+		<a href="/about" target="_blank" title="luckymrwang">luckymrwang</a>
+		
+
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"luckymrwang"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-68490584-1', 'auto');  
+ga('send', 'pageview');
+</script>
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

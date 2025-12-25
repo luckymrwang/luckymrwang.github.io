@@ -85,6 +85,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/05/06/使用-etcdctl-访问-Kubernetes-数据/" title="使用 etcdctl 访问 Kubernetes 数据" itemprop="url">使用 etcdctl 访问 Kubernetes 数据</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-05-06T08:01:16.000Z" itemprop="datePublished"> 发表于 2022-05-06</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>Kubenretes1.6 中使用 <code>etcd V3</code> 版本的 API，使用 <code>etcdctl</code> 直接 <code>ls</code> 的话只能看到 <code>/kube-centos</code> 一个路径。需要在命令前加上 <code>ETCDCTL_API=3</code> 这个环境变量才能看到 kuberentes 在 etcd 中保存的数据。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable constant_">ETCDCTL_API</span>=<span class="number">3</span> etcdctl get /registry/namespaces/<span class="keyword">default</span> -w=json|python -m json.<span class="property">tool</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/05/06/%E4%BD%BF%E7%94%A8-etcdctl-%E8%AE%BF%E9%97%AE-Kubernetes-%E6%95%B0%E6%8D%AE/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/05/06/使用-etcdctl-访问-Kubernetes-数据/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/06/使用-etcdctl-访问-Kubernetes-数据/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/04/24/iptables-nat-conntrack的特殊之处/" title="iptables nat&amp;conntrack的特殊之处" itemprop="url">iptables nat&amp;conntrack的特殊之处</a>
   </h1>
   <p class="article-author">By
@@ -620,69 +680,6 @@
 	
 	  	<span></span>
 		<a href="/2021/11/04/初探-IPTABLES-流動之路-以-Docker-為範例/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/11/04/初探-IPTABLES-流動之路-以-Docker-為範例/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2021/10/25/Go-Http包解析：为什么需要response-Body-Close/" title="Go Http包解析：为什么需要response.Body.Close()" itemprop="url">Go Http包解析：为什么需要response.Body.Close()</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2021-10-25T03:09:41.000Z" itemprop="datePublished"> 发表于 2021-10-25</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>最近线上的一个项目遇到了内存泄露的问题，查了heap之后，发现 http包的 dialConn函数竟然占了内存使用的大头，这个有点懵逼了，后面在网上查询资料的时候无意间发现一句话</p>
-<blockquote>
-<p>10次内存泄露，有9次是goroutine泄露。</p>
-</blockquote>
-<p>结果发现，正是我认为的不可能的goroutine泄露导致了这次的内存泄露，而goroutine泄露的原因就是 没有调用 response.Body.Close()</p>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2021/10/25/Go-Http%E5%8C%85%E8%A7%A3%E6%9E%90%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81response-Body-Close/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Go/">Go</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2021/10/25/Go-Http包解析：为什么需要response-Body-Close/#comments" class="ds-thread-count comments-count-link" data-thread-key="2021/10/25/Go-Http包解析：为什么需要response-Body-Close/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

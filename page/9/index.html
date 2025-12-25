@@ -85,6 +85,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2020/08/04/Kubernetes-Volume-挂载/" title="Kubernetes Volume 挂载" itemprop="url">Kubernetes Volume 挂载</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2020-08-04T06:15:49.000Z" itemprop="datePublished"> 发表于 2020-08-04</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="挂载配置文件到应用程序所在的目录"><a href="#挂载配置文件到应用程序所在的目录" class="headerlink" title="挂载配置文件到应用程序所在的目录"></a>挂载配置文件到应用程序所在的目录</h3><p>应用程序代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;io&quot;</span></span><br><span class="line">    <span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">    <span class="string">&quot;log&quot;</span></span><br><span class="line">    <span class="string">&quot;net/http&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="string">&quot;gopkg.in/yaml.v2&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> config <span class="keyword">struct</span> &#123;</span><br><span class="line">    Port <span class="type">string</span> <span class="string">`yaml:&quot;port&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> c = <span class="built_in">new</span>(config)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">    fContent, err := ioutil.ReadFile(<span class="string">&quot;config.yaml&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> err = yaml.Unmarshal(fContent, c); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    handlerFunc := <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">        io.WriteString(w, <span class="string">&quot;Hello !&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    http.HandleFunc(<span class="string">&quot;/&quot;</span>, handlerFunc)</span><br><span class="line">    log.Fatal(http.ListenAndServe(fmt.Sprintf(<span class="string">&quot;:%s&quot;</span>, c.Port), <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2020/08/04/Kubernetes-Volume-%E6%8C%82%E8%BD%BD/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Kubernetes/">Kubernetes</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2020/08/04/Kubernetes-Volume-挂载/#comments" class="ds-thread-count comments-count-link" data-thread-key="2020/08/04/Kubernetes-Volume-挂载/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2020/02/11/扩展golang的sync-mutex的trylock及islocked/" title="扩展golang的sync mutex的trylock及islocked" itemprop="url">扩展golang的sync mutex的trylock及islocked</a>
   </h1>
   <p class="article-author">By
@@ -617,67 +677,6 @@
 	
 	  	<span></span>
 		<a href="/2019/08/13/docker-搭建-gitlab-ce-教程/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/08/13/docker-搭建-gitlab-ce-教程/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2019/07/22/Minikube的安装/" title="Minikube的安装" itemprop="url">Minikube的安装</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2019-07-22T03:56:21.000Z" itemprop="datePublished"> 发表于 2019-07-22</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="安装Minikube可执行程序"><a href="#安装Minikube可执行程序" class="headerlink" title="安装Minikube可执行程序"></a>安装Minikube可执行程序</h3><h4 id="MAC"><a href="#MAC" class="headerlink" title="MAC"></a>MAC</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew cask install minikub</span><br></pre></td></tr></table></figure>
-
-<h4 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 &amp;&amp; chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2019/07/22/Minikube%E7%9A%84%E5%AE%89%E8%A3%85/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Minikube/">Minikube</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2019/07/22/Minikube的安装/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/07/22/Minikube的安装/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

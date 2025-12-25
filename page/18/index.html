@@ -85,6 +85,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/06/11/Go语言的bytes-buffer/" title="Go语言的bytes.buffer" itemprop="url">Go语言的bytes.buffer</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-06-11T12:43:24.000Z" itemprop="datePublished"> 发表于 2016-06-11</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="bytes-buffer"><a href="#bytes-buffer" class="headerlink" title="bytes.buffer"></a>bytes.buffer</h3><p>bytes.buffer是一个缓冲byte类型的缓冲器，这个缓冲器里存放着都是byte</p>
+<h3 id="创建一个缓冲器"><a href="#创建一个缓冲器" class="headerlink" title="创建一个缓冲器"></a>创建一个缓冲器</h3><h4 id="NewBuffer"><a href="#NewBuffer" class="headerlink" title="NewBuffer"></a>NewBuffer</h4><p>如果在使用bytes.NewBuffer的时候，参数是[]byte的slice的话<br>缓冲器里就是这个slice的内容，如果参数是nil的话，意思是New一个空的缓冲器里</p>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2016/06/11/Go%E8%AF%AD%E8%A8%80%E7%9A%84bytes-buffer/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Go/">Go</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/06/11/Go语言的bytes-buffer/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/06/11/Go语言的bytes-buffer/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/06/01/使用微信JSSDK上传图片到七牛/" title="使用微信JSSDK上传图片到七牛" itemprop="url">使用微信JSSDK上传图片到七牛</a>
   </h1>
   <p class="article-author">By
@@ -613,66 +673,6 @@
 	
 	  	<span></span>
 		<a href="/2016/05/01/利用predis操作redis方法大全/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/05/01/利用predis操作redis方法大全/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/04/05/PHPexcel单元格换行/" title="PHPexcel单元格内换行" itemprop="url">PHPexcel单元格内换行</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-04-05T09:06:55.000Z" itemprop="datePublished"> 发表于 2016-04-05</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">getActiveSheet</span>()-&gt;<span class="title function_ invoke__">getStyleByColumnAndRow</span>(<span class="variable">$k</span> + <span class="number">1</span>, <span class="variable">$row</span>)-&gt;<span class="title function_ invoke__">getAlignment</span>()-&gt;<span class="title function_ invoke__">setWrapText</span>(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">getActiveSheet</span>()-&gt;<span class="title function_ invoke__">setCellValueByColumnAndRow</span>(<span class="variable">$k</span> + <span class="number">1</span>, <span class="variable">$row</span>, <span class="string">&quot;Hello\nWorld&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p><em>要换行的字符串 <code>Hello\nWorld</code> 外面必须是双引号</em></p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/PHP/">PHP</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/04/05/PHPexcel单元格换行/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/04/05/PHPexcel单元格换行/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

@@ -85,6 +85,68 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2015/08/13/FixedHeader随表及浏览器大小自适应/" title="FixedHeader随表及浏览器大小自适应" itemprop="url">FixedHeader随表及浏览器大小自适应</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2015-08-13T12:09:42.000Z" itemprop="datePublished"> 发表于 2015-08-13</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>DataTables中有一个浮动表头的扩展<a href="http://datatables.net/extensions/fixedheader/">FixedHeader</a>,他的作用就是在浏览器滚动时使其表头能够浮动。</p>
+<p>使用方法：</p>
+<p>在引入js文件后，初始化一下命令：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="variable language_">document</span>).<span class="title function_">ready</span>( <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">	<span class="keyword">var</span> table = $(<span class="string">&#x27;#example&#x27;</span>).<span class="title class_">DataTable</span>();</span><br><span class="line">	<span class="keyword">new</span> $.fn.<span class="property">dataTable</span>.<span class="title class_">FixedHeader</span>( table );</span><br><span class="line">&#125; );</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2015/08/13/FixedHeader%E9%9A%8F%E8%A1%A8%E5%8F%8A%E6%B5%8F%E8%A7%88%E5%99%A8%E5%A4%A7%E5%B0%8F%E8%87%AA%E9%80%82%E5%BA%94/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/DataTables/">DataTables</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2015/08/13/FixedHeader随表及浏览器大小自适应/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/08/13/FixedHeader随表及浏览器大小自适应/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2015/08/10/Redis-在SNS类应用中的最佳实践/" title="Redis 在SNS类应用中的最佳实践" itemprop="url">Redis 在SNS类应用中的最佳实践</a>
   </h1>
   <p class="article-author">By
@@ -627,72 +689,6 @@
 	
 	  	<span></span>
 		<a href="/2015/06/04/Apache-403错误汇总/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/04/Apache-403错误汇总/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2015/06/04/bash-profile-profile-bashrc的区别和启动顺序/" title=".bash_profile,profile,bashrc的区别和启动顺序" itemprop="url">.bash_profile,profile,bashrc的区别和启动顺序</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2015-06-04T03:44:27.000Z" itemprop="datePublished"> 发表于 2015-06-04</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><ul>
-<li><p><strong>&#x2F;etc&#x2F;profile</strong>：此文件为系统的每个用户设置环境信息，当用户第一次登录时，该文件被执行。<br>并从&#x2F;etc&#x2F;profile.d目录的配置文件中搜集shell的设置。</p>
-</li>
-<li><p><strong>&#x2F;etc&#x2F;bashrc</strong>：为每一个运行bash shell的用户执行此文件。当bash shell被打开时，该文件被读取。</p>
-</li>
-<li><p><strong>~&#x2F;.bash_profile</strong>：每个用户都可使用该文件输入专用于自己使用的shell信息，当用户登录时，该<br>文件仅仅执行一次。默认情况下，他设置一些环境变量，执行用户的.bashrc文件。</p>
-</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2015/06/04/bash-profile-profile-bashrc%E7%9A%84%E5%8C%BA%E5%88%AB%E5%92%8C%E5%90%AF%E5%8A%A8%E9%A1%BA%E5%BA%8F/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Linux/">Linux</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2015/06/04/bash-profile-profile-bashrc的区别和启动顺序/#comments" class="ds-thread-count comments-count-link" data-thread-key="2015/06/04/bash-profile-profile-bashrc的区别和启动顺序/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

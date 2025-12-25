@@ -85,6 +85,71 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2022/09/05/深入了解-Systemd-之概要介绍/" title="深入了解 Systemd 之概要介绍" itemprop="url">深入了解 Systemd 之概要介绍</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2022-09-05T01:24:42.000Z" itemprop="datePublished"> 发表于 2022-09-05</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>Systemd 是 Linux 系统的一中 Init 用户程序和基础组件的集合，由 Lennart Poettering 带头开发并在 LGPL 2.1 及后续版本许可证下开源发布，目前 Systemd 已纳入众多 Linux 发行版的软件源中。</p>
+<h2 id="Linux-引导原理"><a href="#Linux-引导原理" class="headerlink" title="Linux 引导原理"></a>Linux 引导原理</h2><p>Linux 内核加载启动后，用户空间的第一个进程就是初始化进程，这个程序的物理文件约定位于 <code>/sbin/init</code>，当然也可以通过传递内核参数来让内核启动指定的程序。这个进程的特点是进程号为1，代表第一个运行的用户空间进程。不同发行版采用了不同的启动程序，主要有以下几种主流选择：</p>
+<ol>
+<li>以 Ubuntu 为代表的 Linux 发行版采用 Upstart。</li>
+<li>以7.0版本之前的 CentOS 为代表的 System V Init。</li>
+<li>CentOS7.0 版本的 Systemd。</li>
+</ol>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2022/09/05/%E6%B7%B1%E5%85%A5%E4%BA%86%E8%A7%A3-Systemd-%E4%B9%8B%E6%A6%82%E8%A6%81%E4%BB%8B%E7%BB%8D/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Linux/">Linux</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2022/09/05/深入了解-Systemd-之概要介绍/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/09/05/深入了解-Systemd-之概要介绍/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2022/09/04/清理systemd日志/" title="清理systemd日志" itemprop="url">清理systemd日志</a>
   </h1>
   <p class="article-author">By
@@ -622,78 +687,6 @@
 	
 	  	<span></span>
 		<a href="/2022/06/20/设备收发包之netif-receive-skb/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/06/20/设备收发包之netif-receive-skb/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2022/05/31/netfilter内核态与用户态通信之sockopt/" title="netfilter内核态与用户态通信之sockopt" itemprop="url">netfilter内核态与用户态通信之sockopt</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2022-05-31T11:12:51.000Z" itemprop="datePublished"> 发表于 2022-05-31</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>用户态与内核态交互通信的方法不止一种，sockopt是比较方便的一个，写法也简单.</p>
-<p>缺点就是使用 copy_from_user()&#x2F;copy_to_user()完成内核和用户的通信， 效率其实不高， 多用在传递控制 选项 信息，不适合做大量的数据传输。</p>
-<p>用户态函数：</p>
-<ul>
-<li>发送：int setsockopt ( int sockfd, int proto, int cmd, void *data, int datelen);</li>
-<li>接收：int getsockopt(int sockfd, int proto, int cmd, void *data, int datalen)<ul>
-<li>第一个参数是socket描述符；</li>
-<li>第二个参数proto是sock协议，IP RAW的就用SOL_SOCKET&#x2F;SOL_IP等，TCP&#x2F;UDP socket的可用SOL_SOCKET&#x2F;SOL_IP&#x2F;SOL_TCP&#x2F;SOL_UDP等，即高层的socket是都可以使用低层socket的命令字 的，IPPROTO_IP；</li>
-<li>第三个参数cmd是操作命令字，由自己定义；</li>
-<li>第四个参数是数据缓冲区起始位置指针，set操作时是将缓冲区数据写入内核，get的时候是将内核中的数 据读入该缓冲区；</li>
-<li>第五个参数数据长度</li>
-</ul>
-</li>
-</ul>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2022/05/31/netfilter%E5%86%85%E6%A0%B8%E6%80%81%E4%B8%8E%E7%94%A8%E6%88%B7%E6%80%81%E9%80%9A%E4%BF%A1%E4%B9%8Bsockopt/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Socket/">Socket</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2022/05/31/netfilter内核态与用户态通信之sockopt/#comments" class="ds-thread-count comments-count-link" data-thread-key="2022/05/31/netfilter内核态与用户态通信之sockopt/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

@@ -85,6 +85,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2019/07/22/Minikube的安装/" title="Minikube的安装" itemprop="url">Minikube的安装</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-22T03:56:21.000Z" itemprop="datePublished"> 发表于 2019-07-22</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="安装Minikube可执行程序"><a href="#安装Minikube可执行程序" class="headerlink" title="安装Minikube可执行程序"></a>安装Minikube可执行程序</h3><h4 id="MAC"><a href="#MAC" class="headerlink" title="MAC"></a>MAC</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew cask install minikub</span><br></pre></td></tr></table></figure>
+
+<h4 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 &amp;&amp; chmod +x minikube &amp;&amp; sudo mv minikube /usr/local/bin/</span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2019/07/22/Minikube%E7%9A%84%E5%AE%89%E8%A3%85/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Minikube/">Minikube</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2019/07/22/Minikube的安装/#comments" class="ds-thread-count comments-count-link" data-thread-key="2019/07/22/Minikube的安装/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2019/07/03/Go中的条件变量与Channel/" title="Go中的条件变量与Channel" itemprop="url">Go中的条件变量与Channel</a>
   </h1>
   <p class="article-author">By
@@ -623,70 +684,6 @@
 	
 	  	<span></span>
 		<a href="/2018/12/26/Go-get-through-socks5-proxy/#comments" class="ds-thread-count comments-count-link" data-thread-key="2018/12/26/Go-get-through-socks5-proxy/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2018/11/28/Golang-Json-科学计数法/" title="Golang Json 科学计数法" itemprop="url">Golang Json 科学计数法</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2018-11-28T06:29:57.000Z" itemprop="datePublished"> 发表于 2018-11-28</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>使用Go解析一个从其他接口返回的JSON字符串，有时会遇到数字以科学计数法的形式展现，比如</p>
-<p>源：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;success&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="number">6566651968</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>处理后：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;message&quot;</span><span class="punctuation">:</span> <span class="string">&quot;success&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;data&quot;</span><span class="punctuation">:</span> <span class="number">6.566651968e+09</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2018/11/28/Golang-Json-%E7%A7%91%E5%AD%A6%E8%AE%A1%E6%95%B0%E6%B3%95/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Golang/">Golang</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2018/11/28/Golang-Json-科学计数法/#comments" class="ds-thread-count comments-count-link" data-thread-key="2018/11/28/Golang-Json-科学计数法/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

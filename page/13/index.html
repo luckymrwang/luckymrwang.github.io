@@ -85,6 +85,67 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2017/07/24/如何用-JavaScript-下载文件/" title="如何用 JavaScript 下载文件" itemprop="url">如何用 JavaScript 下载文件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2017-07-24T06:12:57.000Z" itemprop="datePublished"> 发表于 2017-07-24</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>我们知道，下载文件是一个非常常见的需求，但由于浏览器的安全策略的限制，我们通常只能通过一个额外的页面，访问某个文件的 url 来实现下载功能，但是这种用户体验非常不好。<br>幸好，HTML 5 里面为 <code>&lt;a&gt;</code> 标签添加了一个 <code>download</code> 的属性，我们可以轻易的利用它来实现下载功能，再也不需要用以前的笨办法了。</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>我们先看看 <code>download</code> 的使用方法：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;http://somehost/somefile.zip&quot;</span> <span class="attr">download</span>=<span class="string">&quot;filename.zip&quot;</span>&gt;</span>Download file<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+        
+        
+        <p class="article-more-link">
+          
+            <a href="/2017/07/24/%E5%A6%82%E4%BD%95%E7%94%A8-JavaScript-%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6/#more">阅读更多</a>
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/JS/">JS</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2017/07/24/如何用-JavaScript-下载文件/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/07/24/如何用-JavaScript-下载文件/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2017/07/04/Golang之内存使用报告/" title="Golang之内存使用报告" itemprop="url">Golang之内存使用报告</a>
   </h1>
   <p class="article-author">By
@@ -629,83 +690,6 @@
 	
 	  	<span></span>
 		<a href="/2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/03/16/使用-Elastic-Stack-来监控和调优-Golang-应用程序/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2017/01/17/在Mac上安装MongoDB/" title="在Mac上安装MongoDB" itemprop="url">在Mac上安装MongoDB</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2017-01-17T02:52:08.000Z" itemprop="datePublished"> 发表于 2017-01-17</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="一、使用包管理器进行安装"><a href="#一、使用包管理器进行安装" class="headerlink" title="一、使用包管理器进行安装"></a>一、使用包管理器进行安装</h3><ul>
-<li>更新 Homebrew的package数据库（macosx上的软件包管理工具）</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew update</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>安装MongoDb</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ brew install mongodb</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>启动MongoDb（安装成功后命令行有提示）</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo mongod --config /usr/local/etc/mongod.conf</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>连接到mongo</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mongo</span><br></pre></td></tr></table></figure>
-        
-        
-        <p class="article-more-link">
-          
-            <a href="/2017/01/17/%E5%9C%A8Mac%E4%B8%8A%E5%AE%89%E8%A3%85MongoDB/#more">阅读更多</a>
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Mac/">Mac</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2017/01/17/在Mac上安装MongoDB/#comments" class="ds-thread-count comments-count-link" data-thread-key="2017/01/17/在Mac上安装MongoDB/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 

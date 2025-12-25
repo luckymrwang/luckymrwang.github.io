@@ -85,6 +85,66 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2016/04/05/PHPexcel单元格换行/" title="PHPexcel单元格内换行" itemprop="url">PHPexcel单元格内换行</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
+		
+  <p class="article-time">
+    <time datetime="2016-04-05T09:06:55.000Z" itemprop="datePublished"> 发表于 2016-04-05</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">getActiveSheet</span>()-&gt;<span class="title function_ invoke__">getStyleByColumnAndRow</span>(<span class="variable">$k</span> + <span class="number">1</span>, <span class="variable">$row</span>)-&gt;<span class="title function_ invoke__">getAlignment</span>()-&gt;<span class="title function_ invoke__">setWrapText</span>(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$objPHPExcel</span>-&gt;<span class="title function_ invoke__">getActiveSheet</span>()-&gt;<span class="title function_ invoke__">setCellValueByColumnAndRow</span>(<span class="variable">$k</span> + <span class="number">1</span>, <span class="variable">$row</span>, <span class="string">&quot;Hello\nWorld&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><em>要换行的字符串 <code>Hello\nWorld</code> 外面必须是双引号</em></p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/PHP/">PHP</a>
+  </div>
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+	  	<span></span>
+		<a href="/2016/04/05/PHPexcel单元格换行/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/04/05/PHPexcel单元格换行/" data-count-type="comments">&nbsp;</a>
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2016/03/31/React-入门/" title="React 入门" itemprop="url">React 入门</a>
   </h1>
   <p class="article-author">By
@@ -638,68 +698,6 @@
 	
 	  	<span></span>
 		<a href="/2016/01/11/HTML-DOM-position-属性/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/01/11/HTML-DOM-position-属性/" data-count-type="comments">&nbsp;</a>
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2016/01/11/CSS3-TRANSFORM-居中/" title="CSS3 TRANSFORM 居中" itemprop="url">CSS3 TRANSFORM 居中</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="luckymrwang" target="_blank" itemprop="author">luckymrwang</a>
-		
-  <p class="article-time">
-    <time datetime="2016-01-11T05:05:38.000Z" itemprop="datePublished"> 发表于 2016-01-11</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h3 id="水平居中："><a href="#水平居中：" class="headerlink" title="水平居中："></a>水平居中：</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">left</span>:<span class="number">50%</span>;</span><br><span class="line"><span class="attribute">transform</span>: <span class="built_in">translateX</span>(-<span class="number">50%</span>);</span><br></pre></td></tr></table></figure>
-
-<h3 id="垂直居中"><a href="#垂直居中" class="headerlink" title="垂直居中"></a>垂直居中</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">top</span>:<span class="number">50%</span>;</span><br><span class="line"><span class="attribute">transform</span>: <span class="built_in">translateY</span>(-<span class="number">50%</span>);</span><br></pre></td></tr></table></figure>
-
-<h3 id="水平垂直居中"><a href="#水平垂直居中" class="headerlink" title="水平垂直居中"></a>水平垂直居中</h3><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">left</span>:<span class="number">50%</span>;</span><br><span class="line"><span class="attribute">top</span>:<span class="number">50%</span>;</span><br><span class="line"><span class="attribute">transform</span>: <span class="built_in">translate</span>(-<span class="number">50%</span>,-<span class="number">50%</span>);</span><br></pre></td></tr></table></figure>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/CSS3/">CSS3</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-	  	<span></span>
-		<a href="/2016/01/11/CSS3-TRANSFORM-居中/#comments" class="ds-thread-count comments-count-link" data-thread-key="2016/01/11/CSS3-TRANSFORM-居中/" data-count-type="comments">&nbsp;</a>
 	
 </div>
 
